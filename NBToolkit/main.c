@@ -25,25 +25,40 @@ THE SOFTWARE.
 #include "chunk.h"
 
 void print_usage (const char *name) {
-	fprintf(stderr, "Usage: %s <world dir> <ore_id> [options]\n", name);
-	fprintf(stderr, "Ore IDs:\n");
-	fprintf(stderr, "    16 = Coal, 15 = Iron, 14 = Gold, 73 = Redstone, 56 = Diamond, 21 = Lapis\n");
-	fprintf(stderr, "Options:\n");
-	fprintf(stderr, "    -r <num>    : Number of rounds ore is generated per chunk\n");
-	fprintf(stderr, "    -mn <num>   : Minimum depth ore is generated (0-127)\n");
-	fprintf(stderr, "    -mx <num>   : Maximum depth ore is generated (0-127)\n");
-	fprintf(stderr, "    -s <num>    : Size of ore deposit (0-63) -- Defaults:\n");
-	fprintf(stderr, "                  Coal = 16, Iron/Gold = 8, Redstone/Diamond/Lapis = 7\n");
+	fprintf(stderr, "Usage: %s <world dir> <tool> <ore_id> [options]\n", name);
+	fprintf(stderr, "Available tools:\n");
+	fprintf(stderr, "    oregen      : Generate new ore deposits\n");
+	fprintf(stderr, "    replace     : Replace one block type with another\n\n");
+	fprintf(stderr, "Usage and options for 'oregen':\n");
+	fprintf(stderr, "    %s <world_dir> oregen <ore_id> [options]\n", name);
+	fprintf(stderr, "    Ore IDs:\n");
+	fprintf(stderr, "        16 = Coal, 15 = Iron, 14 = Gold, 73 = Redstone, 56 = Diamond, 21 = Lapis\n");
+	fprintf(stderr, "    Options:\n");
+	fprintf(stderr, "        -r <num>    : Number of rounds ore is generated per chunk\n");
+	fprintf(stderr, "        -mn <num>   : Minimum depth ore is generated (0-127)\n");
+	fprintf(stderr, "        -mx <num>   : Maximum depth ore is generated (0-127)\n");
+	fprintf(stderr, "        -s <num>    : Size of ore deposit (0-63) -- Defaults:\n");
+	fprintf(stderr, "                      Coal = 16, Iron/Gold = 8, Redstone/Diamond/Lapis = 7\n");
+	fprintf(stderr, "        -oo         : Take precedence over all existing ores\n");
+	fprintf(stderr, "        -ob         : Take precedence over all existing blocks (excluding air)\n");
+	fprintf(stderr, "        -oa         : Take precedence over all existing blocks (including air)\n");
+	fprintf(stderr, "        -oi <id>    : Take precedence over a specific block type\n\n");
+	fprintf(stderr, "Usage and options for 'replace':\n");
+	fprintf(stderr, "    %s <world_dir> replace <block_id_1> <block_id_2> [options]\n", name);
+	fprintf(stderr, "    Options:\n");
+	fprintf(stderr, "        -mn <num>   : Minimum depth ore is generated (0-127)\n");
+	fprintf(stderr, "        -mx <num>   : Maximum depth ore is generated (0-127)\n");
+	fprintf(stderr, "        -p <num>    : Probability that an individual block is replaced (0.0 - 1.0)\n\n");
+	fprintf(stderr, "Common Options:\n");
 	/*fprintf(stderr, "    -cb <time>	    : Only update chunks created before time (as unix timestamp)\n");
 	fprintf(stderr, "    -ca <time>	    : Only update chunks created after time (as unix timestamp)\n");*/
 	fprintf(stderr, "    -mb <time>  : Only update chunks modified before time (as unix timestamp)\n");
 	fprintf(stderr, "    -ma <time>  : Only update chunks modified after time (as unix timestamp)\n");
-	fprintf(stderr, "    -oo         : Take precedence over all existing ores\n");
-	fprintf(stderr, "    -ob         : Take precedence over all existing blocks (excluding air)\n");
-	fprintf(stderr, "    -oa         : Take precedence over all existing blocks (including air)\n");
 	fprintf(stderr, "    -bb <x1> <y1> <x2> <y2>\n");
 	fprintf(stderr, "                : Only update chunks with coordinates bounded by the rectangle\n");
 	fprintf(stderr, "                  by (x1, y1) and (x2, y2), given as decimal chunk coordinates\n");
+	fprintf(stderr, "    -e <id>     : Only update chunks that contain blocks of the given id\n");
+	fprintf(stderr, "    -ne <id>    : Only update chunks that don't contain blocks of the given id\n");
 	fprintf(stderr, "    -d <num>    : Set block-specific data values (0-15)\n");
 	fprintf(stderr, "    -v          : Verbose output\n");
 	fprintf(stderr, "    -vv         : Very verbose output\n");
