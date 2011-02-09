@@ -56,7 +56,7 @@ int pf_replace (nbt_file * nf, struct options * opt, void * pf_opt) {
     				if (opt->set & OPT_VV) {
 						fprintf(stderr, "Replaced block at %d,%d,%d\n", x, y, z);
 					}
-					
+
 					if (rep_opt->set & OPT_DATA) {
 						if (index % 2 == 0) {
 							dat->content[index / 2] = (dat->content[index / 2] & 0xF0) | rep_opt->data;

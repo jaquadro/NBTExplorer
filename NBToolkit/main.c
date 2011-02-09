@@ -39,12 +39,12 @@ const char * basename (const char *path) {
 }
 
 void print_usage (const char *name) {
-	fprintf(stderr, "Usage: %s <world dir> <tool> <ore_id> [options]\n", basename(name));
+	fprintf(stderr, "Usage: %s <tool> <world dir> [options]\n", basename(name));
 	fprintf(stderr, "Available tools:\n");
 	fprintf(stderr, "    oregen      : Generate new ore deposits\n");
 	fprintf(stderr, "    replace     : Replace one block type with another\n\n");
 	fprintf(stderr, "Usage and options for 'oregen':\n");
-	fprintf(stderr, "    %s <world_dir> oregen <ore_id> [options]\n\n", basename(name));
+	fprintf(stderr, "    %s oregen <world_dir> <ore_id> [options]\n\n", basename(name));
 	fprintf(stderr, "    Ore IDs:\n");
 	fprintf(stderr, "        16 = Coal, 15 = Iron, 14 = Gold, 73 = Redstone, 56 = Diamond, 21 = Lapis\n");
 	fprintf(stderr, "    Options:\n");
@@ -58,10 +58,10 @@ void print_usage (const char *name) {
 	fprintf(stderr, "        -oa         : Take precedence over all existing blocks (including air)\n");
 	fprintf(stderr, "        -oi <id>    : Take precedence over a specific block type\n\n");
 	fprintf(stderr, "Usage and options for 'replace':\n");
-	fprintf(stderr, "    %s <world_dir> replace <block_id_1> <block_id_2> [options]\n\n", basename(name));
+	fprintf(stderr, "    %s replace <world_dir> <block_id_1> <block_id_2> [options]\n\n", basename(name));
 	fprintf(stderr, "    Options:\n");
-	fprintf(stderr, "        -mn <num>   : Minimum depth ore is generated (0-127)\n");
-	fprintf(stderr, "        -mx <num>   : Maximum depth ore is generated (0-127)\n");
+	fprintf(stderr, "        -mn <num>   : Minimum depth blocks are replaced (0-127)\n");
+	fprintf(stderr, "        -mx <num>   : Maximum height blocks are replaced (0-127)\n");
 	fprintf(stderr, "        -p <num>    : Probability that an individual block is replaced (0.0-1.0)\n");
 	fprintf(stderr, "Common Options:\n");
 	/*fprintf(stderr, "    -cb <time>	    : Only update chunks created before time (as unix timestamp)\n");
