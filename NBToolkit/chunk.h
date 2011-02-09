@@ -37,21 +37,32 @@ THE SOFTWARE.
 
 #include "cnbt/nbt.h"
 
-#define OPT_C_TIME	0x0001
-#define OPT_M_TIME	0x0002
-#define OPT_ROUNDS	0x0004
-#define OPT_MIN		0x0008
-#define OPT_MAX		0x0010
-#define OPT_SIZE	0x0020
-#define OPT_OV_ORE	0x0040
-#define OPT_OV_ALL	0x0080
-#define OPT_C_AFT	0x0100
-#define OPT_M_AFT	0x0200
-#define OPT_OV_BLK	0x0400
-#define OPT_BBOX	0x0800
-#define OPT_DATA	0x1000
-#define OPT_V		0x2000
-#define OPT_VV		0x4000
+#define OPT_C_TIME	0x000001
+#define OPT_M_TIME	0x000002
+#define OPT_ROUNDS	0x000004
+#define OPT_MIN		0x000008
+#define OPT_MAX		0x000010
+#define OPT_SIZE	0x000020
+#define OPT_OV_ORE	0x000040
+#define OPT_OV_ALL	0x000080
+#define OPT_C_AFT	0x000100
+#define OPT_M_AFT	0x000200
+#define OPT_OV_BLK	0x000400
+#define OPT_BBOX	0x000800
+#define OPT_DATA	0x001000
+#define OPT_V		0x002000
+#define OPT_VV		0x004000
+#define OPT_INCLUDE	0x008000
+#define OPT_EXCLUDE	0x010000
+#define OPT_OV_I	0x020000
+#define OPT_RANDOM	0x040000
+
+#define INDEXAT(x,y,z) ((y) + ((z) * 128 + (x) * 128 * 16))
+
+struct data_list {
+	int data;
+	struct data_list * next;
+};
 
 struct options {
 	unsigned long set;
@@ -66,6 +77,8 @@ struct options {
 	int x2;
 	int y2;
 	int data;
+	struct data_list * includes;
+	struct data_list * excludes;
 };
 
 struct chunk_coords {

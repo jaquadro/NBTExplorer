@@ -21,8 +21,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef OREGEN_H_
-#define OREGEN_H_
+#ifndef REPLACE_H_
+#define REPLACE_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,49 +38,18 @@ THE SOFTWARE.
 #include "cnbt/nbt.h"
 #include "chunk.h"
 
-#define BLOCK_AIR 0
-#define BLOCK_STONE 1
-#define BLOCK_DIRT 3
-#define BLOCK_GRAVEL 13
-#define BLOCK_COAL 16
-#define BLOCK_IRON 15
-#define BLOCK_GOLD 14
-#define BLOCK_REDSTONE 73
-#define BLOCK_DIAMOND 56
-#define BLOCK_LAPIS 21
-
-struct ore_record {
-	char * name;
-	short block_id;
-	short rounds;
-	short min_depth;
-	short max_depth;
-	short size;
-};
-
-struct options_gen_ore {
+struct options_replace {
 	unsigned long set;
-	int ore_id;
-	int rounds;
+	int old_id;
+	int new_id;
 	int min_depth;
 	int max_depth;
-	int size;
 	int data;
-	struct data_list * override;
+	float p;
 };
 
-#define ORE_COUNT 6
-
-extern const struct ore_record ore_list[ORE_COUNT];
-
-/* Attempt to update single block in chunk */
-void update_block (nbt_byte_array *arr, nbt_byte_array *dat, int x, int y, int z, short ore_id, struct options *opt, struct options_gen_ore * ore_opt);
-
-/* Generate randomized ore parameters for chunk and update blocks */
-void gen_ore (nbt_byte_array *arr, nbt_byte_array *dat, short ore_id, struct options *opt, struct options_gen_ore * ore_opt);
-
 /* Callback function to chunk API */
-int pf_gen_ore (nbt_file * nf, struct options * opt, void * pf_opt);
+int pf_replace (nbt_file * nf, struct options * opt, void * pf_opt);
 
 #endif
 

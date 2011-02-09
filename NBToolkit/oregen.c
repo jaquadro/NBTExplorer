@@ -24,12 +24,12 @@ THE SOFTWARE.
 #include "oregen.h"
 
 const struct ore_record ore_list[] = {
-	{ "Coal", BLOCK_COAL, 20, 0, 128, 16 },
-	{ "Iron", BLOCK_IRON, 20, 0, 64, 8 },
-	{ "Gold", BLOCK_GOLD, 2, 0, 32, 8 },
-	{ "Redstone", BLOCK_REDSTONE, 8, 0, 16, 7 },
-	{ "Diamond", BLOCK_DIAMOND, 1, 0, 16, 7 },
-	{ "Lapis", BLOCK_LAPIS, 1, 0, 32, 7 },
+	{ "Coal", BLOCK_COAL, 20, 0, 127, 16 },
+	{ "Iron", BLOCK_IRON, 20, 0, 63, 8 },
+	{ "Gold", BLOCK_GOLD, 2, 0, 31, 8 },
+	{ "Redstone", BLOCK_REDSTONE, 8, 0, 15, 7 },
+	{ "Diamond", BLOCK_DIAMOND, 1, 0, 15, 7 },
+	{ "Lapis", BLOCK_LAPIS, 1, 0, 31, 7 },
 };
 
 void update_block (nbt_byte_array *arr, nbt_byte_array *dat, int x, int y, int z, short ore_id, struct options *opt, struct options_gen_ore * ore_opt) {
@@ -46,8 +46,23 @@ void update_block (nbt_byte_array *arr, nbt_byte_array *dat, int x, int y, int z
 			arr->content[index] == BLOCK_DIAMOND || arr->content[index] == BLOCK_LAPIS ||
 			arr->content[index] == BLOCK_DIRT || arr->content[index] == BLOCK_GRAVEL) && (arr->content[index] != ore_opt->ore_id)) ||
 		((ore_opt->set & OPT_OV_BLK) && (arr->content[index] != BLOCK_AIR) && (arr->content[index] != ore_opt->ore_id)) ||
+		(ore_opt->set & OPT_OV_I) ||
 		(arr->content[index] == BLOCK_STONE)
 	) {
+	
+		// If overriding list of ores, check membership
+		if (ore_opt->set & OPT_OV_I) {
+			struct data_list * node;
+			for (node = ore_opt->override; node != 0; node = node->next) {
+				if (arr->content[index] == node->data) {
+					break;
+				}
+				if (node->next == 0) {
+					return;
+				}
+			}
+		}
+		
 		arr->content[index] = ore_opt->ore_id;
 		
 		if (opt->set & OPT_VV) {

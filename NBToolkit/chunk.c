@@ -182,6 +182,19 @@ void chunk_to_coords (char * str, struct chunk_coords * cc) {
 	cc->y /= 36;
 }
 
+int scan_byte_array (nbt_byte_array * arr, int value) {
+	int len = 16 * 16 * 128;
+	int i, count = 0;
+	
+	for (i = 0; i < len; i++) {
+		if (arr->content[i] == value) {
+			count++;
+		}
+	}
+	
+	return count;
+}
+
 int update_chunk (char * file, char * name, pf_type pf, struct options * opt, void * pf_opt) {
 	nbt_file *nf;
 	int i;
@@ -222,6 +235,58 @@ int update_chunk (char * file, char * name, pf_type pf, struct options * opt, vo
 	        }
         	gen_ore(arr, dat, ore_id, opt);
         }*/
+        
+        // Check if chunk satisfies required block options
+        if (opt->set & OPT_INCLUDE) {
+        	struct data_list * node;
+        	nbt_byte_array * arr;
+        	nbt_tag * blocks = nbt_find_tag_by_name("Blocks", nbt_find_tag_by_name("Level", nf->root));
+        	
+        	assert (blocks != 0);
+        	arr = nbt_cast_byte_array(blocks);
+        	
+        	for (node = opt->includes; node != 0; node = node->next) {
+        		int count = scan_byte_array(arr, node->data);
+        		if (count == 0) {
+        			if (opt->set & OPT_V) {
+        				fprintf(stderr, "Required block %d not found, skipping chunk\n", node->data);
+        			}
+        			nbt_free(nf);
+        			return EXIT_SUCCESS;
+        		}
+        		else {
+        			if (opt->set & OPT_VV) {
+        				fprintf(stderr, "Found %d instances of required block %d\n", count, node->data);
+        			}
+        		}
+        	}
+        }
+        
+        // Check if chunk satisfies forbiddon block options
+        if (opt->set & OPT_EXCLUDE) {
+        	struct data_list * node;
+        	nbt_byte_array * arr;
+        	nbt_tag * blocks = nbt_find_tag_by_name("Blocks", nbt_find_tag_by_name("Level", nf->root));
+        	
+        	assert (blocks != 0);
+        	arr = nbt_cast_byte_array(blocks);
+        	
+        	for (node = opt->excludes; node != 0; node = node->next) {
+        		int count = scan_byte_array(arr, node->data);
+        		if (count > 0) {
+        			if (opt->set & OPT_V) {
+        				fprintf(stderr, "Found %d instances of forbiddon block %d, skipping chunk\n", count, node->data);
+        			}
+        			nbt_free(nf);
+        			return EXIT_SUCCESS;
+        		}
+        		else {
+        			if (opt->set & OPT_VV) {
+        				fprintf(stderr, "Found 0 instances of forbiddon block %d\n", node->data);
+        			}
+        		}
+        	}
+        }
         
         pf(nf, opt, pf_opt);
         
