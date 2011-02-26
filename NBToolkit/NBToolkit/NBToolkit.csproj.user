@@ -6,8 +6,7 @@
     <StartArguments>replace -b 18 -a 19 -w "F:\Minecraft\tps - Copy (10)" -v -cxa -1 -cxb -1 -cza 0 -czb 0</StartArguments>
   </PropertyGroup>
   <PropertyGroup>
-    <PublishUrlHistory>
-    </PublishUrlHistory>
+    <PublishUrlHistory>publish\</PublishUrlHistory>
     <InstallUrlHistory>
     </InstallUrlHistory>
     <SupportUrlHistory>
