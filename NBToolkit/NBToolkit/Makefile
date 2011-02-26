@@ -1,0 +1,2 @@
+﻿all:
+	gmcs -out:nbtoolkit.exe Program.cs NBT.cs Harness.cs TKOptions.cs NDesk/Options.cs TKFilter.cs Oregen.cs Replace.cs RegionFile.cs RegionFileCache.cs Zlib/Zlib.cs Zlib/ZlibStream.cs Zlib/ZlibConstants.cs Zlib/ZlibCodec.cs Zlib/ZlibBaseStream.cs Zlib/Tree.cs Zlib/InfTree.cs Zlib/Inflate.cs Zlib/GZipStream.cs Zlib/DeflateStream.cs Zlib/Deflate.cs Zlib/Crc32.cs
