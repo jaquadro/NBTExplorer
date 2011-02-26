@@ -41,7 +41,9 @@ const char * basename (const char *path) {
 void print_usage (const char *name) {
 	fprintf(stderr, "Usage: %s <tool> <world dir> [options]\n", basename(name));
 	fprintf(stderr, "Available tools:\n");
+	fprintf(stderr, "    list        : List chunks that match search criteria\n");
 	fprintf(stderr, "    oregen      : Generate new ore deposits\n");
+	fprintf(stderr, "    prune       : Delete chunks matching search criteria\n");
 	fprintf(stderr, "    replace     : Replace one block type with another\n\n");
 	fprintf(stderr, "Usage and options for 'oregen':\n");
 	fprintf(stderr, "    %s oregen <world_dir> <ore_id> [options]\n\n", basename(name));
@@ -353,3 +355,23 @@ int main(int argc, char **argv)
 		}
 	}
 }
+
+// Commands TO Add:
+// - List Chunks
+// - Prune Chunks
+// - Dump Entities
+// - Clear Entities
+// - Relight Chunks
+
+// Options TO Add:
+// -la Light Above
+// -lb Light Below
+// -pa Block Above
+// -pb Block Below
+// -ps Block to Side
+// -de Data Equals
+// -dn Data Not Equals
+//
+// Replace Options
+// -mh Y at heightmap
+// -

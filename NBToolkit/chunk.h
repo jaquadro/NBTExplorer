@@ -96,5 +96,31 @@ void chunk_to_coords (char * str, struct chunk_coords * cc);
 int update_chunk (char * file, char * name, pf_type pf, struct options * opt, void * pf_opt);
 int update_all_chunks (char *path, pf_type pf, struct options * opt, void * pf_opt);
 
+class MCChunk {
+protected:
+
+	// Chunk coordinates (absolute coordinates)
+	int _cx;
+	int _cz;
+
+public:
+
+};
+
+class MCRegionChunk : public MCChunk {
+protected:
+	
+	MCRegion * _region;
+	
+};
+
+class MCFileChunk : public MCChunk {
+protected:
+	
+	// Path to chunk file
+	std::String _path;
+};
+
+
 #endif
 
