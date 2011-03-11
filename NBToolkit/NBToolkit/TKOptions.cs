@@ -27,12 +27,6 @@ namespace NBToolkit
         public int? CH_Z_GE = null;
         public int? CH_Z_LE = null;
 
-        // Block coordinate conditions
-        public int? BL_X_GE = null;
-        public int? BL_X_LE = null;
-        public int? BL_Z_GE = null;
-        public int? BL_Z_LE = null;
-
         public TKOptions (string[] args)
         {
             commonOpt = new OptionSet()
@@ -83,7 +77,7 @@ namespace NBToolkit
                 throw new TKOptionException();
             }
 
-            if (!File.Exists(Path.Combine(OPT_WORLD, "Level.dat"))) {
+            if (!File.Exists(Path.Combine(OPT_WORLD, "level.dat"))) {
                 Console.WriteLine("Error: The supplied world path is invalid");
                 Console.WriteLine();
                 this.PrintUsage();

@@ -9,7 +9,22 @@ namespace NBToolkit
     class Harness
     {
         public void Run (TKOptions opt, TKFilter filter) {
-            string[] regions = RegionFileCache.GetRegionFileList(opt.OPT_WORLD);
+            World world = new World(opt.OPT_WORLD);
+            RegionList regions = new RegionList(world.GetRegionManager());
+
+            foreach (Region region in regions) {
+                Console.WriteLine(region.GetFileName());
+
+                for (int x = 0; x < ChunkManager.REGION_XLEN; x++) {
+                    for (int z = 0; z < ChunkManager.REGION_ZLEN; z++) {
+                        if (!region.ChunkExists(x, z)) {
+                            continue;
+                        }
+                    }
+                }
+            }
+            
+            /*string[] regions = RegionFileCache.GetRegionFileList(opt.OPT_WORLD);
 
             foreach (string p in regions) {
                 Console.WriteLine(p);
@@ -85,7 +100,7 @@ namespace NBToolkit
                         zipStream.Close();
                     }
                 }
-            }
+            }*/
         }
 
         protected bool BlockScan (NBT_Tag level, int val)

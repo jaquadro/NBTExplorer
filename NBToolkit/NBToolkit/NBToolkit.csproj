@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NBToolkit</RootNamespace>
     <AssemblyName>NBToolkit</AssemblyName>
-    <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -53,10 +53,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlockManager.cs" />
+    <Compile Include="Chunk.cs" />
+    <Compile Include="ChunkManager.cs" />
     <Compile Include="Harness.cs" />
     <Compile Include="NBT.cs" />
     <Compile Include="NDesk\Options.cs" />
     <Compile Include="Oregen.cs" />
+    <Compile Include="Region.cs" />
+    <Compile Include="RegionEnumerator.cs" />
+    <Compile Include="RegionKey.cs" />
+    <Compile Include="RegionManager.cs" />
     <Compile Include="Replace.cs" />
     <Compile Include="TKFilter.cs" />
     <Compile Include="TKOptions.cs" />
@@ -64,6 +71,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegionFile.cs" />
     <Compile Include="RegionFileCache.cs" />
+    <Compile Include="World.cs" />
     <Compile Include="Zlib\Crc32.cs" />
     <Compile Include="Zlib\Deflate.cs" />
     <Compile Include="Zlib\DeflateStream.cs" />

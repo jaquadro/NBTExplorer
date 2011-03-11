@@ -59,7 +59,7 @@ namespace NBToolkit
                 { "max=", "Generates deposits no higher than depth {VAL} (0-127)",
                     v => OPT_MAX = Convert.ToInt32(v) % 128 },
                 { "s|size=", "Generates deposits containing roughly up to {VAL} blocks",
-                    v => OPT_MIN = Convert.ToInt32(v) % 128 },
+                    v => OPT_SIZE = Convert.ToInt32(v) % 128 },
                 { "oo=", "Generated deposits can replace other existing ores",
                     v => OPT_OO = true },
                 { "oa=", "Generated deposits can replace any existing block (incl. air)",
@@ -137,6 +137,95 @@ namespace NBToolkit
 
                 throw new TKOptionException();
             }
+        }
+    }
+
+    public class MathHelper
+    {
+        private static float[] trigTable = new float[65536];
+
+        static MathHelper ()
+        {
+            for (int i = 0; i < 65536; i++) {
+                trigTable[i] = (float)Math.Sin(i * Math.PI * 2.0D / 65536.0D);
+            }
+        }
+
+        public static float Sin(float angle)
+        {
+          return trigTable[((int)(angle * 10430.378F) & 0xFFFF)];
+        }
+
+        public static float Cos(float angle) {
+          return trigTable[((int)(angle * 10430.378F + 16384.0F) & 0xFFFF)];
+        }
+    }
+
+    public class NativeOreGen {
+        private int _blockId;
+        private int _size;
+
+        private static Random rand = new Random();
+
+        public NativeOreGen(int blockId, int size)
+        {
+            _blockId = blockId;
+            _size = size;
+        }
+
+        public bool GenerateDeposit (NBT_ByteArray blocks, NBT_ByteArray data, int x, int y, int z)
+        {
+            float rpi = (float)(rand.NextDouble() * Math.PI);
+
+            double x1 = x + 8 + MathHelper.Sin(rpi) * _size / 8.0F;
+            double x2 = x + 8 - MathHelper.Sin(rpi) * _size / 8.0F;
+            double z1 = z + 8 + MathHelper.Cos(rpi) * _size / 8.0F;
+            double z2 = z + 8 - MathHelper.Cos(rpi) * _size / 8.0F;
+
+            double y1 = y + rand.Next(3) + 2;
+            double y2 = y + rand.Next(3) + 2;
+
+            for (int i = 0; i <= _size; i++) {
+                double xPos = x1 + (x2 - x1) * i / _size;
+                double yPos = y1 + (y2 - y1) * i / _size;
+                double zPos = z1 + (z2 - z1) * i / _size;
+
+                double fuzz = rand.NextDouble() * _size / 16.0D;
+                double fuzzXZ = (MathHelper.Sin((float)(i * Math.PI / _size)) + 1.0F) * fuzz + 1.0D;
+                double fuzzY = (MathHelper.Sin((float)(i * Math.PI / _size)) + 1.0F) * fuzz + 1.0D;
+
+                int xStart = (int)(xPos - fuzzXZ / 2.0D);
+                int yStart = (int)(yPos - fuzzY / 2.0D);
+                int zStart = (int)(zPos - fuzzXZ / 2.0D);
+
+                int xEnd = (int)(xPos + fuzzXZ / 2.0D);
+                int yEnd = (int)(yPos + fuzzY / 2.0D);
+                int zEnd = (int)(zPos + fuzzXZ / 2.0D);
+
+                for (int ix = xStart; ix <= xEnd; ix++) {
+                    double xThresh = (ix + 0.5D - xPos) / (fuzzXZ / 2.0D);
+                    if (xThresh * xThresh < 1.0D) {
+                        for (int iy = yStart; iy <= yEnd; iy++) {
+                            double yThresh = (iy + 0.5D - yPos) / (fuzzY / 2.0D);
+                            if (xThresh * xThresh + yThresh * yThresh < 1.0D) {
+                                for (int iz = zStart; iz <= zEnd; iz++) {
+                                    double zThresh = (iz + 0.5D - zPos) / (fuzzXZ / 2.0D);
+                                    if (xThresh * xThresh + yThresh * yThresh + zThresh * zThresh < 1.0D) {
+                                        //Apply
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        int BlockIndex (int x, int y, int z)
+        {
+            return y + (z * 128 + x * 128 * 16);
         }
     }
 
