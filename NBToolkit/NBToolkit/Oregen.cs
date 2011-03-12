@@ -192,7 +192,8 @@ namespace NBToolkit
                 affectedChunks++;
 
                 ApplyChunk(world, chunk);
-                chunk.Save();
+                //chunk.Save();
+                world.GetChunkManager().SaveDirtyChunks();
             }
 
             Console.WriteLine("Affected Chunks: " + affectedChunks);

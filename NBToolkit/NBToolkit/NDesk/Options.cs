@@ -146,7 +146,6 @@ using NDesk.Options;
 namespace NDesk.Options {
 
 	public class OptionValueCollection : IList, IList<string> {
-
 		List<string> values = new List<string> ();
 		OptionContext c;
 
@@ -320,9 +319,12 @@ namespace NDesk.Options {
 				throw new ArgumentException (
 						"The default option handler '<>' cannot require values.",
 						"prototype");
+
+            for (int i = 0; i < names.Length; i++)
+                names[i] = names[i].ToLower();
 		}
 
-		public string           Prototype       {get {return prototype;}}
+        public string           Prototype { get { return prototype; } }
 		public string           Description     {get {return description;}}
 		public OptionValueType  OptionValueType {get {return type;}}
 		public int              MaxValueCount   {get {return count;}}
@@ -735,7 +737,7 @@ namespace NDesk.Options {
 					Unprocessed (unprocessed, def, c, argument);
 					continue;
 				}
-				if (!Parse (argument, c))
+				if (!Parse (argument.ToLower(), c))
 					Unprocessed (unprocessed, def, c, argument);
 			}
 			if (c.Option != null)

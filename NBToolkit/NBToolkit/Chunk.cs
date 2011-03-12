@@ -100,7 +100,7 @@ namespace NBToolkit
             }
 
             _blocks.data[index] = (byte)id;
-            _dirty = true;
+            MarkDirty();
 
             return true;
         }
@@ -142,7 +142,7 @@ namespace NBToolkit
             }
 
             _data[index] = data;
-            _dirty = true;
+            MarkDirty();
 
             return true;
         }
@@ -150,6 +150,17 @@ namespace NBToolkit
         public bool IsPopulated ()
         {
             return GetTree().getRoot().findTagByName("Level").findTagByName("TerrainPopulated").value.toByte().data == 1;
+        }
+
+        protected bool MarkDirty ()
+        {
+            if (_dirty) {
+                return false;
+            }
+
+            _dirty = true;
+            _chunkMan.MarkChunkDirty(this);
+            return true;
         }
     }
 }
