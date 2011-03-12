@@ -11,8 +11,8 @@ namespace NBToolkit
     {
         //private List<Region> _regions;
 
-        private ChunkManager _cm = null;
-        private Region _region = null;
+        protected ChunkManager _cm = null;
+        protected Region _region = null;
 
         // Constructor to enumerate a single region
         public ChunkList (ChunkManager cm, Region region)
@@ -37,7 +37,7 @@ namespace NBToolkit
             return (IEnumerator<Chunk>)GetEnumerator();
         }
 
-        public ChunkEnumerator GetEnumerator ()
+        public virtual ChunkEnumerator GetEnumerator ()
         {
             return new ChunkEnumerator(_cm, _region);
         }
@@ -64,7 +64,15 @@ namespace NBToolkit
             }
         }
 
-        public bool MoveNext ()
+        public ChunkEnumerator (ChunkManager cm)
+        {
+            _cm = cm;
+            _enum = new RegionEnumerator(_cm.GetRegionManager());
+            _enum.MoveNext();
+            _region = _enum.Current;
+        }
+
+        public virtual bool MoveNext ()
         {
             if (_enum == null) {
                 return MoveNextInRegion();
@@ -77,6 +85,7 @@ namespace NBToolkit
                         }
                         _x = 0;
                         _z = -1;
+                        _region = _enum.Current;
                     }
                     if (MoveNextInRegion()) {
                         return true;
@@ -93,7 +102,7 @@ namespace NBToolkit
                         goto FoundNext;
                     }
                 }
-                _z = 0;
+                _z = -1;
             }
 
             FoundNext:

@@ -9,7 +9,7 @@ namespace NBToolkit
     {
         static void Main (string[] args)
         {
-            Harness harness = new Harness();
+            //Harness harness = new Harness();
 
             if (args.Length < 1) {
                 args = new string[1] { "" };
@@ -20,13 +20,13 @@ namespace NBToolkit
                     OregenOptions options = new OregenOptions(args);
                     Oregen filter = new Oregen(options);
                     options.SetDefaults();
-                    harness.Run(options, filter);
+                    filter.Run();
                 }
                 else if (args[0] == "replace") {
                     ReplaceOptions options = new ReplaceOptions(args);
                     Replace filter = new Replace(options);
                     options.SetDefaults();
-                    harness.Run(options, filter);
+                    filter.Run();
                 }
                 else if (args[0] == "help") {
                     if (args.Length < 2) {

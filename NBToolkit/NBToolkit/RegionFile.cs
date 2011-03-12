@@ -7,7 +7,7 @@ using System.Collections;
 
 namespace NBToolkit
 {
-    public class RegionFile {
+    public class RegionFile : IDisposable {
 
         private const int VERSION_GZIP = 1;
         private const int VERSION_DEFLATE = 2;
@@ -27,6 +27,8 @@ namespace NBToolkit
         private int sizeDelta;
         private long lastModified = 0;
 
+        protected bool _disposed = false;
+
         public RegionFile(string path) {
             offsets = new int[SECTOR_INTS];
             chunkTimestamps = new int[SECTOR_INTS];
@@ -36,75 +38,124 @@ namespace NBToolkit
 
             sizeDelta = 0;
 
+            ReadFile();
+        }
+
+        ~RegionFile ()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose ()
+        {
+            Dispose(true);
+            System.GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose (bool disposing)
+        {
+            if (!_disposed) {
+                if (disposing) {
+                    // Cleanup managed resources
+                }
+
+                // Cleanup unmanaged resources
+                if (file != null) {
+                    file.Close();
+                    file = null;
+                }
+            }
+            _disposed = true;
+        }
+
+        protected void ReadFile ()
+        {
+            // Get last udpate time
+            long newModified = 0;
             try {
-                if (File.Exists(path)) {
-                    lastModified = Timestamp(File.GetLastWriteTime(path));
+                if (File.Exists(fileName)) {
+                    newModified = Timestamp(File.GetLastWriteTime(fileName));
                 }
+            }
+            catch (UnauthorizedAccessException e) {
+                Console.WriteLine(e.Message);
+                return;
+            }
 
-                file = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite); // RandomAccessFile(path, "rw");
+            // If it hasn't been modified, we don't need to do anything
+            if (newModified == lastModified) {
+                return;
+            }
 
-                if (file.Length < SECTOR_BYTES) {
-                    byte[] int0 = BitConverter.GetBytes((int)0);
+            try {
+                file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
 
-                    /* we need to write the chunk offset table */
-                    for (int i = 0; i < SECTOR_INTS; ++i) {
-                        file.Write(int0, 0, 4);
+                //using (file) {
+                    if (file.Length < SECTOR_BYTES) {
+                        byte[] int0 = BitConverter.GetBytes((int)0);
+
+                        /* we need to write the chunk offset table */
+                        for (int i = 0; i < SECTOR_INTS; ++i) {
+                            file.Write(int0, 0, 4);
+                        }
+                        // write another sector for the timestamp info
+                        for (int i = 0; i < SECTOR_INTS; ++i) {
+                            file.Write(int0, 0, 4);
+                        }
+
+                        sizeDelta += SECTOR_BYTES * 2;
                     }
-                    // write another sector for the timestamp info
-                    for (int i = 0; i < SECTOR_INTS; ++i) {
-                        file.Write(int0, 0, 4);
-                    }
 
-                    sizeDelta += SECTOR_BYTES * 2;
-                }
-
-                if ((file.Length & 0xfff) != 0) {
-                    /* the file size is not a multiple of 4KB, grow it */
-                    for (int i = 0; i < (file.Length & 0xfff); ++i) {
-                        file.WriteByte(0);
-                    }
-                }
-
-                /* set up the available sector map */
-                int nSectors = (int) file.Length / SECTOR_BYTES;
-                sectorFree = new List<Boolean>(nSectors);
-
-                for (int i = 0; i < nSectors; ++i) {
-                    sectorFree.Add(true);
-                }
-
-                sectorFree[0] = false; // chunk offset table
-                sectorFree[1] = false; // for the last modified info
-
-                file.Seek(0, SeekOrigin.Begin);
-                for (int i = 0; i < SECTOR_INTS; ++i) {
-                    byte[] offsetBytes = new byte[4];
-                    file.Read(offsetBytes, 0, 4);
-
-                    if (BitConverter.IsLittleEndian) {
-                        Array.Reverse(offsetBytes);
-                    }
-                    int offset = BitConverter.ToInt32(offsetBytes, 0);
-
-                    offsets[i] = offset;
-                    if (offset != 0 && (offset >> 8) + (offset & 0xFF) <= sectorFree.Count) {
-                        for (int sectorNum = 0; sectorNum < (offset & 0xFF); ++sectorNum) {
-                            sectorFree[(offset >> 8) + sectorNum] = false;
+                    if ((file.Length & 0xfff) != 0) {
+                        /* the file size is not a multiple of 4KB, grow it */
+                        for (int i = 0; i < (file.Length & 0xfff); ++i) {
+                            file.WriteByte(0);
                         }
                     }
-                }
-                for (int i = 0; i < SECTOR_INTS; ++i) {
-                    byte[] modBytes = new byte[4];
-                    file.Read(modBytes, 0, 4);
 
-                    if (BitConverter.IsLittleEndian) {
-                        Array.Reverse(modBytes);
+                    /* set up the available sector map */
+                    int nSectors = (int)file.Length / SECTOR_BYTES;
+                    sectorFree = new List<Boolean>(nSectors);
+
+                    for (int i = 0; i < nSectors; ++i) {
+                        sectorFree.Add(true);
                     }
-                    int lastModValue = BitConverter.ToInt32(modBytes, 0);
 
-                    chunkTimestamps[i] = lastModValue;
-                }
-            } catch (IOException e) {
+                    sectorFree[0] = false; // chunk offset table
+                    sectorFree[1] = false; // for the last modified info
+
+                    file.Seek(0, SeekOrigin.Begin);
+                    for (int i = 0; i < SECTOR_INTS; ++i) {
+                        byte[] offsetBytes = new byte[4];
+                        file.Read(offsetBytes, 0, 4);
+
+                        if (BitConverter.IsLittleEndian) {
+                            Array.Reverse(offsetBytes);
+                        }
+                        int offset = BitConverter.ToInt32(offsetBytes, 0);
+
+                        offsets[i] = offset;
+                        if (offset != 0 && (offset >> 8) + (offset & 0xFF) <= sectorFree.Count) {
+                            for (int sectorNum = 0; sectorNum < (offset & 0xFF); ++sectorNum) {
+                                sectorFree[(offset >> 8) + sectorNum] = false;
+                            }
+                        }
+                    }
+                    for (int i = 0; i < SECTOR_INTS; ++i) {
+                        byte[] modBytes = new byte[4];
+                        file.Read(modBytes, 0, 4);
+
+                        if (BitConverter.IsLittleEndian) {
+                            Array.Reverse(modBytes);
+                        }
+                        int lastModValue = BitConverter.ToInt32(modBytes, 0);
+
+                        chunkTimestamps[i] = lastModValue;
+                    }
+                //}
+            }
+            catch (IOException e) {
+                System.Console.WriteLine(e.Message);
                 System.Console.WriteLine(e.StackTrace);
             }
         }

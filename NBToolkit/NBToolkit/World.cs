@@ -5,7 +5,7 @@ using System.IO;
 
 namespace NBToolkit
 {
-    class World
+    public class World
     {
         protected RegionManager _regionMan;
         protected ChunkManager _chunkMan;

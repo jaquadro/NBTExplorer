@@ -12,17 +12,32 @@ namespace NBToolkit
             World world = new World(opt.OPT_WORLD);
             RegionList regions = new RegionList(world.GetRegionManager());
 
-            foreach (Region region in regions) {
-                Console.WriteLine(region.GetFileName());
+            int r = 0;
+            int c = 0;
+            //foreach (Region region in regions) {
+            //    Console.WriteLine(region.GetFileName());
 
-                for (int x = 0; x < ChunkManager.REGION_XLEN; x++) {
+            
+                foreach (Chunk chunk in new ChunkList(world.GetChunkManager())) {
+                    //Console.WriteLine("Chunk " + chunk.X + ", " + chunk.Z);
+                    c++;
+               // }
+
+                //foreach (Chunk chunk in new ChunkList(world.GetChunkManager(), region)) {
+               //     c++;
+              //  }
+
+                //r++;
+                /*for (int x = 0; x < ChunkManager.REGION_XLEN; x++) {
                     for (int z = 0; z < ChunkManager.REGION_ZLEN; z++) {
-                        if (!region.ChunkExists(x, z)) {
-                            continue;
+                        if (region.ChunkExists(x, z)) {
+                            c++;
                         }
                     }
-                }
+                }*/
             }
+            Console.WriteLine("Region Count: " + r);
+            Console.WriteLine("Chunk Count: " + c);
             
             /*string[] regions = RegionFileCache.GetRegionFileList(opt.OPT_WORLD);
 

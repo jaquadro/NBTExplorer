@@ -125,7 +125,12 @@ namespace NBToolkit
             opt = o;
         }
 
-        public override void ApplyChunk (NBT_Tree root)
+        public override void Run ()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ApplyChunk (NBT_Tree root)
         {
             if (root == null || root.getRoot() == null) {
                 return;

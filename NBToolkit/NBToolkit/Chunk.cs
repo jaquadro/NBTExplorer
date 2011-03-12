@@ -12,6 +12,7 @@ namespace NBToolkit
 
         protected NBT_Tree _nbt = null;
         protected NBT_ByteArray _blocks = null;
+        protected NibbleArray _data = null;
 
         protected bool _dirty = false;
 
@@ -69,6 +70,7 @@ namespace NBToolkit
         {
             if (_nbt != null) {
                 _blocks = null;
+                _data = null;
 
                 Region r = _chunkMan.GetRegion(_cx, _cz);
                 return r.SaveChunkTree(_cx & ChunkManager.REGION_XMASK, _cz & ChunkManager.REGION_ZMASK, _nbt);
@@ -98,8 +100,56 @@ namespace NBToolkit
             }
 
             _blocks.data[index] = (byte)id;
+            _dirty = true;
 
             return true;
+        }
+
+        public int CountBlockID (int id)
+        {
+            if (_blocks == null) {
+                _blocks = GetTree().getRoot().findTagByName("Level").findTagByName("Blocks").value.toByteArray();
+            }
+
+            int c = 0;
+            for (int i = 0; i < _blocks.length; i++) {
+                if (_blocks.data[i] == id) {
+                    c++;
+                }
+            }
+
+            return c;
+        }
+
+        public int GetBlockData (int x, int y, int z)
+        {
+            if (_data == null) {
+                _data = new NibbleArray(GetTree().getRoot().findTagByName("Level").findTagByName("Data").value.toByteArray().data);
+            }
+
+            return _data[x << 11 | z << 7 | y];
+        }
+
+        public bool SetBlockData (int x, int y, int z, int data)
+        {
+            if (_data == null) {
+                _data = new NibbleArray(GetTree().getRoot().findTagByName("Level").findTagByName("Data").value.toByteArray().data);
+            }
+
+            int index = x << 11 | z << 7 | y;
+            if (_data[index] == data) {
+                return false;
+            }
+
+            _data[index] = data;
+            _dirty = true;
+
+            return true;
+        }
+
+        public bool IsPopulated ()
+        {
+            return GetTree().getRoot().findTagByName("Level").findTagByName("TerrainPopulated").value.toByte().data == 1;
         }
     }
 }

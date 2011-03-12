@@ -6,7 +6,13 @@ using System.IO;
 
 namespace NBToolkit
 {
-    public class TKOptions
+    public interface IOptions
+    {
+        void Parse (string[] args);
+        void PrintUsage ();
+    }
+
+    public class TKOptions : IOptions
     {
         private OptionSet commonOpt = null;
 
@@ -17,17 +23,7 @@ namespace NBToolkit
         public bool OPT_VV = false;
         public bool OPT_HELP = false;
 
-        // Block ID  Include / Exclude conditions by chunk
-        public List<int> OPT_CH_INCLUDE = new List<int>();
-        public List<int> OPT_CH_EXCLUDE = new List<int>();
-
-        // Chunk coordinate conditions
-        public int? CH_X_GE = null;
-        public int? CH_X_LE = null;
-        public int? CH_Z_GE = null;
-        public int? CH_Z_LE = null;
-
-        public TKOptions (string[] args)
+        public TKOptions ()
         {
             commonOpt = new OptionSet()
             {
@@ -39,20 +35,17 @@ namespace NBToolkit
                     v => OPT_V = true },
                 { "vv", "Very verbose output",
                     v => { OPT_V = true; OPT_VV = true; } },
-                { "cxa=", "Update chunks with X-coord equal to or above {VAL}",
-                    v => CH_X_GE = Convert.ToInt32(v) },
-                { "cxb=", "Update chunks with X-coord equal to or below {VAL}",
-                    v => CH_X_LE = Convert.ToInt32(v) },
-                { "cza=", "Update chunks with Z-coord equal to or above {VAL}",
-                    v => CH_Z_GE = Convert.ToInt32(v) },
-                { "czb=", "Update chunks with Z-coord equal to or below {VAL}",
-                    v => CH_Z_LE = Convert.ToInt32(v) },
-                { "ci=", "Update chunks that contain an {ID} block",
-                    v => OPT_CH_INCLUDE.Add(Convert.ToInt32(v) % 256) },
-                { "cx=", "Update chunks that don't contain an {ID} block",
-                    v => OPT_CH_EXCLUDE.Add(Convert.ToInt32(v) % 256) },
             };
+        }
 
+        public TKOptions (string[] args)
+            : this()
+        {
+            Parse(args);
+        }
+
+        public virtual void Parse (string[] args)
+        {
             commonOpt.Parse(args);
         }
 

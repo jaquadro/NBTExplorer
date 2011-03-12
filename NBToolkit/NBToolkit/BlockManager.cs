@@ -31,8 +31,13 @@ namespace NBToolkit
         {
             _chunkMan = cm;
         }
+
+        public BlockManager (BlockManager bm)
+        {
+            _chunkMan = bm._chunkMan;
+        }
         
-        public int GetBlockID (int x, int y, int z)
+        public virtual int GetBlockID (int x, int y, int z)
         {
             if (x < MIN_X || x >= MAX_X)
                 return 0;
@@ -49,15 +54,29 @@ namespace NBToolkit
             return c.GetBlockID(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
         }
 
-        int GetBlockData (int x, int y, int z) { return 0; }
+        public virtual int GetBlockData (int x, int y, int z) {
+            if (x < MIN_X || x >= MAX_X)
+                return 0;
+            if (y < MIN_Y || y >= MAX_Y)
+                return 0;
+            if (z < MIN_Z || z >= MAX_Z)
+                return 0;
 
-        int GetBlockLight (int x, int y, int z) { return 0; }
+            Chunk c = GetChunk(x, y, z);
+            if (c == null) {
+                return 0;
+            }
 
-        int GetBlockSkylight (int x, int y, int z) { return 0; }
+            return c.GetBlockData(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
+        }
 
-        void SetBlock (int x, int y, int z, int id, int data) { }
+        public int GetBlockLight (int x, int y, int z) { return 0; }
 
-        public bool SetBlockID (int x, int y, int z, int id)
+        public int GetBlockSkylight (int x, int y, int z) { return 0; }
+
+        public void SetBlock (int x, int y, int z, int id, int data) { }
+
+        public virtual bool SetBlockID (int x, int y, int z, int id)
         {
             if (x < MIN_X || x >= MAX_X)
                 return false;
@@ -74,7 +93,22 @@ namespace NBToolkit
             return c.SetBlockID(x & CHUNK_XMASK, y, z & CHUNK_ZMASK, id);
         }
 
-        void SetBlockData (int x, int y, int z, int data) { }
+        public virtual bool SetBlockData (int x, int y, int z, int data)
+        {
+            if (x < MIN_X || x >= MAX_X)
+                return false;
+            if (y < MIN_Y || y >= MAX_Y)
+                return false;
+            if (z < MIN_Z || z >= MAX_Z)
+                return false;
+
+            Chunk c = GetChunk(x, y, z);
+            if (c == null) {
+                return false;
+            }
+
+            return c.SetBlockData(x & CHUNK_XMASK, y, z & CHUNK_ZMASK, data);
+        }
 
         public Chunk GetChunk (int x, int y, int z)
         {
