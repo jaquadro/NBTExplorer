@@ -17,6 +17,7 @@ namespace NBToolkit
         private OptionSet commonOpt = null;
 
         public string OPT_WORLD = "";
+        public string OPT_REGION = "region";
 
         // Verbosity
         public bool OPT_V = false;
@@ -31,6 +32,8 @@ namespace NBToolkit
                     v => OPT_WORLD = v },
                 { "h|help", "Print this help message",
                     v => OPT_HELP = true },
+                { "nether", "Update the Nether instead of the main region",
+                    v => OPT_REGION = "DIM-1/region" },
                 { "v", "Verbose output",
                     v => OPT_V = true },
                 { "vv", "Very verbose output",
@@ -72,6 +75,14 @@ namespace NBToolkit
 
             if (!File.Exists(Path.Combine(OPT_WORLD, "level.dat"))) {
                 Console.WriteLine("Error: The supplied world path is invalid");
+                Console.WriteLine();
+                this.PrintUsage();
+
+                throw new TKOptionException();
+            }
+
+            if (!Directory.Exists(Path.Combine(OPT_WORLD, OPT_REGION))) {
+                Console.WriteLine("Error: The supplied world path does not contain region: " + OPT_REGION);
                 Console.WriteLine();
                 this.PrintUsage();
 

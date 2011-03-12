@@ -156,9 +156,15 @@ namespace NBToolkit
         {
             _options = new OptionSet () {
                 { "cxr|ChunkXRange=", "Include chunks with X-chunk coord between {0:V1} and {1:V2}, inclusive.  V1 or V2 may be left blank.",
-                    (v1, v2) => { _xAboveEq = Convert.ToInt32(v1); _xBelowEq = Convert.ToInt32(v2); } },
+                    (v1, v2) => { 
+                        try { _xAboveEq = Convert.ToInt32(v1); } catch (FormatException) { }
+                        try { _xBelowEq = Convert.ToInt32(v2); } catch (FormatException) { } 
+                    } },
                 { "czr|ChunkZRange=", "Include chunks with Z-chunk coord between {0:V1} and {1:V2}, inclusive.  V1 or V2 may be left blank.",
-                    (v1, v2) => { _zAboveEq = Convert.ToInt32(v1); _zBelowEq = Convert.ToInt32(v2); } },
+                    (v1, v2) => { 
+                        try { _zAboveEq = Convert.ToInt32(v1); } catch (FormatException) { }
+                        try { _zBelowEq = Convert.ToInt32(v2); } catch (FormatException) { } 
+                    } },
                 { "crv|ChunkInvertXZ", "Inverts the chunk selection created by --cxr and --czr when both options are used.",
                     v => _invertXZ = true },
                 { "ci|ChunkInclude=", "Include chunks that contain blocks of type {ID}.  This option is repeatable.",

@@ -61,7 +61,6 @@
     <Compile Include="ChunkManager.cs" />
     <Compile Include="FilteredChunkEnumerator.cs" />
     <Compile Include="GenOres.cs" />
-    <Compile Include="Harness.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="NBT.cs" />
     <Compile Include="NDesk\Options.cs" />

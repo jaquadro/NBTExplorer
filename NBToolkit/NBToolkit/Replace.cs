@@ -6,9 +6,10 @@ using NBT;
 
 namespace NBToolkit
 {
-    public class ReplaceOptions : TKOptions
+    public class ReplaceOptions : TKOptions, IChunkFilterable
     {
-        private OptionSet filterOpt = null;
+        private OptionSet _filterOpt = null;
+        private ChunkFilter _chunkFilter = null;
 
         public int? OPT_BEFORE = null;
         public int? OPT_AFTER = null;
@@ -34,9 +35,10 @@ namespace NBToolkit
         public int? OPT_NEIGHBOR_T = null;
         public int? OPT_NEIGHBOR_B = null;
 
-        public ReplaceOptions (string[] args) : base(args)
+        public ReplaceOptions () 
+            : base()
         {
-            filterOpt = new OptionSet()
+            _filterOpt = new OptionSet()
             {
                 { "b|before=", "Replace instances of block type {ID} with another block type",
                     v => OPT_BEFORE = Convert.ToInt32(v) % 256 },
@@ -48,25 +50,34 @@ namespace NBToolkit
                     v => { OPT_PROB = Convert.ToDouble(v); 
                            OPT_PROB = Math.Max((double)OPT_PROB, 0.0); 
                            OPT_PROB = Math.Min((double)OPT_PROB, 1.0); } },
-                { "bxa=", "Update blocks with X-coord equal to or above {VAL}",
+                /*{ "bxa=", "Update blocks with X-coord equal to or above {VAL}",
                     v => BL_X_GE = Convert.ToInt32(v) },
                 { "bxb=", "Update blocks with X-coord equal to or below {VAL}",
-                    v => BL_X_LE = Convert.ToInt32(v) },
-                { "bxr=", "Update blocks with X-coord between {0:V1} and {1:V2} [inclusive]",
-                    (v1, v2) => { BL_X_GE = Convert.ToInt32(v1); BL_X_LE = Convert.ToInt32(v2); } },
-                { "bya=", "Update blocks with Y-coord equal to or above {VAL}",
+                    v => BL_X_LE = Convert.ToInt32(v) },*/
+                { "bxr|BlockXRange=", "Update blocks with X-coord between {0:V1} and {1:V2}, inclusive.  V1 or V2 may be left blank.",
+                    (v1, v2) => { 
+                        try { BL_X_GE = Convert.ToInt32(v1); } catch (FormatException) { }
+                        try { BL_X_LE = Convert.ToInt32(v2); } catch (FormatException) { } 
+                    } },
+                /*{ "bya=", "Update blocks with Y-coord equal to or above {VAL}",
                     v => BL_Y_GE = Convert.ToInt32(v) },
                 { "byb=", "Update blocks with Y-coord equal to or below {VAL}",
-                    v => BL_Y_LE = Convert.ToInt32(v) },
-                { "byr=", "Update blocks with Y-coord between {0:V1} and {1:V2} [inclusive]",
-                    (v1, v2) => { BL_Y_GE = Convert.ToInt32(v1); BL_Y_LE = Convert.ToInt32(v2); } },
-                { "bza=", "Update blocks with Z-coord equal to or above {VAL}",
+                    v => BL_Y_LE = Convert.ToInt32(v) },*/
+                { "byr|BlockYRange=", "Update blocks with Y-coord between {0:V1} and {1:V2}, inclusive.  V1 or V2 may be left blank",
+                    (v1, v2) => { 
+                        try { BL_Y_GE = Convert.ToInt32(v1); } catch (FormatException) { }
+                        try { BL_Y_LE = Convert.ToInt32(v2); } catch (FormatException) { } 
+                    } },
+                /*{ "bza=", "Update blocks with Z-coord equal to or above {VAL}",
                     v => BL_Z_GE = Convert.ToInt32(v) },
                 { "bzb=", "Update blocks with Z-coord equal to or below {VAL}",
-                    v => BL_Z_LE = Convert.ToInt32(v) },
-                { "bzr=", "Update blocks with Z-coord between {0:V1} and {1:V2} [inclusive]",
-                    (v1, v2) => { BL_Z_GE = Convert.ToInt32(v1); BL_Z_LE = Convert.ToInt32(v2); } },
-                { "nb=", "Update blocks that have block type {ID} as any neighbor",
+                    v => BL_Z_LE = Convert.ToInt32(v) },*/
+                { "bzr|BlockZRange=", "Update blocks with Z-coord between {0:V1} and {1:V2}, inclusive.  V1 or V2 may be left blank",
+                    (v1, v2) => { 
+                        try { BL_Z_GE = Convert.ToInt32(v1); } catch (FormatException) { }
+                        try { BL_Z_LE = Convert.ToInt32(v2); } catch (FormatException) { } 
+                    } },
+                /*{ "nb=", "Update blocks that have block type {ID} as any neighbor",
                     v => OPT_NEIGHBOR = Convert.ToInt32(v) % 256 },
                 { "nbs=", "Update blocks that have block type {ID} as any x/z neighbor",
                     v => OPT_NEIGHBOR_SIDE = Convert.ToInt32(v) % 256 },
@@ -81,10 +92,24 @@ namespace NBToolkit
                 { "nbza=", "Update blocks that have block type {ID} as their west neighbor",
                     v => OPT_NEIGHBOR_W = Convert.ToInt32(v) % 256 },
                 { "nbzb=", "Update blocks that have block type {ID} as their east neighbor",
-                    v => OPT_NEIGHBOR_E = Convert.ToInt32(v) % 256 },
+                    v => OPT_NEIGHBOR_E = Convert.ToInt32(v) % 256 },*/
             };
 
-            filterOpt.Parse(args);
+            _chunkFilter = new ChunkFilter();
+        }
+
+        public ReplaceOptions (string[] args)
+            : this()
+        {
+            Parse(args);
+        }
+
+        public override void Parse (string[] args)
+        {
+            base.Parse(args);
+
+            _filterOpt.Parse(args);
+            _chunkFilter.Parse(args);
         }
 
         public override void PrintUsage ()
@@ -93,7 +118,10 @@ namespace NBToolkit
             Console.WriteLine();
             Console.WriteLine("Options for command 'replace':");
 
-            filterOpt.WriteOptionDescriptions(Console.Out);
+            _filterOpt.WriteOptionDescriptions(Console.Out);
+
+            Console.WriteLine();
+            _chunkFilter.PrintUsage();
 
             Console.WriteLine();
             base.PrintUsage();
@@ -112,6 +140,11 @@ namespace NBToolkit
                 throw new TKOptionException();
             }
         }
+
+        public IChunkFilter GetChunkFilter ()
+        {
+            return _chunkFilter;
+        }
     }
 
     class Replace : TKFilter
@@ -127,41 +160,23 @@ namespace NBToolkit
 
         public override void Run ()
         {
-            throw new NotImplementedException();
+            World world = new World(opt.OPT_WORLD);
+
+            int affectedChunks = 0;
+            foreach (Chunk chunk in new FilteredChunkList(world.GetChunkManager(), opt.GetChunkFilter())) {
+                affectedChunks++;
+
+                ApplyChunk(world, chunk);
+                chunk.Save();
+            }
+
+            Console.WriteLine("Affected Chunks: " + affectedChunks);
         }
 
-        public void ApplyChunk (NBT_Tree root)
+        public void ApplyChunk (World world, Chunk chunk)
         {
-            if (root == null || root.getRoot() == null) {
-                return;
-            }
-
-            NBT_Tag level = root.getRoot().findTagByName("Level");
-            if (level == null || level.type != NBT_Type.TAG_COMPOUND) {
-                return;
-            }
-
-            NBT_Tag blocks = level.findTagByName("Blocks");
-            if (blocks == null || blocks.type != NBT_Type.TAG_BYTE_ARRAY) {
-                return;
-            }
-
-            NBT_Tag data = level.findTagByName("Data");
-            if (data == null || data.type != NBT_Type.TAG_BYTE_ARRAY) {
-                return;
-            }
-
-            NBT_Tag xPos = level.findTagByName("xPos");
-            NBT_Tag zPos = level.findTagByName("zPos");
-            if (xPos == null || zPos == null || xPos.type != NBT_Type.TAG_INT || zPos.type != NBT_Type.TAG_INT) {
-                return;
-            }
-
-            int xBase = xPos.value.toInt().data * 16;
-            int zBase = zPos.value.toInt().data * 16;
-
-            NBT_ByteArray blocks_ary = blocks.value.toByteArray();
-            NBT_ByteArray data_ary = data.value.toByteArray();
+            int xBase = chunk.X * BlockManager.CHUNK_XLEN;
+            int zBase = chunk.Z * BlockManager.CHUNK_ZLEN;
 
             // Determine X range
             int xmin = 0;
@@ -226,32 +241,26 @@ namespace NBToolkit
                             }
                         }
 
+                        int lx = x & BlockManager.CHUNK_XMASK;
+                        int ly = y & BlockManager.CHUNK_YMASK;
+                        int lz = z & BlockManager.CHUNK_ZMASK;
+
                         // Attempt to replace block
-                        int index = BlockIndex(x, y, z);
-                        if (blocks_ary.data[index] == opt.OPT_BEFORE) {
-                            blocks_ary.data[index] = (byte)opt.OPT_AFTER;
+                        int oldBlock = chunk.GetBlockID(lx , ly, lz);
+                        if (oldBlock == opt.OPT_BEFORE) {
+                            chunk.SetBlockID(lx, ly, lz, (int)opt.OPT_AFTER);
 
                             if (opt.OPT_VV) {
-                                Console.WriteLine("Replaced block at {0},{1},{2}", x, y, z);
+                                Console.WriteLine("Replaced block at {0},{1},{2}", lx, ly, lz);
                             }
 
                             if (opt.OPT_DATA != null) {
-                                if (index % 2 == 0) {
-                                    data_ary.data[index / 2] = (byte)((data_ary.data[index / 2] & 0xF0) | (int)opt.OPT_DATA);
-                                }
-                                else {
-                                    data_ary.data[index / 2] = (byte)((data_ary.data[index / 2] & 0x0F) | ((int)opt.OPT_DATA << 4));
-                                }
+                                chunk.SetBlockData(lx, ly, lz, (int)opt.OPT_DATA);
                             }
                         }
                     }
                 }
             }
-        }
-
-        int BlockIndex (int x, int y, int z)
-        {
-            return y + (z * 128 + x * 128 * 16);
         }
     }
 }
