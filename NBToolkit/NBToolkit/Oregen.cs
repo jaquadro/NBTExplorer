@@ -23,7 +23,7 @@ namespace NBToolkit
         public bool OPT_OO = false;
         public bool OPT_OA = false;
 
-        public bool OPT_MATHFIX = false;
+        public bool OPT_MATHFIX = true;
         
         public List<int> OPT_OB_INCLUDE = new List<int>();
         public List<int> OPT_OB_EXCLUDE = new List<int>();
@@ -72,8 +72,8 @@ namespace NBToolkit
                     v => OPT_OB_INCLUDE.Add(Convert.ToInt32(v) % 256) },
                 { "ox|OverrideExclude=", "Generated deposits can never replace the specified block type {ID} [repeatable]",
                     v => OPT_OB_EXCLUDE.Add(Convert.ToInt32(v) % 256) },
-                { "mf|MathFix", "Use MC native ore generation algorithm with distribution evenness patch",
-                    v => OPT_MATHFIX = true },
+                { "nu|NativeUnpatched", "Use MC native ore generation algorithm without distribution evenness patch",
+                    v => OPT_MATHFIX = false },
             };
 
             _chunkFilter = new ChunkFilter();
@@ -185,8 +185,12 @@ namespace NBToolkit
 
             int affectedChunks = 0;
             foreach (Chunk chunk in new FilteredChunkList(world.GetChunkManager(), opt.GetChunkFilter())) {
-                if (!chunk.IsPopulated()) {
+                if (chunk == null || !chunk.IsPopulated()) {
                     continue;
+                }
+
+                if (opt.OPT_V) {
+                    Console.WriteLine("Processing Chunk (" + chunk.X + "," + chunk.Z + ")");
                 }
 
                 affectedChunks++;
@@ -254,7 +258,13 @@ namespace NBToolkit
 
         public override bool SetBlockID (int x, int y, int z, int id)
         {
-            int blockID = GetBlockID(x, y, z);
+            int blockID = 0;
+            try {
+                blockID = GetBlockID(x, y, z);
+            }
+            catch {
+                return false;
+            }
 
             if (
                 ((opt.OPT_OA) && (blockID != opt.OPT_ID)) ||

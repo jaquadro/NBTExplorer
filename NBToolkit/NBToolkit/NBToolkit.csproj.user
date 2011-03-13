@@ -1,9 +1,9 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <StartArguments>replace -b 18 -a 19 -w "F:\Minecraft\tps - Copy (10)" -v -cxa -1 -cxb -1 -cza 0 -czb 0</StartArguments>
+    <StartArguments>oregen -w "E:\temp\worlds\testsave2" -b 112 -r 5 -s 5 -mindepth 1 -maxdepth 127 -oi 1 -d 2 -v</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <StartArguments>replace -b 18 -a 19 -w "F:\Minecraft\tps - Copy (10)" -v -cxa -1 -cxb -1 -cza 0 -czb 0</StartArguments>
+    <StartArguments>oregen -w "E:\temp\worlds\testsave2" -b 112 -r 5 -s 5 -mindepth 1 -maxdepth 127 -oi 1 -d 2 -v</StartArguments>
   </PropertyGroup>
   <PropertyGroup>
     <PublishUrlHistory>publish\</PublishUrlHistory>

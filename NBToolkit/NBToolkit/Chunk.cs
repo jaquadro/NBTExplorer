@@ -23,6 +23,11 @@ namespace NBToolkit
             _chunkMan = cm;
             _cx = cx;
             _cz = cz;
+
+            Region r = cm.GetRegion(cx, cz);
+            if (r == null || !r.ChunkExists(LocalX, LocalZ)) {
+                throw new MissingChunkException();
+            }
         }
 
         public int X
@@ -38,6 +43,22 @@ namespace NBToolkit
             get
             {
                 return _cz;
+            }
+        }
+
+        public int LocalX
+        {
+            get
+            {
+                return _cx & ChunkManager.REGION_XMASK;
+            }
+        }
+
+        public int LocalZ
+        {
+            get
+            {
+                return _cz & ChunkManager.REGION_ZMASK;
             }
         }
 
@@ -61,7 +82,11 @@ namespace NBToolkit
             }
 
             Region r = _chunkMan.GetRegion(_cx, _cz);
-            _nbt = r.GetChunkTree(_cx & ChunkManager.REGION_XMASK, _cz & ChunkManager.REGION_ZMASK);
+            if (r == null || !r.ChunkExists(LocalX, LocalZ)) {
+                throw new MissingChunkException();
+            }
+
+            _nbt = r.GetChunkTree(LocalX, LocalZ);
 
             return _nbt;
         }
@@ -73,7 +98,11 @@ namespace NBToolkit
                 _data = null;
 
                 Region r = _chunkMan.GetRegion(_cx, _cz);
-                return r.SaveChunkTree(_cx & ChunkManager.REGION_XMASK, _cz & ChunkManager.REGION_ZMASK, _nbt);
+                if (r == null || !r.ChunkExists(LocalX, LocalZ)) {
+                    throw new MissingChunkException();
+                }
+
+                return r.SaveChunkTree(LocalX, LocalZ, _nbt);
             }
 
             return false;

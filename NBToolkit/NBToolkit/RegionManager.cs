@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 
 namespace NBToolkit
 {
@@ -21,19 +22,24 @@ namespace NBToolkit
             RegionKey k = new RegionKey(rx, rz);
             Region r;
 
-            if (_cache.TryGetValue(k, out r) == false) {
-                r = new Region(this, rx, rz);
-                _cache.Add(k, r);
+            try {
+                if (_cache.TryGetValue(k, out r) == false) {
+                    r = new Region(this, rx, rz);
+                    _cache.Add(k, r);
+                }
+                return r;
             }
-
-            return r;
+            catch (FileNotFoundException) {
+                _cache.Add(k, null);
+                return null;
+            }
         }
 
         public Region GetRegion (string filename)
         {
             int rx, rz;
             if (!Region.ParseFileName(filename, out rx, out rz)) {
-                throw new ArgumentException();
+                throw new ArgumentException("Malformed region file name: " + filename, "filename");
             }
 
             return GetRegion(rx, rz);

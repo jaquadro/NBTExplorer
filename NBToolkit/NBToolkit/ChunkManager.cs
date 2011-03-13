@@ -31,22 +31,21 @@ namespace NBToolkit
         {
             ChunkKey k = new ChunkKey(cx, cz);
 
-            Chunk c = null;
-            if (_cache.ContainsKey(k)) {
-                c = _cache[k].Target as Chunk;
-            }
-            else {
-                _cache.Add(k, new WeakReference(null));
+            WeakReference chunkref = null;
+            if (_cache.TryGetValue(k, out chunkref)) {
+                return chunkref.Target as Chunk;
             }
 
-            if (c != null) {
+            _cache.Add(k, new WeakReference(null));
+
+            try {
+                Chunk c = new Chunk(this, cx, cz);
+                _cache[k].Target = c;
                 return c;
             }
-
-            c = new Chunk(this, cx, cz);
-            _cache[k].Target = c;
-
-            return c;
+            catch (MissingChunkException) {
+                return null;
+            }
         }
 
         public Chunk GetChunkInRegion (Region r, int lcx, int lcz)
@@ -100,5 +99,10 @@ namespace NBToolkit
         {
             return _regionMan;
         }
+    }
+
+    public class MissingChunkException : Exception
+    {
+
     }
 }
