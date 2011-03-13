@@ -66,6 +66,7 @@
     <Compile Include="NDesk\Options.cs" />
     <Compile Include="NibbleArray.cs" />
     <Compile Include="Oregen.cs" />
+    <Compile Include="Purge.cs" />
     <Compile Include="Region.cs" />
     <Compile Include="RegionEnumerator.cs" />
     <Compile Include="RegionKey.cs" />

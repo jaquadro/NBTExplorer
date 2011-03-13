@@ -99,6 +99,28 @@ namespace NBToolkit
         {
             return _regionMan;
         }
+
+        public bool DeleteChunk (int cx, int cz)
+        {
+            Region r = GetRegion(cx, cz);
+            if (r == null) {
+                return false;
+            }
+
+            if (!r.DeleteChunk(cx & REGION_XMASK, cz & REGION_ZMASK)) {
+                return false;
+            }
+
+            ChunkKey k = new ChunkKey(cx, cz);
+            _cache.Remove(k);
+            _dirty.Remove(k);
+
+            if (r.ChunkCount() == 0) {
+                _regionMan.DeleteRegion(r.X, r.Z);
+            }
+
+            return true;
+        }
     }
 
     public class MissingChunkException : Exception

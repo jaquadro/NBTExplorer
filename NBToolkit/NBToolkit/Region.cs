@@ -7,10 +7,11 @@ using NBT;
 
 namespace NBToolkit
 {
-    public class Region
+    public class Region : IDisposable
     {
         protected int _rx;
         protected int _rz;
+        protected bool _disposed = false;
 
         protected RegionManager _regionMan;
 
@@ -56,6 +57,34 @@ namespace NBToolkit
             {
                 return _rz;
             }
+        }
+
+        ~Region ()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose ()
+        {
+            Dispose(true);
+            System.GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose (bool disposing)
+        {
+            if (!_disposed) {
+                if (disposing) {
+                    // Cleanup managed resources
+                    RegionFile rf = _regionFile.Target as RegionFile;
+                    if (rf != null) {
+                        rf.Dispose();
+                        rf = null;
+                    }
+                }
+
+                // Cleanup unmanaged resources
+            }
+            _disposed = true;
         }
 
         public string GetFileName ()
@@ -150,6 +179,17 @@ namespace NBToolkit
             }
 
             return count;
+        }
+
+        public bool DeleteChunk (int lcx, int lcz)
+        {
+            RegionFile rf = GetRegionFile();
+            if (!rf.HasChunk(lcx, lcz)) {
+                return false;
+            }
+
+            rf.DeleteChunk(lcx, lcz);
+            return true;
         }
     }
 }

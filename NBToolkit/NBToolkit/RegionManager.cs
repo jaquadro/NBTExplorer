@@ -49,5 +49,28 @@ namespace NBToolkit
         {
             return _regionPath;
         }
+
+        public bool DeleteRegion (int rx, int rz)
+        {
+            Region r = GetRegion(rx, rz);
+            if (r == null) {
+                return false;
+            }
+
+            RegionKey k = new RegionKey(rx, rz);
+            _cache.Remove(k);
+
+            r.Dispose();
+
+            try {
+                File.Delete(r.GetFilePath());
+            }
+            catch (Exception e) {
+                Console.WriteLine("NOTICE: " + e.Message);
+                return false;
+            }
+
+            return true;
+        }
     }
 }

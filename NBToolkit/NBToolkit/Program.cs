@@ -28,6 +28,12 @@ namespace NBToolkit
                     options.SetDefaults();
                     filter.Run();
                 }
+                else if (args[0] == "purge") {
+                    PurgeOptions options = new PurgeOptions(args);
+                    Purge filter = new Purge(options);
+                    options.SetDefaults();
+                    filter.Run();
+                }
                 else if (args[0] == "help") {
                     if (args.Length < 2) {
                         args = new string[2] { "help", "help" };
@@ -49,6 +55,13 @@ namespace NBToolkit
                         options = new ReplaceOptions(args);
 
                         WriteBlock("Replaces one block type with another.  By default all matching blocks in the world will be replaced, but updates can be restricted by the available options.  This command can be used to set a new data value on blocks by replacing a block with itself.");
+                        Console.WriteLine();
+                        options.PrintUsage();
+                    }
+                    else if (args[1] == "purge") {
+                        options = new PurgeOptions(args);
+
+                        WriteBlock("Deletes all chunks matching the chunk filtering options.  If no options are specified, all world chunks will be deleted.  Region files that have all of their chunks purged will also be deleted from the world directory.");
                         Console.WriteLine();
                         options.PrintUsage();
                     }

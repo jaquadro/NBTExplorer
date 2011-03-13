@@ -371,8 +371,24 @@ namespace NBToolkit
             file.Write(data, 0, length); // chunk data
         }
 
+        public void DeleteChunk (int x, int z)
+        {
+            int offset = GetOffset(x, z);
+            int sectorNumber = offset >> 8;
+            int sectorsAllocated = offset & 0xFF;
+
+            file.Seek(sectorNumber * SECTOR_BYTES, SeekOrigin.Begin);
+            for (int i = 0; i < sectorsAllocated; i++) {
+                file.Write(emptySector, 0, SECTOR_BYTES);
+            }
+
+            SetOffset(x, z, 0);
+            SetTimestamp(x, z, 0);
+        }
+
         /* is this an invalid chunk coordinate? */
-        private bool OutOfBounds(int x, int z) {
+        private bool OutOfBounds (int x, int z)
+        {
             return x < 0 || x >= 32 || z < 0 || z >= 32;
         }
 
