@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using NDesk.Options;
-using NBT;
 
 namespace NBToolkit
 {
+    using NBT;
+
     public class OregenOptions : TKOptions, IChunkFilterable
     {
         private OptionSet _filterOpt = null;

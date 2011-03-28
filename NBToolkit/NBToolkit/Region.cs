@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
-using NBT;
 
 namespace NBToolkit
 {
+    using NBT;
+
     public class Region : IDisposable
     {
         protected int _rx;

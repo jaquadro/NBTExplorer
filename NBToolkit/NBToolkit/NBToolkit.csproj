@@ -38,6 +38,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -46,6 +48,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -63,7 +67,9 @@
     <Compile Include="FilteredChunkEnumerator.cs" />
     <Compile Include="GenOres.cs" />
     <Compile Include="MathHelper.cs" />
-    <Compile Include="NBT.cs" />
+    <Compile Include="NBT\NBT.cs" />
+    <Compile Include="NBT\NBTTag.cs" />
+    <Compile Include="NBT\NBTValues.cs" />
     <Compile Include="NDesk\Options.cs" />
     <Compile Include="NibbleArray.cs" />
     <Compile Include="Oregen.cs" />

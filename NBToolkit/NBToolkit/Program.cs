@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using NBT;
 
 namespace NBToolkit
 {
+    using NBT;
+
     class Program
     {
         static void Main (string[] args)

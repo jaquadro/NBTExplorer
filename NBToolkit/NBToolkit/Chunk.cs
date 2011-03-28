@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using NBT;
 
 namespace NBToolkit
 {
+    using NBT;
+
     public class Chunk
     {
         protected int _cx;
@@ -118,7 +119,7 @@ namespace NBToolkit
         public int GetBlockID (int x, int y, int z)
         {
             if (_blocks == null) {
-                _blocks = GetTree().Root.FindTagByName("Level").FindTagByName("Blocks").value.toByteArray();
+                _blocks = GetTree().Root.FindTagByName("Level").FindTagByName("Blocks").Value.ToNBTByteArray();
             }
 
             return _blocks.Data[x << 11 | z << 7 | y];
@@ -127,7 +128,7 @@ namespace NBToolkit
         public bool SetBlockID (int x, int y, int z, int id)
         {
             if (_blocks == null) {
-                _blocks = GetTree().Root.FindTagByName("Level").FindTagByName("Blocks").value.toByteArray();
+                _blocks = GetTree().Root.FindTagByName("Level").FindTagByName("Blocks").Value.ToNBTByteArray();
             }
 
             int index = x << 11 | z << 7 | y;
@@ -144,7 +145,7 @@ namespace NBToolkit
         public int CountBlockID (int id)
         {
             if (_blocks == null) {
-                _blocks = GetTree().Root.FindTagByName("Level").FindTagByName("Blocks").value.toByteArray();
+                _blocks = GetTree().Root.FindTagByName("Level").FindTagByName("Blocks").Value.ToNBTByteArray();
             }
 
             int c = 0;
@@ -160,7 +161,7 @@ namespace NBToolkit
         public int GetBlockData (int x, int y, int z)
         {
             if (_data == null) {
-                _data = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("Data").value.toByteArray().Data);
+                _data = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("Data").Value.ToNBTByteArray().Data);
             }
 
             return _data[x << 11 | z << 7 | y];
@@ -169,7 +170,7 @@ namespace NBToolkit
         public bool SetBlockData (int x, int y, int z, int data)
         {
             if (_data == null) {
-                _data = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("Data").value.toByteArray().Data);
+                _data = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("Data").Value.ToNBTByteArray().Data);
             }
 
             int index = x << 11 | z << 7 | y;
@@ -186,7 +187,7 @@ namespace NBToolkit
         public int GetBlockLight (int x, int y, int z)
         {
             if (_blockLight == null) {
-                _blockLight = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("BlockLight").value.toByteArray().Data);
+                _blockLight = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("BlockLight").Value.ToNBTByteArray().Data);
             }
 
             return _blockLight[x << 11 | z << 7 | y];
@@ -195,7 +196,7 @@ namespace NBToolkit
         public bool SetBlockLight (int x, int y, int z, int light)
         {
             if (_blockLight == null) {
-                _blockLight = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("BlockLight").value.toByteArray().Data);
+                _blockLight = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("BlockLight").Value.ToNBTByteArray().Data);
             }
 
             int index = x << 11 | z << 7 | y;
@@ -212,7 +213,7 @@ namespace NBToolkit
         public int GetSkyLight (int x, int y, int z)
         {
             if (_skyLight == null) {
-                _skyLight = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("SkyLight").value.toByteArray().Data);
+                _skyLight = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("SkyLight").Value.ToNBTByteArray().Data);
             }
 
             return _skyLight[x << 11 | z << 7 | y];
@@ -221,7 +222,7 @@ namespace NBToolkit
         public bool SetSkyLight (int x, int y, int z, int light)
         {
             if (_skyLight == null) {
-                _skyLight = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("SkyLight").value.toByteArray().Data);
+                _skyLight = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("SkyLight").Value.ToNBTByteArray().Data);
             }
 
             int index = x << 11 | z << 7 | y;
@@ -237,7 +238,7 @@ namespace NBToolkit
 
         public bool IsPopulated ()
         {
-            return GetTree().Root.FindTagByName("Level").FindTagByName("TerrainPopulated").value.toByte().Data == 1;
+            return GetTree().Root.FindTagByName("Level").FindTagByName("TerrainPopulated").Value.ToNBTByte().Data == 1;
         }
 
         protected bool MarkDirty ()
