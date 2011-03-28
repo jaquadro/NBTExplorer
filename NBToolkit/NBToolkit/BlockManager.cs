@@ -36,6 +36,18 @@ namespace NBToolkit
         {
             _chunkMan = bm._chunkMan;
         }
+
+        public virtual BlockRef GetBlockRef (int x, int y, int z)
+        {
+            if (x < MIN_X || x >= MAX_X)
+                return null;
+            if (y < MIN_Y || y >= MAX_Y)
+                return null;
+            if (z < MIN_Z || z >= MAX_Z)
+                return null;
+
+            return new BlockRef(this, x, y, z);
+        }
         
         public virtual int GetBlockID (int x, int y, int z)
         {

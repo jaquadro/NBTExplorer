@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlockManager.cs" />
+    <Compile Include="BlockRef.cs" />
     <Compile Include="Chunk.cs" />
     <Compile Include="ChunkEnumerator.cs" />
     <Compile Include="ChunkFilter.cs" />

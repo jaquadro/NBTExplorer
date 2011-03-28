@@ -50,28 +50,16 @@ namespace NBToolkit
                     v => { OPT_PROB = Convert.ToDouble(v); 
                            OPT_PROB = Math.Max((double)OPT_PROB, 0.0); 
                            OPT_PROB = Math.Min((double)OPT_PROB, 1.0); } },
-                /*{ "bxa=", "Update blocks with X-coord equal to or above {VAL}",
-                    v => BL_X_GE = Convert.ToInt32(v) },
-                { "bxb=", "Update blocks with X-coord equal to or below {VAL}",
-                    v => BL_X_LE = Convert.ToInt32(v) },*/
                 { "bxr|BlockXRange=", "Update blocks with X-coord between {0:V1} and {1:V2}, inclusive.  V1 or V2 may be left blank.",
                     (v1, v2) => { 
                         try { BL_X_GE = Convert.ToInt32(v1); } catch (FormatException) { }
                         try { BL_X_LE = Convert.ToInt32(v2); } catch (FormatException) { } 
                     } },
-                /*{ "bya=", "Update blocks with Y-coord equal to or above {VAL}",
-                    v => BL_Y_GE = Convert.ToInt32(v) },
-                { "byb=", "Update blocks with Y-coord equal to or below {VAL}",
-                    v => BL_Y_LE = Convert.ToInt32(v) },*/
                 { "byr|BlockYRange=", "Update blocks with Y-coord between {0:V1} and {1:V2}, inclusive.  V1 or V2 may be left blank",
                     (v1, v2) => { 
                         try { BL_Y_GE = Convert.ToInt32(v1); } catch (FormatException) { }
                         try { BL_Y_LE = Convert.ToInt32(v2); } catch (FormatException) { } 
                     } },
-                /*{ "bza=", "Update blocks with Z-coord equal to or above {VAL}",
-                    v => BL_Z_GE = Convert.ToInt32(v) },
-                { "bzb=", "Update blocks with Z-coord equal to or below {VAL}",
-                    v => BL_Z_LE = Convert.ToInt32(v) },*/
                 { "bzr|BlockZRange=", "Update blocks with Z-coord between {0:V1} and {1:V2}, inclusive.  V1 or V2 may be left blank",
                     (v1, v2) => { 
                         try { BL_Z_GE = Convert.ToInt32(v1); } catch (FormatException) { }

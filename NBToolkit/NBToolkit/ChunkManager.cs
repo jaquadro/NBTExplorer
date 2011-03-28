@@ -31,15 +31,22 @@ namespace NBToolkit
         {
             ChunkKey k = new ChunkKey(cx, cz);
 
+            Chunk c = null;
+
             WeakReference chunkref = null;
             if (_cache.TryGetValue(k, out chunkref)) {
-                return chunkref.Target as Chunk;
+                c = chunkref.Target as Chunk;
+            }
+            else {
+                _cache.Add(k, new WeakReference(null));
             }
 
-            _cache.Add(k, new WeakReference(null));
+            if (c != null) {
+                return c;
+            }
 
             try {
-                Chunk c = new Chunk(this, cx, cz);
+                c = new Chunk(this, cx, cz);
                 _cache[k].Target = c;
                 return c;
             }

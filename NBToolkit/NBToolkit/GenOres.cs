@@ -99,8 +99,11 @@ namespace NBToolkit
                                 for (int iz = zStart; iz <= zEnd; iz++) {
                                     double zThresh = (iz + 0.5D - zPos) / (fuzzXZ / 2.0D);
                                     if (xThresh * xThresh + yThresh * yThresh + zThresh * zThresh < 1.0D) {
-                                        blockMan.SetBlockID(ix, iy, iz, _blockId);
-                                        blockMan.SetBlockData(ix, iy, iz, _blockData);
+                                        BlockRef block = blockMan.GetBlockRef(ix, iy, iz);
+                                        if (block != null) {
+                                            block.ID = _blockId;
+                                            block.Data = _blockData;
+                                        }
                                     }
                                 }
                             }

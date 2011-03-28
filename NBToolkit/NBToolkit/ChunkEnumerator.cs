@@ -48,6 +48,8 @@ namespace NBToolkit
         protected Region _region;
         protected ChunkManager _cm;
 
+        protected Chunk _chunk;
+
         protected RegionEnumerator _enum = null;
         protected int _x = 0;
         protected int _z = -1;
@@ -88,6 +90,7 @@ namespace NBToolkit
                         _region = _enum.Current;
                     }
                     if (MoveNextInRegion()) {
+                        _chunk = _cm.GetChunkInRegion(_region, _x, _z);
                         return true;
                     }
                 }
@@ -146,8 +149,7 @@ namespace NBToolkit
                 if (_x >= ChunkManager.REGION_XLEN) {
                     throw new InvalidOperationException();
                 }
-
-                return _cm.GetChunkInRegion(_region, _x, _z);
+                return _chunk;
             }
         }
     }

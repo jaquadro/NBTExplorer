@@ -22,99 +22,301 @@ namespace NBT
         TAG_COMPOUND = 10
     }
 
-    public class NBT_Value
+    public abstract class NBT_Value
     {
-        virtual public NBT_Byte toByte () { return null; }
-        virtual public NBT_Short toShort () { return null; }
-        virtual public NBT_Int toInt () { return null; }
-        virtual public NBT_Long toLong () { return null; }
-        virtual public NBT_Float toFloat () { return null; }
-        virtual public NBT_Double toDouble () { return null; }
-        virtual public NBT_ByteArray toByteArray () { return null; }
-        virtual public NBT_String toString () { return null; }
-        virtual public NBT_List toList () { return null; }
-        virtual public NBT_Compound toCompound () { return null; }
+        virtual public NBT_Byte toByte () { throw new InvalidCastException(); }
+        virtual public NBT_Short toShort () { throw new InvalidCastException(); }
+        virtual public NBT_Int toInt () { throw new InvalidCastException(); }
+        virtual public NBT_Long toLong () { throw new InvalidCastException(); }
+        virtual public NBT_Float toFloat () { throw new InvalidCastException(); }
+        virtual public NBT_Double toDouble () { throw new InvalidCastException(); }
+        virtual public NBT_ByteArray toByteArray () { throw new InvalidCastException(); }
+        virtual public NBT_String toString () { throw new InvalidCastException(); }
+        virtual public NBT_List toList () { throw new InvalidCastException(); }
+        virtual public NBT_Compound toCompound () { throw new InvalidCastException(); }
 
         virtual public NBT_Type getType () { return NBT_Type.TAG_END; }
     }
 
+    public abstract class NBT_NumericValue : NBT_Value
+    {
+
+    }
+
     public class NBT_Byte : NBT_Value
     {
-        public byte data = 0;
+        protected byte _data = 0;
+
         override public NBT_Byte toByte () { return this; }
         override public NBT_Type getType () { return NBT_Type.TAG_BYTE; }
+
+        public byte Data
+        {
+            get { return _data; }
+            set { _data = value; }
+        }
+
+        public NBT_Byte () { }
+
+        public NBT_Byte (byte d)
+        {
+            _data = d;
+        }
     }
 
     public class NBT_Short : NBT_Value
     {
-        public short data = 0;
+        protected short _data = 0;
+
         override public NBT_Short toShort () { return this; }
         override public NBT_Type getType () { return NBT_Type.TAG_SHORT; }
+
+        public short Data
+        {
+            get { return _data; }
+            set { _data = value; }
+        }
+
+        public NBT_Short () { }
+
+        public NBT_Short (short d)
+        {
+            _data = d;
+        }
     }
 
     public class NBT_Int : NBT_Value
     {
-        public int data = 0;
+        protected int _data = 0;
+
         override public NBT_Int toInt () { return this; }
         override public NBT_Type getType () { return NBT_Type.TAG_INT; }
+
+        public int Data
+        {
+            get { return _data; }
+            set { _data = value; }
+        }
+
+        public NBT_Int () { }
+
+        public NBT_Int (int d)
+        {
+            _data = d;
+        }
     }
 
     public class NBT_Long : NBT_Value
     {
-        public long data = 0;
+        protected long _data = 0;
+
         override public NBT_Long toLong () { return this; }
         override public NBT_Type getType () { return NBT_Type.TAG_LONG; }
+
+        public long Data
+        {
+            get { return _data; }
+            set { _data = value; }
+        }
+
+        public NBT_Long () { }
+
+        public NBT_Long (long d)
+        {
+            _data = d;
+        }
     }
 
     public class NBT_Float : NBT_Value
     {
-        public float data = 0;
+        protected float _data = 0;
+
         override public NBT_Float toFloat () { return this; }
         override public NBT_Type getType () { return NBT_Type.TAG_FLOAT; }
+
+        public float Data
+        {
+            get { return _data; }
+            set { _data = value; }
+        }
+
+        public NBT_Float () { }
+
+        public NBT_Float (float d)
+        {
+            _data = d;
+        }
     }
 
     public class NBT_Double : NBT_Value
     {
-        public double data = 0;
+        protected double _data = 0;
+
         override public NBT_Double toDouble () { return this; }
         override public NBT_Type getType () { return NBT_Type.TAG_DOUBLE; }
+
+        public double Data
+        {
+            get { return _data; }
+            set { _data = value; }
+        }
+
+        public NBT_Double () { }
+
+        public NBT_Double (double d)
+        {
+            _data = d;
+        }
     }
 
     public class NBT_ByteArray : NBT_Value
     {
-        public int length = 0;
-        public byte[] data = null;
+        protected byte[] _data = null;
 
         override public NBT_ByteArray toByteArray () { return this; }
         override public NBT_Type getType () { return NBT_Type.TAG_BYTE_ARRAY; }
+
+        public byte[] Data
+        {
+            get { return _data; }
+            set { _data = value; }
+        }
+
+        public int Length 
+        {
+            get { return _data.Length; }
+        }
+
+        public NBT_ByteArray () { }
+
+        public NBT_ByteArray (byte[] d)
+        {
+            _data = d;
+        }
     }
 
     public class NBT_String : NBT_Value
     {
-        public String data = null;
+        protected string _data = null;
+
         override public NBT_String toString () { return this; }
         override public NBT_Type getType () { return NBT_Type.TAG_STRING; }
+
+        public string Data
+        {
+            get { return _data; }
+            set { _data = value; }
+        }
+
+        public int Length 
+        {
+            get { return _data.Length; }
+        }
+
+        public NBT_String () { }
+
+        public NBT_String (string d)
+        {
+            _data = d;
+        }
     }
 
     public class NBT_List : NBT_Value
     {
-        public int length = 0;
-        public NBT_Type type = NBT_Type.TAG_END;
+        protected NBT_Type _type = NBT_Type.TAG_END;
 
-        public List<NBT_Value> items = null;
+        protected List<NBT_Value> _items = null;
 
         override public NBT_List toList () { return this; }
         override public NBT_Type getType () { return NBT_Type.TAG_LIST; }
+
+        public int Count
+        {
+            get { return _items.Count; }
+        }
+
+        public List<NBT_Value> Items
+        {
+            get { return _items; }
+        }
+
+        public NBT_Type ValueType
+        {
+            get { return _type; }
+        }
+
+        public NBT_List (NBT_Type type) {
+            _type = type;
+            _items = new List<NBT_Value>();
+        }
+
+        public NBT_List (NBT_Type type, List<NBT_Value> items)
+        {
+            _type = type;
+            _items = items;
+        }
+
+        public void AddItem (NBT_Value val)
+        {
+            if (_type != val.getType()) {
+                throw new InvalidValueException();
+            }
+
+            _items.Add(val);
+        }
+
+        public bool RemoveItem (NBT_Value val)
+        {
+            return _items.Remove(val);
+        }
     }
 
     public class NBT_Compound : NBT_Value
     {
-        public int length = 0;
-
-        public List<NBT_Tag> tags = null;
+        protected List<NBT_Tag> _tags = null;
 
         override public NBT_Compound toCompound () { return this; }
         override public NBT_Type getType () { return NBT_Type.TAG_COMPOUND; }
+
+        public int Count
+        {
+            get { return _tags.Count; }
+        }
+
+        public List<NBT_Tag> Tags
+        {
+            get { return _tags; }
+        }
+
+        public NBT_Compound () {
+            _tags = new List<NBT_Tag>();
+        }
+
+        public NBT_Compound (List<NBT_Tag> tags)
+        {
+            _tags = tags;
+        }
+
+        public void AddTag (NBT_Tag sub)
+        {
+            _tags.Add(sub);
+        }
+
+        public bool RemoveTag (NBT_Tag sub)
+        {
+            return _tags.Remove(sub);
+        }
+
+        public NBT_Tag FindTagByName (string name)
+        {
+            foreach (NBT_Tag tag in _tags) {
+                if (tag.name.Data == name) {
+                    return tag;
+                }
+            }
+
+            return null;
+        }
     }
 
     public class NBT_Tag
@@ -124,19 +326,13 @@ namespace NBT
 
         public NBT_Value value;
 
-        public NBT_Tag findTagByName (String name)
+        public NBT_Tag FindTagByName (string name)
         {
             if (type != NBT_Type.TAG_COMPOUND) {
-                return null;
+                throw new InvalidTagException();
             }
 
-            foreach (NBT_Tag tag in value.toCompound().tags) {
-                if (tag.name.data.Equals(name)) {
-                    return tag;
-                }
-            }
-
-            return null;
+            return value.toCompound().FindTagByName(name);
         }
     }
 
@@ -144,9 +340,7 @@ namespace NBT
     {
         private Stream stream = null;
 
-        //String path = null;
-
-        NBT_Tag root = null;
+        protected NBT_Tag _root = null;
 
         public NBT_Tree (Stream s)
         {
@@ -157,7 +351,7 @@ namespace NBT
         {
             if (s != null) {
                 stream = s;
-                root = ReadTag();
+                _root = ReadTag();
                 stream = null;
             }
         }
@@ -167,75 +361,18 @@ namespace NBT
             if (s != null) {
                 stream = s;
 
-                if (root != null) {
-                    WriteTag(root);
+                if (_root != null) {
+                    WriteTag(_root);
                 }
 
                 stream = null;
             }
         }
 
-        /*public void activate ()
+        public NBT_Tag Root
         {
-            if (root == null) {
-                read();
-            }
+            get { return _root; }
         }
-
-        public void deactivate ()
-        {
-            if (root != null) {
-                root = null;
-            }
-        }
-
-        public void save ()
-        {
-            if (root != null) {
-                write();
-            }
-        }*/
-
-        public NBT_Tag getRoot ()
-        {
-            return root;
-        }
-
-        /*public void addListItem (NBT_Tag tag, NBT_Value val)
-        {
-            if (tag.type != NBT_Type.TAG_LIST) {
-                throw new Exception();
-            }
-
-            if (tag.value.toList().type != val.getType()) {
-                throw new Exception();
-            }
-
-            val.toList().length++;
-            val.toList().items.Add(val);
-        }
-
-        public void addTag (NBT_Tag tag, NBT_Tag sub)
-        {
-            if (tag.type != NBT_Type.TAG_COMPOUND) {
-                throw new Exception();
-            }
-
-            tag.value.toCompound().length++;
-            tag.value.toCompound().tags.Add(sub);
-        }*/
-
-        /*private void read ()
-        {
-            FileStream fStream = new FileStream(path, System.IO.FileMode.Open);
-            gzStream = new GZipStream(fStream, CompressionMode.Decompress);
-
-            root = readTag();
-
-            gzStream.Close();
-
-            gzStream = null;
-        }*/
 
         private NBT_Value ReadValue (NBT_Type type)
         {
@@ -279,25 +416,18 @@ namespace NBT
 
         private NBT_Value ReadByte ()
         {
-            //Console.Write("NBT_File.readByte()");
-
             int gzByte = stream.ReadByte();
             if (gzByte == -1) {
                 throw new NBTException(NBTException.MSG_GZIP_ENDOFSTREAM);
             }
 
-            NBT_Byte val = new NBT_Byte();
-            val.data = (byte)gzByte;
-
-            //Console.WriteLine(" [" + val.data + "]");
+            NBT_Byte val = new NBT_Byte((byte)gzByte);
 
             return val;
         }
 
         private NBT_Value ReadShort ()
         {
-            //Console.Write("NBT_File.readShort");
-
             byte[] gzBytes = new byte[2];
             stream.Read(gzBytes, 0, 2);
 
@@ -305,18 +435,13 @@ namespace NBT
                 Array.Reverse(gzBytes);
             }
 
-            NBT_Short val = new NBT_Short();
-            val.data = BitConverter.ToInt16(gzBytes, 0);
-
-            //Console.WriteLine(" [" + val.data + "]");
+            NBT_Short val = new NBT_Short(BitConverter.ToInt16(gzBytes, 0));
 
             return val;
         }
 
         private NBT_Value ReadInt ()
         {
-            //Console.Write("NBT_File.readInt");
-
             byte[] gzBytes = new byte[4];
             stream.Read(gzBytes, 0, 4);
 
@@ -324,18 +449,13 @@ namespace NBT
                 Array.Reverse(gzBytes);
             }
 
-            NBT_Int val = new NBT_Int();
-            val.data = BitConverter.ToInt32(gzBytes, 0);
-
-            //Console.WriteLine(" [" + val.data + "]");
+            NBT_Int val = new NBT_Int(BitConverter.ToInt32(gzBytes, 0));
 
             return val;
         }
 
         private NBT_Value ReadLong ()
         {
-            //Console.Write("NBT_File.readLong");
-
             byte[] gzBytes = new byte[8];
             stream.Read(gzBytes, 0, 8);
 
@@ -343,18 +463,13 @@ namespace NBT
                 Array.Reverse(gzBytes);
             }
 
-            NBT_Long val = new NBT_Long();
-            val.data = BitConverter.ToInt64(gzBytes, 0);
-
-            //Console.WriteLine(" [" + val.data + "]");
+            NBT_Long val = new NBT_Long(BitConverter.ToInt64(gzBytes, 0));
 
             return val;
         }
 
         private NBT_Value ReadFloat ()
         {
-            //Console.Write("NBT_File.readFloat()");
-
             byte[] gzBytes = new byte[4];
             stream.Read(gzBytes, 0, 4);
 
@@ -362,18 +477,13 @@ namespace NBT
                 Array.Reverse(gzBytes);
             }
 
-            NBT_Float val = new NBT_Float();
-            val.data = BitConverter.ToSingle(gzBytes, 0);
-
-            //Console.WriteLine(" [" + val.data + "]");
+            NBT_Float val = new NBT_Float(BitConverter.ToSingle(gzBytes, 0));
 
             return val;
         }
 
         private NBT_Value ReadDouble ()
         {
-            //Console.Write("NBT_File.readDouble()");
-
             byte[] gzBytes = new byte[8];
             stream.Read(gzBytes, 0, 8);
 
@@ -381,18 +491,13 @@ namespace NBT
                 Array.Reverse(gzBytes);
             }
 
-            NBT_Double val = new NBT_Double();
-            val.data = BitConverter.ToDouble(gzBytes, 0);
-
-            //Console.WriteLine(" [" + val.data + "]");
+            NBT_Double val = new NBT_Double(BitConverter.ToDouble(gzBytes, 0));
 
             return val;
         }
 
         private NBT_Value ReadByteArray ()
         {
-            //Console.Write("NBT_File.readByteArray()");
-
             byte[] lenBytes = new byte[4];
             stream.Read(lenBytes, 0, 4);
 
@@ -400,25 +505,21 @@ namespace NBT
                 Array.Reverse(lenBytes);
             }
 
-            NBT_ByteArray val = new NBT_ByteArray();
-            val.length = BitConverter.ToInt32(lenBytes, 0);
-
-            if (val.length < 0) {
+            int length = BitConverter.ToInt32(lenBytes, 0);
+            if (length < 0) {
                 throw new NBTException(NBTException.MSG_READ_NEG);
             }
 
-            //Console.WriteLine(" [" + val.length + "]");
+            byte[] data = new byte[length];
+            stream.Read(data, 0, length);
 
-            val.data = new byte[val.length];
-            stream.Read(val.data, 0, val.length);
+            NBT_ByteArray val = new NBT_ByteArray(data);
 
             return val;
         }
 
         private NBT_Value ReadString ()
         {
-            //Console.Write("NBT_File.readString()");
-
             byte[] lenBytes = new byte[2];
             stream.Read(lenBytes, 0, 2);
 
@@ -436,26 +537,20 @@ namespace NBT
 
             System.Text.Encoding str = Encoding.GetEncoding(28591);
 
-            NBT_String val = new NBT_String();
-            val.data = str.GetString(strBytes);
-
-            //Console.WriteLine(" [" + val.data.ToString() + "]");
+            NBT_String val = new NBT_String(str.GetString(strBytes));
 
             return val;
         }
 
         private NBT_Value ReadList ()
         {
-            //Console.Write("NBT_File.readList()");
-
             int gzByte = stream.ReadByte();
             if (gzByte == -1) {
                 throw new NBTException(NBTException.MSG_GZIP_ENDOFSTREAM);
             }
 
-            NBT_List val = new NBT_List();
-            val.type = (NBT_Type)gzByte;
-            if (val.type > (NBT_Type)Enum.GetValues(typeof(NBT_Type)).GetUpperBound(0)) {
+            NBT_List val = new NBT_List((NBT_Type)gzByte);
+            if (val.ValueType > (NBT_Type)Enum.GetValues(typeof(NBT_Type)).GetUpperBound(0)) {
                 throw new NBTException(NBTException.MSG_READ_TYPE);
             }
 
@@ -466,17 +561,13 @@ namespace NBT
                 Array.Reverse(lenBytes);
             }
 
-            val.length = BitConverter.ToInt32(lenBytes, 0);
-            if (val.length < 0) {
+            int length = BitConverter.ToInt32(lenBytes, 0);
+            if (length < 0) {
                 throw new NBTException(NBTException.MSG_READ_NEG);
             }
 
-            //Console.WriteLine(" [" + val.type + ", " + val.length + "]");
-
-            val.items = new List<NBT_Value>();
-
-            for (int i = 0; i < val.length; i++) {
-                val.items.Add(ReadValue(val.type));
+            for (int i = 0; i < length; i++) {
+                val.AddItem(ReadValue(val.ValueType));
             }
 
             return val;
@@ -484,10 +575,7 @@ namespace NBT
 
         private NBT_Value ReadCompound ()
         {
-            //Console.WriteLine("NBT_File.readCompound()");
-
             NBT_Compound val = new NBT_Compound();
-            val.tags = new List<NBT_Tag>();
 
             while (true) {
                 NBT_Tag tag = ReadTag();
@@ -495,8 +583,7 @@ namespace NBT
                     break;
                 }
 
-                val.length++;
-                val.tags.Add(tag);
+                val.AddTag(tag);
             }
 
             return val;
@@ -504,15 +591,11 @@ namespace NBT
 
         private NBT_Tag ReadTag ()
         {
-            //Console.Write("NBT_File.readTag()");
-
             NBT_Tag tag = new NBT_Tag();
 
             tag.type = (NBT_Type)stream.ReadByte();
             tag.name = null;
             tag.value = null;
-
-            //Console.WriteLine(" [" + tag.type + "]");
 
             if (tag.type != NBT_Type.TAG_END) {
                 tag.name = ReadString().toString();
@@ -522,20 +605,6 @@ namespace NBT
 
             return tag;
         }
-
-        /*private void write ()
-        {
-            if (root != null) {
-                FileStream fStream = new FileStream(path, System.IO.FileMode.Truncate);
-                stream = new GZipStream(fStream, CompressionMode.Compress);
-
-                writeTag(root);
-
-                stream.Close();
-            }
-
-            stream = null;
-        }*/
 
         private void WriteValue (NBT_Value val)
         {
@@ -587,15 +656,14 @@ namespace NBT
 
         private void WriteByte (NBT_Byte val)
         {
-            stream.WriteByte(val.data);
+            stream.WriteByte(val.Data);
         }
 
         private void WriteShort (NBT_Short val)
         {
-            byte[] gzBytes = BitConverter.GetBytes(val.data);
+            byte[] gzBytes = BitConverter.GetBytes(val.Data);
 
             if (BitConverter.IsLittleEndian) {
-                //gzBytes.Reverse();
                 Array.Reverse(gzBytes);
             }
 
@@ -604,10 +672,9 @@ namespace NBT
 
         private void WriteInt (NBT_Int val)
         {
-            byte[] gzBytes = BitConverter.GetBytes(val.data);
+            byte[] gzBytes = BitConverter.GetBytes(val.Data);
 
             if (BitConverter.IsLittleEndian) {
-                //gzBytes.Reverse();
                 Array.Reverse(gzBytes);
             }
 
@@ -616,10 +683,9 @@ namespace NBT
 
         private void WriteLong (NBT_Long val)
         {
-            byte[] gzBytes = BitConverter.GetBytes(val.data);
+            byte[] gzBytes = BitConverter.GetBytes(val.Data);
 
             if (BitConverter.IsLittleEndian) {
-                //gzBytes.Reverse();
                 Array.Reverse(gzBytes);
             }
 
@@ -628,10 +694,9 @@ namespace NBT
 
         private void WriteFloat (NBT_Float val)
         {
-            byte[] gzBytes = BitConverter.GetBytes(val.data);
+            byte[] gzBytes = BitConverter.GetBytes(val.Data);
 
             if (BitConverter.IsLittleEndian) {
-                //gzBytes.Reverse();
                 Array.Reverse(gzBytes);
             }
 
@@ -640,10 +705,9 @@ namespace NBT
 
         private void WriteDouble (NBT_Double val)
         {
-            byte[] gzBytes = BitConverter.GetBytes(val.data);
+            byte[] gzBytes = BitConverter.GetBytes(val.Data);
 
             if (BitConverter.IsLittleEndian) {
-                //gzBytes.Reverse();
                 Array.Reverse(gzBytes);
             }
 
@@ -652,54 +716,51 @@ namespace NBT
 
         private void WriteByteArray (NBT_ByteArray val)
         {
-            byte[] lenBytes = BitConverter.GetBytes(val.length);
+            byte[] lenBytes = BitConverter.GetBytes(val.Length);
 
             if (BitConverter.IsLittleEndian) {
-                //lenBytes.Reverse();
                 Array.Reverse(lenBytes);
             }
 
             stream.Write(lenBytes, 0, 4);
-            stream.Write(val.data, 0, val.length);
+            stream.Write(val.Data, 0, val.Length);
         }
 
         private void WriteString (NBT_String val)
         {
-            byte[] lenBytes = BitConverter.GetBytes((short)val.data.Length);
+            byte[] lenBytes = BitConverter.GetBytes((short)val.Length);
 
             if (BitConverter.IsLittleEndian) {
-                //lenBytes.Reverse();
                 Array.Reverse(lenBytes);
             }
 
             stream.Write(lenBytes, 0, 2);
 
             System.Text.Encoding str = Encoding.GetEncoding(28591);
-            byte[] gzBytes = str.GetBytes(val.data);
+            byte[] gzBytes = str.GetBytes(val.Data);
 
             stream.Write(gzBytes, 0, gzBytes.Length);
         }
 
         private void WriteList (NBT_List val)
         {
-            byte[] lenBytes = BitConverter.GetBytes(val.length);
+            byte[] lenBytes = BitConverter.GetBytes(val.Count);
 
             if (BitConverter.IsLittleEndian) {
-                //lenBytes.Reverse();
                 Array.Reverse(lenBytes);
             }
 
-            stream.WriteByte((byte)val.type);
+            stream.WriteByte((byte)val.ValueType);
             stream.Write(lenBytes, 0, 4);
 
-            foreach (NBT_Value v in val.items) {
+            foreach (NBT_Value v in val.Items) {
                 WriteValue(v);
             }
         }
 
         private void WriteCompound (NBT_Compound val)
         {
-            foreach (NBT_Tag t in val.tags) {
+            foreach (NBT_Tag t in val.Tags) {
                 WriteTag(t);
             }
 
@@ -720,7 +781,7 @@ namespace NBT
         }
     }
 
-    class NBTException : Exception
+    public class NBTException : Exception
     {
         public const String MSG_GZIP_ENDOFSTREAM = "Gzip Error: Unexpected end of stream";
 
@@ -733,4 +794,8 @@ namespace NBT
 
         public NBTException (String msg, Exception innerException) : base(msg, innerException) { }
     }
+
+    public class InvalidTagException : Exception { }
+
+    public class InvalidValueException : Exception { }
 }

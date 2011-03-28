@@ -62,8 +62,6 @@ namespace NBToolkit
     {
         private PurgeOptions opt;
 
-        private static Random rand = new Random();
-
         public Purge (PurgeOptions o)
         {
             opt = o;

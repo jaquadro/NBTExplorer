@@ -196,7 +196,7 @@ namespace NBToolkit
                 affectedChunks++;
 
                 ApplyChunk(world, chunk);
-                //chunk.Save();
+
                 world.GetChunkManager().SaveDirtyChunks();
             }
 
@@ -254,6 +254,45 @@ namespace NBToolkit
             : base(bm)
         {
             opt = o;
+        }
+
+        public override BlockRef GetBlockRef (int x, int y, int z)
+        {
+            BlockRef block;
+            try {
+                block = base.GetBlockRef(x, y, z);
+            }
+            catch {
+                return null;
+            }
+
+            int blockID = block.ID;
+
+            if (
+                ((opt.OPT_OA) && (blockID != opt.OPT_ID)) ||
+                ((opt.OPT_OO) && (
+                    blockID == BLOCK_COAL || blockID == BLOCK_IRON ||
+                    blockID == BLOCK_GOLD || blockID == BLOCK_REDSTONE ||
+                    blockID == BLOCK_DIAMOND || blockID == BLOCK_LAPIS ||
+                    blockID == BLOCK_DIRT || blockID == BLOCK_GRAVEL) && (blockID != opt.OPT_ID)) ||
+                (opt.OPT_OB_INCLUDE.Count > 0) ||
+                (blockID == BLOCK_STONE)
+            ) {
+                // If overriding list of ores, check membership
+                if (opt.OPT_OB_INCLUDE.Count > 0 && !opt.OPT_OB_INCLUDE.Contains(blockID)) {
+                    return null;
+                }
+
+                // Check for any excluded block
+                if (opt.OPT_OB_EXCLUDE.Contains(blockID)) {
+                    return null;
+                }
+
+                // We're allowed to update the block
+                return block;
+            }
+
+            return null;
         }
 
         public override bool SetBlockID (int x, int y, int z, int id)
