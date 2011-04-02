@@ -185,7 +185,7 @@ namespace NBToolkit
             World world = new World(opt.OPT_WORLD);
 
             int affectedChunks = 0;
-            foreach (Chunk chunk in new FilteredChunkList(world.GetChunkManager(), opt.GetChunkFilter())) {
+            foreach (ChunkRef chunk in new FilteredChunkList(world.GetChunkManager(), opt.GetChunkFilter())) {
                 if (chunk == null || !chunk.IsPopulated()) {
                     continue;
                 }
@@ -204,7 +204,7 @@ namespace NBToolkit
             Console.WriteLine("Affected Chunks: " + affectedChunks);
         }
 
-        public void ApplyChunk (World world, Chunk chunk)
+        public void ApplyChunk (World world, ChunkRef chunk)
         {
             if (opt.OPT_V) {
                 Console.WriteLine("Generating {0} size {1} deposits of {2} between {3} and {4}",
@@ -257,13 +257,52 @@ namespace NBToolkit
             opt = o;
         }
 
-        public override BlockRef GetBlockRef (int x, int y, int z)
+        protected override bool Check (int x, int y, int z)
+        {
+            if (!base.Check(x, y, z)) {
+                return false;
+            }
+
+            int blockID = base.GetBlockID(x, y, z);
+
+            if (
+                ((opt.OPT_OA) && (blockID != opt.OPT_ID)) ||
+                ((opt.OPT_OO) && (
+                    blockID == BLOCK_COAL || blockID == BLOCK_IRON ||
+                    blockID == BLOCK_GOLD || blockID == BLOCK_REDSTONE ||
+                    blockID == BLOCK_DIAMOND || blockID == BLOCK_LAPIS ||
+                    blockID == BLOCK_DIRT || blockID == BLOCK_GRAVEL) && (blockID != opt.OPT_ID)) ||
+                (opt.OPT_OB_INCLUDE.Count > 0) ||
+                (blockID == BLOCK_STONE)
+            ) {
+                // If overriding list of ores, check membership
+                if (opt.OPT_OB_INCLUDE.Count > 0 && !opt.OPT_OB_INCLUDE.Contains(blockID)) {
+                    return false;
+                }
+
+                // Check for any excluded block
+                if (opt.OPT_OB_EXCLUDE.Contains(blockID)) {
+                    return false;
+                }
+
+                // We're allowed to update the block
+                return true;
+            }
+
+            return false;
+        }
+
+        /*public override BlockRef GetBlockRef (int x, int y, int z)
         {
             BlockRef block;
             try {
                 block = base.GetBlockRef(x, y, z);
             }
             catch {
+                return null;
+            }
+
+            if (block == null) {
                 return null;
             }
 
@@ -331,6 +370,6 @@ namespace NBToolkit
             }
 
             return false;
-        }
+        }*/
     }
 }

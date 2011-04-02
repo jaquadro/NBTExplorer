@@ -9,7 +9,7 @@ using System.Text;
 
 namespace NBToolkit
 {
-    class MathHelper
+    public class MathHelper
     {
         private static float[] trigTable = new float[65536];
 

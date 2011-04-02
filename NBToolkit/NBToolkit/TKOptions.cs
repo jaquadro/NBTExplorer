@@ -91,7 +91,7 @@ namespace NBToolkit
         }
     }
 
-    class TKOptionException : Exception
+    public class TKOptionException : Exception
     {
         public TKOptionException () { }
 

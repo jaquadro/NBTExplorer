@@ -18,24 +18,24 @@ namespace NBToolkit
         protected RegionManager _regionMan;
 
         protected Dictionary<ChunkKey, WeakReference> _cache;
-        protected Dictionary<ChunkKey, Chunk> _dirty;
+        protected Dictionary<ChunkKey, ChunkRef> _dirty;
 
         public ChunkManager (RegionManager rm)
         {
             _regionMan = rm;
             _cache = new Dictionary<ChunkKey, WeakReference>();
-            _dirty = new Dictionary<ChunkKey, Chunk>();
+            _dirty = new Dictionary<ChunkKey, ChunkRef>();
         }
 
-        public Chunk GetChunk (int cx, int cz)
+        public ChunkRef GetChunk (int cx, int cz)
         {
             ChunkKey k = new ChunkKey(cx, cz);
 
-            Chunk c = null;
+            ChunkRef c = null;
 
             WeakReference chunkref = null;
             if (_cache.TryGetValue(k, out chunkref)) {
-                c = chunkref.Target as Chunk;
+                c = chunkref.Target as ChunkRef;
             }
             else {
                 _cache.Add(k, new WeakReference(null));
@@ -46,7 +46,7 @@ namespace NBToolkit
             }
 
             try {
-                c = new Chunk(this, cx, cz);
+                c = new ChunkRef(this, cx, cz);
                 _cache[k].Target = c;
                 return c;
             }
@@ -55,7 +55,7 @@ namespace NBToolkit
             }
         }
 
-        public Chunk GetChunkInRegion (Region r, int lcx, int lcz)
+        public ChunkRef GetChunkInRegion (Region r, int lcx, int lcz)
         {
             int cx = r.X * REGION_XLEN + lcx;
             int cz = r.Z * REGION_ZLEN + lcz;
@@ -79,7 +79,7 @@ namespace NBToolkit
             return false;
         }
 
-        public bool MarkChunkDirty (Chunk chunk)
+        public bool MarkChunkDirty (ChunkRef chunk)
         {
             ChunkKey k = new ChunkKey(chunk.X, chunk.Z);
             if (!_dirty.ContainsKey(k)) {
@@ -92,7 +92,7 @@ namespace NBToolkit
         public int SaveDirtyChunks ()
         {
             int saved = 0;
-            foreach (Chunk c in _dirty.Values) {
+            foreach (ChunkRef c in _dirty.Values) {
                 if (c.Save()) {
                     saved++;
                 }

@@ -7,7 +7,7 @@ using System.IO;
 
 namespace NBToolkit
 {
-    public class ChunkList : IEnumerable<Chunk>
+    public class ChunkList : IEnumerable<ChunkRef>
     {
         //private List<Region> _regions;
 
@@ -32,9 +32,9 @@ namespace NBToolkit
             return (IEnumerator)GetEnumerator();
         }
 
-        IEnumerator<Chunk> IEnumerable<Chunk>.GetEnumerator ()
+        IEnumerator<ChunkRef> IEnumerable<ChunkRef>.GetEnumerator ()
         {
-            return (IEnumerator<Chunk>)GetEnumerator();
+            return (IEnumerator<ChunkRef>)GetEnumerator();
         }
 
         public virtual ChunkEnumerator GetEnumerator ()
@@ -43,12 +43,12 @@ namespace NBToolkit
         }
     }
 
-    public class ChunkEnumerator : IEnumerator<Chunk>
+    public class ChunkEnumerator : IEnumerator<ChunkRef>
     {
         protected Region _region;
         protected ChunkManager _cm;
 
-        protected Chunk _chunk;
+        protected ChunkRef _chunk;
 
         protected RegionEnumerator _enum = null;
         protected int _x = 0;
@@ -134,7 +134,7 @@ namespace NBToolkit
             }
         }
 
-        Chunk IEnumerator<Chunk>.Current
+        ChunkRef IEnumerator<ChunkRef>.Current
         {
             get
             {
@@ -142,7 +142,7 @@ namespace NBToolkit
             }
         }
 
-        public Chunk Current
+        public ChunkRef Current
         {
             get
             {

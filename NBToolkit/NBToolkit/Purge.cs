@@ -59,7 +59,7 @@ namespace NBToolkit
         }
     }
 
-    class Purge : TKFilter
+    public class Purge : TKFilter
     {
         private PurgeOptions opt;
 
@@ -73,7 +73,7 @@ namespace NBToolkit
             World world = new World(opt.OPT_WORLD);
 
             int affectedChunks = 0;
-            foreach (Chunk chunk in new FilteredChunkList(world.GetChunkManager(), opt.GetChunkFilter())) {
+            foreach (ChunkRef chunk in new FilteredChunkList(world.GetChunkManager(), opt.GetChunkFilter())) {
                 affectedChunks++;
                 world.GetChunkManager().DeleteChunk(chunk.X, chunk.Z);
             }

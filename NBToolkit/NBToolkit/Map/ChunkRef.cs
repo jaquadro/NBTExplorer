@@ -6,7 +6,38 @@ namespace NBToolkit
 {
     using NBT;
 
-    public class Chunk
+    public interface IChunk
+    {
+        bool IsPopulated { get; set; }
+
+        BlockInfo GetBlockInfo (int lx, int ly, int lz);
+
+        int GetBlockID (int lx, int ly, int lz);
+        int GetBlockData (int lx, int ly, int lz);
+        int GetBlockLight (int lx, int ly, int lz);
+        int GetBlockSkyLight (int lx, int ly, int lz);
+
+        void GetBlockID (int lx, int ly, int lz, int id);
+        void GetBlockData (int lx, int ly, int lz, int data);
+        void GetBlockLight (int lx, int ly, int lz, int light);
+        void GetBlockSkyLight (int lx, int ly, int lz, int light);
+
+        //int CountBlocks (Predicate<BlockRef> match);
+
+        int CountBlockID (int id);
+        int CountBlockData (int id, int data);
+
+        int GetHeight (int lx, int lz);
+
+        NBT_Compound GetTileEntity (int lx, int ly, int lz);
+
+        void AddTileEntity (int lx, int ly, int lz, string id, NBT_Compound data);
+        void RemoveTileEntity (int lx, int ly, int lz);
+
+        //IEnumerable<BlockRef> FilterBlocks (Predicate<BlockRef> match);
+    }
+
+    public class ChunkRef
     {
         protected int _cx;
         protected int _cz;
@@ -53,7 +84,7 @@ namespace NBToolkit
             }
         }
 
-        public Chunk (ChunkManager cm, int cx, int cz)
+        public ChunkRef (ChunkManager cm, int cx, int cz)
         {
             _chunkMan = cm;
             _cx = cx;
@@ -90,6 +121,8 @@ namespace NBToolkit
             }
 
             _nbt = r.GetChunkTree(LocalX, LocalZ);
+            ChunkVerifier cv = new ChunkVerifier(_nbt);
+            cv.Verify();
 
             return _nbt;
         }
@@ -111,6 +144,11 @@ namespace NBToolkit
             return false;
         }
 
+        public Block GetBlock (int lx, int ly, int lz)
+        {
+            return new Block(this, lx, ly, lz);
+        }
+
         public BlockRef GetBlockRef (int lx, int ly, int lz)
         {
             return new BlockRef(this, lx, ly, lz);
@@ -119,7 +157,7 @@ namespace NBToolkit
         public int GetBlockID (int x, int y, int z)
         {
             if (_blocks == null) {
-                _blocks = GetTree().Root.FindTagByName("Level").FindTagByName("Blocks").Value.ToNBTByteArray();
+                _blocks = GetTree().Root["Level"].ToNBTCompound()["Blocks"].ToNBTByteArray();
             }
 
             return _blocks.Data[x << 11 | z << 7 | y];
@@ -128,7 +166,7 @@ namespace NBToolkit
         public bool SetBlockID (int x, int y, int z, int id)
         {
             if (_blocks == null) {
-                _blocks = GetTree().Root.FindTagByName("Level").FindTagByName("Blocks").Value.ToNBTByteArray();
+                _blocks = GetTree().Root["Level"].ToNBTCompound()["Blocks"].ToNBTByteArray();
             }
 
             int index = x << 11 | z << 7 | y;
@@ -145,7 +183,7 @@ namespace NBToolkit
         public int CountBlockID (int id)
         {
             if (_blocks == null) {
-                _blocks = GetTree().Root.FindTagByName("Level").FindTagByName("Blocks").Value.ToNBTByteArray();
+                _blocks = GetTree().Root["Level"].ToNBTCompound()["Blocks"].ToNBTByteArray();
             }
 
             int c = 0;
@@ -161,7 +199,7 @@ namespace NBToolkit
         public int GetBlockData (int x, int y, int z)
         {
             if (_data == null) {
-                _data = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("Data").Value.ToNBTByteArray().Data);
+                _data = new NibbleArray(GetTree().Root["Level"].ToNBTCompound()["Data"].ToNBTByteArray().Data);
             }
 
             return _data[x << 11 | z << 7 | y];
@@ -170,7 +208,7 @@ namespace NBToolkit
         public bool SetBlockData (int x, int y, int z, int data)
         {
             if (_data == null) {
-                _data = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("Data").Value.ToNBTByteArray().Data);
+                _data = new NibbleArray(GetTree().Root["Level"].ToNBTCompound()["Data"].ToNBTByteArray().Data);
             }
 
             int index = x << 11 | z << 7 | y;
@@ -187,7 +225,7 @@ namespace NBToolkit
         public int GetBlockLight (int x, int y, int z)
         {
             if (_blockLight == null) {
-                _blockLight = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("BlockLight").Value.ToNBTByteArray().Data);
+                _blockLight = new NibbleArray(GetTree().Root["Level"].ToNBTCompound()["BlockLight"].ToNBTByteArray().Data);
             }
 
             return _blockLight[x << 11 | z << 7 | y];
@@ -196,7 +234,7 @@ namespace NBToolkit
         public bool SetBlockLight (int x, int y, int z, int light)
         {
             if (_blockLight == null) {
-                _blockLight = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("BlockLight").Value.ToNBTByteArray().Data);
+                _blockLight = new NibbleArray(GetTree().Root["Level"].ToNBTCompound()["BlockLight"].ToNBTByteArray().Data);
             }
 
             int index = x << 11 | z << 7 | y;
@@ -210,19 +248,19 @@ namespace NBToolkit
             return true;
         }
 
-        public int GetSkyLight (int x, int y, int z)
+        public int GetBlockSkyLight (int x, int y, int z)
         {
             if (_skyLight == null) {
-                _skyLight = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("SkyLight").Value.ToNBTByteArray().Data);
+                _skyLight = new NibbleArray(GetTree().Root["Level"].ToNBTCompound()["SkyLight"].ToNBTByteArray().Data);
             }
 
             return _skyLight[x << 11 | z << 7 | y];
         }
 
-        public bool SetSkyLight (int x, int y, int z, int light)
+        public bool SetBlockSkyLight (int x, int y, int z, int light)
         {
             if (_skyLight == null) {
-                _skyLight = new NibbleArray(GetTree().Root.FindTagByName("Level").FindTagByName("SkyLight").Value.ToNBTByteArray().Data);
+                _skyLight = new NibbleArray(GetTree().Root["Level"].ToNBTCompound()["SkyLight"].ToNBTByteArray().Data);
             }
 
             int index = x << 11 | z << 7 | y;
@@ -238,7 +276,34 @@ namespace NBToolkit
 
         public bool IsPopulated ()
         {
-            return GetTree().Root.FindTagByName("Level").FindTagByName("TerrainPopulated").Value.ToNBTByte().Data == 1;
+            return GetTree().Root["Level"].ToNBTCompound()["TerrainPopulated"].ToNBTByte().Data == 1;
+        }
+
+        public NBT_Compound GetTileEntity (int x, int y, int z)
+        {
+            NBT_List telist = GetTree().Root["Level"].ToNBTCompound()["TileEntities"].ToNBTList();
+
+            foreach (NBT_Compound te in telist) {
+                if (te["x"].ToNBTInt().Data == x &&
+                    te["y"].ToNBTInt().Data == y &&
+                    te["z"].ToNBTInt().Data == z) {
+                    return te;
+                }
+            }
+
+            return null;
+        }
+
+        public bool RemoveTileEntity (int x, int y, int z)
+        {
+            NBT_Compound te = GetTileEntity(x, y, z);
+            if (te == null) {
+                return false;
+            }
+
+            NBT_List telist = GetTree().Root["Level"].ToNBTCompound()["TileEntities"].ToNBTList();
+
+            return telist.Remove(te);
         }
 
         protected bool MarkDirty ()
@@ -252,22 +317,22 @@ namespace NBToolkit
             return true;
         }
 
-        public Chunk GetNorthNeighbor ()
+        public ChunkRef GetNorthNeighbor ()
         {
             return _chunkMan.GetChunk(_cx - 1, _cz);
         }
 
-        public Chunk GetSouthNeighbor ()
+        public ChunkRef GetSouthNeighbor ()
         {
             return _chunkMan.GetChunk(_cx + 1, _cz);
         }
 
-        public Chunk GetEastNeighbor ()
+        public ChunkRef GetEastNeighbor ()
         {
             return _chunkMan.GetChunk(_cx, _cz - 1);
         }
 
-        public Chunk GetWestNeighbor ()
+        public ChunkRef GetWestNeighbor ()
         {
             return _chunkMan.GetChunk(_cx, _cz + 1);
         }
