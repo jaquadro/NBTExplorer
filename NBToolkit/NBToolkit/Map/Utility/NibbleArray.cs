@@ -43,7 +43,7 @@ namespace NBToolkit
         {
             get
             {
-                return _data.Length >> 1;
+                return _data.Length << 1;
             }
         }
     }

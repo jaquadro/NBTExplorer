@@ -4,8 +4,9 @@ using System.Text;
 using System.IO;
 using System.IO.Compression;
 
-namespace NBToolkit.NBT
+namespace NBToolkit.Map.NBT
 {
+    using Map.Utility;
 
     public class NBT_Tree
     {

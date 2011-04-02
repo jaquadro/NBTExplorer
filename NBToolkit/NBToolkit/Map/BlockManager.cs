@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NBToolkit
+namespace NBToolkit.Map
 {
     public class BlockManager
     {
@@ -37,6 +37,16 @@ namespace NBToolkit
         public BlockManager (BlockManager bm)
         {
             _chunkMan = bm._chunkMan;
+        }
+
+        public virtual Block GetBlock (int x, int y, int z)
+        {
+            _cache = GetChunk(x, y, z);
+            if (_cache == null || !Check(x, y, z)) {
+                return null;
+            }
+
+            return new Block(_cache, x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
         }
 
         public virtual BlockRef GetBlockRef (int x, int y, int z)
@@ -93,8 +103,6 @@ namespace NBToolkit
             light = _cache.GetBlockSkyLight(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
             return true;
         }
-
-        public void SetBlock (int x, int y, int z, int id, int data) { }
 
         public virtual bool SetBlockID (int x, int y, int z, int id)
         {

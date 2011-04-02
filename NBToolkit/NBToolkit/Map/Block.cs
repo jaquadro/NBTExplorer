@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NBToolkit
+namespace NBToolkit.Map
 {
     using NBT;
+    using Utility;
 
     public interface IBlock
     {
@@ -13,16 +14,20 @@ namespace NBToolkit
         int Data { get; set; }
         int BlockLight { get; set; }
         int SkyLight { get; set; }
+
+        TileEntity GetTileEntity ();
+        bool SetTileEntity (TileEntity te);
+        bool ClearTileEntity ();
     }
 
-    public class Block : IBlock
+    public class Block : IBlock, ICopyable<Block>
     {
-        protected int _id;
-        protected int _data;
-        protected int _skylight;
-        protected int _blocklight;
+        private int _id;
+        private int _data;
+        private int _skylight;
+        private int _blocklight;
 
-        protected NBT_Compound _tileEntities;
+        private TileEntity _tileEntity;
 
         public BlockInfo Info
         {
@@ -32,7 +37,13 @@ namespace NBToolkit
         public int ID
         {
             get { return _id; }
-            set { _id = value; }
+            set
+            {
+                if (BlockInfo.SchemaTable[_id] != BlockInfo.SchemaTable[value]) {
+                    _tileEntity = null;
+                }
+                _id = value;
+            }
         }
 
         public int Data
@@ -64,33 +75,53 @@ namespace NBToolkit
             _data = data;
         }
 
-        public Block (Block block)
-        {
-            _id = block._id;
-            _data = block._data;
-            _skylight = block._skylight;
-            _blocklight = block._blocklight;
-        }
-
-        public Block (IBlock block)
-        {
-            _id = block.ID;
-            _data = block.Data;
-            _skylight = block.SkyLight;
-            _blocklight = block.BlockLight;
-        }
-
-        public Block (ChunkRef chunk, int lx, int ly, int lz)
+        public Block (IChunk chunk, int lx, int ly, int lz)
         {
             _id = chunk.GetBlockID(lx, ly, lz);
             _data = chunk.GetBlockData(lx, ly, lz);
             _skylight = chunk.GetBlockSkyLight(lx, ly, lz);
             _blocklight = chunk.GetBlockLight(lx, ly, lz);
+            _tileEntity = chunk.GetTileEntity(lx, ly, lz).Copy();
         }
 
-        public Block (BlockManager bm, int x, int y, int z)
-            : this(bm.GetBlockRef(x, y, z))
+        public TileEntity GetTileEntity ()
         {
+            return _tileEntity;
         }
+
+        public bool SetTileEntity (TileEntity te)
+        {
+            NBTCompoundNode schema = BlockInfo.SchemaTable[_id];
+            if (schema == null) {
+                return false;
+            }
+
+            if (te.Verify(schema) == false) {
+                return false;
+            }
+
+            _tileEntity = te;
+            return true;
+        }
+
+        public bool ClearTileEntity ()
+        {
+            _tileEntity = null;
+            return true;
+        }
+
+        #region ICopyable<Block> Members
+
+        public Block Copy ()
+        {
+            Block block = new Block(_id, _data);
+            block._blocklight = _blocklight;
+            block._skylight = _skylight;
+            block._tileEntity = _tileEntity.Copy();
+
+            return block;
+        }
+
+        #endregion
     }
 }

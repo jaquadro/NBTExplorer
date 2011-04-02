@@ -4,7 +4,8 @@ using System.Text;
 
 namespace NBToolkit
 {
-    using NBT;
+    using Map;
+    using Map.NBT;
 
     class Program
     {

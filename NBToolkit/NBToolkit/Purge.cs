@@ -5,7 +5,8 @@ using NDesk.Options;
 
 namespace NBToolkit
 {
-    using NBT;
+    using Map;
+    using Map.NBT;
 
     public class PurgeOptions : TKOptions, IChunkFilterable
     {

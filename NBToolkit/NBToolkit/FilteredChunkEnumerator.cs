@@ -4,6 +4,9 @@ using System.Text;
 
 namespace NBToolkit
 {
+    using Map;
+    using Map.NBT;
+
     public class FilteredChunkList : ChunkList
     {
         protected IChunkFilter _filter;

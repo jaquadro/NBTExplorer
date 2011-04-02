@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NBToolkit
+namespace NBToolkit.Map
 {
     public class ChunkManager
     {

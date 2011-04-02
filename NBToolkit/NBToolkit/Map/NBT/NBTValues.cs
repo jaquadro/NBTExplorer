@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NBToolkit.NBT {
+namespace NBToolkit.Map.NBT {
+
+    using Map.Utility;
 
     /// <summary>
     /// Describes the type of value held by an NBT_Tag
@@ -22,7 +24,7 @@ namespace NBToolkit.NBT {
         TAG_COMPOUND = 10
     }
 
-    public abstract class NBT_Value
+    public abstract class NBT_Value : ICopyable<NBT_Value>
     {
         virtual public NBT_Null ToNBTNull () { throw new InvalidCastException(); }
         virtual public NBT_Byte ToNBTByte () { throw new InvalidCastException(); }
@@ -37,12 +39,22 @@ namespace NBToolkit.NBT {
         virtual public NBT_Compound ToNBTCompound () { throw new InvalidCastException(); }
 
         virtual public NBT_Type GetNBTType () { return NBT_Type.TAG_END; }
+
+        public virtual NBT_Value Copy ()
+        {
+            return null;
+        }
     }
 
     public class NBT_Null : NBT_Value
     {
         override public NBT_Null ToNBTNull () { return this; }
         override public NBT_Type GetNBTType () { return NBT_Type.TAG_END; }
+
+        public override NBT_Value Copy ()
+        {
+            return new NBT_Null();
+        }
     }
 
     public class NBT_Byte : NBT_Value
@@ -63,6 +75,11 @@ namespace NBToolkit.NBT {
         public NBT_Byte (byte d)
         {
             _data = d;
+        }
+
+        public override NBT_Value Copy ()
+        {
+            return new NBT_Byte(_data);
         }
 
         public static implicit operator NBT_Byte (byte b)
@@ -96,6 +113,11 @@ namespace NBToolkit.NBT {
             _data = d;
         }
 
+        public override NBT_Value Copy ()
+        {
+            return new NBT_Short(_data);
+        }
+
         public static implicit operator NBT_Short (short s)
         {
             return new NBT_Short(s);
@@ -125,6 +147,11 @@ namespace NBToolkit.NBT {
         public NBT_Int (int d)
         {
             _data = d;
+        }
+
+        public override NBT_Value Copy ()
+        {
+            return new NBT_Int(_data);
         }
 
         public static implicit operator NBT_Int (int i)
@@ -158,6 +185,11 @@ namespace NBToolkit.NBT {
             _data = d;
         }
 
+        public override NBT_Value Copy ()
+        {
+            return new NBT_Long(_data);
+        }
+
         public static implicit operator NBT_Long (long l)
         {
             return new NBT_Long(l);
@@ -189,6 +221,11 @@ namespace NBToolkit.NBT {
             _data = d;
         }
 
+        public override NBT_Value Copy ()
+        {
+            return new NBT_Float(_data);
+        }
+
         public static implicit operator NBT_Float (float f)
         {
             return new NBT_Float(f);
@@ -218,6 +255,11 @@ namespace NBToolkit.NBT {
         public NBT_Double (double d)
         {
             _data = d;
+        }
+
+        public override NBT_Value Copy ()
+        {
+            return new NBT_Double(_data);
         }
 
         public static implicit operator NBT_Double (double d)
@@ -256,6 +298,14 @@ namespace NBToolkit.NBT {
             _data = d;
         }
 
+        public override NBT_Value Copy ()
+        {
+            byte[] arr = new byte[_data.Length];
+            _data.CopyTo(arr, 0);
+
+            return new NBT_ByteArray(arr);
+        }
+
         public byte this [int index] {
             get { return _data[index]; }
             set { _data[index] = value; }
@@ -290,6 +340,11 @@ namespace NBToolkit.NBT {
         public NBT_String (string d)
         {
             _data = d;
+        }
+
+        public override NBT_Value Copy ()
+        {
+            return new NBT_String(_data);
         }
 
         public static implicit operator NBT_String (string s)
@@ -332,6 +387,15 @@ namespace NBToolkit.NBT {
         {
             _type = type;
             _items = items;
+        }
+
+        public override NBT_Value Copy ()
+        {
+            NBT_List list = new NBT_List(_type);
+            foreach (NBT_Value item in _items) {
+                list.Add(item.Copy());
+            }
+            return list;
         }
 
         #region IList<NBT_Value> Members
@@ -433,6 +497,15 @@ namespace NBToolkit.NBT {
         public NBT_Compound ()
         {
             _tags = new Dictionary<string, NBT_Value>();
+        }
+
+        public override NBT_Value Copy ()
+        {
+            NBT_Compound list = new NBT_Compound();
+            foreach (KeyValuePair<string, NBT_Value> item in _tags) {
+                list[item.Key] = item.Value.Copy();
+            }
+            return list;
         }
 
         #region IDictionary<string,NBT_Value> Members

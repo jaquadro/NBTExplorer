@@ -5,7 +5,7 @@ using System.IO;
 using Ionic.Zlib;
 using System.Collections;
 
-namespace NBToolkit
+namespace NBToolkit.Map
 {
     public class RegionFile : IDisposable {
 

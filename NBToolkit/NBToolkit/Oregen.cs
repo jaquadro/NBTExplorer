@@ -5,7 +5,8 @@ using NDesk.Options;
 
 namespace NBToolkit
 {
-    using NBT;
+    using Map;
+    using Map.NBT;
 
     public class OregenOptions : TKOptions, IChunkFilterable
     {
@@ -186,7 +187,7 @@ namespace NBToolkit
 
             int affectedChunks = 0;
             foreach (ChunkRef chunk in new FilteredChunkList(world.GetChunkManager(), opt.GetChunkFilter())) {
-                if (chunk == null || !chunk.IsPopulated()) {
+                if (chunk == null || !chunk.IsTerrainPopulated) {
                     continue;
                 }
 
@@ -263,7 +264,7 @@ namespace NBToolkit
                 return false;
             }
 
-            int blockID = base.GetBlockID(x, y, z);
+            int blockID = _cache.GetBlockID(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
 
             if (
                 ((opt.OPT_OA) && (blockID != opt.OPT_ID)) ||

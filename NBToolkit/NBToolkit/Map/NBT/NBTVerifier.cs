@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NBToolkit.NBT
+namespace NBToolkit.Map.NBT
 {
     public delegate void MissingTagHandler (Object o, TagEventArgs e);
     public delegate void InvalidTagTypeHandler (Object o, TagEventArgs e);
@@ -28,11 +28,6 @@ namespace NBToolkit.NBT
             get { return _tagName; }
         }
 
-       /* public NBT_Tag Tag
-        {
-            get { return _tag; }
-        }*/
-
         public TagEventArgs (string tagName)
             : base()
         {
@@ -56,7 +51,7 @@ namespace NBToolkit.NBT
 
     public class NBTVerifier : INBTVerifier
     {
-        private NBT_Compound _root;
+        private NBT_Value _root;
         private NBTSchemaNode _schema;
 
         public event MissingTagHandler MissingTag;
@@ -65,7 +60,7 @@ namespace NBToolkit.NBT
 
         public NBTVerifier () { }
 
-        public NBTVerifier (NBT_Compound root, NBTSchemaNode schema)
+        public NBTVerifier (NBT_Value root, NBTSchemaNode schema)
         {
             _root = root;
             _schema = schema;
@@ -96,6 +91,11 @@ namespace NBToolkit.NBT
                 return VerifyScaler(tag, scaler);
             }
 
+            NBTStringNode str = schema as NBTStringNode;
+            if (str != null) {
+                return VerifyString(tag, str);
+            }
+
             NBTArrayNode array = schema as NBTArrayNode;
             if (array != null) {
                 return VerifyArray(tag, array);
@@ -123,6 +123,26 @@ namespace NBToolkit.NBT
 
             return true;
         }
+
+        private bool VerifyString (NBT_Value tag, NBTStringNode schema)
+        {
+            NBT_String stag = tag as NBT_String;
+            if (stag == null) {
+                OnInvalidTagType(new TagEventArgs(schema, tag));
+                return false;
+            }
+            if (schema.Length > 0 && stag.Length > schema.Length) {
+                OnInvalidTagValue(new TagEventArgs(schema, tag));
+                return false;
+            }
+            if (schema.Name != null && stag.Data != schema.Value) {
+                OnInvalidTagValue(new TagEventArgs(schema, tag));
+                return false;
+            }
+
+            return true;
+        }
+
 
         private bool VerifyArray (NBT_Value tag, NBTArrayNode schema)
         {
@@ -155,7 +175,17 @@ namespace NBToolkit.NBT
                 return false;
             }
 
-            return true;
+            bool pass = true;
+
+            // If a subschema is set, test all items in list against it
+
+            if (schema.SubSchema != null) {
+                foreach (NBT_Value v in ltag) {
+                    pass = Verify(v, schema.SubSchema) && pass;
+                }
+            }
+
+            return pass;
         }
 
         private bool VerifyCompound (NBT_Value tag, NBTCompoundNode schema)

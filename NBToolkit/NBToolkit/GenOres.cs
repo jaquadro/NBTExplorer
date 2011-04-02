@@ -4,6 +4,9 @@ using System.Text;
 
 namespace NBToolkit
 {
+    using Map;
+    using Map.NBT;
+
     public interface IGenerator
     {
         bool Generate (BlockManager blockMan, Random rand, int x, int y, int z);

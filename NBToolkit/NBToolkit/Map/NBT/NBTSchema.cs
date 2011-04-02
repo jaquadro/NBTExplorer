@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NBToolkit.NBT
+namespace NBToolkit.Map.NBT
 {
     public abstract class NBTSchemaNode
     {
@@ -35,6 +35,34 @@ namespace NBToolkit.NBT
         }
     }
 
+    public class NBTStringNode : NBTSchemaNode
+    {
+        private string _value;
+        private int _length;
+
+        public int Length
+        {
+            get { return _length; }
+        }
+
+        public string Value
+        {
+            get { return _value; }
+        }
+
+        public NBTStringNode (string name, string value)
+            : base(name)
+        {
+            _value = value;
+        }
+
+        public NBTStringNode (string name, int length)
+            : base(name)
+        {
+            _length = length;
+        }
+    }
+
     public class NBTArrayNode : NBTSchemaNode
     {
         private int _length;
@@ -61,6 +89,7 @@ namespace NBToolkit.NBT
     {
         private NBT_Type _type;
         private int _length;
+        private NBTSchemaNode _subschema;
 
         public int Length
         {
@@ -72,11 +101,15 @@ namespace NBToolkit.NBT
             get { return _type; }
         }
 
+        public NBTSchemaNode SubSchema
+        {
+            get { return _subschema; }
+        }
+
         public NBTListNode (string name, NBT_Type type)
             : base(name)
         {
             _type = type;
-            _length = 0;
         }
 
         public NBTListNode (string name, NBT_Type type, int length)
@@ -84,6 +117,21 @@ namespace NBToolkit.NBT
         {
             _type = type;
             _length = length;
+        }
+
+        public NBTListNode (string name, NBT_Type type, NBTSchemaNode subschema)
+            : base(name)
+        {
+            _type = type;
+            _subschema = subschema;
+        }
+
+        public NBTListNode (string name, NBT_Type type, int length, NBTSchemaNode subschema)
+            : base(name)
+        {
+            _type = type;
+            _length = length;
+            _subschema = subschema;
         }
     }
 
@@ -163,6 +211,10 @@ namespace NBToolkit.NBT
         public NBTCompoundNode MergeInto (NBTCompoundNode tree)
         {
             foreach (NBTSchemaNode node in _subnodes) {
+                NBTSchemaNode f = tree._subnodes.Find(n => n.Name == node.Name);
+                if (f != null) {
+                    tree.Remove(f);
+                }
                 tree.Add(node);
             }
 

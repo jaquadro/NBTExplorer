@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NBToolkit
+namespace NBToolkit.Map
 {
     public class BlockRef : IBlock
     {
-        protected ChunkRef _chunk;
+        protected IChunk _chunk;
 
         protected int _lx;
         protected int _ly;
@@ -71,7 +71,7 @@ namespace NBToolkit
             set { _chunk.SetBlockSkyLight(_lx, _ly, _lz, value); }
         }
 
-        public BlockRef (ChunkRef c, int lx, int ly, int lz)
+        public BlockRef (IChunk c, int lx, int ly, int lz)
         {
             _chunk = c;
             _lx = lx;
@@ -85,6 +85,21 @@ namespace NBToolkit
             Data = block.Data;
             BlockLight = block.BlockLight;
             SkyLight = block.SkyLight;
+        }
+
+        public TileEntity GetTileEntity ()
+        {
+            return _chunk.GetTileEntity(_lx, _ly, _lz);
+        }
+
+        public bool SetTileEntity (TileEntity te)
+        {
+            return _chunk.SetTileEntity(_lx, _ly, _lz, te);
+        }
+
+        public bool ClearTileEntity ()
+        {
+            return _chunk.ClearTileEntity(_lx, _ly, _lz);
         }
     }
 }

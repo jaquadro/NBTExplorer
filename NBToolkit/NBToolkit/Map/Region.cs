@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 
-namespace NBToolkit
+namespace NBToolkit.Map
 {
     using NBT;
 
@@ -158,6 +158,12 @@ namespace NBToolkit
             zipstr.Close();
 
             return true;
+        }
+
+        public Stream GetChunkOutStream (int lcx, int lcz)
+        {
+            RegionFile rf = GetRegionFile();
+            return rf.GetChunkDataOutputStream(lcx, lcz);
         }
 
         public bool ChunkExists (int lcx, int lcz)
