@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NBToolkit
+namespace NBToolkit.Map.Utility
 {
-    public class NibbleArray
+    public class NibbleArray : ICopyable<NibbleArray>
     {
         protected readonly byte[] _data = null;
 
@@ -46,5 +46,17 @@ namespace NBToolkit
                 return _data.Length << 1;
             }
         }
+
+        #region ICopyable<NibbleArray> Members
+
+        public NibbleArray Copy ()
+        {
+            byte[] data = new byte[_data.Length];
+            _data.CopyTo(data, 0);
+
+            return new NibbleArray(data);
+        }
+
+        #endregion
     }
 }

@@ -8,6 +8,36 @@ namespace NBToolkit.Map
 {
     using NBT;
 
+    public interface IChunkContainer
+    {
+        int GlobalX (int cx);
+        int GlobalZ (int cz);
+
+        int LocalX (int cx);
+        int LocalZ (int cz);
+
+        Chunk GetChunk (int cx, int cz);
+        ChunkRef GetChunkRef (int cx, int cz);
+
+        bool ChunkExists (int cx, int cz);
+
+        bool DeleteChunk (int cx, int cz);
+
+        bool Save ();
+        bool SaveChunk (Chunk chunk);
+
+        bool MarkChunkDirty (int cx, int cz);
+        bool MarkChunkClean (int cx, int cz);
+    }
+
+    public interface IRegion : IChunkContainer
+    {
+        int X { get; }
+        int Z { get; }
+
+        int ChunkCount ();
+    }
+
     public class Region : IDisposable
     {
         protected int _rx;
@@ -19,6 +49,16 @@ namespace NBToolkit.Map
         protected static Regex _namePattern = new Regex("r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.mcr$");
 
         protected WeakReference _regionFile;
+
+        public int X
+        {
+            get { return _rx; }
+        }
+
+        public int Z
+        {
+            get { return _rz; }
+        }
 
         public Region (RegionManager rm, int rx, int rz)
         {
@@ -41,22 +81,6 @@ namespace NBToolkit.Map
 
             if (!File.Exists(Path.Combine(_regionMan.GetRegionPath(), filename))) {
                 throw new FileNotFoundException();
-            }
-        }
-
-        public int X
-        {
-            get
-            {
-                return _rx;
-            }
-        }
-
-        public int Z
-        {
-            get
-            {
-                return _rz;
             }
         }
 
@@ -87,6 +111,20 @@ namespace NBToolkit.Map
             }
             _disposed = true;
         }
+
+        public Chunk GetChunk (int lcx, int lcz)
+        {
+            if (!ChunkExists(lcx, lcz)) {
+                return null;
+            }
+
+            return new Chunk(GetChunkTree(lcx, lcz));
+        }
+
+        //public ChunkRef GetChunkRef (int lcx, int lcz)
+        //{
+
+        //}
 
         public string GetFileName ()
         {

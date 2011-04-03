@@ -8,7 +8,7 @@ namespace NBToolkit.Map.NBT
 {
     using Map.Utility;
 
-    public class NBT_Tree
+    public class NBT_Tree : ICopyable<NBT_Tree>
     {
         private Stream _stream = null;
         private NBT_Compound _root = null;
@@ -459,6 +459,18 @@ namespace NBToolkit.Map.NBT
                 WriteValue(val);
             }
         }
+
+        #region ICopyable<NBT_Tree> Members
+
+        public NBT_Tree Copy ()
+        {
+            NBT_Tree tree = new NBT_Tree();
+            tree._root = _root.Copy() as NBT_Compound;
+
+            return tree;
+        }
+
+        #endregion
     }
 
     public class NBTException : Exception

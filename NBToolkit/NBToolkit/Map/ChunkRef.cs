@@ -27,45 +27,63 @@ namespace NBToolkit.Map
             get { return _cz; }
         }
 
-        public int LocalX
-        {
-            get { return _cx & ChunkManager.REGION_XMASK; }
-        }
-
-        public int LocalZ
-        {
-            get { return _cz & ChunkManager.REGION_ZMASK; }
-        }
-
         public ChunkRef (ChunkManager cm, int cx, int cz)
         {
             _chunkMan = cm;
             _cx = cx;
             _cz = cz;
 
-            Region r = cm.GetRegion(cx, cz);
-            if (r == null || !r.ChunkExists(LocalX, LocalZ)) {
+            if (!_chunkMan.ChunkExists(cx, cz)) {
                 throw new MissingChunkException();
             }
+        }
+
+        public int GlobalX (int x)
+        {
+            return _cx * BlockManager.CHUNK_XLEN + x;
+        }
+
+        public int GlobalY (int y)
+        {
+            return y;
+        }
+
+        public int GlobalZ (int z)
+        {
+            return _cz * BlockManager.CHUNK_ZLEN + z;
+        }
+
+        public int LocalX (int x)
+        {
+            return x;
+        }
+
+        public int LocalY (int y)
+        {
+            return y;
+        }
+
+        public int LocalZ (int z)
+        {
+            return z;
         }
 
         private Chunk GetChunk ()
         {
             if (_chunk == null) {
-                _chunk = new Chunk(GetTree());
+                _chunk = _chunkMan.GetChunk(_cx, _cz);
             }
             return _chunk;
         }
 
-        private NBT_Tree GetTree ()
+        /*private NBT_Tree GetTree ()
         {
-            Region r = _chunkMan.GetRegion(_cx, _cz);
-            if (r == null || !r.ChunkExists(LocalX, LocalZ)) {
+            if (!_chunkMan.ChunkExists(_cx, _cz)) {
                 throw new MissingChunkException();
             }
 
             return r.GetChunkTree(LocalX, LocalZ);
-        }
+        }*/
 
         private bool MarkDirty ()
         {
@@ -74,11 +92,11 @@ namespace NBToolkit.Map
             }
 
             _dirty = true;
-            _chunkMan.MarkChunkDirty(this);
+            _chunkMan.MarkChunkDirty(_cx, _cz);
             return true;
         }
 
-        public bool Save ()
+        /*public bool Save ()
         {
             if (_dirty) {
                 Region r = _chunkMan.GetRegion(_cx, _cz);
@@ -93,26 +111,46 @@ namespace NBToolkit.Map
                 return false;
             }
             return true;
-        }
+        }*/
 
         public ChunkRef GetNorthNeighbor ()
         {
-            return _chunkMan.GetChunk(_cx - 1, _cz);
+            return _chunkMan.GetChunkRef(_cx - 1, _cz);
         }
 
         public ChunkRef GetSouthNeighbor ()
         {
-            return _chunkMan.GetChunk(_cx + 1, _cz);
+            return _chunkMan.GetChunkRef(_cx + 1, _cz);
         }
 
         public ChunkRef GetEastNeighbor ()
         {
-            return _chunkMan.GetChunk(_cx, _cz - 1);
+            return _chunkMan.GetChunkRef(_cx, _cz - 1);
         }
 
         public ChunkRef GetWestNeighbor ()
         {
-            return _chunkMan.GetChunk(_cx, _cz + 1);
+            return _chunkMan.GetChunkRef(_cx, _cz + 1);
+        }
+
+        public Chunk GetChunkCopy ()
+        {
+            return GetChunk().Copy();
+        }
+
+        public Chunk GetChunkRef ()
+        {
+            Chunk chunk = GetChunk();
+            _chunk = null;
+
+            return chunk;
+        }
+
+        public void SetChunkRef (Chunk chunk)
+        {
+            _chunk = chunk;
+            _chunk.SetLocation(_cx, _cz);
+            MarkDirty();
         }
 
         #region IChunk Members
@@ -154,6 +192,11 @@ namespace NBToolkit.Map
         public BlockInfo GetBlockInfo (int lx, int ly, int lz)
         {
  	        return GetChunk().GetBlockInfo(lx, ly, lz);
+        }
+
+        public void SetBlock (int lx, int ly, int lz, Block block)
+        {
+            GetChunk().SetBlock(lx, ly, lz, block);
         }
 
         public int GetBlockID (int lx, int ly, int lz)

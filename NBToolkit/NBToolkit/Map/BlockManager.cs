@@ -4,7 +4,16 @@ using System.Text;
 
 namespace NBToolkit.Map
 {
-    public class BlockManager
+    /*public interface IBlockManager : IBlockContainer
+    {
+        Block GetBlock (int x, int y, int z);
+        BlockRef GetBlockRef (int x, int y, int z);
+        BlockInfo GetBlockInfo (int x, int y, int z);
+
+        bool SetBlock (int x, int y, int z, Block block);
+    }*/
+
+    public class BlockManager : IBlockContainer
     {
         public const int MIN_X = -32000000;
         public const int MAX_X = 32000000;
@@ -25,6 +34,8 @@ namespace NBToolkit.Map
         public const int CHUNK_YMASK = 0x7F;
         public const int CHUNK_ZMASK = 0xF;
 
+        public static bool EnforceDataLimits = true;
+
         protected ChunkManager _chunkMan;
 
         protected ChunkRef _cache;
@@ -37,6 +48,36 @@ namespace NBToolkit.Map
         public BlockManager (BlockManager bm)
         {
             _chunkMan = bm._chunkMan;
+        }
+
+        public int GlobalX (int x)
+        {
+            return x;
+        }
+
+        public int GlobalY (int y)
+        {
+            return y;
+        }
+
+        public int GlobalZ (int z)
+        {
+            return z;
+        }
+
+        public int LocalX (int x)
+        {
+            return x & CHUNK_XMASK;
+        }
+
+        public int LocalY (int y)
+        {
+            return y & CHUNK_YMASK;
+        }
+
+        public int LocalZ (int z)
+        {
+            return z & CHUNK_ZMASK;
         }
 
         public virtual Block GetBlock (int x, int y, int z)
@@ -56,52 +97,67 @@ namespace NBToolkit.Map
                 return null;
             }
 
-            return new BlockRef(_cache, x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
+            return new BlockRef(_cache, x, y, z);
         }
-        
-        public virtual bool GetBlockID (int x, int y, int z, out int id)
+
+        public virtual BlockInfo GetBlockInfo (int x, int y, int z)
         {
             _cache = GetChunk(x, y, z);
             if (_cache == null || !Check(x, y, z)) {
-                id = 0;
-                return false;
+                return null;
             }
 
-            id = _cache.GetBlockID(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
-            return true;
+            return _cache.GetBlockInfo(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
         }
 
-        public virtual bool GetBlockData (int x, int y, int z, out int data) {
+        public virtual int GetBlockID (int x, int y, int z)
+        {
             _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
-                data = 0;
-                return false;
+            if (_cache == null) {
+                return 0;
             }
 
-            data = _cache.GetBlockData(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
-            return true;
+            return _cache.GetBlockID(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
         }
 
-        public virtual bool GetBlockLight (int x, int y, int z, out int light) {
+        public virtual int GetBlockData (int x, int y, int z)
+        {
             _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
-                light = 0;
-                return false;
+            if (_cache == null) {
+                return 0;
             }
 
-            light = _cache.GetBlockLight(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
-            return true;
+            return _cache.GetBlockData(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
         }
 
-        public virtual bool GetBlockSkyLight (int x, int y, int z, out int light) {
+        public virtual int GetBlockLight (int x, int y, int z)
+        {
             _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
-                light = 0;
-                return false;
+            if (_cache == null) {
+                return 0;
             }
 
-            light = _cache.GetBlockSkyLight(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
-            return true;
+            return _cache.GetBlockLight(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
+        }
+
+        public virtual int GetBlockSkyLight (int x, int y, int z)
+        {
+            _cache = GetChunk(x, y, z);
+            if (_cache == null) {
+                return 0;
+            }
+
+            return _cache.GetBlockSkyLight(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
+        }
+
+        public virtual void SetBlock (int x, int y, int z, Block block)
+        {
+            _cache = GetChunk(x, y, z);
+            if (_cache == null || !Check(x, y, z)) {
+                return;
+            }
+
+            _cache.SetBlock(x & CHUNK_XMASK, y, z & CHUNK_ZMASK, block);
         }
 
         public virtual bool SetBlockID (int x, int y, int z, int id)
@@ -124,11 +180,61 @@ namespace NBToolkit.Map
             return _cache.SetBlockData(x & CHUNK_XMASK, y, z & CHUNK_ZMASK, data);
         }
 
-        public ChunkRef GetChunk (int x, int y, int z)
+        public bool SetBlockLight (int x, int y, int z, int light)
+        {
+            _cache = GetChunk(x, y, z);
+            if (_cache == null || !Check(x, y, z)) {
+                return false;
+            }
+
+            return _cache.SetBlockID(x & CHUNK_XMASK, y, z & CHUNK_ZMASK, light);
+        }
+
+        public bool SetBlockSkyLight (int x, int y, int z, int light)
+        {
+            _cache = GetChunk(x, y, z);
+            if (_cache == null || !Check(x, y, z)) {
+                return false;
+            }
+
+            return _cache.SetBlockSkyLight(x & CHUNK_XMASK, y, z & CHUNK_ZMASK, light);
+        }
+
+        public virtual TileEntity GetTileEntity (int x, int y, int z)
+        {
+            _cache = GetChunk(x, y, z);
+            if (_cache == null || !Check(x, y, z)) {
+                return null;
+            }
+
+            return _cache.GetTileEntity(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
+        }
+
+        public virtual bool SetTileEntity (int x, int y, int z, TileEntity te)
+        {
+            _cache = GetChunk(x, y, z);
+            if (_cache == null || !Check(x, y, z)) {
+                return false;
+            }
+
+            return _cache.SetTileEntity(x & CHUNK_XMASK, y, z & CHUNK_ZMASK, te);
+        }
+
+        public virtual bool ClearTileEntity (int x, int y, int z)
+        {
+            _cache = GetChunk(x, y, z);
+            if (_cache == null || !Check(x, y, z)) {
+                return false;
+            }
+
+            return _cache.ClearTileEntity(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
+        }
+
+        protected ChunkRef GetChunk (int x, int y, int z)
         {
             x >>= CHUNK_XLOG;
             z >>= CHUNK_ZLOG;
-            return _chunkMan.GetChunk(x, z);
+            return _chunkMan.GetChunkRef(x, z);
         }
 
         /// <summary>

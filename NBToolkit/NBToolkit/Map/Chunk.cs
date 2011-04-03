@@ -4,8 +4,41 @@ using System.IO;
 namespace NBToolkit.Map
 {
     using NBT;
+    using Utility;
 
-    public interface IChunk
+    public interface IBlockContainer
+    {
+        int GlobalX (int x);
+        int GlobalY (int y);
+        int GlobalZ (int z);
+
+        int LocalX (int x);
+        int LocalY (int y);
+        int LocalZ (int z);
+
+        Block GetBlock (int lx, int ly, int lz);
+        BlockRef GetBlockRef (int lx, int ly, int lz);
+
+        BlockInfo GetBlockInfo (int lx, int ly, int lz);
+
+        int GetBlockID (int lx, int ly, int lz);
+        int GetBlockData (int lx, int ly, int lz);
+        int GetBlockLight (int lx, int ly, int lz);
+        int GetBlockSkyLight (int lx, int ly, int lz);
+
+        void SetBlock (int lx, int ly, int lz, Block block);
+
+        bool SetBlockID (int lx, int ly, int lz, int id);
+        bool SetBlockData (int lx, int ly, int lz, int data);
+        bool SetBlockLight (int lx, int ly, int lz, int light);
+        bool SetBlockSkyLight (int lx, int ly, int lz, int light);
+
+        TileEntity GetTileEntity (int lx, int ly, int lz);
+        bool SetTileEntity (int lx, int ly, int lz, TileEntity te);
+        bool ClearTileEntity (int lx, int ly, int lz);
+    }
+
+    public interface IChunk : IBlockContainer
     {
         int X { get; }
         int Z { get; }
@@ -14,31 +47,13 @@ namespace NBToolkit.Map
 
         bool Save (Stream outStream);
 
-        Block GetBlock (int lx, int ly, int lz);
-        BlockRef GetBlockRef (int lx, int ly, int lz);
-        BlockInfo GetBlockInfo (int lx, int ly, int lz);
-
-        int GetBlockID (int lx, int ly, int lz);
-        int GetBlockData (int lx, int ly, int lz);
-        int GetBlockLight (int lx, int ly, int lz);
-        int GetBlockSkyLight (int lx, int ly, int lz);
-
-        bool SetBlockID (int lx, int ly, int lz, int id);
-        bool SetBlockData (int lx, int ly, int lz, int data);
-        bool SetBlockLight (int lx, int ly, int lz, int light);
-        bool SetBlockSkyLight (int lx, int ly, int lz, int light);
-
         int CountBlockID (int id);
         int CountBlockData (int id, int data);
 
         int GetHeight (int lx, int lz);
-
-        TileEntity GetTileEntity (int lx, int ly, int lz);
-        bool SetTileEntity (int lx, int ly, int lz, TileEntity te);
-        bool ClearTileEntity (int lx, int ly, int lz);
     }
 
-    public class Chunk : IChunk
+    public class Chunk : IChunk, ICopyable<Chunk>
     {
         private NBT_Tree _tree;
 
@@ -134,6 +149,36 @@ namespace NBToolkit.Map
             _tree.Root.Add("Level", level);
         }
 
+        public int GlobalX (int x)
+        {
+            return _cx * BlockManager.CHUNK_XLEN + x;
+        }
+
+        public int GlobalY (int y)
+        {
+            return y;
+        }
+
+        public int GlobalZ (int z)
+        {
+            return _cz * BlockManager.CHUNK_ZLEN + z;
+        }
+
+        public int LocalX (int x)
+        {
+            return x;
+        }
+
+        public int LocalY (int y)
+        {
+            return y;
+        }
+
+        public int LocalZ (int z)
+        {
+            return z;
+        }
+
         public bool Save (Stream outStream)
         {
             if (outStream == null || !outStream.CanWrite) {
@@ -159,6 +204,19 @@ namespace NBToolkit.Map
         public BlockInfo GetBlockInfo (int lx, int ly, int lz)
         {
             return BlockInfo.BlockTable[GetBlockID(lx, ly, lz)];
+        }
+
+        public void SetBlock (int lx, int ly, int lz, Block block)
+        {
+            int index = lx << 11 | lz << 7 | ly;
+
+            SetBlockID(lx, ly, lz, block.ID);
+            SetBlockData(lx, ly, lz, block.Data);
+
+            _blockLight[index] = block.BlockLight;
+            _skyLight[index] = block.SkyLight;
+
+            SetTileEntity(lx, ly, lz, block.GetTileEntity().Copy());
         }
 
         public int GetBlockID (int lx, int ly, int lz)
@@ -197,17 +255,19 @@ namespace NBToolkit.Map
 
             // Update height map
 
-            int tileHeight = GetHeight(lx, lz);
-            int newOpacity = BlockInfo.BlockTable[id].Opacity;
+            if (BlockInfo.BlockTable[id] != null) {
+                int tileHeight = GetHeight(lx, lz);
+                int newOpacity = BlockInfo.BlockTable[id].Opacity;
 
-            if (ly > tileHeight && newOpacity > BlockInfo.MIN_OPACITY) {
-                _heightMap[lz << 4 | lx] = (byte)ly;
-            }
-            else if (ly == tileHeight && newOpacity == BlockInfo.MIN_OPACITY) {
-                for (int i = ly - 1; i >= 0; i--) {
-                    if (BlockInfo.BlockTable[GetBlockID(lx, i, lz)].Opacity > BlockInfo.MIN_OPACITY) {
-                        _heightMap[lz << 4 | lx] = (byte)i;
-                        break;
+                if (ly > tileHeight && newOpacity > BlockInfo.MIN_OPACITY) {
+                    _heightMap[lz << 4 | lx] = (byte)ly;
+                }
+                else if (ly == tileHeight && newOpacity == BlockInfo.MIN_OPACITY) {
+                    for (int i = ly - 1; i >= 0; i--) {
+                        if (BlockInfo.BlockTable[GetBlockID(lx, i, lz)].Opacity > BlockInfo.MIN_OPACITY) {
+                            _heightMap[lz << 4 | lx] = (byte)i;
+                            break;
+                        }
                     }
                 }
             }
@@ -223,6 +283,12 @@ namespace NBToolkit.Map
             int index = lx << 11 | lz << 7 | ly;
             if (_data[index] == data) {
                 return false;
+            }
+
+            if (BlockManager.EnforceDataLimits && BlockInfo.BlockTable[_blocks[index]] != null) {
+                if (!BlockInfo.BlockTable[_blocks[index]].TestData(data)) {
+                    return false;
+                }
             }
 
             _data[index] = data;
@@ -360,5 +426,14 @@ namespace NBToolkit.Map
         {
             return _cz * BlockManager.CHUNK_ZLEN + lz;
         }
+
+        #region ICopyable<Chunk> Members
+
+        public Chunk Copy ()
+        {
+            return new Chunk(_tree.Copy());
+        }
+
+        #endregion
     }
 }

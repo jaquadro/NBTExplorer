@@ -49,7 +49,15 @@ namespace NBToolkit.Map
         public int Data
         {
             get { return _data; }
-            set { _data = value; }
+            set
+            {
+                if (BlockManager.EnforceDataLimits && BlockInfo.BlockTable[_id] != null) {
+                    if (!BlockInfo.BlockTable[_id].TestData(value)) {
+                        return;
+                    }
+                }
+                _data = value;
+            }
         }
 
         public int SkyLight

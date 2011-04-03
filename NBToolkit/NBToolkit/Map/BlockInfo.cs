@@ -6,11 +6,95 @@ namespace NBToolkit.Map
 {
     using NBT;
 
-    public interface IBlockTileEntity
+    public enum BlockType
     {
-        string TileEntityName { get; }
-
-        NBTCompoundNode TileEntitySchema { get; }
+        AIR = 0,
+        STONE = 1,
+        GRASS = 2,
+        DIRT = 3,
+        COBBLESTONE = 4,
+        WOOD_PLANK = 5,
+        SAPLING = 6,
+        BEDROCK = 7,
+        WATER = 8,
+        STATIONARY_WATER = 9,
+        LAVA = 10,
+        STATIONARY_LAVA = 11,
+        SAND = 12,
+        GRAVEL = 13,
+        GOLD_ORE = 14,
+        IRON_ORE = 15,
+        COAL_ORE = 16,
+        WOOD = 17,
+        LEAVES = 18,
+        SPONGE = 19,
+        GLASS = 20,
+        LAPIS_ORE = 21,
+        LAPIS_BLOCK = 22,
+        DISPENSER = 23,
+        SANDSTONE = 24,
+        NOTE_BLOCK = 25,
+        BED = 26,
+        WOOL = 35,
+        YELLOW_FLOWER = 37,
+        RED_ROSE = 38,
+        BROWN_MUSHROOM = 39,
+        RED_MUSHROOM = 40,
+        GOLD_BLOCK = 41,
+        IRON_BLOCK = 42,
+        DOUBLE_SLAB = 43,
+        SLAB = 44,
+        BRICK_BLOCK = 45,
+        TNT = 46,
+        BOOKSHELF = 47,
+        MOSS_STONE = 48,
+        OBSIDIAN = 49,
+        TORCH = 50,
+        FIRE = 51,
+        MONSTER_SPAWNER = 52,
+        WOOD_STAIRS = 53,
+        CHEST = 54,
+        REDSTONE_WIRE = 55,
+        DIAMOND_ORE = 56,
+        DIAMOND_BLOCK = 57,
+        CRAFTING_TABLE = 58,
+        CROPS = 59,
+        FARMLAND = 60,
+        FURNACE = 61,
+        BURNING_FURNACE = 62,
+        SIGN_POST = 63,
+        WOOD_DOOR = 64,
+        LADDER = 65,
+        RAILS = 66,
+        COBBLESTONE_STAIRS = 67,
+        WALL_SIGN = 68,
+        LEVER = 69,
+        STONE_PLATE = 70,
+        IRON_DOOR = 71,
+        WOOD_PLATE = 72,
+        REDSTONE_ORE = 73,
+        GLOWING_REDSTONE_ORE = 74,
+        REDSTONE_TORCH_OFF = 75,
+        REDSTONE_TORCH_ON = 76,
+        STONE_BUTTON = 77,
+        SNOW = 78,
+        ICE = 79,
+        SNOW_BLOCK = 80,
+        CACTUS = 81,
+        CLAY_BLOCK = 82,
+        SUGAR_CANE = 83,
+        JUKEBOX = 84,
+        FENCE = 85,
+        PUMPKIN = 86,
+        NETHERRACK = 87,
+        SOUL_SAND = 88,
+        GLOWSTONE_BLOCK = 89,
+        PORTAL = 90,
+        JACK_O_LANTERN = 91,
+        CAKE_BLOCK = 92,
+        REDSTONE_REPEATER_ON = 93,
+        REDSTONE_REPEATER_OFF = 94,
+        LOCKED_CHEST = 95,
     }
 
     public class BlockInfo
@@ -43,10 +127,47 @@ namespace NBToolkit.Map
             }
         }
 
+        private class DataLimits
+        {
+            private int _low;
+            private int _high;
+            private int _bitmask;
+
+            public int Low
+            {
+                get { return _low; }
+            }
+
+            public int High
+            {
+                get { return _high; }
+            }
+
+            public int Bitmask
+            {
+                get { return _bitmask; }
+            }
+
+            public DataLimits (int low, int high, int bitmask)
+            {
+                _low = low;
+                _high = high;
+                _bitmask = bitmask;
+            }
+
+            public bool Test (int data)
+            {
+                int rdata = data & ~_bitmask;
+                return rdata >= _low && rdata <= _high;
+            }
+        }
+
         private int _id = 0;
         private string _name = "";
         private int _opacity = MAX_OPACITY;
         private int _luminance = MIN_LUMINANCE;
+
+        private DataLimits _dataLimits;
 
         public static ItemCache<BlockInfo> BlockTable;
 
@@ -103,16 +224,19 @@ namespace NBToolkit.Map
             return this;
         }
 
-        protected static NBTCompoundNode tileEntitySchema = new NBTCompoundNode("")
+        public BlockInfo SetDataLimits (int low, int high, int bitmask)
         {
-            new NBTScalerNode("id", NBT_Type.TAG_STRING),
-            new NBTScalerNode("x", NBT_Type.TAG_INT),
-            new NBTScalerNode("y", NBT_Type.TAG_INT),
-            new NBTScalerNode("z", NBT_Type.TAG_INT),
-        };
+            _dataLimits = new DataLimits(low, high, bitmask);
+            return this;
+        }
 
-        public const int AIR = 0;
-        public const int FURNACE = 61;
+        public bool TestData (int data)
+        {
+            if (_dataLimits == null) {
+                return true;
+            }
+            return _dataLimits.Test(data);
+        }
 
         public static BlockInfo Air;
         public static BlockInfo Stone;
@@ -276,7 +400,7 @@ namespace NBToolkit.Map
             Lever = new BlockInfo(69, "Lever").SetOpacity(0);
             StonePlate = new BlockInfo(70, "Stone Pressure Plate").SetOpacity(0);
             IronDoor = new BlockInfo(71, "Iron Door").SetOpacity(0);
-            WoodPlank = new BlockInfo(72, "Wooden Pressure Plate").SetOpacity(0);
+            WoodPlate = new BlockInfo(72, "Wooden Pressure Plate").SetOpacity(0);
             RedstoneOre = new BlockInfo(73, "Redstone Ore");
             GlowRedstoneOre = new BlockInfo(74, "Glowing Redstone Ore").SetLuminance(9);
             RedstoneTorch = new BlockInfo(75, "Redstone Torch (Off)").SetOpacity(0);
@@ -306,6 +430,8 @@ namespace NBToolkit.Map
                 }
             }
 
+            // Set Tile Entity Data
+
             Dispenser.SetTileEntity("Trap", TileEntity.TrapSchema);
             NoteBlock.SetTileEntity("Music", TileEntity.MusicSchema);
             MonsterSpawner.SetTileEntity("MonsterSpawner", TileEntity.MonsterSpawnerSchema);
@@ -314,6 +440,45 @@ namespace NBToolkit.Map
             BurningFurnace.SetTileEntity("Furnace", TileEntity.FurnaceSchema);
             SignPost.SetTileEntity("Sign", TileEntity.SignSchema);
             WallSign.SetTileEntity("Sign", TileEntity.SignSchema);
+
+            // Set Data Limits
+
+            Wood.SetDataLimits(0, 2, 0);
+            Leaves.SetDataLimits(0, 2, 0);
+            Jukebox.SetDataLimits(0, 2, 0);
+            Sapling.SetDataLimits(0, 15, 0);
+            Cactus.SetDataLimits(0, 15, 0);
+            SugarCane.SetDataLimits(0, 15, 0);
+            Water.SetDataLimits(0, 7, 0x8);
+            Lava.SetDataLimits(0, 7, 0x8);
+            Crops.SetDataLimits(0, 7, 0);
+            Wool.SetDataLimits(0, 15, 0);
+            Torch.SetDataLimits(1, 5, 0);
+            RedstoneTorch.SetDataLimits(0, 5, 0);
+            RedstoneTorchOn.SetDataLimits(0, 5, 0);
+            Rails.SetDataLimits(0, 9, 0);
+            Ladder.SetDataLimits(2, 5, 0);
+            WoodStairs.SetDataLimits(0, 3, 0);
+            CobbleStairs.SetDataLimits(0, 3, 0);
+            Lever.SetDataLimits(0, 6, 0x8);
+            WoodDoor.SetDataLimits(0, 3, 0xC);
+            IronDoor.SetDataLimits(0, 3, 0xC);
+            StoneButton.SetDataLimits(1, 4, 0x8);
+            SignPost.SetDataLimits(0, 15, 0);
+            WallSign.SetDataLimits(2, 5, 0);
+            Furnace.SetDataLimits(2, 5, 0);
+            BurningFurnace.SetDataLimits(2, 5, 0);
+            Dispenser.SetDataLimits(2, 5, 0);
+            Pumpkin.SetDataLimits(0, 3, 0);
+            JackOLantern.SetDataLimits(0, 3, 0);
+            StonePlate.SetDataLimits(0, 0, 0x1);
+            WoodPlate.SetDataLimits(0, 0, 0x1);
+            Slab.SetDataLimits(0, 3, 0);
+            DoubleSlab.SetDataLimits(0, 3, 0);
+            Cactus.SetDataLimits(0, 5, 0);
+            Bed.SetDataLimits(0, 3, 0x8);
+            RedstoneRepeater.SetDataLimits(0, 0, 0xF);
+            RedstoneRepeaterOn.SetDataLimits(0, 0, 0xF);
         }
     }
 

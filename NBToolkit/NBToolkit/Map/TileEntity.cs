@@ -16,6 +16,15 @@ namespace NBToolkit.Map
             get { return _tree; }
         }
 
+        public TileEntity (string id)
+        {
+            _tree = new NBT_Compound();
+            _tree["id"] = new NBT_String(id);
+            _tree["x"] = new NBT_Int();
+            _tree["y"] = new NBT_Int();
+            _tree["z"] = new NBT_Int();
+        }
+
         public TileEntity (NBT_Compound tree)
         {
             _tree = tree;
@@ -77,7 +86,7 @@ namespace NBToolkit.Map
             new NBTStringNode("id", "Furnace"),
             new NBTScalerNode("BurnTime", NBT_Type.TAG_SHORT),
             new NBTScalerNode("CookTime", NBT_Type.TAG_SHORT),
-            new NBTListNode("Items", NBT_Type.TAG_COMPOUND),
+            new NBTListNode("Items", NBT_Type.TAG_COMPOUND, InventorySchema),
         });
 
         public static readonly NBTCompoundNode SignSchema = BaseSchema.MergeInto(new NBTCompoundNode("")

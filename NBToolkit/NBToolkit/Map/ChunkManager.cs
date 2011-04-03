@@ -4,6 +4,26 @@ using System.Text;
 
 namespace NBToolkit.Map
 {
+    public interface IChunkManager
+    {
+        Chunk GetChunk (int cx, int cz);
+        ChunkRef GetChunkRef (int cx, int cz);
+
+        bool ChunkExists (int cx, int cz);
+
+        bool MarkChunkDirty (int cx, int cz);
+        bool MarkChunkClean (int cx, int cz);
+
+        int Save ();
+        bool Save (Chunk chunk);
+
+        ChunkRef CreateChunk (int cx, int cz);
+        bool DeleteChunk (int cx, int cz);
+
+        bool CopyChunk (int cx1, int cz1, int cx2, int cz2);
+        bool MoveChunk (int cx1, int cz1, int cx2, int cz2);
+    }
+
     public class ChunkManager
     {
         public const int REGION_XLEN = 32;
@@ -27,7 +47,20 @@ namespace NBToolkit.Map
             _dirty = new Dictionary<ChunkKey, ChunkRef>();
         }
 
-        public ChunkRef GetChunk (int cx, int cz)
+        public Chunk GetChunk (int cx, int cz)
+        {
+            int lcx = cx & REGION_XMASK;
+            int lcz = cz & REGION_ZMASK;
+
+            Region r = GetRegion(cx, cz);
+            if (r == null || !r.ChunkExists(lcx, lcz)) {
+                return null;
+            }
+
+            return new Chunk(r.GetChunkTree(lcx, lcz));
+        }
+
+        public ChunkRef GetChunkRef (int cx, int cz)
         {
             ChunkKey k = new ChunkKey(cx, cz);
 
@@ -55,45 +88,49 @@ namespace NBToolkit.Map
             }
         }
 
-        public ChunkRef GetChunkInRegion (Region r, int lcx, int lcz)
+        public bool ChunkExists (int cx, int cz)
         {
-            int cx = r.X * REGION_XLEN + lcx;
-            int cz = r.Z * REGION_ZLEN + lcz;
-            return GetChunk(cx, cz);
-        }
+            Region r = GetRegion(cx, cz);
+            if (r == null) {
+                return false;
+            }
 
-        public Region GetRegion (int cx, int cz)
-        {
-            cx >>= REGION_XLOG;
-            cz >>= REGION_ZLOG;
-            return _regionMan.GetRegion(cx, cz);
+            return r.ChunkExists(cx & REGION_XMASK, cz & REGION_ZMASK);
         }
 
         public bool MarkChunkDirty (int cx, int cz)
         {
             ChunkKey k = new ChunkKey(cx, cz);
             if (!_dirty.ContainsKey(k)) {
-                _dirty.Add(k, GetChunk(cx, cz));
+                _dirty.Add(k, GetChunkRef(cx, cz));
                 return true;
             }
             return false;
         }
 
-        public bool MarkChunkDirty (ChunkRef chunk)
+        public bool MarkChunkClean (int cx, int cz)
         {
-            ChunkKey k = new ChunkKey(chunk.X, chunk.Z);
-            if (!_dirty.ContainsKey(k)) {
-                _dirty.Add(k, chunk);
+            ChunkKey k = new ChunkKey(cx, cz);
+            if (_dirty.ContainsKey(k)) {
+                _dirty.Remove(k);
                 return true;
             }
             return false;
         }
 
-        public int SaveDirtyChunks ()
+        public int Save ()
         {
             int saved = 0;
             foreach (ChunkRef c in _dirty.Values) {
-                if (c.Save()) {
+                int lcx = ChunkLocalX(c.X);
+                int lcz = ChunkLocalZ(c.Z);
+
+                Region r = GetRegion(c.X, c.Z);
+                if (r == null || !r.ChunkExists(lcx, lcz)) {
+                    throw new MissingChunkException();
+                }
+
+                if (c.Save(r.GetChunkOutStream(lcx, lcz))) {
                     saved++;
                 }
             }
@@ -102,9 +139,14 @@ namespace NBToolkit.Map
             return saved;
         }
 
-        public RegionManager GetRegionManager ()
+        public bool Save (Chunk chunk)
         {
-            return _regionMan;
+            Region r = GetRegion(chunk.X, chunk.Z);
+            if (r == null) {
+                return false;
+            }
+
+            return chunk.Save(r.GetChunkOutStream(chunk.X & REGION_XLEN, chunk.Z & REGION_ZLEN));
         }
 
         public bool DeleteChunk (int cx, int cz)
@@ -127,6 +169,35 @@ namespace NBToolkit.Map
             }
 
             return true;
+        }
+
+        public RegionManager GetRegionManager ()
+        {
+            return _regionMan;
+        }
+
+        public ChunkRef GetChunkRefInRegion (Region r, int lcx, int lcz)
+        {
+            int cx = r.X * REGION_XLEN + lcx;
+            int cz = r.Z * REGION_ZLEN + lcz;
+            return GetChunkRef(cx, cz);
+        }
+
+        protected int ChunkLocalX (int cx)
+        {
+            return cx & REGION_XMASK;
+        }
+
+        protected int ChunkLocalZ (int cz)
+        {
+            return cz & REGION_ZMASK;
+        }
+
+        protected Region GetRegion (int cx, int cz)
+        {
+            cx >>= REGION_XLOG;
+            cz >>= REGION_ZLOG;
+            return _regionMan.GetRegion(cx, cz);
         }
     }
 

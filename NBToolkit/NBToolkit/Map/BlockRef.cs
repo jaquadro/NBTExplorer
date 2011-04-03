@@ -6,6 +6,107 @@ namespace NBToolkit.Map
 {
     public class BlockRef : IBlock
     {
+        protected IBlockContainer _container;
+
+        protected int _x;
+        protected int _y;
+        protected int _z;
+
+        public int X
+        {
+            get { return _container.GlobalX(_x); }
+        }
+
+        public int Y
+        {
+            get { return _container.GlobalY(_y); }
+        }
+
+        public int Z
+        {
+            get { return _container.GlobalZ(_z); }
+        }
+
+        public int LocalX
+        {
+            get { return _container.LocalX(_x); }
+        }
+
+        public int LocalY
+        {
+            get { return _container.LocalZ(_z); }
+        }
+
+        public int LocalZ
+        {
+            get { return _z; }
+        }
+
+        public BlockInfo Info
+        {
+            get { return BlockInfo.BlockTable[_container.GetBlockID(_x, _y, _z)]; }
+        }
+
+        public int ID
+        {
+            get { return _container.GetBlockID(_x, _y, _z); }
+            set { _container.SetBlockID(_x, _y, _z, value); }
+        }
+
+        public int Data
+        {
+            get { return _container.GetBlockData(_x, _y, _z); }
+            set { _container.SetBlockData(_x, _y, _z, value); }
+        }
+
+        public int BlockLight
+        {
+            get { return _container.GetBlockLight(_x, _y, _z); }
+            set { _container.SetBlockLight(_x, _y, _z, value); }
+        }
+
+        public int SkyLight
+        {
+            get { return _container.GetBlockSkyLight(_x, _y, _z); }
+            set { _container.SetBlockSkyLight(_x, _y, _z, value); }
+        }
+
+        public BlockRef (IBlockContainer container, int x, int y, int z)
+        {
+            _container = container;
+            _x = x;
+            _y = y;
+            _z = z;
+        }
+
+        public void CopyFrom (IBlock block)
+        {
+            ID = block.ID;
+            Data = block.Data;
+            BlockLight = block.BlockLight;
+            SkyLight = block.SkyLight;
+
+            SetTileEntity(block.GetTileEntity().Copy());
+        }
+
+        public TileEntity GetTileEntity ()
+        {
+            return _container.GetTileEntity(_x, _y, _z);
+        }
+
+        public bool SetTileEntity (TileEntity te)
+        {
+            return _container.SetTileEntity(_x, _y, _z, te);
+        }
+
+        public bool ClearTileEntity ()
+        {
+            return _container.ClearTileEntity(_x, _y, _z);
+        }
+    }
+
+    /*public class BlockRef : IBlock
+    {
         protected IChunk _chunk;
 
         protected int _lx;
@@ -101,5 +202,5 @@ namespace NBToolkit.Map
         {
             return _chunk.ClearTileEntity(_lx, _ly, _lz);
         }
-    }
+    }*/
 }

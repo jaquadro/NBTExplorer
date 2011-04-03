@@ -90,7 +90,7 @@ namespace NBToolkit.Map
                         _region = _enum.Current;
                     }
                     if (MoveNextInRegion()) {
-                        _chunk = _cm.GetChunkInRegion(_region, _x, _z);
+                        _chunk = _cm.GetChunkRefInRegion(_region, _x, _z);
                         return true;
                     }
                 }
