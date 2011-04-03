@@ -50,32 +50,32 @@ namespace NBToolkit.Map
             _chunkMan = bm._chunkMan;
         }
 
-        public int GlobalX (int x)
+        public int BlockGlobalX (int x)
         {
             return x;
         }
 
-        public int GlobalY (int y)
+        public int BlockGlobalY (int y)
         {
             return y;
         }
 
-        public int GlobalZ (int z)
+        public int BlockGlobalZ (int z)
         {
             return z;
         }
 
-        public int LocalX (int x)
+        public int BlockLocalX (int x)
         {
             return x & CHUNK_XMASK;
         }
 
-        public int LocalY (int y)
+        public int BlockLocalY (int y)
         {
             return y & CHUNK_YMASK;
         }
 
-        public int LocalZ (int z)
+        public int BlockLocalZ (int z)
         {
             return z & CHUNK_ZMASK;
         }
@@ -87,7 +87,7 @@ namespace NBToolkit.Map
                 return null;
             }
 
-            return new Block(_cache, x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
+            return _cache.GetBlock(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
         }
 
         public virtual BlockRef GetBlockRef (int x, int y, int z)
@@ -97,7 +97,7 @@ namespace NBToolkit.Map
                 return null;
             }
 
-            return new BlockRef(_cache, x, y, z);
+            return _cache.GetBlockRef(x & CHUNK_XMASK, y, z & CHUNK_ZMASK);
         }
 
         public virtual BlockInfo GetBlockInfo (int x, int y, int z)

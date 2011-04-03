@@ -9,7 +9,8 @@ namespace NBToolkit.Map
 
     public class ChunkRef : IChunk
     {
-        private ChunkManager _chunkMan;
+        private IChunkContainer _container;
+        private IChunkCache _cache;
         private Chunk _chunk;
 
         private int _cx;
@@ -19,51 +20,62 @@ namespace NBToolkit.Map
 
         public int X
         {
-            get { return _cx; }
+            get { return _container.ChunkGlobalX(_cx); }
         }
 
         public int Z
         {
-            get { return _cz; }
+            get { return _container.ChunkGlobalZ(_cz); }
         }
 
-        public ChunkRef (ChunkManager cm, int cx, int cz)
+        public int LocalX
         {
-            _chunkMan = cm;
+            get { return _container.ChunkLocalX(_cx); }
+        }
+
+        public int LocalZ
+        {
+            get { return _container.ChunkLocalZ(_cz); }
+        }
+
+        public ChunkRef (IChunkContainer container, IChunkCache cache, int cx, int cz)
+        {
+            _container = container;
+            _cache = cache;
             _cx = cx;
             _cz = cz;
 
-            if (!_chunkMan.ChunkExists(cx, cz)) {
+            if (!_container.ChunkExists(cx, cz)) {
                 throw new MissingChunkException();
             }
         }
 
-        public int GlobalX (int x)
+        public int BlockGlobalX (int x)
         {
-            return _cx * BlockManager.CHUNK_XLEN + x;
+            return _container.ChunkGlobalX(_cx) * BlockManager.CHUNK_XLEN + x;
         }
 
-        public int GlobalY (int y)
+        public int BlockGlobalY (int y)
         {
             return y;
         }
 
-        public int GlobalZ (int z)
+        public int BlockGlobalZ (int z)
         {
-            return _cz * BlockManager.CHUNK_ZLEN + z;
+            return _container.ChunkGlobalZ(_cz) * BlockManager.CHUNK_ZLEN + z;
         }
 
-        public int LocalX (int x)
+        public int BlockLocalX (int x)
         {
             return x;
         }
 
-        public int LocalY (int y)
+        public int BlockLocalY (int y)
         {
             return y;
         }
 
-        public int LocalZ (int z)
+        public int BlockLocalZ (int z)
         {
             return z;
         }
@@ -71,19 +83,10 @@ namespace NBToolkit.Map
         private Chunk GetChunk ()
         {
             if (_chunk == null) {
-                _chunk = _chunkMan.GetChunk(_cx, _cz);
+                _chunk = _container.GetChunk(_cx, _cz);
             }
             return _chunk;
         }
-
-        /*private NBT_Tree GetTree ()
-        {
-            if (!_chunkMan.ChunkExists(_cx, _cz)) {
-                throw new MissingChunkException();
-            }
-
-            return r.GetChunkTree(LocalX, LocalZ);
-        }*/
 
         private bool MarkDirty ()
         {
@@ -92,45 +95,28 @@ namespace NBToolkit.Map
             }
 
             _dirty = true;
-            _chunkMan.MarkChunkDirty(_cx, _cz);
+            _cache.MarkChunkDirty(this);
             return true;
         }
 
-        /*public bool Save ()
-        {
-            if (_dirty) {
-                Region r = _chunkMan.GetRegion(_cx, _cz);
-                if (r == null || !r.ChunkExists(LocalX, LocalZ)) {
-                    throw new MissingChunkException();
-                }
-
-                if (GetChunk().Save(r.GetChunkOutStream(_cx, _cz))) {
-                    _dirty = false;
-                    return true;
-                }
-                return false;
-            }
-            return true;
-        }*/
-
         public ChunkRef GetNorthNeighbor ()
         {
-            return _chunkMan.GetChunkRef(_cx - 1, _cz);
+            return _container.GetChunkRef(_cx - 1, _cz);
         }
 
         public ChunkRef GetSouthNeighbor ()
         {
-            return _chunkMan.GetChunkRef(_cx + 1, _cz);
+            return _container.GetChunkRef(_cx + 1, _cz);
         }
 
         public ChunkRef GetEastNeighbor ()
         {
-            return _chunkMan.GetChunkRef(_cx, _cz - 1);
+            return _container.GetChunkRef(_cx, _cz - 1);
         }
 
         public ChunkRef GetWestNeighbor ()
         {
-            return _chunkMan.GetChunkRef(_cx, _cz + 1);
+            return _container.GetChunkRef(_cx, _cz + 1);
         }
 
         public Chunk GetChunkCopy ()

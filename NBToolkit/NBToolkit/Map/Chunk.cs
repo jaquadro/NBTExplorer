@@ -6,53 +6,6 @@ namespace NBToolkit.Map
     using NBT;
     using Utility;
 
-    public interface IBlockContainer
-    {
-        int GlobalX (int x);
-        int GlobalY (int y);
-        int GlobalZ (int z);
-
-        int LocalX (int x);
-        int LocalY (int y);
-        int LocalZ (int z);
-
-        Block GetBlock (int lx, int ly, int lz);
-        BlockRef GetBlockRef (int lx, int ly, int lz);
-
-        BlockInfo GetBlockInfo (int lx, int ly, int lz);
-
-        int GetBlockID (int lx, int ly, int lz);
-        int GetBlockData (int lx, int ly, int lz);
-        int GetBlockLight (int lx, int ly, int lz);
-        int GetBlockSkyLight (int lx, int ly, int lz);
-
-        void SetBlock (int lx, int ly, int lz, Block block);
-
-        bool SetBlockID (int lx, int ly, int lz, int id);
-        bool SetBlockData (int lx, int ly, int lz, int data);
-        bool SetBlockLight (int lx, int ly, int lz, int light);
-        bool SetBlockSkyLight (int lx, int ly, int lz, int light);
-
-        TileEntity GetTileEntity (int lx, int ly, int lz);
-        bool SetTileEntity (int lx, int ly, int lz, TileEntity te);
-        bool ClearTileEntity (int lx, int ly, int lz);
-    }
-
-    public interface IChunk : IBlockContainer
-    {
-        int X { get; }
-        int Z { get; }
-
-        bool IsTerrainPopulated { get; set; }
-
-        bool Save (Stream outStream);
-
-        int CountBlockID (int id);
-        int CountBlockData (int id, int data);
-
-        int GetHeight (int lx, int lz);
-    }
-
     public class Chunk : IChunk, ICopyable<Chunk>
     {
         private NBT_Tree _tree;
@@ -149,32 +102,32 @@ namespace NBToolkit.Map
             _tree.Root.Add("Level", level);
         }
 
-        public int GlobalX (int x)
+        public int BlockGlobalX (int x)
         {
             return _cx * BlockManager.CHUNK_XLEN + x;
         }
 
-        public int GlobalY (int y)
+        public int BlockGlobalY (int y)
         {
             return y;
         }
 
-        public int GlobalZ (int z)
+        public int BlockGlobalZ (int z)
         {
             return _cz * BlockManager.CHUNK_ZLEN + z;
         }
 
-        public int LocalX (int x)
+        public int BlockLocalX (int x)
         {
             return x;
         }
 
-        public int LocalY (int y)
+        public int BlockLocalY (int y)
         {
             return y;
         }
 
-        public int LocalZ (int z)
+        public int BlockLocalZ (int z)
         {
             return z;
         }

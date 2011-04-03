@@ -7,19 +7,6 @@ namespace NBToolkit.Map
     using NBT;
     using Utility;
 
-    public interface IBlock
-    {
-        BlockInfo Info { get; }
-        int ID { get; set; }
-        int Data { get; set; }
-        int BlockLight { get; set; }
-        int SkyLight { get; set; }
-
-        TileEntity GetTileEntity ();
-        bool SetTileEntity (TileEntity te);
-        bool ClearTileEntity ();
-    }
-
     public class Block : IBlock, ICopyable<Block>
     {
         private int _id;

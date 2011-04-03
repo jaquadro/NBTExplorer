@@ -8,37 +8,7 @@ namespace NBToolkit.Map
 {
     using NBT;
 
-    public interface IChunkContainer
-    {
-        int GlobalX (int cx);
-        int GlobalZ (int cz);
-
-        int LocalX (int cx);
-        int LocalZ (int cz);
-
-        Chunk GetChunk (int cx, int cz);
-        ChunkRef GetChunkRef (int cx, int cz);
-
-        bool ChunkExists (int cx, int cz);
-
-        bool DeleteChunk (int cx, int cz);
-
-        bool Save ();
-        bool SaveChunk (Chunk chunk);
-
-        bool MarkChunkDirty (int cx, int cz);
-        bool MarkChunkClean (int cx, int cz);
-    }
-
-    public interface IRegion : IChunkContainer
-    {
-        int X { get; }
-        int Z { get; }
-
-        int ChunkCount ();
-    }
-
-    public class Region : IDisposable
+    public class Region : IDisposable, IChunkContainer, IChunkCache
     {
         protected int _rx;
         protected int _rz;
@@ -49,6 +19,9 @@ namespace NBToolkit.Map
         protected static Regex _namePattern = new Regex("r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.mcr$");
 
         protected WeakReference _regionFile;
+
+        protected Dictionary<ChunkKey, WeakReference> _cache;
+        protected Dictionary<ChunkKey, ChunkRef> _dirty;
 
         public int X
         {
@@ -66,6 +39,9 @@ namespace NBToolkit.Map
             _regionFile = new WeakReference(null);
             _rx = rx;
             _rz = rz;
+
+            _cache = new Dictionary<ChunkKey, WeakReference>();
+            _dirty = new Dictionary<ChunkKey, ChunkRef>();
 
             if (!File.Exists(GetFilePath())) {
                 throw new FileNotFoundException();
@@ -111,20 +87,6 @@ namespace NBToolkit.Map
             }
             _disposed = true;
         }
-
-        public Chunk GetChunk (int lcx, int lcz)
-        {
-            if (!ChunkExists(lcx, lcz)) {
-                return null;
-            }
-
-            return new Chunk(GetChunkTree(lcx, lcz));
-        }
-
-        //public ChunkRef GetChunkRef (int lcx, int lcz)
-        //{
-
-        //}
 
         public string GetFileName ()
         {
@@ -204,12 +166,6 @@ namespace NBToolkit.Map
             return rf.GetChunkDataOutputStream(lcx, lcz);
         }
 
-        public bool ChunkExists (int lcx, int lcz)
-        {
-            RegionFile rf = GetRegionFile();
-            return rf.HasChunk(lcx, lcz);
-        }
-
         public int ChunkCount ()
         {
             RegionFile rf = GetRegionFile();
@@ -226,6 +182,77 @@ namespace NBToolkit.Map
             return count;
         }
 
+        public ChunkRef GetChunkRef (int lcx, int lcz, IChunkCache cache)
+        {
+            ChunkKey k = new ChunkKey(lcx, lcz);
+
+            ChunkRef c = null;
+
+            WeakReference chunkref = null;
+            if (_cache.TryGetValue(k, out chunkref)) {
+                c = chunkref.Target as ChunkRef;
+            }
+            else {
+                _cache.Add(k, new WeakReference(null));
+            }
+
+            if (c != null) {
+                return c;
+            }
+
+            try {
+                c = new ChunkRef(this, cache, lcx, lcz);
+                _cache[k].Target = c;
+                return c;
+            }
+            catch (MissingChunkException) {
+                return null;
+            }
+        }
+
+
+        #region IChunkCollection Members
+
+        public int ChunkGlobalX (int cx)
+        {
+            return cx;
+        }
+
+        public int ChunkGlobalZ (int cz)
+        {
+            return cz;
+        }
+
+        public int ChunkLocalX (int cx)
+        {
+            return cx & ChunkManager.REGION_XMASK;
+        }
+
+        public int ChunkLocalZ (int cz)
+        {
+            return cz & ChunkManager.REGION_ZMASK;
+        }
+
+        public Chunk GetChunk (int lcx, int lcz)
+        {
+            if (!ChunkExists(lcx, lcz)) {
+                return null;
+            }
+
+            return new Chunk(GetChunkTree(lcx, lcz));
+        }
+
+        public ChunkRef GetChunkRef (int lcx, int lcz)
+        {
+            return GetChunkRef(lcx, lcz, this);
+        }
+
+        public bool ChunkExists (int lcx, int lcz)
+        {
+            RegionFile rf = GetRegionFile();
+            return rf.HasChunk(lcx, lcz);
+        }
+
         public bool DeleteChunk (int lcx, int lcz)
         {
             RegionFile rf = GetRegionFile();
@@ -234,7 +261,71 @@ namespace NBToolkit.Map
             }
 
             rf.DeleteChunk(lcx, lcz);
+
+            ChunkKey k = new ChunkKey(lcx, lcz);
+            _cache.Remove(k);
+            _dirty.Remove(k);
+
+            if (ChunkCount() == 0) {
+                _regionMan.DeleteRegion(X, Z);
+            }
+
             return true;
         }
+
+        public int Save ()
+        {
+            int saved = 0;
+            foreach (ChunkRef c in _dirty.Values) {
+                int lcx = ChunkLocalX(c.X);
+                int lcz = ChunkLocalZ(c.Z);
+
+                if (!ChunkExists(lcx, lcz)) {
+                    throw new MissingChunkException();
+                }
+
+                if (c.Save(GetChunkOutStream(lcx, lcz))) {
+                    saved++;
+                }
+            }
+
+            _dirty.Clear();
+            return saved;
+        }
+
+        public bool SaveChunk (Chunk chunk)
+        {
+            return chunk.Save(GetChunkOutStream(ChunkLocalX(chunk.X), ChunkLocalZ(chunk.Z)));
+        }
+
+        #endregion
+
+
+        #region IChunkCache Members
+
+        public bool MarkChunkDirty (ChunkRef chunk)
+        {
+            int lcx = chunk.LocalX;
+            int lcz = chunk.LocalZ;
+
+            ChunkKey k = new ChunkKey(lcx, lcz);
+            if (!_dirty.ContainsKey(k)) {
+                _dirty.Add(k, GetChunkRef(lcx, lcz));
+                return true;
+            }
+            return false;
+        }
+
+        public bool MarkChunkClean (int lcx, int lcz)
+        {
+            ChunkKey k = new ChunkKey(lcx, lcz);
+            if (_dirty.ContainsKey(k)) {
+                _dirty.Remove(k);
+                return true;
+            }
+            return false;
+        }
+
+        #endregion
     }
 }

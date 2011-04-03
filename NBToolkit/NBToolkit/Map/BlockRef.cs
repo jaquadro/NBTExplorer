@@ -14,27 +14,27 @@ namespace NBToolkit.Map
 
         public int X
         {
-            get { return _container.GlobalX(_x); }
+            get { return _container.BlockGlobalX(_x); }
         }
 
         public int Y
         {
-            get { return _container.GlobalY(_y); }
+            get { return _container.BlockGlobalY(_y); }
         }
 
         public int Z
         {
-            get { return _container.GlobalZ(_z); }
+            get { return _container.BlockGlobalZ(_z); }
         }
 
         public int LocalX
         {
-            get { return _container.LocalX(_x); }
+            get { return _container.BlockLocalX(_x); }
         }
 
         public int LocalY
         {
-            get { return _container.LocalZ(_z); }
+            get { return _container.BlockLocalZ(_z); }
         }
 
         public int LocalZ
