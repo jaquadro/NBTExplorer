@@ -8,19 +8,22 @@ namespace NBToolkit.Map.NBT
     {
         public static string Serialize (NBT_Value tag)
         {
+            return Serialize(tag, 0);
+        }
+
+        public static string Serialize (NBT_Value tag, int level)
+        {
             StringBuilder str = new StringBuilder();
 
             if (tag.GetNBTType() == NBT_Type.TAG_COMPOUND) {
-                SerializeCompound(tag as NBT_Compound, str, 0);
+                SerializeCompound(tag as NBT_Compound, str, level);
             }
             else if (tag.GetNBTType() == NBT_Type.TAG_LIST) {
-                SerializeList(tag as NBT_List, str, 0);
+                SerializeList(tag as NBT_List, str, level);
             }
             else {
                 SerializeScaler(tag, str);
             }
-
-            str.AppendLine();
 
             return str.ToString();
         }
@@ -137,7 +140,7 @@ namespace NBToolkit.Map.NBT
                     break;
 
                 case NBT_Type.TAG_BYTE_ARRAY:
-                    str.Append("null");
+                    str.Append(Convert.ToBase64String(tag.ToNBTByteArray().Data));
                     break;
             }
         }

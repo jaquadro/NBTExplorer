@@ -37,7 +37,7 @@ namespace NBToolkit
                     filter.Run();
                 }
                 else if (args[0] == "dump") {
-                    ReplaceOptions options = new ReplaceOptions(args);
+                    DumpOptions options = new DumpOptions(args);
                     Dump filter = new Dump(options);
                     options.SetDefaults();
                     filter.Run();
@@ -73,6 +73,13 @@ namespace NBToolkit
                         Console.WriteLine();
                         options.PrintUsage();
                     }
+                    else if (args[1] == "dump") {
+                        options = new DumpOptions(args);
+
+                        WriteBlock("Dumps out chunk data in a readable JSON file.  Block data, which are byte arrays, are printed as Bas64-encoded strings.");
+                        Console.WriteLine();
+                        options.PrintUsage();
+                    }
                     else {
                         WriteBlock("Prints help and usage information for another command.  Available commands are 'oregen' and 'replace'.");
                         Console.WriteLine();
@@ -94,6 +101,8 @@ namespace NBToolkit
                     Console.WriteLine("  help        Get help and usage info for another command");
                     Console.WriteLine("  oregen      Generate structured deposits of a single block type");
                     Console.WriteLine("  replace     Replace one block type with another");
+                    Console.WriteLine("  purge       Delete chunks");
+                    Console.WriteLine("  dump        Dump parsed chunk data to a readable JSON file");
                     Console.WriteLine();
                     options.PrintUsage();
                     return;

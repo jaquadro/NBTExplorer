@@ -1,9 +1,9 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <StartArguments>replace -w "F:\Minecraft\tps - Copy" -b 61 -a 18 -vv</StartArguments>
+    <StartArguments>dump -w "F:\Minecraft\tps - Copy" --out="json.txt"</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <StartArguments>replace -w "F:\Minecraft\tps - Copy" -b 61 -a 18 -vv</StartArguments>
+    <StartArguments>dump -w "F:\Minecraft\tps - Copy" --out="json.txt"</StartArguments>
   </PropertyGroup>
   <PropertyGroup>
     <PublishUrlHistory>publish\</PublishUrlHistory>

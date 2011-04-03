@@ -1,2 +1,4 @@
-﻿all:
-	gmcs -out:nbtoolkit.exe BlockInfo.cs BlockKey.cs BlockRef.cs BlockManager.cs Chunk.cs ChunkEnumerator.cs ChunkFilter.cs ChunkKey.cs ChunkManager.cs ChunkVerifier.cs FilteredChunkEnumerator.cs GenOres.cs MathHelper.cs NBT/NBT.cs NBT/NBTTag.cs NBT/NBTValues.cs NibbleArray.cs Oregen.cs Program.cs Purge.cs Region.cs RegionEnumerator.cs RegionFile.cs RegionKey.cs RegionManager.cs Replace.cs TKFilter.cs TKOptions.cs World.cs NDesk/Options.cs Zlib/Zlib.cs Zlib/ZlibStream.cs Zlib/ZlibConstants.cs Zlib/ZlibCodec.cs Zlib/ZlibBaseStream.cs Zlib/Tree.cs Zlib/InfTree.cs Zlib/Inflate.cs Zlib/GZipStream.cs Zlib/DeflateStream.cs Zlib/Deflate.cs Zlib/Crc32.cs
+﻿SRCS=*.cs Map/*.cs Map/NBT/*.cs Map/Util/*.cs Zlib/*.cs NDesk/*.cs
+
+all: $(SRCS)
+	gmcs -out:nbtoolkit.exe $(SRCS)
