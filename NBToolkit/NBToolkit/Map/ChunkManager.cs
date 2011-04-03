@@ -93,15 +93,19 @@ namespace NBToolkit.Map
             return true;
         }
 
-        public bool MarkChunkClean (int cx, int cz)
+        public bool MarkChunkClean (ChunkRef chunk)
         {
-            Region r = GetRegion(cx, cz);
+            Region r = GetRegion(chunk.X, chunk.Z);
             if (r == null) {
                 return false;
             }
 
             RegionKey k = new RegionKey(r.X, r.Z);
-            return _dirty.Remove(k);
+            _dirty.Remove(k);
+
+            r.MarkChunkClean(chunk);
+
+            return true;
         }
 
         public int Save ()

@@ -32,6 +32,11 @@ namespace NBToolkit.Map
             get { return _cz; }
         }
 
+        public NBT_Tree Tree
+        {
+            get { return _tree; }
+        }
+
         public bool IsTerrainPopulated
         {
             get { return _tree.Root["Level"].ToNBTCompound()["TerrainPopulated"].ToNBTByte() == 1; }
@@ -63,6 +68,17 @@ namespace NBToolkit.Map
 
             _entities = level["Entities"] as NBT_List;
             _tileEntities = level["TileEntities"] as NBT_List;
+
+            // List-type patch up
+            if (_entities.Count == 0) {
+                level["Entities"] = new NBT_List(NBT_Type.TAG_COMPOUND);
+                _entities = level["Entities"] as NBT_List;
+            }
+
+            if (_tileEntities.Count == 0) {
+                level["TileEntities"] = new NBT_List(NBT_Type.TAG_COMPOUND);
+                _tileEntities = level["TileEntities"] as NBT_List;
+            }
 
             _cx = level["xPos"].ToNBTInt();
             _cz = level["zPos"].ToNBTInt();
@@ -201,9 +217,18 @@ namespace NBToolkit.Map
 
             // Update tile entities
 
-            if (BlockInfo.SchemaTable[_blocks[index]] != null &&
-                BlockInfo.SchemaTable[_blocks[index]] != BlockInfo.SchemaTable[id]) {
-                ClearTileEntity(lx, ly, lz);
+            if (BlockInfo.SchemaTable[_blocks[index]] != BlockInfo.SchemaTable[id]) {
+                if (BlockInfo.SchemaTable[_blocks[index]] != null) {
+                    ClearTileEntity(lx, ly, lz);
+                }
+
+                if (BlockInfo.SchemaTable[id] != null) {
+                    TileEntity te = new TileEntity(BlockInfo.SchemaTable[id]);
+                    te.X = BlockGlobalX(lx);
+                    te.Y = BlockGlobalY(ly);
+                    te.Z = BlockGlobalZ(lz);
+                    _tileEntities.Add(te.Root);
+                }
             }
 
             // Update height map
@@ -301,10 +326,14 @@ namespace NBToolkit.Map
 
         public TileEntity GetTileEntity (int lx, int ly, int lz)
         {
+            int x = BlockGlobalX(lx);
+            int y = BlockGlobalY(ly);
+            int z = BlockGlobalZ(lz);
+
             foreach (NBT_Compound te in _tileEntities) {
-                if (te["x"].ToNBTInt().Data == lx &&
-                    te["y"].ToNBTInt().Data == ly &&
-                    te["z"].ToNBTInt().Data == lz) {
+                if (te["x"].ToNBTInt().Data == x &&
+                    te["y"].ToNBTInt().Data == y &&
+                    te["z"].ToNBTInt().Data == z) {
                     return new TileEntity(te);
                 }
             }
@@ -327,23 +356,18 @@ namespace NBToolkit.Map
 
             ClearTileEntity(lx, ly, lz);
 
-            int x = BlockX(lx);
-            int y = BlockY(ly);
-            int z = BlockZ(lz);
-
-            if (!te.LocatedAt(x, y, z)) {
-                te = te.Copy();
-                te.Relocate(x, y, z);
-            }
+            te.X = BlockGlobalX(lx);
+            te.Y = BlockGlobalY(ly);
+            te.Z = BlockGlobalZ(lz);
 
             _tileEntities.Add(te.Root);
 
             return true;
         }
 
-        public bool ClearTileEntity (int x, int y, int z)
+        public bool ClearTileEntity (int lx, int ly, int lz)
         {
-            TileEntity te = GetTileEntity(x, y, z);
+            TileEntity te = GetTileEntity(lx, ly, lz);
             if (te == null) {
                 return false;
             }
@@ -363,21 +387,6 @@ namespace NBToolkit.Map
                 te["x"].ToNBTInt().Data += diffx * BlockManager.CHUNK_XLEN;
                 te["z"].ToNBTInt().Data += diffz * BlockManager.CHUNK_ZLEN;
             }
-        }
-
-        protected int BlockX (int lx)
-        {
-            return _cx * BlockManager.CHUNK_XLEN + lx;
-        }
-
-        protected int BlockY (int ly)
-        {
-            return ly;
-        }
-
-        protected int BlockZ (int lz)
-        {
-            return _cz * BlockManager.CHUNK_ZLEN + lz;
         }
 
         #region ICopyable<Chunk> Members

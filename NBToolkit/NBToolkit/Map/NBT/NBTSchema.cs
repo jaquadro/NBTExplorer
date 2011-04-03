@@ -17,6 +17,11 @@ namespace NBToolkit.Map.NBT
         {
             _name = name;
         }
+
+        public virtual NBT_Value BuildDefaultTree ()
+        {
+            return null;
+        }
     }
 
     public class NBTScalerNode : NBTSchemaNode
@@ -33,11 +38,39 @@ namespace NBToolkit.Map.NBT
         {
             _type = type;
         }
+
+        public override NBT_Value BuildDefaultTree ()
+        {
+            switch (_type) {
+                case NBT_Type.TAG_STRING:
+                    return new NBT_String();
+
+                case NBT_Type.TAG_BYTE:
+                    return new NBT_Byte();
+
+                case NBT_Type.TAG_SHORT:
+                    return new NBT_Short();
+
+                case NBT_Type.TAG_INT:
+                    return new NBT_Int();
+
+                case NBT_Type.TAG_LONG:
+                    return new NBT_Long();
+
+                case NBT_Type.TAG_FLOAT:
+                    return new NBT_Float();
+
+                case NBT_Type.TAG_DOUBLE:
+                    return new NBT_Double();
+            }
+
+            return null;
+        }
     }
 
     public class NBTStringNode : NBTSchemaNode
     {
-        private string _value;
+        private string _value = "";
         private int _length;
 
         public int Length
@@ -61,6 +94,15 @@ namespace NBToolkit.Map.NBT
         {
             _length = length;
         }
+
+        public override NBT_Value BuildDefaultTree ()
+        {
+            if (_value.Length > 0) {
+                return new NBT_String(_value);
+            }
+
+            return new NBT_String();
+        }
     }
 
     public class NBTArrayNode : NBTSchemaNode
@@ -82,6 +124,11 @@ namespace NBToolkit.Map.NBT
             : base(name)
         {
             _length = length;
+        }
+
+        public override NBT_Value BuildDefaultTree ()
+        {
+            return new NBT_ByteArray(new byte[_length]);
         }
     }
 
@@ -112,13 +159,6 @@ namespace NBToolkit.Map.NBT
             _type = type;
         }
 
-        public NBTListNode (string name, NBT_Type type, int length)
-            : base(name)
-        {
-            _type = type;
-            _length = length;
-        }
-
         public NBTListNode (string name, NBT_Type type, NBTSchemaNode subschema)
             : base(name)
         {
@@ -132,6 +172,20 @@ namespace NBToolkit.Map.NBT
             _type = type;
             _length = length;
             _subschema = subschema;
+        }
+
+        public override NBT_Value BuildDefaultTree ()
+        {
+            if (_length == 0) {
+                return new NBT_List(_type);
+            }
+
+            NBT_List list = new NBT_List(_type);
+            for (int i = 0; i < _length; i++) {
+                list.Add(_subschema.BuildDefaultTree());
+            }
+
+            return list;
         }
     }
 
@@ -213,12 +267,22 @@ namespace NBToolkit.Map.NBT
             foreach (NBTSchemaNode node in _subnodes) {
                 NBTSchemaNode f = tree._subnodes.Find(n => n.Name == node.Name);
                 if (f != null) {
-                    tree.Remove(f);
+                    continue;
                 }
                 tree.Add(node);
             }
 
             return tree;
+        }
+
+        public override NBT_Value BuildDefaultTree ()
+        {
+            NBT_Compound list = new NBT_Compound();
+            foreach (NBTSchemaNode node in _subnodes) {
+                list[node.Name] = node.BuildDefaultTree();
+            }
+
+            return list;
         }
     }
 }

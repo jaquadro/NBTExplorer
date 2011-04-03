@@ -57,12 +57,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dump.cs" />
     <Compile Include="Map\Block.cs" />
     <Compile Include="Map\BlockInfo.cs" />
+    <Compile Include="Map\BlockInterface.cs" />
     <Compile Include="Map\BlockKey.cs" />
     <Compile Include="Map\BlockManager.cs" />
     <Compile Include="Map\BlockRef.cs" />
     <Compile Include="Map\Chunk.cs" />
+    <Compile Include="Map\ChunkFile.cs" />
+    <Compile Include="Map\ChunkFileManager.cs" />
+    <Compile Include="Map\ChunkInterface.cs" />
     <Compile Include="Map\ChunkRef.cs" />
     <Compile Include="Map\ChunkEnumerator.cs" />
     <Compile Include="ChunkFilter.cs" />
@@ -71,6 +76,7 @@
     <Compile Include="Map\ChunkVerifier.cs" />
     <Compile Include="FilteredChunkEnumerator.cs" />
     <Compile Include="GenOres.cs" />
+    <Compile Include="Map\NBT\JSONSerializer.cs" />
     <Compile Include="Map\TileEntity.cs" />
     <Compile Include="Map\Utility\Interface.cs" />
     <Compile Include="MathHelper.cs" />

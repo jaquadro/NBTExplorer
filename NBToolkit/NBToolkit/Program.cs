@@ -36,6 +36,12 @@ namespace NBToolkit
                     options.SetDefaults();
                     filter.Run();
                 }
+                else if (args[0] == "dump") {
+                    ReplaceOptions options = new ReplaceOptions(args);
+                    Dump filter = new Dump(options);
+                    options.SetDefaults();
+                    filter.Run();
+                }
                 else if (args[0] == "help") {
                     if (args.Length < 2) {
                         args = new string[2] { "help", "help" };

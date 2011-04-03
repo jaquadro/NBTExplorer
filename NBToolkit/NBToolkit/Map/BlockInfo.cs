@@ -434,7 +434,7 @@ namespace NBToolkit.Map
 
             Dispenser.SetTileEntity("Trap", TileEntity.TrapSchema);
             NoteBlock.SetTileEntity("Music", TileEntity.MusicSchema);
-            MonsterSpawner.SetTileEntity("MonsterSpawner", TileEntity.MonsterSpawnerSchema);
+            MonsterSpawner.SetTileEntity("MonsterSpawner", TileEntity.MobSpawnerSchema);
             Chest.SetTileEntity("Chest", TileEntity.ChestSchema);
             Furnace.SetTileEntity("Furnace", TileEntity.FurnaceSchema);
             BurningFurnace.SetTileEntity("Furnace", TileEntity.FurnaceSchema);

@@ -175,6 +175,11 @@ namespace NBToolkit.Map.NBT
                 return false;
             }
 
+            // Patch up empty lists
+            //if (schema.Length == 0) {
+            //    tag = new NBT_List(schema.Type);
+            //}
+
             bool pass = true;
 
             // If a subschema is set, test all items in list against it

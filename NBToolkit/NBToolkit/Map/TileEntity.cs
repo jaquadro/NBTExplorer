@@ -16,6 +16,29 @@ namespace NBToolkit.Map
             get { return _tree; }
         }
 
+        public string ID
+        {
+            get { return _tree["id"].ToNBTString(); }
+        }
+
+        public int X
+        {
+            get { return _tree["x"].ToNBTInt(); }
+            set { _tree["x"] = new NBT_Int(value); }
+        }
+
+        public int Y
+        {
+            get { return _tree["y"].ToNBTInt(); }
+            set { _tree["y"] = new NBT_Int(value); }
+        }
+
+        public int Z
+        {
+            get { return _tree["z"].ToNBTInt(); }
+            set { _tree["z"] = new NBT_Int(value); }
+        }
+
         public TileEntity (string id)
         {
             _tree = new NBT_Compound();
@@ -30,6 +53,11 @@ namespace NBToolkit.Map
             _tree = tree;
         }
 
+        public TileEntity (NBTSchemaNode schema)
+        {
+            _tree = schema.BuildDefaultTree() as NBT_Compound;
+        }
+
         public bool Verify ()
         {
             NBTVerifier v = new NBTVerifier(Root, BaseSchema);
@@ -42,25 +70,11 @@ namespace NBToolkit.Map
             return v.Verify();
         }
 
-        public bool LocatedAt (int lx, int ly, int lz)
+        public bool LocatedAt (int x, int y, int z)
         {
-            return _tree["x"].ToNBTInt().Data == lx &&
-                _tree["y"].ToNBTInt().Data == ly &&
-                _tree["z"].ToNBTInt().Data == lz;
-        }
-
-        public bool Relocate (int lx, int ly, int lz)
-        {
-            if (lx >= 0 && lx < BlockManager.CHUNK_XLEN &&
-                ly >= 0 && ly < BlockManager.CHUNK_YLEN &&
-                lz >= 0 && lz < BlockManager.CHUNK_ZLEN) {
-                _tree["x"].ToNBTInt().Data = lx;
-                _tree["y"].ToNBTInt().Data = ly;
-                _tree["z"].ToNBTInt().Data = lz;
-                return true;
-            }
-
-            return false;
+            return _tree["x"].ToNBTInt().Data == x &&
+                _tree["y"].ToNBTInt().Data == y &&
+                _tree["z"].ToNBTInt().Data == z;
         }
 
         #region Predefined Schemas
@@ -98,9 +112,9 @@ namespace NBToolkit.Map
             new NBTScalerNode("Text4", NBT_Type.TAG_STRING),
         });
 
-        public static readonly NBTCompoundNode MonsterSpawnerSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly NBTCompoundNode MobSpawnerSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
         {
-            new NBTStringNode("id", "MonsterSpawner"),
+            new NBTStringNode("id", "MobSpawner"),
             new NBTScalerNode("EntityId", NBT_Type.TAG_STRING),
             new NBTScalerNode("Delay", NBT_Type.TAG_SHORT),
         });

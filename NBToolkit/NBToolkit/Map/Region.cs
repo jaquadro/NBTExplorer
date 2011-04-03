@@ -215,22 +215,22 @@ namespace NBToolkit.Map
 
         public int ChunkGlobalX (int cx)
         {
-            return cx;
+            return _rx * ChunkManager.REGION_XLEN + cx;
         }
 
         public int ChunkGlobalZ (int cz)
         {
-            return cz;
+            return _rz * ChunkManager.REGION_ZLEN + cz;
         }
 
         public int ChunkLocalX (int cx)
         {
-            return cx & ChunkManager.REGION_XMASK;
+            return cx;
         }
 
         public int ChunkLocalZ (int cz)
         {
-            return cz & ChunkManager.REGION_ZMASK;
+            return cz;
         }
 
         public Chunk GetChunk (int lcx, int lcz)
@@ -277,8 +277,8 @@ namespace NBToolkit.Map
         {
             int saved = 0;
             foreach (ChunkRef c in _dirty.Values) {
-                int lcx = ChunkLocalX(c.X);
-                int lcz = ChunkLocalZ(c.Z);
+                int lcx = c.LocalX;
+                int lcz = c.LocalZ;
 
                 if (!ChunkExists(lcx, lcz)) {
                     throw new MissingChunkException();
@@ -316,8 +316,11 @@ namespace NBToolkit.Map
             return false;
         }
 
-        public bool MarkChunkClean (int lcx, int lcz)
+        public bool MarkChunkClean (ChunkRef chunk)
         {
+            int lcx = chunk.LocalX;
+            int lcz = chunk.LocalZ;
+
             ChunkKey k = new ChunkKey(lcx, lcz);
             if (_dirty.ContainsKey(k)) {
                 _dirty.Remove(k);

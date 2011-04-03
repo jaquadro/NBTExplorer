@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 
 namespace NBToolkit.Map
 {
@@ -23,7 +24,7 @@ namespace NBToolkit.Map
     public interface IChunkCache
     {
         bool MarkChunkDirty (ChunkRef chunk);
-        bool MarkChunkClean (int cx, int cz);
+        bool MarkChunkClean (ChunkRef chunk);
     }
 
     public interface IChunkContainer

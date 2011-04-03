@@ -199,7 +199,7 @@ namespace NBToolkit
 
                 ApplyChunk(world, chunk);
 
-                world.GetChunkManager().SaveDirtyChunks();
+                world.GetChunkManager().Save();
             }
 
             Console.WriteLine("Affected Chunks: " + affectedChunks);

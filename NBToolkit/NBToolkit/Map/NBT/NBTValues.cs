@@ -319,7 +319,7 @@ namespace NBToolkit.Map.NBT {
 
     public class NBT_String : NBT_Value
     {
-        private string _data = null;
+        private string _data = "";
 
         override public NBT_String ToNBTString () { return this; }
         override public NBT_Type GetNBTType () { return NBT_Type.TAG_STRING; }
