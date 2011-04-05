@@ -367,8 +367,8 @@ namespace NBToolkit.Map
             Wool = new BlockInfo(35, "Wool");
             YellowFlower = new BlockInfo(37, "Yellow Flower").SetOpacity(0);
             RedRose = new BlockInfo(38, "Red Rose").SetOpacity(0);
-            BrownMushroom = new BlockInfo(39, "Brown Mushroom").SetOpacity(0);
-            RedMushroom = new BlockInfo(40, "Red Mushroom").SetOpacity(0);
+            BrownMushroom = new BlockInfo(39, "Brown Mushroom").SetOpacity(0).SetLuminance(1);
+            RedMushroom = new BlockInfo(40, "Red Mushroom").SetOpacity(0).SetLuminance(1);
             GoldBlock = new BlockInfo(41, "Gold Block");
             IronBlock = new BlockInfo(42, "Iron Block");
             DoubleSlab = new BlockInfo(43, "Double Slab");

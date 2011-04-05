@@ -9,7 +9,7 @@ namespace NBToolkit.Map
 
     public class TileEntity : ICopyable<TileEntity>
     {
-        private NBT_Compound _tree;
+        protected NBT_Compound _tree;
 
         public NBT_Compound Root
         {
@@ -58,7 +58,7 @@ namespace NBToolkit.Map
             _tree = schema.BuildDefaultTree() as NBT_Compound;
         }
 
-        public bool Verify ()
+        public virtual bool Verify ()
         {
             NBTVerifier v = new NBTVerifier(Root, BaseSchema);
             return v.Verify();
@@ -76,6 +76,15 @@ namespace NBToolkit.Map
                 _tree["y"].ToNBTInt().Data == y &&
                 _tree["z"].ToNBTInt().Data == z;
         }
+
+        #region ICopyable<TileEntity> Members
+
+        public virtual TileEntity Copy ()
+        {
+            return new TileEntity(_tree.Copy() as NBT_Compound);
+        }
+
+        #endregion
 
         #region Predefined Schemas
 
@@ -138,12 +147,258 @@ namespace NBToolkit.Map
         });
 
         #endregion
+    }
+
+    public class TileEntityFurnace : TileEntity, IItemContainer
+    {
+        protected const int _capacity = 3;
+
+        protected ItemCollection _items;
+
+        public int BurnTime
+        {
+            get { return _tree["BurnTime"].ToNBTShort(); }
+            set { _tree["BurnTime"] = new NBT_Short((short)value); }
+        }
+
+        public int CookTime
+        {
+            get { return _tree["CookTime"].ToNBTShort(); }
+            set { _tree["CookTime"] = new NBT_Short((short)value); }
+        }
+
+        public TileEntityFurnace (NBT_Compound tree)
+            : base(tree)
+        {
+            NBT_List items = tree["Items"].ToNBTList();
+
+            if (items.Count == 0) {
+                tree["Items"] = new NBT_List(NBT_Type.TAG_COMPOUND);
+                items = _tree["Items"].ToNBTList();
+            }
+
+            _items = new ItemCollection(items, _capacity);
+        }
+
+        public override bool Verify ()
+        {
+            NBTVerifier v = new NBTVerifier(Root, TileEntity.FurnaceSchema);
+            return v.Verify();
+        }
 
         #region ICopyable<TileEntity> Members
 
-        public TileEntity Copy ()
+        public override TileEntity Copy ()
         {
-            return new TileEntity(_tree.Copy() as NBT_Compound);
+            return new TileEntityFurnace(_tree.Copy() as NBT_Compound);
+        }
+
+        #endregion
+
+        #region IItemContainer Members
+
+        public ItemCollection Items
+        {
+            get { return _items; }
+        }
+
+        #endregion
+    }
+
+    public class TileEntitySign : TileEntity
+    {
+        public string Text1
+        {
+            get { return _tree["Text1"].ToNBTString(); }
+            set { _tree["Text1"] = new NBT_String(value.Substring(0, 12)); }
+        }
+
+        public string Text2
+        {
+            get { return _tree["Text2"].ToNBTString(); }
+            set { _tree["Text2"] = new NBT_String(value.Substring(0, 12)); }
+        }
+
+        public string Text3
+        {
+            get { return _tree["Text3"].ToNBTString(); }
+            set { _tree["Text3"] = new NBT_String(value.Substring(0, 12)); }
+        }
+
+        public string Text4
+        {
+            get { return _tree["Text4"].ToNBTString(); }
+            set { _tree["Text4"] = new NBT_String(value.Substring(0, 12)); }
+        }
+
+        public TileEntitySign (NBT_Compound tree)
+            : base(tree)
+        {
+        }
+
+        public override bool Verify ()
+        {
+            NBTVerifier v = new NBTVerifier(Root, TileEntity.SignSchema);
+            return v.Verify();
+        }
+
+        #region ICopyable<TileEntity> Members
+
+        public override TileEntity Copy ()
+        {
+            return new TileEntitySign(_tree.Copy() as NBT_Compound);
+        }
+
+        #endregion
+    }
+
+    public class TileEntityMobSpawner : TileEntity
+    {
+        public int Delay
+        {
+            get { return _tree["Delay"].ToNBTShort(); }
+            set { _tree["Delay"] = new NBT_Short((short)value); }
+        }
+
+        public string EntityID
+        {
+            get { return _tree["EntityID"].ToNBTString(); }
+            set { _tree["EntityID"] = new NBT_String(value); }
+        }
+
+        public TileEntityMobSpawner (NBT_Compound tree)
+            : base(tree)
+        {
+        }
+
+        public override bool Verify ()
+        {
+            NBTVerifier v = new NBTVerifier(Root, TileEntity.MobSpawnerSchema);
+            return v.Verify();
+        }
+
+        #region ICopyable<TileEntity> Members
+
+        public override TileEntity Copy ()
+        {
+            return new TileEntityMobSpawner(_tree.Copy() as NBT_Compound);
+        }
+
+        #endregion
+    }
+
+    public class TileEntityChest : TileEntity, IItemContainer
+    {
+        protected const int _capacity = 27;
+
+        protected ItemCollection _items;
+
+        public TileEntityChest (NBT_Compound tree)
+            : base(tree)
+        {
+            NBT_List items = tree["Items"].ToNBTList();
+
+            if (items.Count == 0) {
+                tree["Items"] = new NBT_List(NBT_Type.TAG_COMPOUND);
+                items = _tree["Items"].ToNBTList();
+            }
+
+            _items = new ItemCollection(items, _capacity);
+        }
+
+        public override bool Verify ()
+        {
+            NBTVerifier v = new NBTVerifier(Root, TileEntity.ChestSchema);
+            return v.Verify();
+        }
+
+        #region ICopyable<TileEntity> Members
+
+        public override TileEntity Copy ()
+        {
+            return new TileEntityChest(_tree.Copy() as NBT_Compound);
+        }
+
+        #endregion
+
+        #region IItemContainer Members
+
+        public ItemCollection Items
+        {
+            get { return _items; }
+        }
+
+        #endregion
+    }
+
+    public class TileEntityMusic : TileEntity
+    {
+        public int Note
+        {
+            get { return _tree["Note"].ToNBTByte(); }
+            set { _tree["Note"] = new NBT_Byte((byte)value); }
+        }
+
+        public TileEntityMusic (NBT_Compound tree)
+            : base(tree)
+        {
+        }
+
+        public override bool Verify ()
+        {
+            NBTVerifier v = new NBTVerifier(Root, TileEntity.MusicSchema);
+            return v.Verify();
+        }
+
+        #region ICopyable<TileEntity> Members
+
+        public override TileEntity Copy ()
+        {
+            return new TileEntityMusic(_tree.Copy() as NBT_Compound);
+        }
+
+        #endregion
+    }
+
+    public class TileEntityTrap : TileEntity, IItemContainer
+    {
+        protected const int _capacity = 8;
+
+        protected ItemCollection _items;
+
+        public TileEntityTrap (NBT_Compound tree)
+            : base(tree)
+        {
+            NBT_List items = tree["Items"].ToNBTList();
+
+            if (items.Count == 0) {
+                tree["Items"] = new NBT_List(NBT_Type.TAG_COMPOUND);
+                items = _tree["Items"].ToNBTList();
+            }
+
+            _items = new ItemCollection(items, _capacity);
+        }
+
+        public override bool Verify ()
+        {
+            NBTVerifier v = new NBTVerifier(Root, TileEntity.TrapSchema);
+            return v.Verify();
+        }
+
+        #region ICopyable<TileEntity> Members
+
+        public override TileEntity Copy ()
+        {
+            return new TileEntityTrap(_tree.Copy() as NBT_Compound);
+        }
+
+        #endregion
+
+        #region IItemContainer Members
+
+        public ItemCollection Items
+        {
+            get { return _items; }
         }
 
         #endregion

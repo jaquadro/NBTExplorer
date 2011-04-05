@@ -159,6 +159,13 @@ namespace NBToolkit.Map.NBT
             _type = type;
         }
 
+        public NBTListNode (string name, NBT_Type type, int length)
+            : base(name)
+        {
+            _type = type;
+            _length = length;
+        }
+
         public NBTListNode (string name, NBT_Type type, NBTSchemaNode subschema)
             : base(name)
         {
