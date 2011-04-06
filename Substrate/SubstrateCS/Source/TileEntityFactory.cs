@@ -17,7 +17,7 @@ namespace Substrate.Map
                 return null;
             }
 
-            return Activator.CreateInstance(t) as TileEntity;
+            return Activator.CreateInstance(t, new object[] { type }) as TileEntity;
         }
 
         public static TileEntity Create (NBT_Compound tree)
@@ -29,7 +29,7 @@ namespace Substrate.Map
                 return null;
             }
 
-            TileEntity te = Activator.CreateInstance(t, new object[] { tree }) as TileEntity;
+            TileEntity te = Activator.CreateInstance(t) as TileEntity;
 
             return te.LoadTreeSafe(tree);
         }
