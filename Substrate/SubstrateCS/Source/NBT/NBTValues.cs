@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Substrate.NBT {
 
-    using Map.Utility;
+    using Substrate.Utility;
 
     /// <summary>
     /// Describes the type of value held by an NBT_Tag

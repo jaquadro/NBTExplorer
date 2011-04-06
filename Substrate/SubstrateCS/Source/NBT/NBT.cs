@@ -6,7 +6,7 @@ using System.IO.Compression;
 
 namespace Substrate.NBT
 {
-    using Map.Utility;
+    using Substrate.Utility;
 
     public interface INBTObject<T>
     {

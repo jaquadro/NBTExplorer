@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Substrate.Map
+namespace Substrate
 {
     using NBT;
     using Entities;
@@ -55,18 +55,22 @@ namespace Substrate.Map
             _registry = new Dictionary<string, Type>();
 
             _registry["Arrow"] = typeof(EntityArrow);
+            _registry["Boat"] = typeof(EntityBoat);
             _registry["Chicken"] = typeof(EntityChicken);
             _registry["Cow"] = typeof(EntityCow);
             _registry["Creeper"] = typeof(EntityCreeper);
             _registry["Egg"] = typeof(EntityEgg);
+            _registry["FallingSand"] = typeof(EntityFallingSand);
             _registry["Ghast"] = typeof(EntityGhast);
             _registry["Giant"] = typeof(EntityGiant);
             _registry["Item"] = typeof(EntityItem);
+            _registry["Minecart"] = typeof(EntityMinecart);
             _registry["Mob"] = typeof(EntityMob);
             _registry["Monster"] = typeof(EntityMonster);
             _registry["Painting"] = typeof(EntityPainting);
             _registry["Pig"] = typeof(EntityPig);
             _registry["PigZombie"] = typeof(EntityPigZombie);
+            _registry["PrimedTnt"] = typeof(EntityPrimedTnt);
             _registry["Sheep"] = typeof(EntitySheep);
             _registry["Skeleton"] = typeof(EntitySkeleton);
             _registry["Slime"] = typeof(EntitySlime);

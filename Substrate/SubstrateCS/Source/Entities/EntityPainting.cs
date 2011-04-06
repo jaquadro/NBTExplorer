@@ -8,7 +8,7 @@ namespace Substrate.Entities
 
     public class EntityPainting : Entity
     {
-        public enum Direction
+        public enum DirectionType
         {
             EAST = 0,
             NORTH = 1,
@@ -26,13 +26,13 @@ namespace Substrate.Entities
             new NBTScalerNode("Motive", NBT_Type.TAG_STRING),
         });
 
-        private Direction _dir;
+        private DirectionType _dir;
         private string _motive;
         private short _xTile;
         private short _yTile;
         private short _zTile;
 
-        public Direction Direction
+        public DirectionType Direction
         {
             get { return _dir; }
             set { _dir = value; }
@@ -90,7 +90,7 @@ namespace Substrate.Entities
                 return null;
             }
 
-            _dir = (Direction) ctree["Dir"].ToNBTByte().Data;
+            _dir = (DirectionType) ctree["Dir"].ToNBTByte().Data;
             _motive = ctree["Motive"].ToNBTString();
             _xTile = ctree["TileX"].ToNBTShort();
             _yTile = ctree["TileY"].ToNBTShort();
