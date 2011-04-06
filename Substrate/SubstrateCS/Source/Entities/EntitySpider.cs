@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Substrate.Map.Entities
+namespace Substrate.Entities
 {
-    using Substrate.Map.NBT;
+    using Substrate.NBT;
 
     public class EntitySpider : EntityMob
     {

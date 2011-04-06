@@ -5,7 +5,7 @@ using System.IO;
 using Ionic.Zlib;
 using System.Collections;
 
-namespace Substrate.Map
+namespace Substrate
 {
     public class RegionFile : IDisposable {
 

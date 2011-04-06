@@ -4,7 +4,7 @@ using System.Text;
 using System.IO;
 using Ionic.Zlib;
 
-namespace Substrate.Map
+namespace Substrate
 {
     class ChunkFile
     {

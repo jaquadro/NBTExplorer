@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Substrate.Map.TileEntities
+namespace Substrate.TileEntities
 {
-    using Substrate.Map.NBT;
+    using Substrate.NBT;
 
     public class TileEntityMobSpawner : TileEntity
     {

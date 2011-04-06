@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Substrate.Map
+namespace Substrate
 {
 
     public class ChunkManager : IChunkContainer, IChunkCache, IEnumerable<ChunkRef>

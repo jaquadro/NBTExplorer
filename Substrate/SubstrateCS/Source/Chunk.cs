@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Substrate.Map
+namespace Substrate
 {
     using NBT;
     using Utility;

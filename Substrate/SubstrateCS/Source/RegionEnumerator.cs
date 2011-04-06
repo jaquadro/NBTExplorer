@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 
-namespace Substrate.Map
+namespace Substrate
 {
     public class RegionList : IEnumerable<Region>
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Substrate.Map.NBT
+namespace Substrate.NBT
 {
     public delegate void MissingTagHandler (Object o, TagEventArgs e);
     public delegate void InvalidTagTypeHandler (Object o, TagEventArgs e);
