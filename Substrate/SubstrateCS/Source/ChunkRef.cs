@@ -251,6 +251,11 @@ namespace Substrate
  	        return GetChunk().CountBlockData(id, data);
         }
 
+        public int CountEntities ()
+        {
+            return GetChunk().CountEntities();
+        }
+
         public int GetHeight (int lx, int lz)
         {
  	        return GetChunk().GetHeight(lx, lz);
@@ -280,49 +285,48 @@ namespace Substrate
         }
 
         #endregion
-    }
 
-        /*public bool VerifyTileEntities ()
+
+        #region IEntityContainer Members
+
+        public List<Entity> FindEntities (string id)
         {
-            bool pass = true;
-
-            NBT_List telist = GetTree().Root["Level"].ToNBTCompound()["TileEntities"].ToNBTList();
-
-            foreach (NBT_Value val in telist) {
-                NBT_Compound tree = val as NBT_Compound;
-                if (tree == null) {
-                    pass = false;
-                    continue;
-                }
-
-                if (new NBTVerifier(tree, TileEntity.BaseSchema).Verify() == false) {
-                    pass = false;
-                    continue;
-                }
-
-                int x = tree["x"].ToNBTInt() & BlockManager.CHUNK_XMASK;
-                int y = tree["y"].ToNBTInt() & BlockManager.CHUNK_YMASK;
-                int z = tree["z"].ToNBTInt() & BlockManager.CHUNK_ZMASK;
-                int id = GetBlockID(x, y, z);
-
-                NBTCompoundNode schema = BlockInfo.SchemaTable[id];
-                if (schema == null) {
-                    pass = false;
-                    continue;
-                }
-
-                pass = new NBTVerifier(tree, schema).Verify() && pass;
-            }
-
-            return pass;
+            return GetChunk().FindEntities(id);
         }
 
-        private static bool LocalBounds (int lx, int ly, int lz)
+        public List<Entity> FindEntities (Predicate<Entity> match)
         {
-            return lx >= 0 && lx < BlockManager.CHUNK_XLEN &&
-                ly >= 0 && ly < BlockManager.CHUNK_YLEN &&
-                lz >= 0 && lz < BlockManager.CHUNK_ZLEN;
-        }*/
+            return GetChunk().FindEntities(match);
+        }
 
-    public class MalformedNBTTreeException : Exception { }
+        public bool AddEntity (Entity ent)
+        {
+            if (GetChunk().AddEntity(ent)) {
+                MarkDirty();
+                return true;
+            }
+            return false;
+        }
+
+        public int RemoveEntities (string id)
+        {
+            int ret = GetChunk().RemoveEntities(id);
+            if (ret > 0) {
+                MarkDirty();
+            }
+            return ret;
+        }
+
+        public int RemoveEntities (Predicate<Entity> match)
+        {
+            int ret = GetChunk().RemoveEntities(match);
+            if (ret > 0) {
+                MarkDirty();
+            }
+            return ret;
+        }
+
+        #endregion
+    }
+
 }

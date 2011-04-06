@@ -18,15 +18,18 @@ namespace Substrate
                 return null;
             }
 
-            return Activator.CreateInstance(t, new object[] { type} ) as Entity;
+            return Activator.CreateInstance(t, new object[] { type } ) as Entity;
         }
 
         public static Entity Create (NBT_Compound tree)
         {
-            string type = tree["id"].ToNBTString();
+            NBT_Value type;
+            if (!tree.TryGetValue("id", out type)) {
+                return null;
+            }
 
             Type t;
-            if (!_registry.TryGetValue(type, out t)) {
+            if (!_registry.TryGetValue(type.ToNBTString(), out t)) {
                 return null;
             }
 

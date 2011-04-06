@@ -7,6 +7,17 @@ namespace Substrate
     using NBT;
     using Utility;
 
+    public interface IEntityContainer
+    {
+        List<Entity> FindEntities (string id);
+        List<Entity> FindEntities (Predicate<Entity> match);
+
+        bool AddEntity (Entity ent);
+
+        int RemoveEntities (string id);
+        int RemoveEntities (Predicate<Entity> match);
+    }
+
     public class Entity : INBTObject<Entity>, ICopyable<Entity>
     {
         public class Vector3

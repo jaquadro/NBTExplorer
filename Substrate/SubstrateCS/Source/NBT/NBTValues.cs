@@ -398,6 +398,16 @@ namespace Substrate.NBT {
             return list;
         }
 
+        public List<NBT_Value> FindAll(Predicate<NBT_Value> match)
+        {
+            return _items.FindAll(match);
+        }
+
+        public int RemoveAll (Predicate<NBT_Value> match)
+        {
+            return _items.RemoveAll(match);
+        }
+
         #region IList<NBT_Value> Members
 
         public int IndexOf (NBT_Value item)

@@ -233,20 +233,6 @@ namespace Substrate
                 }
             }
 
-            /*if (BlockInfo.SchemaTable[_blocks[index]] != BlockInfo.SchemaTable[id]) {
-                if (BlockInfo.SchemaTable[_blocks[index]] != null) {
-                    ClearTileEntity(lx, ly, lz);
-                }
-
-                if (BlockInfo.SchemaTable[id] != null) {
-                    TileEntity te = new TileEntity(BlockInfo.SchemaTable[id]);
-                    te.X = BlockGlobalX(lx);
-                    te.Y = BlockGlobalY(ly);
-                    te.Z = BlockGlobalZ(lz);
-                    _tileEntities.Add(te.Root);
-                }
-            }*/
-
             // Update height map
 
             if (BlockInfo.BlockTable[id] != null) {
@@ -330,6 +316,11 @@ namespace Substrate
             }
 
             return c;
+        }
+
+        public int CountEntities ()
+        {
+            return _entities.Count;
         }
 
         public int GetHeight (int lx, int lz)
@@ -459,6 +450,7 @@ namespace Substrate
 
         #endregion
 
+
         #region INBTObject<Chunk> Members
 
         public Chunk LoadTree (NBT_Value tree)
@@ -517,6 +509,102 @@ namespace Substrate
         public bool ValidateTree (NBT_Value tree)
         {
             return new NBTVerifier(tree, LevelSchema).Verify();
+        }
+
+        #endregion
+
+
+        #region IEntityContainer Members
+
+        public List<Entity> FindEntities (string id)
+        {
+            List<Entity> set = new List<Entity>();
+
+            foreach (NBT_Compound ent in _entities) {
+                NBT_Value eid;
+                if (!ent.TryGetValue("id", out eid)) {
+                    continue;
+                }
+
+                if (eid.ToNBTString().Data != id) {
+                    continue;
+                }
+
+                Entity obj = EntityFactory.Create(ent);
+                if (obj != null) {
+                    set.Add(obj);
+                }
+            }
+
+            return set;
+        }
+
+        public List<Entity> FindEntities (Predicate<Entity> match)
+        {
+            List<Entity> set = new List<Entity>();
+
+            foreach (NBT_Compound ent in _entities) {
+                Entity obj = EntityFactory.Create(ent);
+                if (obj == null) {
+                    continue;
+                }
+
+                if (match(obj)) {
+                    set.Add(obj);
+                }
+            }
+
+            return set;
+        }
+
+        public bool AddEntity (Entity ent)
+        {
+            double xlow = _cx * BlockManager.CHUNK_XLEN;
+            double xhigh = xlow + BlockManager.CHUNK_XLEN;
+            double zlow = _cz * BlockManager.CHUNK_ZLEN;
+            double zhigh = zlow + BlockManager.CHUNK_ZLEN;
+
+            Entity.Vector3 pos = ent.Position;
+            if (!(pos.X >= xlow && pos.X < xhigh && pos.Z >= zlow && pos.Z < zhigh)) {
+                return false;
+            }
+
+            _entities.Add(ent.BuildTree());
+            return true;
+        }
+
+        public int RemoveEntities (string id)
+        {
+            return _entities.RemoveAll(val => {
+                NBT_Compound cval = val as NBT_Compound;
+                if (cval == null) {
+                    return false;
+                }
+
+                NBT_Value sval;
+                if (!cval.TryGetValue("id", out sval)) {
+                    return false;
+                }
+
+                return (sval.ToNBTString().Data == id);
+            });
+        }
+
+        public int RemoveEntities (Predicate<Entity> match)
+        {
+            return _entities.RemoveAll(val => {
+                NBT_Compound cval = val as NBT_Compound;
+                if (cval == null) {
+                    return false;
+                }
+
+                Entity obj = EntityFactory.Create(cval);
+                if (obj == null) {
+                    return false;
+                }
+
+                return match(obj);
+            });
         }
 
         #endregion

@@ -6,7 +6,7 @@ using System.IO;
 namespace Substrate
 {
 
-    public interface IChunk : IBlockContainer
+    public interface IChunk : IBlockContainer, IEntityContainer
     {
         int X { get; }
         int Z { get; }
@@ -17,6 +17,8 @@ namespace Substrate
 
         int CountBlockID (int id);
         int CountBlockData (int id, int data);
+
+        int CountEntities ();
 
         int GetHeight (int lx, int lz);
     }
