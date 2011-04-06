@@ -5,6 +5,7 @@ using System.Text;
 namespace Substrate.Map
 {
     using NBT;
+    using TileEntities;
 
     public class TileEntityFactory
     {

@@ -5,6 +5,7 @@ using System.Text;
 namespace Substrate.Map
 {
     using NBT;
+    using Entities;
 
     public class EntityFactory
     {
