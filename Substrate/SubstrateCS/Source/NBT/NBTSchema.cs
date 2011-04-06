@@ -269,6 +269,20 @@ namespace Substrate.Map.NBT
             _subnodes = new List<NBTSchemaNode>();
         }
 
+        public NBTCompoundNode (string name, NBTSchemaNode subschema)
+            : base(name)
+        {
+            NBTCompoundNode schema = subschema as NBTCompoundNode;
+            if (schema == null) {
+                return;
+            }
+
+            foreach (NBTSchemaNode node in schema._subnodes)
+            {
+                _subnodes.Add(node);
+            }
+        }
+
         public NBTCompoundNode MergeInto (NBTCompoundNode tree)
         {
             foreach (NBTSchemaNode node in _subnodes) {
