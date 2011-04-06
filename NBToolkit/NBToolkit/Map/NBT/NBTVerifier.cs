@@ -135,7 +135,7 @@ namespace NBToolkit.Map.NBT
                 OnInvalidTagValue(new TagEventArgs(schema, tag));
                 return false;
             }
-            if (schema.Name != null && stag.Data != schema.Value) {
+            if (schema.Value != null && stag.Data != schema.Value) {
                 OnInvalidTagValue(new TagEventArgs(schema, tag));
                 return false;
             }

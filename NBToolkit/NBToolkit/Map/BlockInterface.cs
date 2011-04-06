@@ -49,4 +49,14 @@ namespace NBToolkit.Map
         bool SetTileEntity (int lx, int ly, int lz, TileEntity te);
         bool ClearTileEntity (int lx, int ly, int lz);
     }
+
+    public interface IEntity
+    {
+
+    }
+
+    public interface IEntityCollection
+    {
+        List<Entity> FindAll (Predicate<Entity> match);
+    }
 }

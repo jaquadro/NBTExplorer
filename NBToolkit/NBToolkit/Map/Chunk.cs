@@ -5,9 +5,28 @@ namespace NBToolkit.Map
 {
     using NBT;
     using Utility;
+    using System.Collections.Generic;
 
-    public class Chunk : IChunk, ICopyable<Chunk>
+    public class Chunk : IChunk, INBTObject<Chunk>, ICopyable<Chunk>
     {
+        public static NBTCompoundNode LevelSchema = new NBTCompoundNode()
+        {
+            new NBTCompoundNode("Level")
+            {
+                new NBTArrayNode("Blocks", 32768),
+                new NBTArrayNode("Data", 16384),
+                new NBTArrayNode("SkyLight", 16384),
+                new NBTArrayNode("BlockLight", 16384),
+                new NBTArrayNode("HeightMap", 256),
+                new NBTListNode("Entities", NBT_Type.TAG_COMPOUND),
+                new NBTListNode("TileEntities", NBT_Type.TAG_COMPOUND, TileEntity.BaseSchema),
+                new NBTScalerNode("LastUpdate", NBT_Type.TAG_LONG),
+                new NBTScalerNode("xPos", NBT_Type.TAG_INT),
+                new NBTScalerNode("zPos", NBT_Type.TAG_INT),
+                new NBTScalerNode("TerrainPopulated", NBT_Type.TAG_BYTE),
+            },
+        };
+
         private NBT_Tree _tree;
 
         private int _cx;
@@ -21,6 +40,8 @@ namespace NBToolkit.Map
 
         protected NBT_List _entities;
         protected NBT_List _tileEntities;
+
+        protected Dictionary<BlockKey, NBT_Compound> _tileEntityTable;
 
         public int X
         {
@@ -49,39 +70,15 @@ namespace NBToolkit.Map
             _cz = z;
 
             BuildNBTTree();
+
+            BuildTileEntityCache();
         }
 
         public Chunk (NBT_Tree tree)
         {
-            _tree = tree;
-            if (new ChunkVerifier(tree).Verify() == false) {
-                throw new MalformedNBTTreeException();
+            if (LoadTreeSafe(tree.Root) == null) {
+                throw new InvalidNBTObjectException();
             }
-
-            NBT_Compound level = tree.Root["Level"] as NBT_Compound;
-
-            _blocks = level["Blocks"] as NBT_ByteArray;
-            _data = new NibbleArray(level["Data"].ToNBTByteArray().Data);
-            _blockLight = new NibbleArray(level["BlockLight"].ToNBTByteArray().Data);
-            _skyLight = new NibbleArray(level["SkyLight"].ToNBTByteArray().Data);
-            _heightMap = level["HeightMap"] as NBT_ByteArray;
-
-            _entities = level["Entities"] as NBT_List;
-            _tileEntities = level["TileEntities"] as NBT_List;
-
-            // List-type patch up
-            if (_entities.Count == 0) {
-                level["Entities"] = new NBT_List(NBT_Type.TAG_COMPOUND);
-                _entities = level["Entities"] as NBT_List;
-            }
-
-            if (_tileEntities.Count == 0) {
-                level["TileEntities"] = new NBT_List(NBT_Type.TAG_COMPOUND);
-                _tileEntities = level["TileEntities"] as NBT_List;
-            }
-
-            _cx = level["xPos"].ToNBTInt();
-            _cz = level["zPos"].ToNBTInt();
         }
 
         private void BuildNBTTree ()
@@ -211,13 +208,32 @@ namespace NBToolkit.Map
         public bool SetBlockID (int lx, int ly, int lz, int id)
         {
             int index = lx << 11 | lz << 7 | ly;
-            if (_blocks.Data[index] == id) {
+            int oldid = _blocks.Data[index];
+
+            if (oldid == id) {
                 return false;
             }
 
+            // Update value
+
+            _blocks.Data[index] = (byte)id;
+
             // Update tile entities
 
-            if (BlockInfo.SchemaTable[_blocks[index]] != BlockInfo.SchemaTable[id]) {
+            BlockInfoEx info1 = BlockInfo.BlockTable[oldid] as BlockInfoEx;
+            BlockInfoEx info2 = BlockInfo.BlockTable[id] as BlockInfoEx;
+
+            if (info1 != info2) {
+                if (info1 != null) {
+                    ClearTileEntity(lx, ly, lz);
+                }
+
+                if (info2 != null) {
+                    CreateTileEntity(lx, ly, lz);
+                }
+            }
+
+            /*if (BlockInfo.SchemaTable[_blocks[index]] != BlockInfo.SchemaTable[id]) {
                 if (BlockInfo.SchemaTable[_blocks[index]] != null) {
                     ClearTileEntity(lx, ly, lz);
                 }
@@ -229,7 +245,7 @@ namespace NBToolkit.Map
                     te.Z = BlockGlobalZ(lz);
                     _tileEntities.Add(te.Root);
                 }
-            }
+            }*/
 
             // Update height map
 
@@ -250,9 +266,6 @@ namespace NBToolkit.Map
                 }
             }
 
-            // Update value
-
-            _blocks.Data[index] = (byte)id;
             return true;
         }
 
@@ -324,55 +337,92 @@ namespace NBToolkit.Map
             return _heightMap[lz << 4 | lx];
         }
 
+        private void CreateTileEntity (int lx, int ly, int lz)
+        {
+            BlockInfoEx info = GetBlockInfo(lx, ly, lz) as BlockInfoEx;
+            if (info == null) {
+                return;
+            }
+
+            TileEntity te = TileEntityFactory.Create(info.TileEntityName);
+            if (te == null) {
+                return;
+            }
+
+            te.X = BlockGlobalX(lx);
+            te.Y = BlockGlobalY(ly);
+            te.Z = BlockGlobalZ(lz);
+
+            _tileEntities.Add(te.BuildTree());
+        }
+
         public TileEntity GetTileEntity (int lx, int ly, int lz)
         {
             int x = BlockGlobalX(lx);
             int y = BlockGlobalY(ly);
             int z = BlockGlobalZ(lz);
 
-            foreach (NBT_Compound te in _tileEntities) {
-                if (te["x"].ToNBTInt().Data == x &&
-                    te["y"].ToNBTInt().Data == y &&
-                    te["z"].ToNBTInt().Data == z) {
-                    return new TileEntity(te);
-                }
+            BlockKey key = new BlockKey(x, y, z);
+            NBT_Compound te;
+
+            if (!_tileEntityTable.TryGetValue(key, out te)) {
+                return null;
             }
 
-            return null;
+            return TileEntityFactory.Create(te);
         }
 
         public bool SetTileEntity (int lx, int ly, int lz, TileEntity te)
         {
-            int id = GetBlockID(lx, ly, lz);
-
-            NBTCompoundNode schema = BlockInfo.SchemaTable[id];
-            if (schema == null) {
+            BlockInfoEx info = GetBlockInfo(lx, ly, lz) as BlockInfoEx;
+            if (info == null) {
                 return false;
             }
 
-            if (!te.Verify(schema)) {
+            if (te.GetType() != TileEntityFactory.Lookup(info.TileEntityName)) {
                 return false;
             }
 
-            ClearTileEntity(lx, ly, lz);
+            int x = BlockGlobalX(lx);
+            int y = BlockGlobalY(ly);
+            int z = BlockGlobalZ(lz);
 
-            te.X = BlockGlobalX(lx);
-            te.Y = BlockGlobalY(ly);
-            te.Z = BlockGlobalZ(lz);
+            BlockKey key = new BlockKey(x, y, z);
+            NBT_Compound oldte;
 
-            _tileEntities.Add(te.Root);
+            if (_tileEntityTable.TryGetValue(key, out oldte)) {
+                _tileEntities.Remove(oldte);
+            }
+
+            te.X = x;
+            te.Y = y;
+            te.Z = z;
+
+            NBT_Compound tree = te.BuildTree() as NBT_Compound;
+
+            _tileEntities.Add(tree);
+            _tileEntityTable[key] = tree;            
 
             return true;
         }
 
         public bool ClearTileEntity (int lx, int ly, int lz)
         {
-            TileEntity te = GetTileEntity(lx, ly, lz);
-            if (te == null) {
+            int x = BlockGlobalX(lx);
+            int y = BlockGlobalY(ly);
+            int z = BlockGlobalZ(lz);
+
+            BlockKey key = new BlockKey(x, y, z);
+            NBT_Compound te;
+
+            if (!_tileEntityTable.TryGetValue(key, out te)) {
                 return false;
             }
 
-            return _tileEntities.Remove(te.Root);
+            _tileEntities.Remove(te);
+            _tileEntityTable.Remove(key);
+
+            return true;
         }
 
         public virtual void SetLocation (int x, int z)
@@ -383,9 +433,20 @@ namespace NBToolkit.Map
             _cx = x;
             _cz = z;
 
+            BuildTileEntityCache();
+        }
+
+        private void BuildTileEntityCache ()
+        {
+            _tileEntityTable = new Dictionary<BlockKey, NBT_Compound>();
+
             foreach (NBT_Compound te in _tileEntities) {
-                te["x"].ToNBTInt().Data += diffx * BlockManager.CHUNK_XLEN;
-                te["z"].ToNBTInt().Data += diffz * BlockManager.CHUNK_ZLEN;
+                int tex = te["x"].ToNBTInt();
+                int tey = te["y"].ToNBTInt();
+                int tez = te["z"].ToNBTInt();
+
+                BlockKey key = new BlockKey(tex, tey, tez);
+                _tileEntityTable[key] = te;
             }
         }
 
@@ -394,6 +455,68 @@ namespace NBToolkit.Map
         public Chunk Copy ()
         {
             return new Chunk(_tree.Copy());
+        }
+
+        #endregion
+
+        #region INBTObject<Chunk> Members
+
+        public Chunk LoadTree (NBT_Value tree)
+        {
+            NBT_Compound ctree = tree as NBT_Compound;
+            if (ctree == null) {
+                return null;
+            }
+
+            _tree = new NBT_Tree(ctree);
+ 
+            NBT_Compound level = _tree.Root["Level"] as NBT_Compound;
+
+            _blocks = level["Blocks"] as NBT_ByteArray;
+            _data = new NibbleArray(level["Data"].ToNBTByteArray().Data);
+            _blockLight = new NibbleArray(level["BlockLight"].ToNBTByteArray().Data);
+            _skyLight = new NibbleArray(level["SkyLight"].ToNBTByteArray().Data);
+            _heightMap = level["HeightMap"] as NBT_ByteArray;
+
+            _entities = level["Entities"] as NBT_List;
+            _tileEntities = level["TileEntities"] as NBT_List;
+
+            // List-type patch up
+            if (_entities.Count == 0) {
+                level["Entities"] = new NBT_List(NBT_Type.TAG_COMPOUND);
+                _entities = level["Entities"] as NBT_List;
+            }
+
+            if (_tileEntities.Count == 0) {
+                level["TileEntities"] = new NBT_List(NBT_Type.TAG_COMPOUND);
+                _tileEntities = level["TileEntities"] as NBT_List;
+            }
+
+            _cx = level["xPos"].ToNBTInt();
+            _cz = level["zPos"].ToNBTInt();
+
+            BuildTileEntityCache();
+
+            return this;
+        }
+
+        public Chunk LoadTreeSafe (NBT_Value tree)
+        {
+            if (!ValidateTree(tree)) {
+                return null;
+            }
+
+            return LoadTree(tree);
+        }
+
+        public NBT_Value BuildTree ()
+        {
+            return _tree.Root;
+        }
+
+        public bool ValidateTree (NBT_Value tree)
+        {
+            return new NBTVerifier(tree, LevelSchema).Verify();
         }
 
         #endregion

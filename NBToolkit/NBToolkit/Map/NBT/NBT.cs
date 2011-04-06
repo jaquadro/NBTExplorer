@@ -8,6 +8,16 @@ namespace NBToolkit.Map.NBT
 {
     using Map.Utility;
 
+    public interface INBTObject<T>
+    {
+        T LoadTree (NBT_Value tree);
+        T LoadTreeSafe (NBT_Value tree);
+
+        NBT_Value BuildTree ();
+
+        bool ValidateTree (NBT_Value tree);
+    }
+
     public class NBT_Tree : ICopyable<NBT_Tree>
     {
         private Stream _stream = null;
@@ -23,6 +33,11 @@ namespace NBToolkit.Map.NBT
         public NBT_Tree ()
         {
             _root = new NBT_Compound();
+        }
+
+        public NBT_Tree (NBT_Compound tree)
+        {
+            _root = tree;
         }
 
         public NBT_Tree (Stream s)
@@ -486,6 +501,8 @@ namespace NBToolkit.Map.NBT
 
         public NBTException (String msg, Exception innerException) : base(msg, innerException) { }
     }
+
+    public class InvalidNBTObjectException : Exception { }
 
     public class InvalidTagException : Exception { }
 

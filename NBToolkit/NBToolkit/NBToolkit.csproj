@@ -73,11 +73,13 @@
     <Compile Include="ChunkFilter.cs" />
     <Compile Include="Map\ChunkKey.cs" />
     <Compile Include="Map\ChunkManager.cs" />
-    <Compile Include="Map\ChunkVerifier.cs" />
     <Compile Include="FilteredChunkEnumerator.cs" />
     <Compile Include="GenOres.cs" />
+    <Compile Include="Map\Entity.cs" />
+    <Compile Include="Map\Item.cs" />
     <Compile Include="Map\NBT\JSONSerializer.cs" />
     <Compile Include="Map\TileEntity.cs" />
+    <Compile Include="Map\TileEntityFactory.cs" />
     <Compile Include="Map\Utility\Interface.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Map\NBT\NBT.cs" />

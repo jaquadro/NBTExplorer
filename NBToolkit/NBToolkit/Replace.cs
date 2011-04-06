@@ -7,6 +7,7 @@ namespace NBToolkit
 {
     using Map;
     using Map.NBT;
+    using System.Globalization;
 
     public class ReplaceOptions : TKOptions, IChunkFilterable
     {
@@ -49,7 +50,7 @@ namespace NBToolkit
                 { "d|data=", "Set the new block's data value to {VAL} (0-15)",
                     v => OPT_DATA = Convert.ToInt32(v) % 16 },
                 { "p|prob=", "Replace any matching block with probability {VAL} (0.0-1.0)",
-                    v => { OPT_PROB = Convert.ToDouble(v); 
+                    v => { OPT_PROB = Convert.ToDouble(v, new CultureInfo("en-US")); 
                            OPT_PROB = Math.Max((double)OPT_PROB, 0.0); 
                            OPT_PROB = Math.Min((double)OPT_PROB, 1.0); } },
                 { "bxr|BlockXRange=", "Update blocks with X-coord between {0:V1} and {1:V2}, inclusive.  V1 or V2 may be left blank.",

@@ -110,8 +110,6 @@ namespace NBToolkit.Map
         private static int[] _opacityTable;
         private static int[] _luminanceTable;
 
-        protected internal static NBTCompoundNode[] _schemaTable;
-
         public class ItemCache<T>
         {
             private T[] _cache;
@@ -261,9 +259,9 @@ namespace NBToolkit.Map
         public static BlockInfo Glass;
         public static BlockInfo LapisOre;
         public static BlockInfo LapisBlock;
-        public static TileEntityBlockInfo Dispenser;
+        public static BlockInfoEx Dispenser;
         public static BlockInfo Sandstone;
-        public static TileEntityBlockInfo NoteBlock;
+        public static BlockInfoEx NoteBlock;
         public static BlockInfo Bed;
         public static BlockInfo Wool;
         public static BlockInfo YellowFlower;
@@ -281,23 +279,23 @@ namespace NBToolkit.Map
         public static BlockInfo Obsidian;
         public static BlockInfo Torch;
         public static BlockInfo Fire;
-        public static TileEntityBlockInfo MonsterSpawner;
+        public static BlockInfoEx MonsterSpawner;
         public static BlockInfo WoodStairs;
-        public static TileEntityBlockInfo Chest;
+        public static BlockInfoEx Chest;
         public static BlockInfo RedstoneWire;
         public static BlockInfo DiamondOre;
         public static BlockInfo DiamondBlock;
         public static BlockInfo CraftTable;
         public static BlockInfo Crops;
         public static BlockInfo Farmland;
-        public static TileEntityBlockInfo Furnace;
-        public static TileEntityBlockInfo BurningFurnace;
-        public static TileEntityBlockInfo SignPost;
+        public static BlockInfoEx Furnace;
+        public static BlockInfoEx BurningFurnace;
+        public static BlockInfoEx SignPost;
         public static BlockInfo WoodDoor;
         public static BlockInfo Ladder;
         public static BlockInfo Rails;
         public static BlockInfo CobbleStairs;
-        public static TileEntityBlockInfo WallSign;
+        public static BlockInfoEx WallSign;
         public static BlockInfo Lever;
         public static BlockInfo StonePlate;
         public static BlockInfo IronDoor;
@@ -330,12 +328,10 @@ namespace NBToolkit.Map
             _blockTable = new BlockInfo[MAX_BLOCKS];
             _opacityTable = new int[MAX_BLOCKS];
             _luminanceTable = new int[MAX_BLOCKS];
-            _schemaTable = new NBTCompoundNode[MAX_BLOCKS];
 
             BlockTable = new ItemCache<BlockInfo>(_blockTable);
             OpacityTable = new ItemCache<int>(_opacityTable);
             LuminanceTable = new ItemCache<int>(_luminanceTable);
-            SchemaTable = new ItemCache<NBTCompoundNode>(_schemaTable);
 
             Air = new BlockInfo(0, "Air").SetOpacity(0);
             Stone = new BlockInfo(1, "Stone");
@@ -360,9 +356,9 @@ namespace NBToolkit.Map
             Glass = new BlockInfo(20, "Glass").SetOpacity(0);
             LapisOre = new BlockInfo(21, "Lapis Lazuli Ore");
             LapisBlock = new BlockInfo(22, "Lapis Lazuli Block");
-            Dispenser = new TileEntityBlockInfo(23, "Dispenser");
+            Dispenser = new BlockInfoEx(23, "Dispenser");
             Sandstone = new BlockInfo(24, "Sandstone");
-            NoteBlock = new TileEntityBlockInfo(25, "Note Block");
+            NoteBlock = new BlockInfoEx(25, "Note Block");
             Bed = new BlockInfo(26, "Bed").SetOpacity(0);
             Wool = new BlockInfo(35, "Wool");
             YellowFlower = new BlockInfo(37, "Yellow Flower").SetOpacity(0);
@@ -380,23 +376,23 @@ namespace NBToolkit.Map
             Obsidian = new BlockInfo(49, "Obsidian");
             Torch = new BlockInfo(50, "Torch").SetOpacity(0).SetLuminance(MAX_LUMINANCE - 1);
             Fire = new BlockInfo(51, "Fire").SetOpacity(0).SetLuminance(MAX_LUMINANCE);
-            MonsterSpawner = (TileEntityBlockInfo)new TileEntityBlockInfo(52, "Monster Spawner").SetOpacity(0);
+            MonsterSpawner = (BlockInfoEx)new BlockInfoEx(52, "Monster Spawner").SetOpacity(0);
             WoodStairs = new BlockInfo(53, "Wooden Stairs").SetOpacity(0);
-            Chest = new TileEntityBlockInfo(54, "Chest");
+            Chest = new BlockInfoEx(54, "Chest");
             RedstoneWire = new BlockInfo(55, "Redstone Wire").SetOpacity(0);
             DiamondOre = new BlockInfo(56, "Diamond Ore");
             DiamondBlock = new BlockInfo(57, "Diamond Block");
             CraftTable = new BlockInfo(58, "Crafting Table");
             Crops = new BlockInfo(59, "Crops").SetOpacity(0);
             Farmland = new BlockInfo(60, "Farmland").SetOpacity(0);
-            Furnace = new TileEntityBlockInfo(61, "Furnace");
-            BurningFurnace = (TileEntityBlockInfo)new TileEntityBlockInfo(62, "Burning Furnace").SetLuminance(MAX_LUMINANCE - 1);
-            SignPost = (TileEntityBlockInfo)new TileEntityBlockInfo(63, "Sign Post").SetOpacity(0);
+            Furnace = new BlockInfoEx(61, "Furnace");
+            BurningFurnace = (BlockInfoEx)new BlockInfoEx(62, "Burning Furnace").SetLuminance(MAX_LUMINANCE - 1);
+            SignPost = (BlockInfoEx)new BlockInfoEx(63, "Sign Post").SetOpacity(0);
             WoodDoor = new BlockInfo(64, "Wooden Door").SetOpacity(0);
             Ladder = new BlockInfo(65, "Ladder").SetOpacity(0);
             Rails = new BlockInfo(66, "Rails").SetOpacity(0);
             CobbleStairs = new BlockInfo(67, "Cobblestone Stairs").SetOpacity(0);
-            WallSign = (TileEntityBlockInfo)new TileEntityBlockInfo(68, "Wall Sign").SetOpacity(0);
+            WallSign = (BlockInfoEx)new BlockInfoEx(68, "Wall Sign").SetOpacity(0);
             Lever = new BlockInfo(69, "Lever").SetOpacity(0);
             StonePlate = new BlockInfo(70, "Stone Pressure Plate").SetOpacity(0);
             IronDoor = new BlockInfo(71, "Iron Door").SetOpacity(0);
@@ -432,14 +428,14 @@ namespace NBToolkit.Map
 
             // Set Tile Entity Data
 
-            Dispenser.SetTileEntity("Trap", TileEntity.TrapSchema);
-            NoteBlock.SetTileEntity("Music", TileEntity.MusicSchema);
-            MonsterSpawner.SetTileEntity("MonsterSpawner", TileEntity.MobSpawnerSchema);
-            Chest.SetTileEntity("Chest", TileEntity.ChestSchema);
-            Furnace.SetTileEntity("Furnace", TileEntity.FurnaceSchema);
-            BurningFurnace.SetTileEntity("Furnace", TileEntity.FurnaceSchema);
-            SignPost.SetTileEntity("Sign", TileEntity.SignSchema);
-            WallSign.SetTileEntity("Sign", TileEntity.SignSchema);
+            Dispenser.SetTileEntity("Trap");
+            NoteBlock.SetTileEntity("Music");
+            MonsterSpawner.SetTileEntity("MobSpawner");
+            Chest.SetTileEntity("Chest");
+            Furnace.SetTileEntity("Furnace");
+            BurningFurnace.SetTileEntity("Furnace");
+            SignPost.SetTileEntity("Sign");
+            WallSign.SetTileEntity("Sign");
 
             // Set Data Limits
 
@@ -482,29 +478,21 @@ namespace NBToolkit.Map
         }
     }
 
-    public class TileEntityBlockInfo : BlockInfo
+    public class BlockInfoEx : BlockInfo
     {
         private string _tileEntityName;
-        private NBTSchemaNode _tileEntitySchema;
 
         public string TileEntityName
         {
             get { return _tileEntityName; }
         }
 
-        public NBTSchemaNode TileEntitySchema
-        {
-            get { return _tileEntitySchema; }
-        }
+        public BlockInfoEx (int id) : base(id) { }
 
-        public TileEntityBlockInfo (int id) : base(id) { }
+        public BlockInfoEx (int id, string name) : base(id, name) { }
 
-        public TileEntityBlockInfo (int id, string name) : base(id, name) { }
-
-        public BlockInfo SetTileEntity (string name, NBTCompoundNode schema) {
+        public BlockInfo SetTileEntity (string name) {
             _tileEntityName = name;
-            _tileEntitySchema = schema;
-            _schemaTable[ID] = schema;
             return this;
         }
     }

@@ -5,7 +5,7 @@ using System.Text;
 namespace NBToolkit.Map
 {
 
-    public class ChunkManager : IChunkContainer, IChunkCache
+    public class ChunkManager : IChunkContainer, IChunkCache, IEnumerable<ChunkRef>
     {
         public const int REGION_XLEN = 32;
         public const int REGION_ZLEN = 32;
@@ -169,6 +169,24 @@ namespace NBToolkit.Map
             cz >>= REGION_ZLOG;
             return _regionMan.GetRegion(cx, cz);
         }
+
+        #region IEnumerable<ChunkRef> Members
+
+        public IEnumerator<ChunkRef> GetEnumerator ()
+        {
+            return new ChunkEnumerator(this);
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
+        {
+            return new ChunkEnumerator(this);
+        }
+
+        #endregion
     }
 
     public class MissingChunkException : Exception

@@ -26,9 +26,19 @@ namespace NBToolkit.Map
             get { return _id; }
             set
             {
-                if (BlockInfo.SchemaTable[_id] != BlockInfo.SchemaTable[value]) {
-                    _tileEntity = null;
+                BlockInfoEx info1 = BlockInfo.BlockTable[_id] as BlockInfoEx;
+                BlockInfoEx info2 = BlockInfo.BlockTable[value] as BlockInfoEx;
+
+                if (info1 != info2) {
+                    if (info1 != null) {
+                        _tileEntity = null;
+                    }
+
+                    if (info2 != null) {
+                        _tileEntity = TileEntityFactory.Create(info2.TileEntityName);
+                    }
                 }
+
                 _id = value;
             }
         }
@@ -86,12 +96,12 @@ namespace NBToolkit.Map
 
         public bool SetTileEntity (TileEntity te)
         {
-            NBTCompoundNode schema = BlockInfo.SchemaTable[_id];
-            if (schema == null) {
+            BlockInfoEx info = BlockInfo.BlockTable[_id] as BlockInfoEx;
+            if (info == null) {
                 return false;
             }
 
-            if (te.Verify(schema) == false) {
+            if (te.GetType() != TileEntityFactory.Lookup(info.TileEntityName)) {
                 return false;
             }
 

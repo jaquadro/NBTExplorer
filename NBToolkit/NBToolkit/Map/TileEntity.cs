@@ -7,95 +7,8 @@ namespace NBToolkit.Map
     using NBT;
     using Utility;
 
-    public class TileEntity : ICopyable<TileEntity>
+    public class TileEntity : INBTObject<TileEntity>, ICopyable<TileEntity>
     {
-        protected NBT_Compound _tree;
-
-        public NBT_Compound Root
-        {
-            get { return _tree; }
-        }
-
-        public string ID
-        {
-            get { return _tree["id"].ToNBTString(); }
-        }
-
-        public int X
-        {
-            get { return _tree["x"].ToNBTInt(); }
-            set { _tree["x"] = new NBT_Int(value); }
-        }
-
-        public int Y
-        {
-            get { return _tree["y"].ToNBTInt(); }
-            set { _tree["y"] = new NBT_Int(value); }
-        }
-
-        public int Z
-        {
-            get { return _tree["z"].ToNBTInt(); }
-            set { _tree["z"] = new NBT_Int(value); }
-        }
-
-        public TileEntity (string id)
-        {
-            _tree = new NBT_Compound();
-            _tree["id"] = new NBT_String(id);
-            _tree["x"] = new NBT_Int();
-            _tree["y"] = new NBT_Int();
-            _tree["z"] = new NBT_Int();
-        }
-
-        public TileEntity (NBT_Compound tree)
-        {
-            _tree = tree;
-        }
-
-        public TileEntity (NBTSchemaNode schema)
-        {
-            _tree = schema.BuildDefaultTree() as NBT_Compound;
-        }
-
-        public virtual bool Verify ()
-        {
-            NBTVerifier v = new NBTVerifier(Root, BaseSchema);
-            return v.Verify();
-        }
-
-        public bool Verify (NBTSchemaNode schema)
-        {
-            NBTVerifier v = new NBTVerifier(Root, schema);
-            return v.Verify();
-        }
-
-        public bool LocatedAt (int x, int y, int z)
-        {
-            return _tree["x"].ToNBTInt().Data == x &&
-                _tree["y"].ToNBTInt().Data == y &&
-                _tree["z"].ToNBTInt().Data == z;
-        }
-
-        #region ICopyable<TileEntity> Members
-
-        public virtual TileEntity Copy ()
-        {
-            return new TileEntity(_tree.Copy() as NBT_Compound);
-        }
-
-        #endregion
-
-        #region Predefined Schemas
-
-        public static readonly NBTCompoundNode InventorySchema = new NBTCompoundNode("")
-        {
-            new NBTScalerNode("id", NBT_Type.TAG_SHORT),
-            new NBTScalerNode("Damage", NBT_Type.TAG_SHORT),
-            new NBTScalerNode("Count", NBT_Type.TAG_BYTE),
-            new NBTScalerNode("Slot", NBT_Type.TAG_BYTE),
-        };
-
         public static readonly NBTCompoundNode BaseSchema = new NBTCompoundNode("")
         {
             new NBTScalerNode("id", NBT_Type.TAG_STRING),
@@ -104,14 +17,211 @@ namespace NBToolkit.Map
             new NBTScalerNode("z", NBT_Type.TAG_INT),
         };
 
+        private string _id;
+        private int _x;
+        private int _y;
+        private int _z;
+
+        public string ID
+        {
+            get { return _id; }
+        }
+
+        public int X
+        {
+            get { return _x; }
+            set { _x = value; }
+        }
+
+        public int Y
+        {
+            get { return _y; }
+            set { _y = value; }
+        }
+
+        public int Z
+        {
+            get { return _z; }
+            set { _z = value; }
+        }
+
+        public TileEntity (string id)
+        {
+            _id = id;
+        }
+
+        public TileEntity (TileEntity te)
+        {
+            _id = te._id;
+            _x = te._x;
+            _y = te._y;
+            _z = te._z;
+        }
+
+        public bool LocatedAt (int x, int y, int z)
+        {
+            return _x == x && _y == y && _z == z;
+        }
+
+        #region ICopyable<TileEntity> Members
+
+        public virtual TileEntity Copy ()
+        {
+            return new TileEntity(this);
+        }
+
+        #endregion
+
+        #region INBTObject<TileEntity> Members
+
+        public virtual TileEntity LoadTree (NBT_Value tree)
+        {
+            NBT_Compound ctree = tree as NBT_Compound;
+            if (ctree == null) {
+                return null;
+            }
+
+            _id = ctree["id"].ToNBTString();
+            _x = ctree["x"].ToNBTInt();
+            _y = ctree["y"].ToNBTInt();
+            _z = ctree["z"].ToNBTInt();
+
+            return this;
+        }
+
+        public virtual TileEntity LoadTreeSafe (NBT_Value tree)
+        {
+            if (!ValidateTree(tree)) {
+                return null;
+            }
+
+            return LoadTree(tree);
+        }
+
+        public virtual NBT_Value BuildTree ()
+        {
+            NBT_Compound tree = new NBT_Compound();
+            tree["id"] = new NBT_String(_id);
+            tree["x"] = new NBT_Int(_x);
+            tree["y"] = new NBT_Int(_y);
+            tree["z"] = new NBT_Int(_z);
+
+            return tree;
+        }
+
+        public virtual bool ValidateTree (NBT_Value tree)
+        {
+            return new NBTVerifier(tree, BaseSchema).Verify();
+        }
+
+        #endregion
+    }
+
+    public class TileEntityFurnace : TileEntity, IItemContainer
+    {
         public static readonly NBTCompoundNode FurnaceSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
         {
             new NBTStringNode("id", "Furnace"),
             new NBTScalerNode("BurnTime", NBT_Type.TAG_SHORT),
             new NBTScalerNode("CookTime", NBT_Type.TAG_SHORT),
-            new NBTListNode("Items", NBT_Type.TAG_COMPOUND, InventorySchema),
+            new NBTListNode("Items", NBT_Type.TAG_COMPOUND, ItemCollection.ListSchema),
         });
 
+        private const int _CAPACITY = 3;
+
+        private short _burnTime;
+        private short _cookTime;
+
+        private ItemCollection _items;
+
+        public int BurnTime
+        {
+            get { return _burnTime; }
+            set { _burnTime = (short)value; }
+        }
+
+        public int CookTime
+        {
+            get { return _cookTime; }
+            set { _cookTime = (short)value; }
+        }
+
+        public TileEntityFurnace ()
+            : base("Furnace")
+        {
+            _items = new ItemCollection(_CAPACITY);
+        }
+
+        public TileEntityFurnace (TileEntity te)
+            : base (te)
+        {
+            TileEntityFurnace tec = te as TileEntityFurnace;
+            if (tec != null) {
+                _cookTime = tec._cookTime;
+                _burnTime = tec._burnTime;
+                _items = tec._items.Copy();
+            }
+            else {
+                _items = new ItemCollection(_CAPACITY);
+            }
+        }
+
+        #region ICopyable<TileEntity> Members
+
+        public override TileEntity Copy ()
+        {
+            return new TileEntityFurnace(this);
+        }
+
+        #endregion
+
+        #region IItemContainer Members
+
+        public ItemCollection Items
+        {
+            get { return _items; }
+        }
+
+        #endregion
+
+        #region INBTObject<TileEntity> Members
+
+        public override TileEntity LoadTree (NBT_Value tree)
+        {
+            NBT_Compound ctree = tree as NBT_Compound;
+            if (ctree == null || base.LoadTree(tree) == null) {
+                return null;
+            }
+
+            _burnTime = ctree["BurnTime"].ToNBTShort();
+            _cookTime = ctree["CookTime"].ToNBTShort();
+
+            NBT_List items = ctree["Items"].ToNBTList();
+            _items = new ItemCollection(_CAPACITY).LoadTree(items);
+
+            return this;
+        }
+
+        public override NBT_Value BuildTree ()
+        {
+            NBT_Compound tree = base.BuildTree() as NBT_Compound;
+            tree["BurnTime"] = new NBT_Short(_burnTime);
+            tree["CookTime"] = new NBT_Short(_cookTime);
+            tree["Items"] = _items.BuildTree();
+
+            return tree;
+        }
+
+        public override bool ValidateTree (NBT_Value tree)
+        {
+            return new NBTVerifier(tree, FurnaceSchema).Verify();
+        }
+
+        #endregion
+    }
+
+    public class TileEntitySign : TileEntity
+    {
         public static readonly NBTCompoundNode SignSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
         {
             new NBTStringNode("id", "Sign"),
@@ -121,132 +231,92 @@ namespace NBToolkit.Map
             new NBTScalerNode("Text4", NBT_Type.TAG_STRING),
         });
 
-        public static readonly NBTCompoundNode MobSpawnerSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
-        {
-            new NBTStringNode("id", "MobSpawner"),
-            new NBTScalerNode("EntityId", NBT_Type.TAG_STRING),
-            new NBTScalerNode("Delay", NBT_Type.TAG_SHORT),
-        });
+        private string _text1 = "";
+        private string _text2 = "";
+        private string _text3 = "";
+        private string _text4 = "";
 
-        public static readonly NBTCompoundNode ChestSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
-        {
-            new NBTStringNode("id", "Chest"),
-            new NBTListNode("Items", NBT_Type.TAG_COMPOUND, InventorySchema),
-        });
-
-        public static readonly NBTCompoundNode MusicSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
-        {
-            new NBTStringNode("id", "Music"),
-            new NBTScalerNode("note", NBT_Type.TAG_BYTE),
-        });
-
-        public static readonly NBTCompoundNode TrapSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
-        {
-            new NBTStringNode("id", "Trap"),
-            new NBTListNode("Items", NBT_Type.TAG_COMPOUND, InventorySchema),
-        });
-
-        #endregion
-    }
-
-    public class TileEntityFurnace : TileEntity, IItemContainer
-    {
-        protected const int _capacity = 3;
-
-        protected ItemCollection _items;
-
-        public int BurnTime
-        {
-            get { return _tree["BurnTime"].ToNBTShort(); }
-            set { _tree["BurnTime"] = new NBT_Short((short)value); }
-        }
-
-        public int CookTime
-        {
-            get { return _tree["CookTime"].ToNBTShort(); }
-            set { _tree["CookTime"] = new NBT_Short((short)value); }
-        }
-
-        public TileEntityFurnace (NBT_Compound tree)
-            : base(tree)
-        {
-            NBT_List items = tree["Items"].ToNBTList();
-
-            if (items.Count == 0) {
-                tree["Items"] = new NBT_List(NBT_Type.TAG_COMPOUND);
-                items = _tree["Items"].ToNBTList();
-            }
-
-            _items = new ItemCollection(items, _capacity);
-        }
-
-        public override bool Verify ()
-        {
-            NBTVerifier v = new NBTVerifier(Root, TileEntity.FurnaceSchema);
-            return v.Verify();
-        }
-
-        #region ICopyable<TileEntity> Members
-
-        public override TileEntity Copy ()
-        {
-            return new TileEntityFurnace(_tree.Copy() as NBT_Compound);
-        }
-
-        #endregion
-
-        #region IItemContainer Members
-
-        public ItemCollection Items
-        {
-            get { return _items; }
-        }
-
-        #endregion
-    }
-
-    public class TileEntitySign : TileEntity
-    {
         public string Text1
         {
-            get { return _tree["Text1"].ToNBTString(); }
-            set { _tree["Text1"] = new NBT_String(value.Substring(0, 12)); }
+            get { return _text1; }
+            set { _text1 = value.Substring(0, 12); }
         }
 
         public string Text2
         {
-            get { return _tree["Text2"].ToNBTString(); }
-            set { _tree["Text2"] = new NBT_String(value.Substring(0, 12)); }
+            get { return _text2; }
+            set { _text2 = value.Substring(0, 12); }
         }
 
         public string Text3
         {
-            get { return _tree["Text3"].ToNBTString(); }
-            set { _tree["Text3"] = new NBT_String(value.Substring(0, 12)); }
+            get { return _text3; }
+            set { _text3 = value.Substring(0, 12); }
         }
 
         public string Text4
         {
-            get { return _tree["Text4"].ToNBTString(); }
-            set { _tree["Text4"] = new NBT_String(value.Substring(0, 12)); }
+            get { return _text4; }
+            set { _text4 = value.Substring(0, 12); }
         }
 
-        public TileEntitySign (NBT_Compound tree)
-            : base(tree)
+        public TileEntitySign ()
+            : base("Sign")
         {
         }
 
-        public override bool Verify ()
+        public TileEntitySign (TileEntity te)
+            : base(te)
         {
-            NBTVerifier v = new NBTVerifier(Root, TileEntity.SignSchema);
-            return v.Verify();
+            TileEntitySign tes = te as TileEntitySign;
+            if (tes != null) {
+                _text1 = tes._text1;
+                _text2 = tes._text2;
+                _text3 = tes._text3;
+                _text4 = tes._text4;
+            }
         }
 
         #region ICopyable<TileEntity> Members
 
         public override TileEntity Copy ()
         {
-            return new TileEntitySign(_tree.Copy() as NBT_Compound);
+            return new TileEntitySign(this);
+        }
+
+        #endregion
+
+        #region INBTObject<TileEntity> Members
+
+        public override TileEntity LoadTree (NBT_Value tree)
+        {
+            NBT_Compound ctree = tree as NBT_Compound;
+            if (ctree == null || base.LoadTree(tree) == null) {
+                return null;
+            }
+
+            _text1 = ctree["Text1"].ToNBTString();
+            _text2 = ctree["Text2"].ToNBTString();
+            _text3 = ctree["Text3"].ToNBTString();
+            _text4 = ctree["Text4"].ToNBTString();
+
+            return this;
+        }
+
+        public override NBT_Value BuildTree ()
+        {
+            NBT_Compound tree = base.BuildTree() as NBT_Compound;
+            tree["Text1"] = new NBT_String(_text1);
+            tree["Text2"] = new NBT_String(_text2);
+            tree["Text3"] = new NBT_String(_text3);
+            tree["Text4"] = new NBT_String(_text4);
+
+            return tree;
+        }
+
+        public override bool ValidateTree (NBT_Value tree)
+        {
+            return new NBTVerifier(tree, SignSchema).Verify();
         }
 
         #endregion
@@ -254,34 +324,79 @@ namespace NBToolkit.Map
 
     public class TileEntityMobSpawner : TileEntity
     {
+        public static readonly NBTCompoundNode MobSpawnerSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
+        {
+            new NBTStringNode("id", "MobSpawner"),
+            new NBTScalerNode("EntityId", NBT_Type.TAG_STRING),
+            new NBTScalerNode("Delay", NBT_Type.TAG_SHORT),
+        });
+
+        private short _delay;
+        private string _entityID;
+
         public int Delay
         {
-            get { return _tree["Delay"].ToNBTShort(); }
-            set { _tree["Delay"] = new NBT_Short((short)value); }
+            get { return _delay; }
+            set { _delay = (short)value; }
         }
 
         public string EntityID
         {
-            get { return _tree["EntityID"].ToNBTString(); }
-            set { _tree["EntityID"] = new NBT_String(value); }
+            get { return _entityID; }
+            set { _entityID = value; }
         }
 
-        public TileEntityMobSpawner (NBT_Compound tree)
-            : base(tree)
+        public TileEntityMobSpawner ()
+            : base("MobSpawner")
         {
         }
 
-        public override bool Verify ()
+        public TileEntityMobSpawner (TileEntity te)
+            : base(te)
         {
-            NBTVerifier v = new NBTVerifier(Root, TileEntity.MobSpawnerSchema);
-            return v.Verify();
+            TileEntityMobSpawner tes = te as TileEntityMobSpawner;
+            if (tes != null) {
+                _delay = tes._delay;
+                _entityID = tes._entityID;
+            }
         }
 
         #region ICopyable<TileEntity> Members
 
         public override TileEntity Copy ()
         {
-            return new TileEntityMobSpawner(_tree.Copy() as NBT_Compound);
+            return new TileEntityMobSpawner(this);
+        }
+
+        #endregion
+
+        #region INBTObject<TileEntity> Members
+
+        public override TileEntity LoadTree (NBT_Value tree)
+        {
+            NBT_Compound ctree = tree as NBT_Compound;
+            if (ctree == null || base.LoadTree(tree) == null) {
+                return null;
+            }
+
+            _delay = ctree["Delay"].ToNBTShort();
+            _entityID = ctree["EntityID"].ToNBTString();
+
+            return this;
+        }
+
+        public override NBT_Value BuildTree ()
+        {
+            NBT_Compound tree = base.BuildTree() as NBT_Compound;
+            tree["EntityID"] = new NBT_String(_entityID);
+            tree["Delay"] = new NBT_Short(_delay);
+
+            return tree;
+        }
+
+        public override bool ValidateTree (NBT_Value tree)
+        {
+            return new NBTVerifier(tree, MobSpawnerSchema).Verify();
         }
 
         #endregion
@@ -289,34 +404,39 @@ namespace NBToolkit.Map
 
     public class TileEntityChest : TileEntity, IItemContainer
     {
-        protected const int _capacity = 27;
-
-        protected ItemCollection _items;
-
-        public TileEntityChest (NBT_Compound tree)
-            : base(tree)
+        public static readonly NBTCompoundNode ChestSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
         {
-            NBT_List items = tree["Items"].ToNBTList();
+            new NBTStringNode("id", "Chest"),
+            new NBTListNode("Items", NBT_Type.TAG_COMPOUND, ItemCollection.ListSchema),
+        });
 
-            if (items.Count == 0) {
-                tree["Items"] = new NBT_List(NBT_Type.TAG_COMPOUND);
-                items = _tree["Items"].ToNBTList();
-            }
+        private const int _CAPACITY = 27;
 
-            _items = new ItemCollection(items, _capacity);
+        private ItemCollection _items;
+
+        public TileEntityChest ()
+            : base("Chest")
+        {
+            _items = new ItemCollection(_CAPACITY);
         }
 
-        public override bool Verify ()
+        public TileEntityChest (TileEntity te)
+            : base(te)
         {
-            NBTVerifier v = new NBTVerifier(Root, TileEntity.ChestSchema);
-            return v.Verify();
+            TileEntityChest tec = te as TileEntityChest;
+            if (tec != null) {
+                _items = tec._items.Copy();
+            }
+            else {
+                _items = new ItemCollection(_CAPACITY);
+            }
         }
 
         #region ICopyable<TileEntity> Members
 
         public override TileEntity Copy ()
         {
-            return new TileEntityChest(_tree.Copy() as NBT_Compound);
+            return new TileEntityChest(this);
         }
 
         #endregion
@@ -326,6 +446,36 @@ namespace NBToolkit.Map
         public ItemCollection Items
         {
             get { return _items; }
+        }
+
+        #endregion
+
+        #region INBTObject<TileEntity> Members
+
+        public override TileEntity LoadTree (NBT_Value tree)
+        {
+            NBT_Compound ctree = tree as NBT_Compound;
+            if (ctree == null || base.LoadTree(tree) == null) {
+                return null;
+            }
+
+            NBT_List items = ctree["Items"].ToNBTList();
+            _items = new ItemCollection(_CAPACITY).LoadTree(items);
+
+            return this;
+        }
+
+        public override NBT_Value BuildTree ()
+        {
+            NBT_Compound tree = base.BuildTree() as NBT_Compound;
+            tree["Items"] = _items.BuildTree();
+
+            return tree;
+        }
+
+        public override bool ValidateTree (NBT_Value tree)
+        {
+            return new NBTVerifier(tree, ChestSchema).Verify();
         }
 
         #endregion
@@ -333,28 +483,68 @@ namespace NBToolkit.Map
 
     public class TileEntityMusic : TileEntity
     {
+        public static readonly NBTCompoundNode MusicSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
+        {
+            new NBTStringNode("id", "Music"),
+            new NBTScalerNode("note", NBT_Type.TAG_BYTE),
+        });
+
+        private byte _note;
+
         public int Note
         {
-            get { return _tree["Note"].ToNBTByte(); }
-            set { _tree["Note"] = new NBT_Byte((byte)value); }
+            get { return _note; }
+            set { _note = (byte)value; }
         }
 
-        public TileEntityMusic (NBT_Compound tree)
-            : base(tree)
+        public TileEntityMusic ()
+            : base("Music")
         {
         }
 
-        public override bool Verify ()
+        public TileEntityMusic (TileEntity te)
+            : base(te)
         {
-            NBTVerifier v = new NBTVerifier(Root, TileEntity.MusicSchema);
-            return v.Verify();
+            TileEntityMusic tes = te as TileEntityMusic;
+            if (tes != null) {
+                _note = tes._note;
+            }
         }
 
         #region ICopyable<TileEntity> Members
 
         public override TileEntity Copy ()
         {
-            return new TileEntityMusic(_tree.Copy() as NBT_Compound);
+            return new TileEntityMusic(this);
+        }
+
+        #endregion
+
+        #region INBTObject<TileEntity> Members
+
+        public override TileEntity LoadTree (NBT_Value tree)
+        {
+            NBT_Compound ctree = tree as NBT_Compound;
+            if (ctree == null || base.LoadTree(tree) == null) {
+                return null;
+            }
+
+            _note = ctree["Note"].ToNBTByte();
+
+            return this;
+        }
+
+        public override NBT_Value BuildTree ()
+        {
+            NBT_Compound tree = base.BuildTree() as NBT_Compound;
+            tree["Note"] = new NBT_Byte(_note);
+
+            return tree;
+        }
+
+        public override bool ValidateTree (NBT_Value tree)
+        {
+            return new NBTVerifier(tree, MusicSchema).Verify();
         }
 
         #endregion
@@ -362,34 +552,39 @@ namespace NBToolkit.Map
 
     public class TileEntityTrap : TileEntity, IItemContainer
     {
-        protected const int _capacity = 8;
-
-        protected ItemCollection _items;
-
-        public TileEntityTrap (NBT_Compound tree)
-            : base(tree)
+        public static readonly NBTCompoundNode TrapSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
         {
-            NBT_List items = tree["Items"].ToNBTList();
+            new NBTStringNode("id", "Trap"),
+            new NBTListNode("Items", NBT_Type.TAG_COMPOUND, ItemCollection.ListSchema),
+        });
 
-            if (items.Count == 0) {
-                tree["Items"] = new NBT_List(NBT_Type.TAG_COMPOUND);
-                items = _tree["Items"].ToNBTList();
-            }
+        private const int _CAPACITY = 8;
 
-            _items = new ItemCollection(items, _capacity);
+        private ItemCollection _items;
+
+        public TileEntityTrap ()
+            : base("Trap")
+        {
+            _items = new ItemCollection(_CAPACITY);
         }
 
-        public override bool Verify ()
+        public TileEntityTrap (TileEntity te)
+            : base(te)
         {
-            NBTVerifier v = new NBTVerifier(Root, TileEntity.TrapSchema);
-            return v.Verify();
+            TileEntityTrap tec = te as TileEntityTrap;
+            if (tec != null) {
+                _items = tec._items.Copy();
+            }
+            else {
+                _items = new ItemCollection(_CAPACITY);
+            }
         }
 
         #region ICopyable<TileEntity> Members
 
         public override TileEntity Copy ()
         {
-            return new TileEntityTrap(_tree.Copy() as NBT_Compound);
+            return new TileEntityTrap(this);
         }
 
         #endregion
@@ -399,6 +594,36 @@ namespace NBToolkit.Map
         public ItemCollection Items
         {
             get { return _items; }
+        }
+
+        #endregion
+
+        #region INBTObject<TileEntity> Members
+
+        public override TileEntity LoadTree (NBT_Value tree)
+        {
+            NBT_Compound ctree = tree as NBT_Compound;
+            if (ctree == null || base.LoadTree(tree) == null) {
+                return null;
+            }
+
+            NBT_List items = ctree["Items"].ToNBTList();
+            _items = new ItemCollection(_CAPACITY).LoadTree(items);
+
+            return this;
+        }
+
+        public override NBT_Value BuildTree ()
+        {
+            NBT_Compound tree = base.BuildTree() as NBT_Compound;
+            tree["Items"] = _items.BuildTree();
+
+            return tree;
+        }
+
+        public override bool ValidateTree (NBT_Value tree)
+        {
+            return new NBTVerifier(tree, TrapSchema).Verify();
         }
 
         #endregion
