@@ -4,7 +4,7 @@ using System.Text;
 using System.IO;
 using System.IO.Compression;
 
-namespace NBToolkit.Map.NBT
+namespace Substrate.Map.NBT
 {
     using Map.Utility;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace NBToolkit.Map
+namespace Substrate.Map
 {
     using NBT;
     using Utility;

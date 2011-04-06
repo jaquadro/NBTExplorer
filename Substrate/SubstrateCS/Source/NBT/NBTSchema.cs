@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NBToolkit.Map.NBT
+namespace Substrate.Map.NBT
 {
     public abstract class NBTSchemaNode
     {

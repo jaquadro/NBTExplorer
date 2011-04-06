@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 
-namespace NBToolkit.Map
+namespace Substrate.Map
 {
     using NBT;
 

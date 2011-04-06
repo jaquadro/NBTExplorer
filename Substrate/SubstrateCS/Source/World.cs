@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace NBToolkit.Map
+namespace Substrate.Map
 {
     public class World
     {

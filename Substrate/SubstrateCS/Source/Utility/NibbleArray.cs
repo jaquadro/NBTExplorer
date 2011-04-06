@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NBToolkit.Map.Utility
+namespace Substrate.Map.Utility
 {
     public class NibbleArray : ICopyable<NibbleArray>
     {

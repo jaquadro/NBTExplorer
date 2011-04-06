@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NBToolkit.Map
+namespace Substrate.Map
 {
     public struct BlockKey : IEquatable<BlockKey>
     {
