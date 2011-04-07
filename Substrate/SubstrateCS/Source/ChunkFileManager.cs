@@ -7,7 +7,7 @@ namespace Substrate
 {
     using NBT;
 
-    public class ChunkFileManager : IChunkContainer, IChunkCache
+    public class ChunkFileManager : IChunkManager, IChunkCache
     {
         protected string _mapPath;
 
@@ -29,7 +29,7 @@ namespace Substrate
         protected NBT_Tree GetChunkTree (int cx, int cz)
         {
             ChunkFile cf = GetChunkFile(cx, cz);
-            Stream nbtstr = cf.GetChunkDataInputStream();
+            Stream nbtstr = cf.GetDataInputStream();
             if (nbtstr == null) {
                 return null;
             }
@@ -40,7 +40,7 @@ namespace Substrate
         protected bool SaveChunkTree (int cx, int cz, NBT_Tree tree)
         {
             ChunkFile cf = GetChunkFile(cx, cz);
-            Stream zipstr = cf.GetChunkDataOutputStream();
+            Stream zipstr = cf.GetDataOutputStream();
             if (zipstr == null) {
                 return false;
             }
@@ -53,7 +53,7 @@ namespace Substrate
 
         protected Stream GetChunkOutStream (int cx, int cz)
         {
-            return new ChunkFile(_mapPath, cx, cz).GetChunkDataOutputStream();
+            return new ChunkFile(_mapPath, cx, cz).GetDataOutputStream();
         }
 
         #region IChunkContainer Members

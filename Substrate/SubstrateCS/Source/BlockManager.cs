@@ -13,7 +13,7 @@ namespace Substrate
         bool SetBlock (int x, int y, int z, Block block);
     }*/
 
-    public class BlockManager : IBlockContainer
+    public class BlockManager : IBlockManager
     {
         public const int MIN_X = -32000000;
         public const int MAX_X = 32000000;
@@ -36,11 +36,11 @@ namespace Substrate
 
         public static bool EnforceDataLimits = true;
 
-        protected ChunkManager _chunkMan;
+        protected IChunkManager _chunkMan;
 
         protected ChunkRef _cache;
 
-        public BlockManager (ChunkManager cm)
+        public BlockManager (IChunkManager cm)
         {
             _chunkMan = cm;
         }

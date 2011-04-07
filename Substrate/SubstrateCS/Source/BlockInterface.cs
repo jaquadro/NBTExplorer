@@ -49,4 +49,9 @@ namespace Substrate
         bool SetTileEntity (int lx, int ly, int lz, TileEntity te);
         bool ClearTileEntity (int lx, int ly, int lz);
     }
+
+    public interface IBlockManager : IBlockContainer
+    {
+
+    }
 }

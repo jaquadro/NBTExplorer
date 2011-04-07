@@ -5,7 +5,7 @@ using System.Text;
 namespace Substrate
 {
 
-    public class ChunkManager : IChunkContainer, IChunkCache, IEnumerable<ChunkRef>
+    public class ChunkManager : IChunkManager, IChunkCache, IEnumerable<ChunkRef>
     {
         public const int REGION_XLEN = 32;
         public const int REGION_ZLEN = 32;

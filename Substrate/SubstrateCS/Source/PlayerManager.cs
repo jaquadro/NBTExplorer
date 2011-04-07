@@ -24,7 +24,7 @@ namespace Substrate
         protected NBT_Tree GetPlayerTree (string name)
         {
             PlayerFile pf = GetPlayerFile(name);
-            Stream nbtstr = pf.GetChunkDataInputStream();
+            Stream nbtstr = pf.GetDataInputStream();
             if (nbtstr == null) {
                 return null;
             }
@@ -35,7 +35,7 @@ namespace Substrate
         protected bool SavePlayerTree (string name, NBT_Tree tree)
         {
             PlayerFile pf = GetPlayerFile(name);
-            Stream zipstr = pf.GetChunkDataOutputStream();
+            Stream zipstr = pf.GetDataOutputStream();
             if (zipstr == null) {
                 return false;
             }

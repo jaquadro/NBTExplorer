@@ -47,4 +47,9 @@ namespace Substrate
         int Save ();
         bool SaveChunk (Chunk chunk);
     }
+
+    public interface IChunkManager : IChunkContainer
+    {
+
+    }
 }

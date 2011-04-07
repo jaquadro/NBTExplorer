@@ -28,7 +28,7 @@ namespace Substrate
             return true;
         }
 
-        public Stream GetChunkDataInputStream ()
+        public Stream GetDataInputStream ()
         {
             FileStream fstr = new FileStream(_filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
@@ -43,7 +43,7 @@ namespace Substrate
             return new GZipStream(new MemoryStream(data), CompressionMode.Decompress);
         }
 
-        public Stream GetChunkDataOutputStream ()
+        public Stream GetDataOutputStream ()
         {
             return new ZlibStream(new NBTBuffer(this), CompressionMode.Compress);
         }
