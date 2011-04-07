@@ -7,7 +7,7 @@ namespace Substrate
 {
     using NBT;
 
-    class ChunkFileManager : IChunkContainer, IChunkCache
+    public class ChunkFileManager : IChunkContainer, IChunkCache
     {
         protected string _mapPath;
 

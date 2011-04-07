@@ -10,6 +10,7 @@ namespace Substrate
         protected RegionManager _regionMan;
         protected ChunkManager _chunkMan;
         protected BlockManager _blockMan;
+        protected PlayerManager _playerMan;
 
         protected string _worldPath;
 
@@ -17,9 +18,19 @@ namespace Substrate
         {
             _worldPath = world;
 
-            _regionMan = new RegionManager(Path.Combine(world, "region"));
-            _chunkMan = new ChunkManager(_regionMan);
+            if (Directory.Exists(Path.Combine(world, "region"))) {
+                _regionMan = new RegionManager(Path.Combine(world, "region"));
+                _chunkMan = new ChunkManager(_regionMan);
+            }
+            else if (Directory.Exists(Path.Combine(world, "0"))) {
+                //_chunkMan = new ChunkFileManager(world);
+            }
+
             _blockMan = new BlockManager(_chunkMan);
+
+            if (Directory.Exists(Path.Combine(world, "players"))) {
+                _playerMan = new PlayerManager(Path.Combine(world, "players"));
+            }
         }
 
         public RegionManager GetRegionManager ()
@@ -35,6 +46,11 @@ namespace Substrate
         public BlockManager GetBlockManager ()
         {
             return _blockMan;
+        }
+
+        public PlayerManager GetPlayerManager ()
+        {
+            return _playerMan;
         }
     }
 }
