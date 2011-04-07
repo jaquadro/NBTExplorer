@@ -10,9 +10,9 @@ namespace Substrate.Entities
     {
         public static readonly NBTCompoundNode SheepSchema = MobSchema.MergeInto(new NBTCompoundNode("")
         {
-            new NBTStringNode("id", "Pig"),
+            new NBTStringNode("id", "Sheep"),
             new NBTScalerNode("Sheared", NBT_Type.TAG_BYTE),
-            new NBTScalerNode("Color", NBT_Type.TAG_BYTE),
+            new NBTScalerNode("Color", NBT_Type.TAG_BYTE, NBTOptions.CREATE_ON_MISSING),
         });
 
         private bool _sheared;

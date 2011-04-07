@@ -4,18 +4,37 @@ using System.Text;
 
 namespace Substrate.NBT
 {
+    [Flags]
+    public enum NBTOptions
+    {
+        OPTIONAL = 0x1,
+        CREATE_ON_MISSING = 0x2,
+    }
+
     public abstract class NBTSchemaNode
     {
         private string _name;
+        private NBTOptions _options;
 
         public string Name
         {
             get { return _name; }
         }
 
+        public NBTOptions Options
+        {
+            get { return _options; }
+        }
+
         public NBTSchemaNode (string name)
         {
             _name = name;
+        }
+
+        public NBTSchemaNode (string name, NBTOptions options)
+        {
+            _name = name;
+            _options = options;
         }
 
         public virtual NBT_Value BuildDefaultTree ()
@@ -35,6 +54,12 @@ namespace Substrate.NBT
 
         public NBTScalerNode (string name, NBT_Type type)
             : base(name)
+        {
+            _type = type;
+        }
+
+        public NBTScalerNode (string name, NBT_Type type, NBTOptions options)
+            : base(name, options)
         {
             _type = type;
         }
@@ -83,6 +108,11 @@ namespace Substrate.NBT
             get { return _value; }
         }
 
+        public NBTStringNode (string name, NBTOptions options)
+            : base(name, options)
+        {
+        }
+
         public NBTStringNode (string name, string value)
             : base(name)
         {
@@ -120,8 +150,20 @@ namespace Substrate.NBT
             _length = 0;
         }
 
+        public NBTArrayNode (string name, NBTOptions options)
+            : base(name, options)
+        {
+            _length = 0;
+        }
+
         public NBTArrayNode (string name, int length)
             : base(name)
+        {
+            _length = length;
+        }
+
+        public NBTArrayNode (string name, int length, NBTOptions options)
+            : base(name, options)
         {
             _length = length;
         }
@@ -159,8 +201,21 @@ namespace Substrate.NBT
             _type = type;
         }
 
+        public NBTListNode (string name, NBT_Type type, NBTOptions options)
+            : base(name, options)
+        {
+            _type = type;
+        }
+
         public NBTListNode (string name, NBT_Type type, int length)
             : base(name)
+        {
+            _type = type;
+            _length = length;
+        }
+
+        public NBTListNode (string name, NBT_Type type, int length, NBTOptions options)
+            : base(name, options)
         {
             _type = type;
             _length = length;
@@ -173,8 +228,23 @@ namespace Substrate.NBT
             _subschema = subschema;
         }
 
+        public NBTListNode (string name, NBT_Type type, NBTSchemaNode subschema, NBTOptions options)
+            : base(name, options)
+        {
+            _type = type;
+            _subschema = subschema;
+        }
+
         public NBTListNode (string name, NBT_Type type, int length, NBTSchemaNode subschema)
             : base(name)
+        {
+            _type = type;
+            _length = length;
+            _subschema = subschema;
+        }
+
+        public NBTListNode (string name, NBT_Type type, int length, NBTSchemaNode subschema, NBTOptions options)
+            : base(name, options)
         {
             _type = type;
             _length = length;
@@ -263,8 +333,20 @@ namespace Substrate.NBT
             _subnodes = new List<NBTSchemaNode>();
         }
 
+        public NBTCompoundNode (NBTOptions options)
+            : base("", options)
+        {
+            _subnodes = new List<NBTSchemaNode>();
+        }
+
         public NBTCompoundNode (string name)
             : base(name)
+        {
+            _subnodes = new List<NBTSchemaNode>();
+        }
+
+        public NBTCompoundNode (string name, NBTOptions options)
+            : base(name, options)
         {
             _subnodes = new List<NBTSchemaNode>();
         }
@@ -279,6 +361,19 @@ namespace Substrate.NBT
 
             foreach (NBTSchemaNode node in schema._subnodes)
             {
+                _subnodes.Add(node);
+            }
+        }
+
+        public NBTCompoundNode (string name, NBTSchemaNode subschema, NBTOptions options)
+            : base(name, options)
+        {
+            NBTCompoundNode schema = subschema as NBTCompoundNode;
+            if (schema == null) {
+                return;
+            }
+
+            foreach (NBTSchemaNode node in schema._subnodes) {
                 _subnodes.Add(node);
             }
         }

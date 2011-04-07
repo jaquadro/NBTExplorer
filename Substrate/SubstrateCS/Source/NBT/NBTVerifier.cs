@@ -58,6 +58,8 @@ namespace Substrate.NBT
         public event InvalidTagTypeHandler InvalidTagType;
         public event InvalidTagValueHandler InvalidTagValue;
 
+        private Dictionary<string, NBT_Value> _scratch = new Dictionary<string,NBT_Value>();
+
         public NBTVerifier () { }
 
         public NBTVerifier (NBT_Value root, NBTSchemaNode schema)
@@ -207,8 +209,24 @@ namespace Substrate.NBT
                 NBT_Value value;
                 ctag.TryGetValue(node.Name, out value);
 
+                if (value == null) {
+                    if ((node.Options & NBTOptions.CREATE_ON_MISSING) == NBTOptions.CREATE_ON_MISSING) {
+                        _scratch[node.Name] = schema.BuildDefaultTree();
+                        continue;
+                    }
+                    else if ((node.Options & NBTOptions.OPTIONAL) == NBTOptions.OPTIONAL) {
+                        continue;
+                    }
+                }
+
                 pass = Verify(value, node) && pass;
             }
+
+            foreach (KeyValuePair<string, NBT_Value> item in _scratch) {
+                ctag[item.Key] = item.Value;
+            }
+
+            _scratch.Clear();
 
             return pass;
         }

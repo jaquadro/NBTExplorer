@@ -18,7 +18,7 @@ namespace Substrate
         int RemoveEntities (Predicate<Entity> match);
     }
 
-    public class Entity : INBTObject<Entity>, ICopyable<Entity>
+    public class UntypedEntity : INBTObject<UntypedEntity>, ICopyable<UntypedEntity>
     {
         public class Vector3
         {
@@ -33,9 +33,8 @@ namespace Substrate
             public double Yaw { get; set; }
         }
 
-        public static readonly NBTCompoundNode BaseSchema = new NBTCompoundNode("")
+        public static readonly NBTCompoundNode UTBaseSchema = new NBTCompoundNode("")
         {
-            new NBTScalerNode("id", NBT_Type.TAG_STRING),
             new NBTListNode("Pos", NBT_Type.TAG_DOUBLE, 3),
             new NBTListNode("Motion", NBT_Type.TAG_DOUBLE, 3),
             new NBTListNode("Rotation", NBT_Type.TAG_FLOAT, 2),
@@ -45,7 +44,6 @@ namespace Substrate
             new NBTScalerNode("OnGround", NBT_Type.TAG_BYTE),
         };
 
-        private string _id;
         private Vector3 _pos;
         private Vector3 _motion;
         private Orientation _rotation;
@@ -54,13 +52,6 @@ namespace Substrate
         private short _fire;
         private short _air;
         private byte _onGround;
-
-        private string _world;
-
-        public string ID
-        {
-            get { return _id; }
-        }
 
         public Vector3 Position
         {
@@ -104,15 +95,12 @@ namespace Substrate
             set { _onGround = (byte)(value ? 1 : 0); }
         }
 
-        public Entity (string id)
+        public UntypedEntity ()
         {
-            _id = id;
         }
 
-        public Entity (Entity e)
+        public UntypedEntity (UntypedEntity e)
         {
-            _id = e._id;
-
             _pos = new Vector3();
             _pos.X = e._pos.X;
             _pos.Y = e._pos.Y;
@@ -131,20 +119,17 @@ namespace Substrate
             _fire = e._fire;
             _air = e._air;
             _onGround = e._onGround;
-            _world = e._world;
         }
 
 
         #region INBTObject<Entity> Members
 
-        public virtual Entity LoadTree (NBT_Value tree)
+        public UntypedEntity LoadTree (NBT_Value tree)
         {
             NBT_Compound ctree = tree as NBT_Compound;
             if (ctree == null) {
                 return null;
             }
-
-            _id = ctree["id"].ToNBTString();
 
             NBT_List pos = ctree["Pos"].ToNBTList();
             _pos = new Vector3();
@@ -167,17 +152,10 @@ namespace Substrate
             _air = ctree["Air"].ToNBTShort();
             _onGround = ctree["OnGround"].ToNBTByte();
 
-            NBT_Value world;
-            ctree.TryGetValue("World", out world);
-
-            if (world != null) {
-                _world = world.ToNBTString();
-            }
-
             return this;
         }
 
-        public virtual Entity LoadTreeSafe (NBT_Value tree)
+        public UntypedEntity LoadTreeSafe (NBT_Value tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -186,10 +164,9 @@ namespace Substrate
             return LoadTree(tree);
         }
 
-        public virtual NBT_Value BuildTree ()
+        public NBT_Value BuildTree ()
         {
             NBT_Compound tree = new NBT_Compound();
-            tree["id"] = new NBT_String(_id);
 
             NBT_List pos = new NBT_List(NBT_Type.TAG_DOUBLE);
             pos.Add(new NBT_Double(_pos.X));
@@ -213,14 +190,86 @@ namespace Substrate
             tree["Air"] = new NBT_Short(_air);
             tree["OnGround"] = new NBT_Byte(_onGround);
 
-            if (_world != null) {
-                tree["World"] = new NBT_String(_world);
+            return tree;
+        }
+
+        public bool ValidateTree (NBT_Value tree)
+        {
+            return new NBTVerifier(tree, UTBaseSchema).Verify();
+        }
+
+        #endregion
+
+
+        #region ICopyable<Entity> Members
+
+        public UntypedEntity Copy ()
+        {
+            return new UntypedEntity(this);
+        }
+
+        #endregion
+    }
+
+    public class Entity : UntypedEntity, INBTObject<Entity>, ICopyable<Entity>
+    {
+        public static readonly NBTCompoundNode BaseSchema = UTBaseSchema.MergeInto(new NBTCompoundNode("")
+        {
+            new NBTScalerNode("id", NBT_Type.TAG_STRING),
+        });
+
+        private string _id;
+
+        public string ID
+        {
+            get { return _id; }
+        }
+
+        public Entity (string id)
+            : base()
+        {
+            _id = id;
+        }
+
+        public Entity (Entity e)
+            : base(e)
+        {
+            _id = e._id;
+        }
+
+
+        #region INBTObject<Entity> Members
+
+        public virtual new Entity LoadTree (NBT_Value tree)
+        {
+            NBT_Compound ctree = tree as NBT_Compound;
+            if (ctree == null || base.LoadTree(tree) == null) {
+                return null;
             }
+
+            _id = ctree["id"].ToNBTString();
+
+            return this;
+        }
+
+        public virtual new Entity LoadTreeSafe (NBT_Value tree)
+        {
+            if (!ValidateTree(tree)) {
+                return null;
+            }
+
+            return LoadTree(tree);
+        }
+
+        public virtual new NBT_Value BuildTree ()
+        {
+            NBT_Compound tree = base.BuildTree() as NBT_Compound;
+            tree["id"] = new NBT_String(_id);
 
             return tree;
         }
 
-        public virtual bool ValidateTree (NBT_Value tree)
+        public virtual new bool ValidateTree (NBT_Value tree)
         {
             return new NBTVerifier(tree, BaseSchema).Verify();
         }
@@ -230,7 +279,7 @@ namespace Substrate
 
         #region ICopyable<Entity> Members
 
-        public virtual Entity Copy ()
+        public virtual new Entity Copy ()
         {
             return new Entity(this);
         }
