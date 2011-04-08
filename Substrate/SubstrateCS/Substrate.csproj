@@ -73,7 +73,6 @@
     <Compile Include="Source\BlockManager.cs" />
     <Compile Include="Source\BlockRef.cs" />
     <Compile Include="Source\Chunk.cs" />
-    <Compile Include="Source\ChunkEnumerator.cs" />
     <Compile Include="Source\ChunkFile.cs" />
     <Compile Include="Source\ChunkFileManager.cs" />
     <Compile Include="Source\ChunkInterface.cs" />
@@ -118,7 +117,6 @@
     <Compile Include="Source\NBT\NBTVerifier.cs" />
     <Compile Include="Source\Player.cs" />
     <Compile Include="Source\Region.cs" />
-    <Compile Include="Source\RegionEnumerator.cs" />
     <Compile Include="Source\RegionFile.cs" />
     <Compile Include="Source\RegionKey.cs" />
     <Compile Include="Source\RegionManager.cs" />

@@ -48,7 +48,7 @@ namespace Substrate
         bool SaveChunk (Chunk chunk);
     }
 
-    public interface IChunkManager : IChunkContainer
+    public interface IChunkManager : IChunkContainer, IEnumerable<ChunkRef>
     {
 
     }

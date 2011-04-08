@@ -184,5 +184,23 @@ namespace Substrate
 
         #endregion
 
+
+        #region IEnumerable<ChunkRef> Members
+
+        public IEnumerator<ChunkRef> GetEnumerator ()
+        {
+            return null;
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
+        {
+            return null;
+        }
+
+        #endregion
     }
 }

@@ -182,10 +182,12 @@ namespace NBToolkit
         public override void Run ()
         {
             World world = new World(opt.OPT_WORLD);
+
             ChunkManager cm = world.GetChunkManager() as ChunkManager;
+            FilteredChunkManager fcm = new FilteredChunkManager(cm, opt.GetChunkFilter());
 
             int affectedChunks = 0;
-            foreach (ChunkRef chunk in new FilteredChunkList(cm, opt.GetChunkFilter())) {
+            foreach (ChunkRef chunk in fcm) {
                 if (chunk == null || !chunk.IsTerrainPopulated) {
                     continue;
                 }

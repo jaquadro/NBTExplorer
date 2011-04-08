@@ -73,7 +73,7 @@ namespace NBToolkit
                 throw new TKOptionException();
             }
 
-            if (!File.Exists(Path.Combine(OPT_WORLD, "level.dat"))) {
+            /*if (!File.Exists(Path.Combine(OPT_WORLD, "level.dat"))) {
                 Console.WriteLine("Error: The supplied world path is invalid");
                 Console.WriteLine();
                 this.PrintUsage();
@@ -87,7 +87,7 @@ namespace NBToolkit
                 this.PrintUsage();
 
                 throw new TKOptionException();
-            }
+            }*/
         }
     }
 

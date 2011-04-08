@@ -54,11 +54,12 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dump.cs" />
     <Compile Include="ChunkFilter.cs" />
-    <Compile Include="FilteredChunkEnumerator.cs" />
+    <Compile Include="FilteredChunkManager.cs" />
     <Compile Include="GenOres.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="NDesk\Options.cs" />

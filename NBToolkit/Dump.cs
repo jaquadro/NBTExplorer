@@ -97,7 +97,9 @@ namespace NBToolkit
         public override void Run ()
         {
             World world = new World(opt.OPT_WORLD);
+
             ChunkManager cm = world.GetChunkManager() as ChunkManager;
+            FilteredChunkManager fcm = new FilteredChunkManager(cm, opt.GetChunkFilter());
 
             StreamWriter fstr;
             try {
@@ -111,7 +113,7 @@ namespace NBToolkit
             fstr.WriteLine("[");
 
             bool first = true;
-            foreach (ChunkRef chunk in new FilteredChunkList(cm, opt.GetChunkFilter())) {
+            foreach (ChunkRef chunk in fcm) {
                 if (!first) {
                     fstr.Write(",");
                 }

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using System.Collections;
 
 namespace Substrate
 {
-    public class RegionManager
+    public class RegionManager : IEnumerable<Region>
     {
         protected string _regionPath;
 
@@ -72,5 +72,102 @@ namespace Substrate
 
             return true;
         }
+
+
+        #region IEnumerable<Region> Members
+
+        public IEnumerator<Region> GetEnumerator ()
+        {
+            return new RegionEnumerator(this);
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        IEnumerator IEnumerable.GetEnumerator ()
+        {
+            return new RegionEnumerator(this);
+        }
+
+        #endregion
+
+
+        public class RegionEnumerator : IEnumerator<Region>
+        {
+            protected List<Region> _regions;
+
+            protected int _pos = -1;
+
+            public RegionEnumerator (List<Region> regs)
+            {
+                _regions = regs;
+            }
+
+            public RegionEnumerator (RegionManager rm)
+            {
+                _regions = new List<Region>();
+
+                if (!Directory.Exists(rm.GetRegionPath())) {
+                    throw new DirectoryNotFoundException();
+                }
+
+                string[] files = Directory.GetFiles(rm.GetRegionPath());
+                _regions.Capacity = files.Length;
+
+                foreach (string file in files) {
+                    try {
+                        Region r = rm.GetRegion(file);
+                        _regions.Add(r);
+                    }
+                    catch (ArgumentException) {
+                        continue;
+                    }
+                }
+            }
+
+            public bool MoveNext ()
+            {
+                _pos++;
+                return (_pos < _regions.Count);
+            }
+
+            public void Reset ()
+            {
+                _pos = -1;
+            }
+
+            void IDisposable.Dispose () { }
+
+            object IEnumerator.Current
+            {
+                get
+                {
+                    return Current;
+                }
+            }
+
+            Region IEnumerator<Region>.Current
+            {
+                get
+                {
+                    return Current;
+                }
+            }
+
+            public Region Current
+            {
+                get
+                {
+                    try {
+                        return _regions[_pos];
+                    }
+                    catch (IndexOutOfRangeException) {
+                        throw new InvalidOperationException();
+                    }
+                }
+            }
+        }
+
     }
 }
