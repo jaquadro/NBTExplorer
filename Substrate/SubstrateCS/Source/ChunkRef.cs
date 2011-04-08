@@ -28,6 +28,8 @@ namespace Substrate
             get { return _container.ChunkGlobalZ(_cz); }
         }
 
+        
+
         public int LocalX
         {
             get { return _container.ChunkLocalX(_cx); }
@@ -52,7 +54,7 @@ namespace Substrate
 
         public int BlockGlobalX (int x)
         {
-            return _container.ChunkGlobalX(_cx) * BlockManager.CHUNK_XLEN + x;
+            return _container.ChunkGlobalX(_cx) * XDim + x;
         }
 
         public int BlockGlobalY (int y)
@@ -62,7 +64,7 @@ namespace Substrate
 
         public int BlockGlobalZ (int z)
         {
-            return _container.ChunkGlobalZ(_cz) * BlockManager.CHUNK_ZLEN + z;
+            return _container.ChunkGlobalZ(_cz) * ZDim + z;
         }
 
         public int BlockLocalX (int x)
@@ -185,62 +187,6 @@ namespace Substrate
             GetChunk().SetBlock(lx, ly, lz, block);
         }
 
-        public int GetBlockID (int lx, int ly, int lz)
-        {
- 	        return GetChunk().GetBlockID(lx, ly, lz);
-        }
-
-        public int GetBlockData (int lx, int ly, int lz)
-        {
- 	        return GetChunk().GetBlockData(lx, ly, lz);
-        }
-
-        public int GetBlockLight (int lx, int ly, int lz)
-        {
- 	        return GetChunk().GetBlockSkyLight(lx, ly, lz);
-        }
-
-        public int GetBlockSkyLight (int lx, int ly, int lz)
-        {
- 	        return GetChunk().GetBlockSkyLight(lx, ly, lz);
-        }
-
-        public bool SetBlockID (int lx, int ly, int lz, int id)
-        {
- 	        if (GetChunk().SetBlockID(lx, ly, lz, id)) {
-                MarkDirty();
-                return true;
-            }
-            return false;
-        }
-
-        public bool SetBlockData (int lx, int ly, int lz, int data)
-        {
- 	        if (GetChunk().SetBlockData(lx, ly, lz, data)) {
-                MarkDirty();
-                return true;
-            }
-            return false;
-        }
-
-        public bool SetBlockLight (int lx, int ly, int lz, int light)
-        {
- 	        if (GetChunk().SetBlockLight(lx, ly, lz, light)) {
-                MarkDirty();
-                return true;
-            }
-            return false;
-        }
-
-        public bool SetBlockSkyLight (int lx, int ly, int lz, int light)
-        {
- 	        if (GetChunk().SetBlockSkyLight(lx, ly, lz, light)) {
-                MarkDirty();
-                return true;
-            }
-            return false;
-        }
-
         public int CountBlockID (int id)
         {
  	        return GetChunk().CountBlockID(id);
@@ -261,14 +207,150 @@ namespace Substrate
  	        return GetChunk().GetHeight(lx, lz);
         }
 
+        #endregion
+
+
+        #region IBoundedBlockContainer Members
+
+        public int XDim
+        {
+            get { return _chunk.XDim; }
+        }
+
+        public int YDim
+        {
+            get { return _chunk.YDim; }
+        }
+
+        public int ZDim
+        {
+            get { return _chunk.ZDim; }
+        }
+
+        #endregion
+
+
+        #region IBlockContainer Members
+
+        IBlock IBlockContainer.GetBlock (int lx, int ly, int lz)
+        {
+            return new Block(this, lx, ly, lz);
+        }
+
+        IBlock IBlockContainer.GetBlockRef (int lx, int ly, int lz)
+        {
+            return new BlockRef(this, lx, ly, lz);
+        }
+
+        public void SetBlock (int lx, int ly, int lz, IBlock block)
+        {
+            GetChunk().SetBlock(lx, ly, lz, block);
+        }
+
+        public int GetBlockID (int lx, int ly, int lz)
+        {
+            return GetChunk().GetBlockID(lx, ly, lz);
+        }
+
+        public int GetBlockData (int lx, int ly, int lz)
+        {
+            return GetChunk().GetBlockData(lx, ly, lz);
+        }
+
+        public bool SetBlockID (int lx, int ly, int lz, int id)
+        {
+            if (GetChunk().SetBlockID(lx, ly, lz, id)) {
+                MarkDirty();
+                return true;
+            }
+            return false;
+        }
+
+        public bool SetBlockData (int lx, int ly, int lz, int data)
+        {
+            if (GetChunk().SetBlockData(lx, ly, lz, data)) {
+                MarkDirty();
+                return true;
+            }
+            return false;
+        }
+
+        #endregion
+
+
+        #region ILitBlockContainer Members
+
+        ILitBlock ILitBlockContainer.GetBlock (int lx, int ly, int lz)
+        {
+            throw new NotImplementedException();
+        }
+
+        ILitBlock ILitBlockContainer.GetBlockRef (int lx, int ly, int lz)
+        {
+            return new BlockRef(this, lx, ly, lz);
+        }
+
+        public void SetBlock (int lx, int ly, int lz, ILitBlock block)
+        {
+            GetChunk().SetBlock(lx, ly, lz, block);
+        }
+
+        public int GetBlockLight (int lx, int ly, int lz)
+        {
+            return GetChunk().GetBlockSkyLight(lx, ly, lz);
+        }
+
+        public int GetBlockSkyLight (int lx, int ly, int lz)
+        {
+            return GetChunk().GetBlockSkyLight(lx, ly, lz);
+        }
+
+        public bool SetBlockLight (int lx, int ly, int lz, int light)
+        {
+            if (GetChunk().SetBlockLight(lx, ly, lz, light)) {
+                MarkDirty();
+                return true;
+            }
+            return false;
+        }
+
+        public bool SetBlockSkyLight (int lx, int ly, int lz, int light)
+        {
+            if (GetChunk().SetBlockSkyLight(lx, ly, lz, light)) {
+                MarkDirty();
+                return true;
+            }
+            return false;
+        }
+
+        #endregion
+
+
+        #region IPropertyBlockContainer Members
+
+        IPropertyBlock IPropertyBlockContainer.GetBlock (int lx, int ly, int lz)
+        {
+            return new Block(this, lx, ly, lz);
+        }
+
+        IPropertyBlock IPropertyBlockContainer.GetBlockRef (int lx, int ly, int lz)
+        {
+            return new BlockRef(this, lx, ly, lz);
+        }
+
+        public void SetBlock (int lx, int ly, int lz, IPropertyBlock block)
+        {
+            GetChunk().SetBlock(lx, ly, lz, block);
+        }
+
         public TileEntity GetTileEntity (int lx, int ly, int lz)
         {
- 	        return GetChunk().GetTileEntity(lx, ly, lz);
+            return GetChunk().GetTileEntity(lx, ly, lz);
         }
 
         public bool SetTileEntity (int lx, int ly, int lz, TileEntity te)
         {
- 	        if (GetChunk().SetTileEntity(lx, ly, lz, te)) {
+            if (GetChunk().SetTileEntity(lx, ly, lz, te)) {
                 MarkDirty();
                 return true;
             }
@@ -277,7 +359,7 @@ namespace Substrate
 
         public bool ClearTileEntity (int lx, int ly, int lz)
         {
- 	        if (GetChunk().ClearTileEntity(lx, ly, lz)) {
+            if (GetChunk().ClearTileEntity(lx, ly, lz)) {
                 MarkDirty();
                 return true;
             }

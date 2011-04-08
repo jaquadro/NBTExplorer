@@ -6,7 +6,7 @@ using System.IO;
 namespace Substrate
 {
 
-    public interface IChunk : IBlockContainer, IEntityContainer
+    public interface IChunk : IBoundedBlockContainer, IAlphaBlockContainer, IEntityContainer
     {
         int X { get; }
         int Z { get; }

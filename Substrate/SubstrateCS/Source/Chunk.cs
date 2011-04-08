@@ -83,8 +83,8 @@ namespace Substrate
 
         private void BuildNBTTree ()
         {
-            int elements2 = BlockManager.CHUNK_XLEN * BlockManager.CHUNK_ZLEN;
-            int elements3 = elements2 * BlockManager.CHUNK_YLEN;
+            int elements2 = XDim * ZDim;
+            int elements3 = elements2 *YDim;
 
             _blocks = new NBT_ByteArray(new byte[elements3]);
             NBT_ByteArray data = new NBT_ByteArray(new byte[elements3 >> 1]);
@@ -117,7 +117,7 @@ namespace Substrate
 
         public int BlockGlobalX (int x)
         {
-            return _cx * BlockManager.CHUNK_XLEN + x;
+            return _cx * XDim + x;
         }
 
         public int BlockGlobalY (int y)
@@ -127,7 +127,7 @@ namespace Substrate
 
         public int BlockGlobalZ (int z)
         {
-            return _cz * BlockManager.CHUNK_ZLEN + z;
+            return _cz * XDim + z;
         }
 
         public int BlockLocalX (int x)
@@ -167,11 +167,6 @@ namespace Substrate
             return new BlockRef(this, lx, ly, lz);
         }
 
-        public BlockInfo GetBlockInfo (int lx, int ly, int lz)
-        {
-            return BlockInfo.BlockTable[GetBlockID(lx, ly, lz)];
-        }
-
         public void SetBlock (int lx, int ly, int lz, Block block)
         {
             int index = lx << 11 | lz << 7 | ly;
@@ -179,10 +174,147 @@ namespace Substrate
             SetBlockID(lx, ly, lz, block.ID);
             SetBlockData(lx, ly, lz, block.Data);
 
-            _blockLight[index] = block.BlockLight;
-            _skyLight[index] = block.SkyLight;
-
             SetTileEntity(lx, ly, lz, block.GetTileEntity().Copy());
+        }
+
+        public int CountBlockID (int id)
+        {
+            int c = 0;
+            for (int i = 0; i < _blocks.Length; i++) {
+                if (_blocks[i] == id) {
+                    c++;
+                }
+            }
+
+            return c;
+        }
+
+        public int CountBlockData (int id, int data)
+        {
+            int c = 0;
+            for (int i = 0; i < _blocks.Length; i++) {
+                if (_blocks[i] == id && _data[i] == data) {
+                    c++;
+                }
+            }
+
+            return c;
+        }
+
+        public int CountEntities ()
+        {
+            return _entities.Count;
+        }
+
+        public int GetHeight (int lx, int lz)
+        {
+            return _heightMap[lz << 4 | lx];
+        }
+
+        private void CreateTileEntity (int lx, int ly, int lz)
+        {
+            BlockInfoEx info = GetBlockInfo(lx, ly, lz) as BlockInfoEx;
+            if (info == null) {
+                return;
+            }
+
+            TileEntity te = TileEntityFactory.Create(info.TileEntityName);
+            if (te == null) {
+                return;
+            }
+
+            te.X = BlockGlobalX(lx);
+            te.Y = BlockGlobalY(ly);
+            te.Z = BlockGlobalZ(lz);
+
+            _tileEntities.Add(te.BuildTree());
+        }
+
+        public virtual void SetLocation (int x, int z)
+        {
+            int diffx = x - _cx;
+            int diffz = z - _cz;
+
+            _cx = x;
+            _cz = z;
+
+            BuildTileEntityCache();
+        }
+
+        private void BuildTileEntityCache ()
+        {
+            _tileEntityTable = new Dictionary<BlockKey, NBT_Compound>();
+
+            foreach (NBT_Compound te in _tileEntities) {
+                int tex = te["x"].ToNBTInt();
+                int tey = te["y"].ToNBTInt();
+                int tez = te["z"].ToNBTInt();
+
+                BlockKey key = new BlockKey(tex, tey, tez);
+                _tileEntityTable[key] = te;
+            }
+        }
+
+
+        #region IBoundedBlockContainer Members
+
+        public int XDim
+        {
+            get { return 16; }
+        }
+
+        public int YDim
+        {
+            get { return 128; }
+        }
+
+        public int ZDim
+        {
+            get { return 16; }
+        }
+
+        #endregion
+
+
+        #region IBlockContainer Members
+
+        IBlock IBlockContainer.GetBlock (int lx, int ly, int lz)
+        {
+            return GetBlock(lx, ly, lz);
+        }
+
+        IBlock IBlockContainer.GetBlockRef (int lx, int ly, int lz)
+        {
+            return GetBlockRef(lx, ly, lz);
+        }
+
+        public void SetBlock (int lx, int ly, int lz, IBlock block)
+        {
+            int index = lx << 11 | lz << 7 | ly;
+            int oldid = _blocks.Data[index];
+
+            SetBlockID(lx, ly, lz, block.ID);
+            SetBlockData(lx, ly, lz, block.Data);
+
+            // Update tile entities
+
+            BlockInfoEx info1 = BlockInfo.BlockTable[oldid] as BlockInfoEx;
+            BlockInfoEx info2 = BlockInfo.BlockTable[block.ID] as BlockInfoEx;
+
+            if (info1 != info2) {
+                if (info1 != null) {
+                    ClearTileEntity(lx, ly, lz);
+                }
+
+                if (info2 != null) {
+                    CreateTileEntity(lx, ly, lz);
+                }
+            }
+        }
+
+        public BlockInfo GetBlockInfo (int lx, int ly, int lz)
+        {
+            return BlockInfo.BlockTable[GetBlockID(lx, ly, lz)];
         }
 
         public int GetBlockID (int lx, int ly, int lz)
@@ -193,16 +325,6 @@ namespace Substrate
         public int GetBlockData (int lx, int ly, int lz)
         {
             return _data[lx << 11 | lz << 7 | ly];
-        }
-
-        public int GetBlockLight (int lx, int ly, int lz)
-        {
-            return _blockLight[lx << 11 | lz << 7 | ly];
-        }
-
-        public int GetBlockSkyLight (int lx, int ly, int lz)
-        {
-            return _skyLight[lx << 11 | lz << 7 | ly];
         }
 
         public bool SetBlockID (int lx, int ly, int lz, int id)
@@ -262,14 +384,63 @@ namespace Substrate
                 return false;
             }
 
-            if (BlockManager.EnforceDataLimits && BlockInfo.BlockTable[_blocks[index]] != null) {
+            /*if (BlockManager.EnforceDataLimits && BlockInfo.BlockTable[_blocks[index]] != null) {
                 if (!BlockInfo.BlockTable[_blocks[index]].TestData(data)) {
                     return false;
                 }
-            }
+            }*/
 
             _data[index] = data;
             return true;
+        }
+
+        #endregion
+
+
+        #region ILitBlockContainer Members
+
+        ILitBlock ILitBlockContainer.GetBlock (int lx, int ly, int lz)
+        {
+            throw new NotImplementedException();
+        }
+
+        ILitBlock ILitBlockContainer.GetBlockRef (int lx, int ly, int lz)
+        {
+            return GetBlockRef(lx, ly, lz);
+        }
+
+        public void SetBlock (int lx, int ly, int lz, ILitBlock block)
+        {
+            int index = lx << 11 | lz << 7 | ly;
+            int oldid = _blocks.Data[index];
+
+            SetBlockID(lx, ly, lz, block.ID);
+            SetBlockData(lx, ly, lz, block.Data);
+
+            // Update tile entities
+
+            BlockInfoEx info1 = BlockInfo.BlockTable[oldid] as BlockInfoEx;
+            BlockInfoEx info2 = BlockInfo.BlockTable[block.ID] as BlockInfoEx;
+
+            if (info1 != info2) {
+                if (info1 != null) {
+                    ClearTileEntity(lx, ly, lz);
+                }
+
+                if (info2 != null) {
+                    CreateTileEntity(lx, ly, lz);
+                }
+            }
+        }
+
+        public int GetBlockLight (int lx, int ly, int lz)
+        {
+            return _blockLight[lx << 11 | lz << 7 | ly];
+        }
+
+        public int GetBlockSkyLight (int lx, int ly, int lz)
+        {
+            return _skyLight[lx << 11 | lz << 7 | ly];
         }
 
         public bool SetBlockLight (int lx, int ly, int lz, int light)
@@ -294,57 +465,29 @@ namespace Substrate
             return true;
         }
 
-        public int CountBlockID (int id)
-        {
-            int c = 0;
-            for (int i = 0; i < _blocks.Length; i++) {
-                if (_blocks[i] == id) {
-                    c++;
-                }
-            }
+        #endregion
 
-            return c;
+
+        #region IPropertyBlockContainer Members
+
+        IPropertyBlock IPropertyBlockContainer.GetBlock (int lx, int ly, int lz)
+        {
+            return GetBlock(lx, ly, lz);
         }
 
-        public int CountBlockData (int id, int data)
+        IPropertyBlock IPropertyBlockContainer.GetBlockRef (int lx, int ly, int lz)
         {
-            int c = 0;
-            for (int i = 0; i < _blocks.Length; i++) {
-                if (_blocks[i] == id && _data[i] == data) {
-                    c++;
-                }
-            }
-
-            return c;
+            return GetBlockRef(lx, ly, lz);
         }
 
-        public int CountEntities ()
+        public void SetBlock (int lx, int ly, int lz, IPropertyBlock block)
         {
-            return _entities.Count;
-        }
+            int index = lx << 11 | lz << 7 | ly;
 
-        public int GetHeight (int lx, int lz)
-        {
-            return _heightMap[lz << 4 | lx];
-        }
+            SetBlockID(lx, ly, lz, block.ID);
+            SetBlockData(lx, ly, lz, block.Data);
 
-        private void CreateTileEntity (int lx, int ly, int lz)
-        {
-            BlockInfoEx info = GetBlockInfo(lx, ly, lz) as BlockInfoEx;
-            if (info == null) {
-                return;
-            }
-
-            TileEntity te = TileEntityFactory.Create(info.TileEntityName);
-            if (te == null) {
-                return;
-            }
-
-            te.X = BlockGlobalX(lx);
-            te.Y = BlockGlobalY(ly);
-            te.Z = BlockGlobalZ(lz);
-
-            _tileEntities.Add(te.BuildTree());
+            SetTileEntity(lx, ly, lz, block.GetTileEntity().Copy());
         }
 
         public TileEntity GetTileEntity (int lx, int ly, int lz)
@@ -392,7 +535,7 @@ namespace Substrate
             NBT_Compound tree = te.BuildTree() as NBT_Compound;
 
             _tileEntities.Add(tree);
-            _tileEntityTable[key] = tree;            
+            _tileEntityTable[key] = tree;
 
             return true;
         }
@@ -416,30 +559,8 @@ namespace Substrate
             return true;
         }
 
-        public virtual void SetLocation (int x, int z)
-        {
-            int diffx = x - _cx;
-            int diffz = z - _cz;
+        #endregion
 
-            _cx = x;
-            _cz = z;
-
-            BuildTileEntityCache();
-        }
-
-        private void BuildTileEntityCache ()
-        {
-            _tileEntityTable = new Dictionary<BlockKey, NBT_Compound>();
-
-            foreach (NBT_Compound te in _tileEntities) {
-                int tex = te["x"].ToNBTInt();
-                int tey = te["y"].ToNBTInt();
-                int tez = te["z"].ToNBTInt();
-
-                BlockKey key = new BlockKey(tex, tey, tez);
-                _tileEntityTable[key] = te;
-            }
-        }
 
         #region ICopyable<Chunk> Members
 
@@ -559,10 +680,10 @@ namespace Substrate
 
         public bool AddEntity (Entity ent)
         {
-            double xlow = _cx * BlockManager.CHUNK_XLEN;
-            double xhigh = xlow + BlockManager.CHUNK_XLEN;
-            double zlow = _cz * BlockManager.CHUNK_ZLEN;
-            double zhigh = zlow + BlockManager.CHUNK_ZLEN;
+            double xlow = _cx * XDim;
+            double xhigh = xlow + XDim;
+            double zlow = _cz * ZDim;
+            double zhigh = zlow + ZDim;
 
             Entity.Vector3 pos = ent.Position;
             if (!(pos.X >= xlow && pos.X < xhigh && pos.Z >= zlow && pos.Z < zhigh)) {
