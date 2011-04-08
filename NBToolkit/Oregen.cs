@@ -183,7 +183,7 @@ namespace NBToolkit
         {
             World world = new World(opt.OPT_WORLD);
 
-            ChunkManager cm = world.GetChunkManager() as ChunkManager;
+            IChunkManager cm = world.GetChunkManager();
             FilteredChunkManager fcm = new FilteredChunkManager(cm, opt.GetChunkFilter());
 
             int affectedChunks = 0;

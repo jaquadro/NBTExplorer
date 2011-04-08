@@ -60,6 +60,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Source\Level.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Source\TileEntities\TileEntityTrap.cs" />
     <Compile Include="Source\TileEntity.cs" />
     <Compile Include="Source\TileEntityFactory.cs" />
+    <Compile Include="Source\Utility\Base.cs" />
     <Compile Include="Source\Utility\Interface.cs" />
     <Compile Include="Source\Utility\NibbleArray.cs" />
     <Compile Include="Source\World.cs" />

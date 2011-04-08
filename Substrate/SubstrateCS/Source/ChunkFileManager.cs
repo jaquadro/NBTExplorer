@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.IO;
 
 namespace Substrate
 {
     using NBT;
+    using Utility;
 
     public class ChunkFileManager : IChunkManager, IChunkCache
     {
@@ -13,6 +16,11 @@ namespace Substrate
 
         protected Dictionary<ChunkKey, WeakReference> _cache;
         protected Dictionary<ChunkKey, ChunkRef> _dirty;
+
+        public string ChunkPath
+        {
+            get { return _mapPath; }
+        }
 
         public ChunkFileManager (string mapDir)
         {
@@ -189,7 +197,7 @@ namespace Substrate
 
         public IEnumerator<ChunkRef> GetEnumerator ()
         {
-            return null;
+            return new ChunkEnumerator(this);
         }
 
         #endregion
@@ -198,9 +206,156 @@ namespace Substrate
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
         {
-            return null;
+            return new ChunkEnumerator(this);
         }
 
         #endregion
+
+
+        public class ChunkEnumerator : IEnumerator<ChunkRef>
+        {
+            protected ChunkFileManager _cm;
+            protected Queue<string> _tld;
+            protected Queue<string> _sld;
+            protected Queue<ChunkRef> _chunks;
+
+            private string _curtld;
+            private string _cursld;
+            private ChunkRef _curchunk;
+
+            public ChunkEnumerator (ChunkFileManager cfm)
+            {
+                _cm = cfm;
+
+                if (!Directory.Exists(_cm.ChunkPath)) {
+                    throw new DirectoryNotFoundException();
+                }
+
+                Reset();
+            }
+
+            private bool MoveNextTLD ()
+            {
+                if (_tld.Count == 0) {
+                    return false;
+                }
+
+                _curtld = _tld.Dequeue();
+
+                //string path = Path.Combine(_cm.ChunkPath, _curtld);
+
+                string[] files = Directory.GetDirectories(_curtld);
+                foreach (string file in files) {
+                    _sld.Enqueue(file);
+                }
+
+                return true;
+            }
+
+            public bool MoveNextSLD ()
+            {
+                while (_sld.Count == 0) {
+                    if (MoveNextTLD() == false) {
+                        return false;
+                    }
+                }
+
+                _cursld = _sld.Dequeue();
+
+                //string path = Path.Combine(_cm.ChunkPath, _curtld);
+                //path = Path.Combine(path, _cursld);
+
+                string[] files = Directory.GetFiles(_cursld);
+                foreach (string file in files) {
+                    int x;
+                    int z;
+
+                    string basename = Path.GetFileName(file);
+
+                    if (!ParseFileName(basename, out x, out z)) {
+                        continue;
+                    }
+
+                    ChunkRef cref = _cm.GetChunkRef(x, z);
+                    if (cref != null) {
+                        _chunks.Enqueue(cref);
+                    }
+                }
+
+                return true;
+            }
+
+            public bool MoveNext ()
+            {
+                while (_chunks.Count == 0) {
+                    if (MoveNextSLD() == false) {
+                        return false;
+                    }
+                }
+
+                _curchunk = _chunks.Dequeue();
+                return true;
+            }
+
+            public void Reset ()
+            {
+                _curchunk = null;
+
+                _tld = new Queue<string>();
+                _sld = new Queue<string>();
+                _chunks = new Queue<ChunkRef>();
+
+                string[] files = Directory.GetDirectories(_cm.ChunkPath);
+                foreach (string file in files) {
+                    _tld.Enqueue(file);
+                }
+            }
+
+            void IDisposable.Dispose () { }
+
+            object IEnumerator.Current
+            {
+                get
+                {
+                    return Current;
+                }
+            }
+
+            ChunkRef IEnumerator<ChunkRef>.Current
+            {
+                get
+                {
+                    return Current;
+                }
+            }
+
+            public ChunkRef Current
+            {
+                get
+                {
+                    if (_curchunk == null) {
+                        throw new InvalidOperationException();
+                    }
+                    return _curchunk;
+                }
+            }
+
+            private bool ParseFileName (string filename, out int x, out int z)
+            {
+                x = 0;
+                z = 0;
+
+                Match match = _namePattern.Match(filename);
+                if (!match.Success) {
+                    return false;
+                }
+
+                x = (int)Base36.Decode(match.Groups[1].Value);
+                z = (int)Base36.Decode(match.Groups[2].Value);
+                return true;
+            }
+
+            protected static Regex _namePattern = new Regex("c\\.(-?[0-9a-zA-Z]+)\\.(-?[0-9a-zA-Z]+)\\.dat$");
+        }
     }
 }

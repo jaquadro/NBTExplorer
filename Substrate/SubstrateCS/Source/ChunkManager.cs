@@ -209,8 +209,6 @@ namespace Substrate
             private int _x = 0;
             private int _z = -1;
 
-            //protected RegionEnumerator _enum = null;
-
             public ChunkEnumerator (ChunkManager cm)
             {
                 _cm = cm;

@@ -28,7 +28,7 @@ namespace Substrate
             return true;
         }
 
-        public Stream GetDataInputStream ()
+        public virtual Stream GetDataInputStream ()
         {
             FileStream fstr = new FileStream(_filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
@@ -43,9 +43,9 @@ namespace Substrate
             return new GZipStream(new MemoryStream(data), CompressionMode.Decompress);
         }
 
-        public Stream GetDataOutputStream ()
+        public virtual Stream GetDataOutputStream ()
         {
-            return new ZlibStream(new NBTBuffer(this), CompressionMode.Compress);
+            return new GZipStream(new NBTBuffer(this), CompressionMode.Compress);
         }
 
         class NBTBuffer : MemoryStream
