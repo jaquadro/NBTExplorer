@@ -214,17 +214,17 @@ namespace Substrate
 
         public int XDim
         {
-            get { return _chunk.XDim; }
+            get { return 16; }
         }
 
         public int YDim
         {
-            get { return _chunk.YDim; }
+            get { return 128; }
         }
 
         public int ZDim
         {
-            get { return _chunk.ZDim; }
+            get { return 16; }
         }
 
         #endregion

@@ -143,7 +143,10 @@ namespace Substrate
                 return null;
             }
 
-            return new NBT_Tree(nbtstr);
+            NBT_Tree tree = new NBT_Tree(nbtstr);
+
+            nbtstr.Close();
+            return tree;
         }
 
         public bool SaveChunkTree (int lcx, int lcz, NBT_Tree tree)

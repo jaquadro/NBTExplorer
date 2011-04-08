@@ -10,22 +10,7 @@ namespace Substrate
 
     public class Level : INBTObject<Level>, ICopyable<Level>
     {
-        public static NBTCompoundNode LevelSchema = new NBTCompoundNode()
-        {
-            new NBTCompoundNode("Data")
-            {
-                new NBTScalerNode("Time", NBT_Type.TAG_LONG),
-                new NBTScalerNode("LastPlayed", NBT_Type.TAG_LONG),
-                new NBTCompoundNode("Player", Player.PlayerSchema),
-                new NBTScalerNode("SpawnX", NBT_Type.TAG_INT),
-                new NBTScalerNode("SpawnY", NBT_Type.TAG_INT),
-                new NBTScalerNode("SpawnZ", NBT_Type.TAG_INT),
-                new NBTScalerNode("SizeOnDisk", NBT_Type.TAG_LONG),
-                new NBTScalerNode("RandomSeed", NBT_Type.TAG_LONG),
-                new NBTScalerNode("Version", NBT_Type.TAG_INT, NBTOptions.OPTIONAL),
-                new NBTScalerNode("LevelName", NBT_Type.TAG_STRING, NBTOptions.OPTIONAL),
-            },
-        };
+        public static NBTCompoundNode LevelSchema;
 
         private World _world;
 
@@ -103,6 +88,23 @@ namespace Substrate
         public Level (World world)
         {
             _world = world;
+
+            LevelSchema = new NBTCompoundNode()
+            {
+                new NBTCompoundNode("Data")
+                {
+                    new NBTScalerNode("Time", NBT_Type.TAG_LONG),
+                    new NBTScalerNode("LastPlayed", NBT_Type.TAG_LONG),
+                    new NBTCompoundNode("Player", Player.PlayerSchema, NBTOptions.OPTIONAL),
+                    new NBTScalerNode("SpawnX", NBT_Type.TAG_INT),
+                    new NBTScalerNode("SpawnY", NBT_Type.TAG_INT),
+                    new NBTScalerNode("SpawnZ", NBT_Type.TAG_INT),
+                    new NBTScalerNode("SizeOnDisk", NBT_Type.TAG_LONG),
+                    new NBTScalerNode("RandomSeed", NBT_Type.TAG_LONG),
+                    new NBTScalerNode("version", NBT_Type.TAG_INT, NBTOptions.OPTIONAL),
+                    new NBTScalerNode("LevelName", NBT_Type.TAG_STRING, NBTOptions.OPTIONAL),
+                },
+            };
         }
 
         public Level (Level p)
@@ -157,7 +159,9 @@ namespace Substrate
             _time = ctree["Time"].ToNBTLong();
             _lastPlayed = ctree["LastPlayed"].ToNBTLong();
 
-            _player = new Player().LoadTree(ctree["Player"]);
+            if (ctree.ContainsKey("Player")) {
+                _player = new Player().LoadTree(ctree["Player"]);
+            }
 
             _spawnX = ctree["SpawnX"].ToNBTInt();
             _spawnY = ctree["SpawnY"].ToNBTInt();
@@ -166,8 +170,8 @@ namespace Substrate
             _sizeOnDisk = ctree["SizeOnDisk"].ToNBTLong();
             _randomSeed = ctree["RandomSeed"].ToNBTLong();
 
-            if (ctree.ContainsKey("Version")) {
-                _version = ctree["Version"].ToNBTInt();
+            if (ctree.ContainsKey("version")) {
+                _version = ctree["version"].ToNBTInt();
             }
 
             if (ctree.ContainsKey("LevelName")) {
@@ -191,7 +195,11 @@ namespace Substrate
             NBT_Compound data = new NBT_Compound();
             data["Time"] = new NBT_Long(_time);
             data["LastPlayed"] = new NBT_Long(_lastPlayed);
-            data["Player"] = _player.BuildTree();
+
+            if (_player != null) {
+                data["Player"] = _player.BuildTree();
+            }
+
             data["SpawnX"] = new NBT_Int(_spawnX);
             data["SpawnY"] = new NBT_Int(_spawnY);
             data["SpawnZ"] = new NBT_Int(_spawnZ);
@@ -199,7 +207,7 @@ namespace Substrate
             data["RandomSeed"] = new NBT_Long(_randomSeed);
 
             if (_version != null) {
-                data["Version"] = new NBT_Int(_version ?? 0);
+                data["version"] = new NBT_Int(_version ?? 0);
             }
 
             if (_name != null) {

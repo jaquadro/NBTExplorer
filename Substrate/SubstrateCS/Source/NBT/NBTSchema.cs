@@ -354,6 +354,8 @@ namespace Substrate.NBT
         public NBTCompoundNode (string name, NBTSchemaNode subschema)
             : base(name)
         {
+            _subnodes = new List<NBTSchemaNode>();
+
             NBTCompoundNode schema = subschema as NBTCompoundNode;
             if (schema == null) {
                 return;
@@ -368,6 +370,8 @@ namespace Substrate.NBT
         public NBTCompoundNode (string name, NBTSchemaNode subschema, NBTOptions options)
             : base(name, options)
         {
+            _subnodes = new List<NBTSchemaNode>();
+
             NBTCompoundNode schema = subschema as NBTCompoundNode;
             if (schema == null) {
                 return;

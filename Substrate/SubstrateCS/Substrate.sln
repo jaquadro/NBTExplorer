@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C# Express 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Substrate", "Substrate.csproj", "{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBToolkit", "..\..\NBToolkit\NBToolkit.csproj", "{68207314-C080-4823-97F1-A6623145AA00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ionic.Zlib", "..\..\Ionic.Zlib\Ionic.Zlib.csproj", "{5A137E43-7E7B-4696-8BFC-844CACAB144B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +17,14 @@ Global
 		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68207314-C080-4823-97F1-A6623145AA00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68207314-C080-4823-97F1-A6623145AA00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68207314-C080-4823-97F1-A6623145AA00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68207314-C080-4823-97F1-A6623145AA00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A137E43-7E7B-4696-8BFC-844CACAB144B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A137E43-7E7B-4696-8BFC-844CACAB144B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A137E43-7E7B-4696-8BFC-844CACAB144B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A137E43-7E7B-4696-8BFC-844CACAB144B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

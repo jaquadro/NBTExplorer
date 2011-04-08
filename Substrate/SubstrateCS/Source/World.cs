@@ -61,7 +61,10 @@ namespace Substrate
                 return false;
             }
 
-            _level = new Level(this).LoadTreeSafe(new NBT_Tree(nbtstr).Root);
+            NBT_Tree tree = new NBT_Tree(nbtstr);
+
+            _level = new Level(this);
+            _level = _level.LoadTreeSafe(tree.Root);
 
             return _level != null;
         }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Substrate.NBT
 {
-    class JSONSerializer
+    public class JSONSerializer
     {
         public static string Serialize (NBT_Value tag)
         {

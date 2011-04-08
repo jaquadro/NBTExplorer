@@ -237,14 +237,24 @@ namespace Substrate
                     byte[] data = new byte[length - 1];
                     file.Read(data, 0, data.Length);
                     Stream ret = new GZipStream(new MemoryStream(data), CompressionMode.Decompress);
-                    // Debug("READ", x, z, " = found");
+
                     return ret;
-                } else if (version == VERSION_DEFLATE) {
+                } 
+                else if (version == VERSION_DEFLATE) {
                     byte[] data = new byte[length - 1];
                     file.Read(data, 0, data.Length);
+
                     Stream ret = new ZlibStream(new MemoryStream(data), CompressionMode.Decompress, true);
-                    // Debug("READ", x, z, " = found");
                     return ret;
+
+                    /*MemoryStream sinkZ = new MemoryStream();
+                    ZlibStream zOut = new ZlibStream(sinkZ, CompressionMode.Decompress, true);
+                    zOut.Write(data, 0, data.Length);
+                    zOut.Flush();
+                    zOut.Close();
+
+                    sinkZ.Seek(0, SeekOrigin.Begin);
+                    return sinkZ;*/
                 }
 
                 Debugln("READ", x, z, "unknown version " + version);
