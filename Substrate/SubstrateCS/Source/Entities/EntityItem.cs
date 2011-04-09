@@ -11,8 +11,8 @@ namespace Substrate.Entities
         public static readonly NBTCompoundNode ItemSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
         {
             new NBTStringNode("id", "Item"),
-            new NBTScalerNode("Health", NBT_Type.TAG_SHORT),
-            new NBTScalerNode("Age", NBT_Type.TAG_SHORT),
+            new NBTScalerNode("Health", TagType.TAG_SHORT),
+            new NBTScalerNode("Age", TagType.TAG_SHORT),
             new NBTCompoundNode("Item", Item.ItemSchema),
         });
 
@@ -58,32 +58,32 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (NBT_Value tree)
+        public override Entity LoadTree (TagValue tree)
         {
-            NBT_Compound ctree = tree as NBT_Compound;
+            TagCompound ctree = tree as TagCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
 
-            _health = ctree["Health"].ToNBTShort();
-            _age = ctree["Age"].ToNBTShort();
+            _health = ctree["Health"].ToTagShort();
+            _age = ctree["Age"].ToTagShort();
 
             _item = new Item().LoadTree(ctree["Item"]);
 
             return this;
         }
 
-        public override NBT_Value BuildTree ()
+        public override TagValue BuildTree ()
         {
-            NBT_Compound tree = base.BuildTree() as NBT_Compound;
-            tree["Health"] = new NBT_Short(_health);
-            tree["Age"] = new NBT_Short(_age);
+            TagCompound tree = base.BuildTree() as TagCompound;
+            tree["Health"] = new TagShort(_health);
+            tree["Age"] = new TagShort(_age);
             tree["Item"] = _item.BuildTree();
 
             return tree;
         }
 
-        public override bool ValidateTree (NBT_Value tree)
+        public override bool ValidateTree (TagValue tree)
         {
             return new NBTVerifier(tree, ItemSchema).Verify();
         }

@@ -11,9 +11,9 @@ namespace Substrate.TileEntities
         public static readonly NBTCompoundNode FurnaceSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
         {
             new NBTStringNode("id", "Furnace"),
-            new NBTScalerNode("BurnTime", NBT_Type.TAG_SHORT),
-            new NBTScalerNode("CookTime", NBT_Type.TAG_SHORT),
-            new NBTListNode("Items", NBT_Type.TAG_COMPOUND, ItemCollection.ListSchema),
+            new NBTScalerNode("BurnTime", TagType.TAG_SHORT),
+            new NBTScalerNode("CookTime", TagType.TAG_SHORT),
+            new NBTListNode("Items", TagType.TAG_COMPOUND, ItemCollection.ListSchema),
         });
 
         private const int _CAPACITY = 3;
@@ -78,33 +78,33 @@ namespace Substrate.TileEntities
 
         #region INBTObject<TileEntity> Members
 
-        public override TileEntity LoadTree (NBT_Value tree)
+        public override TileEntity LoadTree (TagValue tree)
         {
-            NBT_Compound ctree = tree as NBT_Compound;
+            TagCompound ctree = tree as TagCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
 
-            _burnTime = ctree["BurnTime"].ToNBTShort();
-            _cookTime = ctree["CookTime"].ToNBTShort();
+            _burnTime = ctree["BurnTime"].ToTagShort();
+            _cookTime = ctree["CookTime"].ToTagShort();
 
-            NBT_List items = ctree["Items"].ToNBTList();
+            TagList items = ctree["Items"].ToTagList();
             _items = new ItemCollection(_CAPACITY).LoadTree(items);
 
             return this;
         }
 
-        public override NBT_Value BuildTree ()
+        public override TagValue BuildTree ()
         {
-            NBT_Compound tree = base.BuildTree() as NBT_Compound;
-            tree["BurnTime"] = new NBT_Short(_burnTime);
-            tree["CookTime"] = new NBT_Short(_cookTime);
+            TagCompound tree = base.BuildTree() as TagCompound;
+            tree["BurnTime"] = new TagShort(_burnTime);
+            tree["CookTime"] = new TagShort(_cookTime);
             tree["Items"] = _items.BuildTree();
 
             return tree;
         }
 
-        public override bool ValidateTree (NBT_Value tree)
+        public override bool ValidateTree (TagValue tree)
         {
             return new NBTVerifier(tree, FurnaceSchema).Verify();
         }

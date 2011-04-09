@@ -19,11 +19,11 @@ namespace Substrate.Entities
         public static readonly NBTCompoundNode PaintingSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
         {
             new NBTStringNode("id", "Painting"),
-            new NBTScalerNode("Dir", NBT_Type.TAG_BYTE),
-            new NBTScalerNode("TileX", NBT_Type.TAG_SHORT),
-            new NBTScalerNode("TileY", NBT_Type.TAG_SHORT),
-            new NBTScalerNode("TileZ", NBT_Type.TAG_SHORT),
-            new NBTScalerNode("Motive", NBT_Type.TAG_STRING),
+            new NBTScalerNode("Dir", TagType.TAG_BYTE),
+            new NBTScalerNode("TileX", TagType.TAG_SHORT),
+            new NBTScalerNode("TileY", TagType.TAG_SHORT),
+            new NBTScalerNode("TileZ", TagType.TAG_SHORT),
+            new NBTScalerNode("Motive", TagType.TAG_STRING),
         });
 
         private DirectionType _dir;
@@ -83,35 +83,35 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (NBT_Value tree)
+        public override Entity LoadTree (TagValue tree)
         {
-            NBT_Compound ctree = tree as NBT_Compound;
+            TagCompound ctree = tree as TagCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
 
-            _dir = (DirectionType) ctree["Dir"].ToNBTByte().Data;
-            _motive = ctree["Motive"].ToNBTString();
-            _xTile = ctree["TileX"].ToNBTShort();
-            _yTile = ctree["TileY"].ToNBTShort();
-            _zTile = ctree["TileZ"].ToNBTShort();
+            _dir = (DirectionType) ctree["Dir"].ToTagByte().Data;
+            _motive = ctree["Motive"].ToTagString();
+            _xTile = ctree["TileX"].ToTagShort();
+            _yTile = ctree["TileY"].ToTagShort();
+            _zTile = ctree["TileZ"].ToTagShort();
 
             return this;
         }
 
-        public override NBT_Value BuildTree ()
+        public override TagValue BuildTree ()
         {
-            NBT_Compound tree = base.BuildTree() as NBT_Compound;
-            tree["Dir"] = new NBT_Byte((byte)_dir);
-            tree["Motive"] = new NBT_String(_motive);
-            tree["TileX"] = new NBT_Short(_xTile);
-            tree["TileY"] = new NBT_Short(_yTile);
-            tree["TileZ"] = new NBT_Short(_zTile);
+            TagCompound tree = base.BuildTree() as TagCompound;
+            tree["Dir"] = new TagByte((byte)_dir);
+            tree["Motive"] = new TagString(_motive);
+            tree["TileX"] = new TagShort(_xTile);
+            tree["TileY"] = new TagShort(_yTile);
+            tree["TileZ"] = new TagShort(_zTile);
 
             return tree;
         }
 
-        public override bool ValidateTree (NBT_Value tree)
+        public override bool ValidateTree (TagValue tree)
         {
             return new NBTVerifier(tree, PaintingSchema).Verify();
         }

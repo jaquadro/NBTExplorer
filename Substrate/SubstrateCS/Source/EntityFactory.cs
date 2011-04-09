@@ -21,15 +21,15 @@ namespace Substrate
             return Activator.CreateInstance(t, new object[] { type } ) as Entity;
         }
 
-        public static Entity Create (NBT_Compound tree)
+        public static Entity Create (TagCompound tree)
         {
-            NBT_Value type;
+            TagValue type;
             if (!tree.TryGetValue("id", out type)) {
                 return null;
             }
 
             Type t;
-            if (!_registry.TryGetValue(type.ToNBTString(), out t)) {
+            if (!_registry.TryGetValue(type.ToTagString(), out t)) {
                 return null;
             }
 

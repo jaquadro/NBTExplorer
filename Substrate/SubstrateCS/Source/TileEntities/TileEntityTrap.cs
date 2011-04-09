@@ -11,7 +11,7 @@ namespace Substrate.TileEntities
         public static readonly NBTCompoundNode TrapSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
         {
             new NBTStringNode("id", "Trap"),
-            new NBTListNode("Items", NBT_Type.TAG_COMPOUND, ItemCollection.ListSchema),
+            new NBTListNode("Items", TagType.TAG_COMPOUND, ItemCollection.ListSchema),
         });
 
         private const int _CAPACITY = 8;
@@ -59,28 +59,28 @@ namespace Substrate.TileEntities
 
         #region INBTObject<TileEntity> Members
 
-        public override TileEntity LoadTree (NBT_Value tree)
+        public override TileEntity LoadTree (TagValue tree)
         {
-            NBT_Compound ctree = tree as NBT_Compound;
+            TagCompound ctree = tree as TagCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
 
-            NBT_List items = ctree["Items"].ToNBTList();
+            TagList items = ctree["Items"].ToTagList();
             _items = new ItemCollection(_CAPACITY).LoadTree(items);
 
             return this;
         }
 
-        public override NBT_Value BuildTree ()
+        public override TagValue BuildTree ()
         {
-            NBT_Compound tree = base.BuildTree() as NBT_Compound;
+            TagCompound tree = base.BuildTree() as TagCompound;
             tree["Items"] = _items.BuildTree();
 
             return tree;
         }
 
-        public override bool ValidateTree (NBT_Value tree)
+        public override bool ValidateTree (TagValue tree)
         {
             return new NBTVerifier(tree, TrapSchema).Verify();
         }

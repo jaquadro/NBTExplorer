@@ -11,14 +11,14 @@ namespace Substrate
     {
         public static readonly NBTCompoundNode PlayerSchema = UTBaseSchema.MergeInto(new NBTCompoundNode("")
         {
-            new NBTScalerNode("Dimension", NBT_Type.TAG_INT),
-            new NBTListNode("Inventory", NBT_Type.TAG_COMPOUND, ItemCollection.InventorySchema),
-            new NBTScalerNode("World", NBT_Type.TAG_STRING, NBTOptions.OPTIONAL),
-            new NBTScalerNode("Sleeping", NBT_Type.TAG_BYTE, NBTOptions.CREATE_ON_MISSING),
-            new NBTScalerNode("SleepTimer", NBT_Type.TAG_SHORT, NBTOptions.CREATE_ON_MISSING),
-            new NBTScalerNode("SpawnX", NBT_Type.TAG_INT, NBTOptions.OPTIONAL),
-            new NBTScalerNode("SpawnY", NBT_Type.TAG_INT, NBTOptions.OPTIONAL),
-            new NBTScalerNode("SpawnZ", NBT_Type.TAG_INT, NBTOptions.OPTIONAL),
+            new NBTScalerNode("Dimension", TagType.TAG_INT),
+            new NBTListNode("Inventory", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),
+            new NBTScalerNode("World", TagType.TAG_STRING, NBTOptions.OPTIONAL),
+            new NBTScalerNode("Sleeping", TagType.TAG_BYTE, NBTOptions.CREATE_ON_MISSING),
+            new NBTScalerNode("SleepTimer", TagType.TAG_SHORT, NBTOptions.CREATE_ON_MISSING),
+            new NBTScalerNode("SpawnX", TagType.TAG_INT, NBTOptions.OPTIONAL),
+            new NBTScalerNode("SpawnY", TagType.TAG_INT, NBTOptions.OPTIONAL),
+            new NBTScalerNode("SpawnZ", TagType.TAG_INT, NBTOptions.OPTIONAL),
         });
 
         private const int _CAPACITY = 105;
@@ -98,37 +98,37 @@ namespace Substrate
 
         #region INBTObject<Player> Members
 
-        public virtual new Player LoadTree (NBT_Value tree)
+        public virtual new Player LoadTree (TagValue tree)
         {
-            NBT_Compound ctree = tree as NBT_Compound;
+            TagCompound ctree = tree as TagCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
 
-            _dimension = ctree["Dimension"].ToNBTInt();
-            _sleeping = ctree["Sleeping"].ToNBTByte();
-            _sleepTimer = ctree["SleepTimer"].ToNBTShort();
+            _dimension = ctree["Dimension"].ToTagInt();
+            _sleeping = ctree["Sleeping"].ToTagByte();
+            _sleepTimer = ctree["SleepTimer"].ToTagShort();
 
             if (ctree.ContainsKey("SpawnX")) {
-                _spawnX = ctree["SpawnX"].ToNBTInt();
+                _spawnX = ctree["SpawnX"].ToTagInt();
             }
             if (ctree.ContainsKey("SpawnY")) {
-                _spawnY = ctree["SpawnY"].ToNBTInt();
+                _spawnY = ctree["SpawnY"].ToTagInt();
             }
             if (ctree.ContainsKey("SpawnZ")) {
-                _spawnZ = ctree["SpawnZ"].ToNBTInt();
+                _spawnZ = ctree["SpawnZ"].ToTagInt();
             }
 
             if (ctree.ContainsKey("World")) {
-                _world = ctree["World"].ToNBTString();
+                _world = ctree["World"].ToTagString();
             }
 
-            _inventory.LoadTree(ctree["Inventory"].ToNBTList());
+            _inventory.LoadTree(ctree["Inventory"].ToTagList());
 
             return this;
         }
 
-        public virtual new Player LoadTreeSafe (NBT_Value tree)
+        public virtual new Player LoadTreeSafe (TagValue tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -137,21 +137,21 @@ namespace Substrate
             return LoadTree(tree);
         }
 
-        public virtual new NBT_Value BuildTree ()
+        public virtual new TagValue BuildTree ()
         {
-            NBT_Compound tree = base.BuildTree() as NBT_Compound;
-            tree["Dimension"] = new NBT_Int(_dimension);
-            tree["Sleeping"] = new NBT_Byte(_sleeping);
-            tree["SleepTimer"] = new NBT_Short(_sleepTimer);
+            TagCompound tree = base.BuildTree() as TagCompound;
+            tree["Dimension"] = new TagInt(_dimension);
+            tree["Sleeping"] = new TagByte(_sleeping);
+            tree["SleepTimer"] = new TagShort(_sleepTimer);
 
             if (_spawnX != null && _spawnY != null && _spawnZ != null) {
-                tree["SpawnX"] = new NBT_Int(_spawnX ?? 0);
-                tree["SpawnY"] = new NBT_Int(_spawnY ?? 0);
-                tree["SpawnZ"] = new NBT_Int(_spawnZ ?? 0);
+                tree["SpawnX"] = new TagInt(_spawnX ?? 0);
+                tree["SpawnY"] = new TagInt(_spawnY ?? 0);
+                tree["SpawnZ"] = new TagInt(_spawnZ ?? 0);
             }
 
             if (_world != null) {
-                tree["World"] = new NBT_String(_world);
+                tree["World"] = new TagString(_world);
             }
 
             tree["Inventory"] = _inventory.BuildTree();
@@ -159,7 +159,7 @@ namespace Substrate
             return tree;
         }
 
-        public virtual new bool ValidateTree (NBT_Value tree)
+        public virtual new bool ValidateTree (TagValue tree)
         {
             return new NBTVerifier(tree, PlayerSchema).Verify();
         }

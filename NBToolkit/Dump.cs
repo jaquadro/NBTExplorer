@@ -119,19 +119,19 @@ namespace NBToolkit
                 Chunk c = chunk.GetChunkRef();
 
                 if (!opt._dumpBlocks) {
-                    c.Tree.Root["Level"].ToNBTCompound().Remove("Blocks");
-                    c.Tree.Root["Level"].ToNBTCompound().Remove("Data");
-                    c.Tree.Root["Level"].ToNBTCompound().Remove("BlockLight");
-                    c.Tree.Root["Level"].ToNBTCompound().Remove("SkyLight");
-                    c.Tree.Root["Level"].ToNBTCompound().Remove("HeightMap");
+                    c.Tree.Root["Level"].ToTagCompound().Remove("Blocks");
+                    c.Tree.Root["Level"].ToTagCompound().Remove("Data");
+                    c.Tree.Root["Level"].ToTagCompound().Remove("BlockLight");
+                    c.Tree.Root["Level"].ToTagCompound().Remove("SkyLight");
+                    c.Tree.Root["Level"].ToTagCompound().Remove("HeightMap");
                 }
 
                 if (!opt._dumpEntities) {
-                    c.Tree.Root["Level"].ToNBTCompound().Remove("Entities");
+                    c.Tree.Root["Level"].ToTagCompound().Remove("Entities");
                 }
 
                 if (!opt._dumpTileEntities) {
-                    c.Tree.Root["Level"].ToNBTCompound().Remove("TileEntities");
+                    c.Tree.Root["Level"].ToTagCompound().Remove("TileEntities");
                 }
 
                 string s = JSONSerializer.Serialize(c.Tree.Root["Level"], 1);

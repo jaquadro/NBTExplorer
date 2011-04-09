@@ -11,8 +11,8 @@ namespace Substrate.TileEntities
         public static readonly NBTCompoundNode MobSpawnerSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
         {
             new NBTStringNode("id", "MobSpawner"),
-            new NBTScalerNode("EntityId", NBT_Type.TAG_STRING),
-            new NBTScalerNode("Delay", NBT_Type.TAG_SHORT),
+            new NBTScalerNode("EntityId", TagType.TAG_STRING),
+            new NBTScalerNode("Delay", TagType.TAG_SHORT),
         });
 
         private short _delay;
@@ -58,29 +58,29 @@ namespace Substrate.TileEntities
 
         #region INBTObject<TileEntity> Members
 
-        public override TileEntity LoadTree (NBT_Value tree)
+        public override TileEntity LoadTree (TagValue tree)
         {
-            NBT_Compound ctree = tree as NBT_Compound;
+            TagCompound ctree = tree as TagCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
 
-            _delay = ctree["Delay"].ToNBTShort();
-            _entityID = ctree["EntityID"].ToNBTString();
+            _delay = ctree["Delay"].ToTagShort();
+            _entityID = ctree["EntityID"].ToTagString();
 
             return this;
         }
 
-        public override NBT_Value BuildTree ()
+        public override TagValue BuildTree ()
         {
-            NBT_Compound tree = base.BuildTree() as NBT_Compound;
-            tree["EntityID"] = new NBT_String(_entityID);
-            tree["Delay"] = new NBT_Short(_delay);
+            TagCompound tree = base.BuildTree() as TagCompound;
+            tree["EntityID"] = new TagString(_entityID);
+            tree["Delay"] = new TagShort(_delay);
 
             return tree;
         }
 
-        public override bool ValidateTree (NBT_Value tree)
+        public override bool ValidateTree (TagValue tree)
         {
             return new NBTVerifier(tree, MobSpawnerSchema).Verify();
         }

@@ -20,7 +20,7 @@ namespace Substrate.NBT
     public class TagEventArgs : EventArgs
     {
         protected string _tagName;
-        protected NBT_Value _tag;
+        protected TagValue _tag;
         protected NBTSchemaNode _schema;
 
         public string TagName
@@ -34,14 +34,14 @@ namespace Substrate.NBT
             _tagName = tagName;
         }
 
-        public TagEventArgs (string tagName, NBT_Value tag)
+        public TagEventArgs (string tagName, TagValue tag)
             : base()
         {
             _tag = tag;
             _tagName = tagName;
         }
 
-        public TagEventArgs (NBTSchemaNode schema, NBT_Value tag)
+        public TagEventArgs (NBTSchemaNode schema, TagValue tag)
             : base()
         {
             _tag = tag;
@@ -51,18 +51,18 @@ namespace Substrate.NBT
 
     public class NBTVerifier : INBTVerifier
     {
-        private NBT_Value _root;
+        private TagValue _root;
         private NBTSchemaNode _schema;
 
         public event MissingTagHandler MissingTag;
         public event InvalidTagTypeHandler InvalidTagType;
         public event InvalidTagValueHandler InvalidTagValue;
 
-        private Dictionary<string, NBT_Value> _scratch = new Dictionary<string,NBT_Value>();
+        private Dictionary<string, TagValue> _scratch = new Dictionary<string,TagValue>();
 
         public NBTVerifier () { }
 
-        public NBTVerifier (NBT_Value root, NBTSchemaNode schema)
+        public NBTVerifier (TagValue root, NBTSchemaNode schema)
         {
             _root = root;
             _schema = schema;
@@ -75,13 +75,13 @@ namespace Substrate.NBT
 
         static NBTCompoundNode inventorySchema = new NBTCompoundNode("")
         {
-            new NBTScalerNode("id", NBT_Type.TAG_SHORT),
-            new NBTScalerNode("Damage", NBT_Type.TAG_SHORT),
-            new NBTScalerNode("Count", NBT_Type.TAG_BYTE),
-            new NBTScalerNode("Slot", NBT_Type.TAG_BYTE),
+            new NBTScalerNode("id", TagType.TAG_SHORT),
+            new NBTScalerNode("Damage", TagType.TAG_SHORT),
+            new NBTScalerNode("Count", TagType.TAG_BYTE),
+            new NBTScalerNode("Slot", TagType.TAG_BYTE),
         };
 
-        private bool Verify (NBT_Value tag, NBTSchemaNode schema)
+        private bool Verify (TagValue tag, NBTSchemaNode schema)
         {
             if (tag == null) {
                 OnMissingTag(new TagEventArgs(schema.Name));
@@ -116,9 +116,9 @@ namespace Substrate.NBT
             return false;
         }
 
-        private bool VerifyScaler (NBT_Value tag, NBTScalerNode schema)
+        private bool VerifyScaler (TagValue tag, NBTScalerNode schema)
         {
-            if (tag.GetNBTType() != schema.Type) {
+            if (!tag.IsCastableTo(schema.Type)) {
                 OnInvalidTagType(new TagEventArgs(schema.Name, tag));
                 return false;
             }
@@ -126,9 +126,9 @@ namespace Substrate.NBT
             return true;
         }
 
-        private bool VerifyString (NBT_Value tag, NBTStringNode schema)
+        private bool VerifyString (TagValue tag, NBTStringNode schema)
         {
-            NBT_String stag = tag as NBT_String;
+            TagString stag = tag as TagString;
             if (stag == null) {
                 OnInvalidTagType(new TagEventArgs(schema, tag));
                 return false;
@@ -146,9 +146,9 @@ namespace Substrate.NBT
         }
 
 
-        private bool VerifyArray (NBT_Value tag, NBTArrayNode schema)
+        private bool VerifyArray (TagValue tag, NBTArrayNode schema)
         {
-            NBT_ByteArray atag = tag as NBT_ByteArray;
+            TagByteArray atag = tag as TagByteArray;
             if (atag == null) {
                 OnInvalidTagType(new TagEventArgs(schema, tag));
                 return false;
@@ -161,9 +161,9 @@ namespace Substrate.NBT
             return true;
         }
 
-        private bool VerifyList (NBT_Value tag, NBTListNode schema)
+        private bool VerifyList (TagValue tag, NBTListNode schema)
         {
-            NBT_List ltag = tag as NBT_List;
+            TagList ltag = tag as TagList;
             if (ltag == null) {
                 OnInvalidTagType(new TagEventArgs(schema, tag));
                 return false;
@@ -187,7 +187,7 @@ namespace Substrate.NBT
             // If a subschema is set, test all items in list against it
 
             if (schema.SubSchema != null) {
-                foreach (NBT_Value v in ltag) {
+                foreach (TagValue v in ltag) {
                     pass = Verify(v, schema.SubSchema) && pass;
                 }
             }
@@ -195,9 +195,9 @@ namespace Substrate.NBT
             return pass;
         }
 
-        private bool VerifyCompound (NBT_Value tag, NBTCompoundNode schema)
+        private bool VerifyCompound (TagValue tag, NBTCompoundNode schema)
         {
-            NBT_Compound ctag = tag as NBT_Compound;
+            TagCompound ctag = tag as TagCompound;
             if (ctag == null) {
                 OnInvalidTagType(new TagEventArgs(schema, tag));
                 return false;
@@ -206,7 +206,7 @@ namespace Substrate.NBT
             bool pass = true;
 
             foreach (NBTSchemaNode node in schema) {
-                NBT_Value value;
+                TagValue value;
                 ctag.TryGetValue(node.Name, out value);
 
                 if (value == null) {
@@ -222,7 +222,7 @@ namespace Substrate.NBT
                 pass = Verify(value, node) && pass;
             }
 
-            foreach (KeyValuePair<string, NBT_Value> item in _scratch) {
+            foreach (KeyValuePair<string, TagValue> item in _scratch) {
                 ctag[item.Key] = item.Value;
             }
 

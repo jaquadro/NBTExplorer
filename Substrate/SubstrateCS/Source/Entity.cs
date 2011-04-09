@@ -35,13 +35,13 @@ namespace Substrate
 
         public static readonly NBTCompoundNode UTBaseSchema = new NBTCompoundNode("")
         {
-            new NBTListNode("Pos", NBT_Type.TAG_DOUBLE, 3),
-            new NBTListNode("Motion", NBT_Type.TAG_DOUBLE, 3),
-            new NBTListNode("Rotation", NBT_Type.TAG_FLOAT, 2),
-            new NBTScalerNode("FallDistance", NBT_Type.TAG_FLOAT),
-            new NBTScalerNode("Fire", NBT_Type.TAG_SHORT),
-            new NBTScalerNode("Air", NBT_Type.TAG_SHORT),
-            new NBTScalerNode("OnGround", NBT_Type.TAG_BYTE),
+            new NBTListNode("Pos", TagType.TAG_DOUBLE, 3),
+            new NBTListNode("Motion", TagType.TAG_DOUBLE, 3),
+            new NBTListNode("Rotation", TagType.TAG_FLOAT, 2),
+            new NBTScalerNode("FallDistance", TagType.TAG_FLOAT),
+            new NBTScalerNode("Fire", TagType.TAG_SHORT),
+            new NBTScalerNode("Air", TagType.TAG_SHORT),
+            new NBTScalerNode("OnGround", TagType.TAG_BYTE),
         };
 
         private Vector3 _pos;
@@ -124,38 +124,38 @@ namespace Substrate
 
         #region INBTObject<Entity> Members
 
-        public UntypedEntity LoadTree (NBT_Value tree)
+        public UntypedEntity LoadTree (TagValue tree)
         {
-            NBT_Compound ctree = tree as NBT_Compound;
+            TagCompound ctree = tree as TagCompound;
             if (ctree == null) {
                 return null;
             }
 
-            NBT_List pos = ctree["Pos"].ToNBTList();
+            TagList pos = ctree["Pos"].ToTagList();
             _pos = new Vector3();
-            _pos.X = pos[0].ToNBTDouble();
-            _pos.Y = pos[1].ToNBTDouble();
-            _pos.Z = pos[2].ToNBTDouble();
+            _pos.X = pos[0].ToTagDouble();
+            _pos.Y = pos[1].ToTagDouble();
+            _pos.Z = pos[2].ToTagDouble();
 
-            NBT_List motion = ctree["Motion"].ToNBTList();
+            TagList motion = ctree["Motion"].ToTagList();
             _motion = new Vector3();
-            _motion.X = motion[0].ToNBTDouble();
-            _motion.Y = motion[1].ToNBTDouble();
-            _motion.Z = motion[2].ToNBTDouble();
+            _motion.X = motion[0].ToTagDouble();
+            _motion.Y = motion[1].ToTagDouble();
+            _motion.Z = motion[2].ToTagDouble();
 
-            NBT_List rotation = ctree["Rotation"].ToNBTList();
+            TagList rotation = ctree["Rotation"].ToTagList();
             _rotation = new Orientation();
-            _rotation.Yaw = rotation[0].ToNBTFloat();
-            _rotation.Pitch = rotation[1].ToNBTFloat();
+            _rotation.Yaw = rotation[0].ToTagFloat();
+            _rotation.Pitch = rotation[1].ToTagFloat();
 
-            _fire = ctree["Fire"].ToNBTShort();
-            _air = ctree["Air"].ToNBTShort();
-            _onGround = ctree["OnGround"].ToNBTByte();
+            _fire = ctree["Fire"].ToTagShort();
+            _air = ctree["Air"].ToTagShort();
+            _onGround = ctree["OnGround"].ToTagByte();
 
             return this;
         }
 
-        public UntypedEntity LoadTreeSafe (NBT_Value tree)
+        public UntypedEntity LoadTreeSafe (TagValue tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -164,36 +164,36 @@ namespace Substrate
             return LoadTree(tree);
         }
 
-        public NBT_Value BuildTree ()
+        public TagValue BuildTree ()
         {
-            NBT_Compound tree = new NBT_Compound();
+            TagCompound tree = new TagCompound();
 
-            NBT_List pos = new NBT_List(NBT_Type.TAG_DOUBLE);
-            pos.Add(new NBT_Double(_pos.X));
-            pos.Add(new NBT_Double(_pos.Y));
-            pos.Add(new NBT_Double(_pos.Z));
+            TagList pos = new TagList(TagType.TAG_DOUBLE);
+            pos.Add(new TagDouble(_pos.X));
+            pos.Add(new TagDouble(_pos.Y));
+            pos.Add(new TagDouble(_pos.Z));
             tree["Position"] = pos;
 
-            NBT_List motion = new NBT_List(NBT_Type.TAG_DOUBLE);
-            motion.Add(new NBT_Double(_motion.X));
-            motion.Add(new NBT_Double(_motion.Y));
-            motion.Add(new NBT_Double(_motion.Z));
+            TagList motion = new TagList(TagType.TAG_DOUBLE);
+            motion.Add(new TagDouble(_motion.X));
+            motion.Add(new TagDouble(_motion.Y));
+            motion.Add(new TagDouble(_motion.Z));
             tree["Motion"] = motion;
 
-            NBT_List rotation = new NBT_List(NBT_Type.TAG_FLOAT);
-            rotation.Add(new NBT_Float((float)_rotation.Yaw));
-            rotation.Add(new NBT_Float((float)_rotation.Pitch));
+            TagList rotation = new TagList(TagType.TAG_FLOAT);
+            rotation.Add(new TagFloat((float)_rotation.Yaw));
+            rotation.Add(new TagFloat((float)_rotation.Pitch));
             tree["Rotation"] = rotation;
 
-            tree["FallDistance"] = new NBT_Float(_fallDistance);
-            tree["Fire"] = new NBT_Short(_fire);
-            tree["Air"] = new NBT_Short(_air);
-            tree["OnGround"] = new NBT_Byte(_onGround);
+            tree["FallDistance"] = new TagFloat(_fallDistance);
+            tree["Fire"] = new TagShort(_fire);
+            tree["Air"] = new TagShort(_air);
+            tree["OnGround"] = new TagByte(_onGround);
 
             return tree;
         }
 
-        public bool ValidateTree (NBT_Value tree)
+        public bool ValidateTree (TagValue tree)
         {
             return new NBTVerifier(tree, UTBaseSchema).Verify();
         }
@@ -215,7 +215,7 @@ namespace Substrate
     {
         public static readonly NBTCompoundNode BaseSchema = UTBaseSchema.MergeInto(new NBTCompoundNode("")
         {
-            new NBTScalerNode("id", NBT_Type.TAG_STRING),
+            new NBTScalerNode("id", TagType.TAG_STRING),
         });
 
         private string _id;
@@ -240,19 +240,19 @@ namespace Substrate
 
         #region INBTObject<Entity> Members
 
-        public virtual new Entity LoadTree (NBT_Value tree)
+        public virtual new Entity LoadTree (TagValue tree)
         {
-            NBT_Compound ctree = tree as NBT_Compound;
+            TagCompound ctree = tree as TagCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
 
-            _id = ctree["id"].ToNBTString();
+            _id = ctree["id"].ToTagString();
 
             return this;
         }
 
-        public virtual new Entity LoadTreeSafe (NBT_Value tree)
+        public virtual new Entity LoadTreeSafe (TagValue tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -261,15 +261,15 @@ namespace Substrate
             return LoadTree(tree);
         }
 
-        public virtual new NBT_Value BuildTree ()
+        public virtual new TagValue BuildTree ()
         {
-            NBT_Compound tree = base.BuildTree() as NBT_Compound;
-            tree["id"] = new NBT_String(_id);
+            TagCompound tree = base.BuildTree() as TagCompound;
+            tree["id"] = new TagString(_id);
 
             return tree;
         }
 
-        public virtual new bool ValidateTree (NBT_Value tree)
+        public virtual new bool ValidateTree (TagValue tree)
         {
             return new NBTVerifier(tree, BaseSchema).Verify();
         }

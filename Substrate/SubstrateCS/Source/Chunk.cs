@@ -18,12 +18,12 @@ namespace Substrate
                 new NBTArrayNode("SkyLight", 16384),
                 new NBTArrayNode("BlockLight", 16384),
                 new NBTArrayNode("HeightMap", 256),
-                new NBTListNode("Entities", NBT_Type.TAG_COMPOUND),
-                new NBTListNode("TileEntities", NBT_Type.TAG_COMPOUND, TileEntity.BaseSchema),
-                new NBTScalerNode("LastUpdate", NBT_Type.TAG_LONG),
-                new NBTScalerNode("xPos", NBT_Type.TAG_INT),
-                new NBTScalerNode("zPos", NBT_Type.TAG_INT),
-                new NBTScalerNode("TerrainPopulated", NBT_Type.TAG_BYTE),
+                new NBTListNode("Entities", TagType.TAG_COMPOUND),
+                new NBTListNode("TileEntities", TagType.TAG_COMPOUND, TileEntity.BaseSchema),
+                new NBTScalerNode("LastUpdate", TagType.TAG_LONG),
+                new NBTScalerNode("xPos", TagType.TAG_INT),
+                new NBTScalerNode("zPos", TagType.TAG_INT),
+                new NBTScalerNode("TerrainPopulated", TagType.TAG_BYTE),
             },
         };
 
@@ -32,16 +32,16 @@ namespace Substrate
         private int _cx;
         private int _cz;
 
-        protected NBT_ByteArray _blocks;
+        protected TagByteArray _blocks;
         protected NibbleArray _data;
         protected NibbleArray _blockLight;
         protected NibbleArray _skyLight;
-        protected NBT_ByteArray _heightMap;
+        protected TagByteArray _heightMap;
 
-        protected NBT_List _entities;
-        protected NBT_List _tileEntities;
+        protected TagList _entities;
+        protected TagList _tileEntities;
 
-        protected Dictionary<BlockKey, NBT_Compound> _tileEntityTable;
+        protected Dictionary<BlockKey, TagCompound> _tileEntityTable;
 
         public int X
         {
@@ -60,8 +60,8 @@ namespace Substrate
 
         public bool IsTerrainPopulated
         {
-            get { return _tree.Root["Level"].ToNBTCompound()["TerrainPopulated"].ToNBTByte() == 1; }
-            set { _tree.Root["Level"].ToNBTCompound()["TerrainPopulated"].ToNBTByte().Data = (byte)(value ? 1 : 0); }
+            get { return _tree.Root["Level"].ToTagCompound()["TerrainPopulated"].ToTagByte() == 1; }
+            set { _tree.Root["Level"].ToTagCompound()["TerrainPopulated"].ToTagByte().Data = (byte)(value ? 1 : 0); }
         }
 
         public Chunk (int x, int z)
@@ -86,19 +86,19 @@ namespace Substrate
             int elements2 = XDim * ZDim;
             int elements3 = elements2 *YDim;
 
-            _blocks = new NBT_ByteArray(new byte[elements3]);
-            NBT_ByteArray data = new NBT_ByteArray(new byte[elements3 >> 1]);
-            NBT_ByteArray blocklight = new NBT_ByteArray(new byte[elements3 >> 1]);
-            NBT_ByteArray skylight = new NBT_ByteArray(new byte[elements3 >> 1]);
-            _heightMap = new NBT_ByteArray(new byte[elements2]);
-            _entities = new NBT_List(NBT_Type.TAG_COMPOUND);
-            _tileEntities = new NBT_List(NBT_Type.TAG_COMPOUND);
+            _blocks = new TagByteArray(new byte[elements3]);
+            TagByteArray data = new TagByteArray(new byte[elements3 >> 1]);
+            TagByteArray blocklight = new TagByteArray(new byte[elements3 >> 1]);
+            TagByteArray skylight = new TagByteArray(new byte[elements3 >> 1]);
+            _heightMap = new TagByteArray(new byte[elements2]);
+            _entities = new TagList(TagType.TAG_COMPOUND);
+            _tileEntities = new TagList(TagType.TAG_COMPOUND);
 
             _data = new NibbleArray(data.Data);
             _blockLight = new NibbleArray(blocklight.Data);
             _skyLight = new NibbleArray(skylight.Data);
 
-            NBT_Compound level = new NBT_Compound();
+            TagCompound level = new TagCompound();
             level.Add("Blocks", _blocks);
             level.Add("Data", data);
             level.Add("SkyLight", blocklight);
@@ -106,10 +106,10 @@ namespace Substrate
             level.Add("HeightMap", _heightMap);
             level.Add("Entities", _entities);
             level.Add("TileEntities", _tileEntities);
-            level.Add("LastUpdate", new NBT_Long());
-            level.Add("xPos", new NBT_Int());
-            level.Add("zPos", new NBT_Int());
-            level.Add("TerrainPopulated", new NBT_Byte());
+            level.Add("LastUpdate", new TagLong());
+            level.Add("xPos", new TagInt());
+            level.Add("zPos", new TagInt());
+            level.Add("TerrainPopulated", new TagByte());
 
             _tree = new NBT_Tree();
             _tree.Root.Add("Level", level);
@@ -243,12 +243,12 @@ namespace Substrate
 
         private void BuildTileEntityCache ()
         {
-            _tileEntityTable = new Dictionary<BlockKey, NBT_Compound>();
+            _tileEntityTable = new Dictionary<BlockKey, TagCompound>();
 
-            foreach (NBT_Compound te in _tileEntities) {
-                int tex = te["x"].ToNBTInt();
-                int tey = te["y"].ToNBTInt();
-                int tez = te["z"].ToNBTInt();
+            foreach (TagCompound te in _tileEntities) {
+                int tex = te["x"].ToTagInt();
+                int tey = te["y"].ToTagInt();
+                int tez = te["z"].ToTagInt();
 
                 BlockKey key = new BlockKey(tex, tey, tez);
                 _tileEntityTable[key] = te;
@@ -497,7 +497,7 @@ namespace Substrate
             int z = BlockGlobalZ(lz);
 
             BlockKey key = new BlockKey(x, y, z);
-            NBT_Compound te;
+            TagCompound te;
 
             if (!_tileEntityTable.TryGetValue(key, out te)) {
                 return null;
@@ -522,7 +522,7 @@ namespace Substrate
             int z = BlockGlobalZ(lz);
 
             BlockKey key = new BlockKey(x, y, z);
-            NBT_Compound oldte;
+            TagCompound oldte;
 
             if (_tileEntityTable.TryGetValue(key, out oldte)) {
                 _tileEntities.Remove(oldte);
@@ -532,7 +532,7 @@ namespace Substrate
             te.Y = y;
             te.Z = z;
 
-            NBT_Compound tree = te.BuildTree() as NBT_Compound;
+            TagCompound tree = te.BuildTree() as TagCompound;
 
             _tileEntities.Add(tree);
             _tileEntityTable[key] = tree;
@@ -547,7 +547,7 @@ namespace Substrate
             int z = BlockGlobalZ(lz);
 
             BlockKey key = new BlockKey(x, y, z);
-            NBT_Compound te;
+            TagCompound te;
 
             if (!_tileEntityTable.TryGetValue(key, out te)) {
                 return false;
@@ -574,46 +574,46 @@ namespace Substrate
 
         #region INBTObject<Chunk> Members
 
-        public Chunk LoadTree (NBT_Value tree)
+        public Chunk LoadTree (TagValue tree)
         {
-            NBT_Compound ctree = tree as NBT_Compound;
+            TagCompound ctree = tree as TagCompound;
             if (ctree == null) {
                 return null;
             }
 
             _tree = new NBT_Tree(ctree);
  
-            NBT_Compound level = _tree.Root["Level"] as NBT_Compound;
+            TagCompound level = _tree.Root["Level"] as TagCompound;
 
-            _blocks = level["Blocks"] as NBT_ByteArray;
-            _data = new NibbleArray(level["Data"].ToNBTByteArray().Data);
-            _blockLight = new NibbleArray(level["BlockLight"].ToNBTByteArray().Data);
-            _skyLight = new NibbleArray(level["SkyLight"].ToNBTByteArray().Data);
-            _heightMap = level["HeightMap"] as NBT_ByteArray;
+            _blocks = level["Blocks"] as TagByteArray;
+            _data = new NibbleArray(level["Data"].ToTagByteArray().Data);
+            _blockLight = new NibbleArray(level["BlockLight"].ToTagByteArray().Data);
+            _skyLight = new NibbleArray(level["SkyLight"].ToTagByteArray().Data);
+            _heightMap = level["HeightMap"] as TagByteArray;
 
-            _entities = level["Entities"] as NBT_List;
-            _tileEntities = level["TileEntities"] as NBT_List;
+            _entities = level["Entities"] as TagList;
+            _tileEntities = level["TileEntities"] as TagList;
 
             // List-type patch up
             if (_entities.Count == 0) {
-                level["Entities"] = new NBT_List(NBT_Type.TAG_COMPOUND);
-                _entities = level["Entities"] as NBT_List;
+                level["Entities"] = new TagList(TagType.TAG_COMPOUND);
+                _entities = level["Entities"] as TagList;
             }
 
             if (_tileEntities.Count == 0) {
-                level["TileEntities"] = new NBT_List(NBT_Type.TAG_COMPOUND);
-                _tileEntities = level["TileEntities"] as NBT_List;
+                level["TileEntities"] = new TagList(TagType.TAG_COMPOUND);
+                _tileEntities = level["TileEntities"] as TagList;
             }
 
-            _cx = level["xPos"].ToNBTInt();
-            _cz = level["zPos"].ToNBTInt();
+            _cx = level["xPos"].ToTagInt();
+            _cz = level["zPos"].ToTagInt();
 
             BuildTileEntityCache();
 
             return this;
         }
 
-        public Chunk LoadTreeSafe (NBT_Value tree)
+        public Chunk LoadTreeSafe (TagValue tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -622,12 +622,12 @@ namespace Substrate
             return LoadTree(tree);
         }
 
-        public NBT_Value BuildTree ()
+        public TagValue BuildTree ()
         {
             return _tree.Root;
         }
 
-        public bool ValidateTree (NBT_Value tree)
+        public bool ValidateTree (TagValue tree)
         {
             return new NBTVerifier(tree, LevelSchema).Verify();
         }
@@ -641,13 +641,13 @@ namespace Substrate
         {
             List<Entity> set = new List<Entity>();
 
-            foreach (NBT_Compound ent in _entities) {
-                NBT_Value eid;
+            foreach (TagCompound ent in _entities) {
+                TagValue eid;
                 if (!ent.TryGetValue("id", out eid)) {
                     continue;
                 }
 
-                if (eid.ToNBTString().Data != id) {
+                if (eid.ToTagString().Data != id) {
                     continue;
                 }
 
@@ -664,7 +664,7 @@ namespace Substrate
         {
             List<Entity> set = new List<Entity>();
 
-            foreach (NBT_Compound ent in _entities) {
+            foreach (TagCompound ent in _entities) {
                 Entity obj = EntityFactory.Create(ent);
                 if (obj == null) {
                     continue;
@@ -697,24 +697,24 @@ namespace Substrate
         public int RemoveEntities (string id)
         {
             return _entities.RemoveAll(val => {
-                NBT_Compound cval = val as NBT_Compound;
+                TagCompound cval = val as TagCompound;
                 if (cval == null) {
                     return false;
                 }
 
-                NBT_Value sval;
+                TagValue sval;
                 if (!cval.TryGetValue("id", out sval)) {
                     return false;
                 }
 
-                return (sval.ToNBTString().Data == id);
+                return (sval.ToTagString().Data == id);
             });
         }
 
         public int RemoveEntities (Predicate<Entity> match)
         {
             return _entities.RemoveAll(val => {
-                NBT_Compound cval = val as NBT_Compound;
+                TagCompound cval = val as TagCompound;
                 if (cval == null) {
                     return false;
                 }

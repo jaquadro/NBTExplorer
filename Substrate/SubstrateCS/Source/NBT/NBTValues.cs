@@ -6,10 +6,7 @@ namespace Substrate.NBT {
 
     using Substrate.Utility;
 
-    /// <summary>
-    /// Describes the type of value held by an NBT_Tag
-    /// </summary>
-    public enum NBT_Type
+    public enum TagType
     {
         TAG_END = 0,
         TAG_BYTE = 1,   // 8 bits signed
@@ -24,45 +21,62 @@ namespace Substrate.NBT {
         TAG_COMPOUND = 10
     }
 
-    public abstract class NBT_Value : ICopyable<NBT_Value>
+    public abstract class TagValue : ICopyable<TagValue>
     {
-        virtual public NBT_Null ToNBTNull () { throw new InvalidCastException(); }
-        virtual public NBT_Byte ToNBTByte () { throw new InvalidCastException(); }
-        virtual public NBT_Short ToNBTShort () { throw new InvalidCastException(); }
-        virtual public NBT_Int ToNBTInt () { throw new InvalidCastException(); }
-        virtual public NBT_Long ToNBTLong () { throw new InvalidCastException(); }
-        virtual public NBT_Float ToNBTFloat () { throw new InvalidCastException(); }
-        virtual public NBT_Double ToNBTDouble () { throw new InvalidCastException(); }
-        virtual public NBT_ByteArray ToNBTByteArray () { throw new InvalidCastException(); }
-        virtual public NBT_String ToNBTString () { throw new InvalidCastException(); }
-        virtual public NBT_List ToNBTList () { throw new InvalidCastException(); }
-        virtual public NBT_Compound ToNBTCompound () { throw new InvalidCastException(); }
+        public virtual TagNull ToTagNull () { throw new InvalidCastException(); }
+        public virtual TagByte ToTagByte () { throw new InvalidCastException(); }
+        public virtual TagShort ToTagShort () { throw new InvalidCastException(); }
+        public virtual TagInt ToTagInt () { throw new InvalidCastException(); }
+        public virtual TagLong ToTagLong () { throw new InvalidCastException(); }
+        public virtual TagFloat ToTagFloat () { throw new InvalidCastException(); }
+        public virtual TagDouble ToTagDouble () { throw new InvalidCastException(); }
+        public virtual TagByteArray ToTagByteArray () { throw new InvalidCastException(); }
+        public virtual TagString ToTagString () { throw new InvalidCastException(); }
+        public virtual TagList ToTagList () { throw new InvalidCastException(); }
+        public virtual TagCompound ToTagCompound () { throw new InvalidCastException(); }
 
-        virtual public NBT_Type GetNBTType () { return NBT_Type.TAG_END; }
+        public virtual TagType GetTagType () { return TagType.TAG_END; }
 
-        public virtual NBT_Value Copy ()
+        public virtual bool IsCastableTo (TagType type)
+        {
+            return type == GetTagType();
+        }
+
+        public virtual TagValue Copy ()
         {
             return null;
         }
     }
 
-    public class NBT_Null : NBT_Value
+    public class TagNull : TagValue
     {
-        override public NBT_Null ToNBTNull () { return this; }
-        override public NBT_Type GetNBTType () { return NBT_Type.TAG_END; }
+        public override TagNull ToTagNull () { return this; }
+        public override TagType GetTagType () { return TagType.TAG_END; }
 
-        public override NBT_Value Copy ()
+        public override TagValue Copy ()
         {
-            return new NBT_Null();
+            return new TagNull();
         }
     }
 
-    public class NBT_Byte : NBT_Value
+    public class TagByte : TagValue
     {
         private byte _data = 0;
 
-        override public NBT_Byte ToNBTByte () { return this; }
-        override public NBT_Type GetNBTType () { return NBT_Type.TAG_BYTE; }
+        public override TagByte ToTagByte () { return this; }
+        public override TagShort ToTagShort () { return new TagShort(_data); }
+        public override TagInt ToTagInt () { return new TagInt(_data); }
+        public override TagLong ToTagLong () { return new TagLong(_data); }
+ 
+        public override TagType GetTagType () { return TagType.TAG_BYTE; }
+
+        public override bool IsCastableTo (TagType type)
+        {
+            return (type == TagType.TAG_BYTE ||
+                type == TagType.TAG_SHORT ||
+                type == TagType.TAG_INT ||
+                type == TagType.TAG_LONG);
+        }
 
         public byte Data
         {
@@ -70,35 +84,65 @@ namespace Substrate.NBT {
             set { _data = value; }
         }
 
-        public NBT_Byte () { }
+        public TagByte () { }
 
-        public NBT_Byte (byte d)
+        public TagByte (byte d)
         {
             _data = d;
         }
 
-        public override NBT_Value Copy ()
+        public override TagValue Copy ()
         {
-            return new NBT_Byte(_data);
+            return new TagByte(_data);
         }
 
-        public static implicit operator NBT_Byte (byte b)
+        public override string ToString ()
         {
-            return new NBT_Byte(b);
+            return _data.ToString();
         }
 
-        public static implicit operator byte (NBT_Byte b)
+        public static implicit operator TagByte (byte b)
+        {
+            return new TagByte(b);
+        }
+
+        public static implicit operator byte (TagByte b)
+        {
+            return b._data;
+        }
+
+        public static implicit operator short (TagByte b)
+        {
+            return b._data;
+        }
+
+        public static implicit operator int (TagByte b)
+        {
+            return b._data;
+        }
+
+        public static implicit operator long (TagByte b)
         {
             return b._data;
         }
     }
 
-    public class NBT_Short : NBT_Value
+    public class TagShort : TagValue
     {
         private short _data = 0;
 
-        override public NBT_Short ToNBTShort () { return this; }
-        override public NBT_Type GetNBTType () { return NBT_Type.TAG_SHORT; }
+        public override TagShort ToTagShort () { return this; }
+        public override TagInt ToTagInt () { return new TagInt(_data); }
+        public override TagLong ToTagLong () { return new TagLong(_data); }
+
+        public override TagType GetTagType () { return TagType.TAG_SHORT; }
+
+        public override bool IsCastableTo (TagType type)
+        {
+            return (type == TagType.TAG_SHORT ||
+                type == TagType.TAG_INT ||
+                type == TagType.TAG_LONG);
+        }
 
         public short Data
         {
@@ -106,35 +150,63 @@ namespace Substrate.NBT {
             set { _data = value; }
         }
 
-        public NBT_Short () { }
+        public TagShort () { }
 
-        public NBT_Short (short d)
+        public TagShort (short d)
         {
             _data = d;
         }
 
-        public override NBT_Value Copy ()
+        public override TagValue Copy ()
         {
-            return new NBT_Short(_data);
+            return new TagShort(_data);
         }
 
-        public static implicit operator NBT_Short (short s)
+        public override string ToString ()
         {
-            return new NBT_Short(s);
+            return _data.ToString();
         }
 
-        public static implicit operator short (NBT_Short s)
+        public static implicit operator TagShort (byte b)
+        {
+            return new TagShort(b);
+        }
+
+        public static implicit operator TagShort (short s)
+        {
+            return new TagShort(s);
+        }
+
+        public static implicit operator short (TagShort s)
+        {
+            return s._data;
+        }
+
+        public static implicit operator int (TagShort s)
+        {
+            return s._data;
+        }
+
+        public static implicit operator long (TagShort s)
         {
             return s._data;
         }
     }
 
-    public class NBT_Int : NBT_Value
+    public class TagInt : TagValue
     {
         private int _data = 0;
 
-        override public NBT_Int ToNBTInt () { return this; }
-        override public NBT_Type GetNBTType () { return NBT_Type.TAG_INT; }
+        public override TagInt ToTagInt () { return this; }
+        public override TagLong ToTagLong () { return new TagLong(_data); }
+
+        public override TagType GetTagType () { return TagType.TAG_INT; }
+
+        public override bool IsCastableTo (TagType type)
+        {
+            return (type == TagType.TAG_INT ||
+                type == TagType.TAG_LONG);
+        }
 
         public int Data
         {
@@ -142,35 +214,56 @@ namespace Substrate.NBT {
             set { _data = value; }
         }
 
-        public NBT_Int () { }
+        public TagInt () { }
 
-        public NBT_Int (int d)
+        public TagInt (int d)
         {
             _data = d;
         }
 
-        public override NBT_Value Copy ()
+        public override TagValue Copy ()
         {
-            return new NBT_Int(_data);
+            return new TagInt(_data);
         }
 
-        public static implicit operator NBT_Int (int i)
+        public override string ToString ()
         {
-            return new NBT_Int(i);
+            return _data.ToString();
         }
 
-        public static implicit operator int (NBT_Int i)
+        public static implicit operator TagInt (byte b)
+        {
+            return new TagInt(b);
+        }
+
+        public static implicit operator TagInt (short s)
+        {
+            return new TagInt(s);
+        }
+
+        public static implicit operator TagInt (int i)
+        {
+            return new TagInt(i);
+        }
+
+        public static implicit operator int (TagInt i)
+        {
+            return i._data;
+        }
+
+        public static implicit operator long (TagInt i)
         {
             return i._data;
         }
     }
 
-    public class NBT_Long : NBT_Value
+    public class TagLong : TagValue
     {
         private long _data = 0;
 
-        override public NBT_Long ToNBTLong () { return this; }
-        override public NBT_Type GetNBTType () { return NBT_Type.TAG_LONG; }
+        public override TagLong ToTagLong () { return this; }
+
+        public override TagType GetTagType () { return TagType.TAG_LONG; }
 
         public long Data
         {
@@ -178,35 +271,63 @@ namespace Substrate.NBT {
             set { _data = value; }
         }
 
-        public NBT_Long () { }
+        public TagLong () { }
 
-        public NBT_Long (long d)
+        public TagLong (long d)
         {
             _data = d;
         }
 
-        public override NBT_Value Copy ()
+        public override TagValue Copy ()
         {
-            return new NBT_Long(_data);
+            return new TagLong(_data);
         }
 
-        public static implicit operator NBT_Long (long l)
+        public override string ToString ()
         {
-            return new NBT_Long(l);
+            return _data.ToString();
         }
 
-        public static implicit operator long (NBT_Long l)
+        public static implicit operator TagLong (byte b)
+        {
+            return new TagLong(b);
+        }
+
+        public static implicit operator TagLong (short s)
+        {
+            return new TagLong(s);
+        }
+
+        public static implicit operator TagLong (int i)
+        {
+            return new TagLong(i);
+        }
+
+        public static implicit operator TagLong (long l)
+        {
+            return new TagLong(l);
+        }
+
+        public static implicit operator long (TagLong l)
         {
             return l._data;
         }
     }
 
-    public class NBT_Float : NBT_Value
+    public class TagFloat : TagValue
     {
         private float _data = 0;
 
-        override public NBT_Float ToNBTFloat () { return this; }
-        override public NBT_Type GetNBTType () { return NBT_Type.TAG_FLOAT; }
+        public override TagFloat ToTagFloat () { return this; }
+        public override TagDouble ToTagDouble () { return new TagDouble(_data); }
+
+        public override TagType GetTagType () { return TagType.TAG_FLOAT; }
+
+        public override bool IsCastableTo (TagType type)
+        {
+            return (type == TagType.TAG_FLOAT ||
+                type == TagType.TAG_DOUBLE);
+        }
 
         public float Data
         {
@@ -214,35 +335,46 @@ namespace Substrate.NBT {
             set { _data = value; }
         }
 
-        public NBT_Float () { }
+        public TagFloat () { }
 
-        public NBT_Float (float d)
+        public TagFloat (float d)
         {
             _data = d;
         }
 
-        public override NBT_Value Copy ()
+        public override TagValue Copy ()
         {
-            return new NBT_Float(_data);
+            return new TagFloat(_data);
         }
 
-        public static implicit operator NBT_Float (float f)
+        public override string ToString ()
         {
-            return new NBT_Float(f);
+            return _data.ToString();
         }
 
-        public static implicit operator float (NBT_Float f)
+        public static implicit operator TagFloat (float f)
+        {
+            return new TagFloat(f);
+        }
+
+        public static implicit operator float (TagFloat f)
+        {
+            return f._data;
+        }
+
+        public static implicit operator double (TagFloat f)
         {
             return f._data;
         }
     }
 
-    public class NBT_Double : NBT_Value
+    public class TagDouble : TagValue
     {
         private double _data = 0;
 
-        override public NBT_Double ToNBTDouble () { return this; }
-        override public NBT_Type GetNBTType () { return NBT_Type.TAG_DOUBLE; }
+        public override TagDouble ToTagDouble () { return this; }
+
+        public override TagType GetTagType () { return TagType.TAG_DOUBLE; }
 
         public double Data
         {
@@ -250,35 +382,46 @@ namespace Substrate.NBT {
             set { _data = value; }
         }
 
-        public NBT_Double () { }
+        public TagDouble () { }
 
-        public NBT_Double (double d)
+        public TagDouble (double d)
         {
             _data = d;
         }
 
-        public override NBT_Value Copy ()
+        public override TagValue Copy ()
         {
-            return new NBT_Double(_data);
+            return new TagDouble(_data);
         }
 
-        public static implicit operator NBT_Double (double d)
+        public override string ToString ()
         {
-            return new NBT_Double(d);
+            return _data.ToString();
         }
 
-        public static implicit operator double (NBT_Double d)
+        public static implicit operator TagDouble (float f)
+        {
+            return new TagDouble(f);
+        }
+
+        public static implicit operator TagDouble (double d)
+        {
+            return new TagDouble(d);
+        }
+
+        public static implicit operator double (TagDouble d)
         {
             return d._data;
         }
     }
 
-    public class NBT_ByteArray : NBT_Value
+    public class TagByteArray : TagValue
     {
         private byte[] _data = null;
 
-        override public NBT_ByteArray ToNBTByteArray () { return this; }
-        override public NBT_Type GetNBTType () { return NBT_Type.TAG_BYTE_ARRAY; }
+        public override TagByteArray ToTagByteArray () { return this; }
+
+        public override TagType GetTagType () { return TagType.TAG_BYTE_ARRAY; }
 
         public byte[] Data
         {
@@ -291,19 +434,24 @@ namespace Substrate.NBT {
             get { return _data.Length; }
         }
 
-        public NBT_ByteArray () { }
+        public TagByteArray () { }
 
-        public NBT_ByteArray (byte[] d)
+        public TagByteArray (byte[] d)
         {
             _data = d;
         }
 
-        public override NBT_Value Copy ()
+        public override TagValue Copy ()
         {
             byte[] arr = new byte[_data.Length];
             _data.CopyTo(arr, 0);
 
-            return new NBT_ByteArray(arr);
+            return new TagByteArray(arr);
+        }
+
+        public override string ToString ()
+        {
+            return _data.ToString();
         }
 
         public byte this [int index] {
@@ -311,18 +459,24 @@ namespace Substrate.NBT {
             set { _data[index] = value; }
         }
 
-        public static implicit operator NBT_ByteArray (byte[] b)
+        public static implicit operator TagByteArray (byte[] b)
         {
-            return new NBT_ByteArray(b);
+            return new TagByteArray(b);
+        }
+
+        public static implicit operator byte[] (TagByteArray b)
+        {
+            return b._data;
         }
     }
 
-    public class NBT_String : NBT_Value
+    public class TagString : TagValue
     {
         private string _data = "";
 
-        override public NBT_String ToNBTString () { return this; }
-        override public NBT_Type GetNBTType () { return NBT_Type.TAG_STRING; }
+        public override TagString ToTagString () { return this; }
+
+        public override TagType GetTagType () { return TagType.TAG_STRING; }
 
         public string Data
         {
@@ -335,87 +489,98 @@ namespace Substrate.NBT {
             get { return _data.Length; }
         }
 
-        public NBT_String () { }
+        public TagString () { }
 
-        public NBT_String (string d)
+        public TagString (string d)
         {
             _data = d;
         }
 
-        public override NBT_Value Copy ()
+        public override TagValue Copy ()
         {
-            return new NBT_String(_data);
+            return new TagString(_data);
         }
 
-        public static implicit operator NBT_String (string s)
+        public override string ToString ()
         {
-            return new NBT_String(s);
+            return _data.ToString();
         }
 
-        public static implicit operator string (NBT_String s)
+        public static implicit operator TagString (string s)
+        {
+            return new TagString(s);
+        }
+
+        public static implicit operator string (TagString s)
         {
             return s._data;
         }
     }
 
-    public class NBT_List : NBT_Value, IList<NBT_Value>
+    public class TagList : TagValue, IList<TagValue>
     {
-        private NBT_Type _type = NBT_Type.TAG_END;
+        private TagType _type = TagType.TAG_END;
 
-        private List<NBT_Value> _items = null;
+        private List<TagValue> _items = null;
 
-        override public NBT_List ToNBTList () { return this; }
-        override public NBT_Type GetNBTType () { return NBT_Type.TAG_LIST; }
+        public override TagList ToTagList () { return this; }
+
+        public override TagType GetTagType () { return TagType.TAG_LIST; }
 
         public int Count
         {
             get { return _items.Count; }
         }
 
-        public NBT_Type ValueType
+        public TagType ValueType
         {
             get { return _type; }
         }
 
-        public NBT_List (NBT_Type type)
+        public TagList (TagType type)
         {
             _type = type;
-            _items = new List<NBT_Value>();
+            _items = new List<TagValue>();
         }
 
-        public NBT_List (NBT_Type type, List<NBT_Value> items)
+        public TagList (TagType type, List<TagValue> items)
         {
             _type = type;
             _items = items;
         }
 
-        public override NBT_Value Copy ()
+        public override TagValue Copy ()
         {
-            NBT_List list = new NBT_List(_type);
-            foreach (NBT_Value item in _items) {
+            TagList list = new TagList(_type);
+            foreach (TagValue item in _items) {
                 list.Add(item.Copy());
             }
             return list;
         }
 
-        public List<NBT_Value> FindAll(Predicate<NBT_Value> match)
+        public List<TagValue> FindAll(Predicate<TagValue> match)
         {
             return _items.FindAll(match);
         }
 
-        public int RemoveAll (Predicate<NBT_Value> match)
+        public int RemoveAll (Predicate<TagValue> match)
         {
             return _items.RemoveAll(match);
         }
 
+        public override string ToString ()
+        {
+            return _items.ToString();
+        }
+
         #region IList<NBT_Value> Members
 
-        public int IndexOf (NBT_Value item)
+        public int IndexOf (TagValue item)
         {
             return _items.IndexOf(item);
         }
 
-        public void Insert (int index, NBT_Value item)
+        public void Insert (int index, TagValue item)
         {
             _items.Insert(index, item);
         }
@@ -425,7 +590,7 @@ namespace Substrate.NBT {
             _items.RemoveAt(index);
         }
 
-        public NBT_Value this[int index]
+        public TagValue this[int index]
         {
             get
             {
@@ -441,7 +606,7 @@ namespace Substrate.NBT {
 
         #region ICollection<NBT_Value> Members
 
-        public void Add (NBT_Value item)
+        public void Add (TagValue item)
         {
             _items.Add(item);
         }
@@ -451,12 +616,12 @@ namespace Substrate.NBT {
             _items.Clear();
         }
 
-        public bool Contains (NBT_Value item)
+        public bool Contains (TagValue item)
         {
             return _items.Contains(item);
         }
 
-        public void CopyTo (NBT_Value[] array, int arrayIndex)
+        public void CopyTo (TagValue[] array, int arrayIndex)
         {
             _items.CopyTo(array, arrayIndex);
         }
@@ -466,7 +631,7 @@ namespace Substrate.NBT {
             get { return false; }
         }
 
-        public bool Remove (NBT_Value item)
+        public bool Remove (TagValue item)
         {
             return _items.Remove(item);
         }
@@ -475,7 +640,7 @@ namespace Substrate.NBT {
 
         #region IEnumerable<NBT_Value> Members
 
-        public IEnumerator<NBT_Value> GetEnumerator ()
+        public IEnumerator<TagValue> GetEnumerator ()
         {
             return _items.GetEnumerator();
         }
@@ -492,35 +657,41 @@ namespace Substrate.NBT {
         #endregion
     }
 
-    public class NBT_Compound : NBT_Value, IDictionary<string, NBT_Value>
+    public class TagCompound : TagValue, IDictionary<string, TagValue>
     {
-        private Dictionary<string, NBT_Value> _tags;
+        private Dictionary<string, TagValue> _tags;
 
-        override public NBT_Compound ToNBTCompound () { return this; }
-        override public NBT_Type GetNBTType () { return NBT_Type.TAG_COMPOUND; }
+        public override TagCompound ToTagCompound () { return this; }
+
+        public override TagType GetTagType () { return TagType.TAG_COMPOUND; }
 
         public int Count
         {
             get { return _tags.Count; }
         }
 
-        public NBT_Compound ()
+        public TagCompound ()
         {
-            _tags = new Dictionary<string, NBT_Value>();
+            _tags = new Dictionary<string, TagValue>();
         }
 
-        public override NBT_Value Copy ()
+        public override TagValue Copy ()
         {
-            NBT_Compound list = new NBT_Compound();
-            foreach (KeyValuePair<string, NBT_Value> item in _tags) {
+            TagCompound list = new TagCompound();
+            foreach (KeyValuePair<string, TagValue> item in _tags) {
                 list[item.Key] = item.Value.Copy();
             }
             return list;
         }
 
+        public override string ToString ()
+        {
+            return _tags.ToString();
+        }
+
         #region IDictionary<string,NBT_Value> Members
 
-        public void Add (string key, NBT_Value value)
+        public void Add (string key, TagValue value)
         {
             _tags.Add(key, value);
         }
@@ -540,17 +711,17 @@ namespace Substrate.NBT {
             return _tags.Remove(key);
         }
 
-        public bool TryGetValue (string key, out NBT_Value value)
+        public bool TryGetValue (string key, out TagValue value)
         {
             return _tags.TryGetValue(key, out value);
         }
 
-        public ICollection<NBT_Value> Values
+        public ICollection<TagValue> Values
         {
             get { return _tags.Values; }
         }
 
-        public NBT_Value this[string key]
+        public TagValue this[string key]
         {
             get
             {
@@ -566,7 +737,7 @@ namespace Substrate.NBT {
 
         #region ICollection<KeyValuePair<string,NBT_Value>> Members
 
-        public void Add (KeyValuePair<string, NBT_Value> item)
+        public void Add (KeyValuePair<string, TagValue> item)
         {
             _tags.Add(item.Key, item.Value);
         }
@@ -576,16 +747,16 @@ namespace Substrate.NBT {
             _tags.Clear();
         }
 
-        public bool Contains (KeyValuePair<string, NBT_Value> item)
+        public bool Contains (KeyValuePair<string, TagValue> item)
         {
-            NBT_Value value;
+            TagValue value;
             if (!_tags.TryGetValue(item.Key, out value)) {
                 return false;
             }
             return value == item.Value;
         }
 
-        public void CopyTo (KeyValuePair<string, NBT_Value>[] array, int arrayIndex)
+        public void CopyTo (KeyValuePair<string, TagValue>[] array, int arrayIndex)
         {
             if (array == null) {
                 throw new ArgumentNullException();
@@ -597,7 +768,7 @@ namespace Substrate.NBT {
                 throw new ArgumentException();
             }
 
-            foreach (KeyValuePair<string, NBT_Value> item in _tags) {
+            foreach (KeyValuePair<string, TagValue> item in _tags) {
                 array[arrayIndex] = item;
                 arrayIndex++;
             }
@@ -608,7 +779,7 @@ namespace Substrate.NBT {
             get { return false; }
         }
 
-        public bool Remove (KeyValuePair<string, NBT_Value> item)
+        public bool Remove (KeyValuePair<string, TagValue> item)
         {
             if (Contains(item)) {
                 _tags.Remove(item.Key);
@@ -621,7 +792,7 @@ namespace Substrate.NBT {
 
         #region IEnumerable<KeyValuePair<string,NBT_Value>> Members
 
-        public IEnumerator<KeyValuePair<string, NBT_Value>> GetEnumerator ()
+        public IEnumerator<KeyValuePair<string, TagValue>> GetEnumerator ()
         {
             return _tags.GetEnumerator();
         }

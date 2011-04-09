@@ -21,9 +21,9 @@ namespace Substrate
             return Activator.CreateInstance(t, new object[] { type }) as TileEntity;
         }
 
-        public static TileEntity Create (NBT_Compound tree)
+        public static TileEntity Create (TagCompound tree)
         {
-            string type = tree["id"].ToNBTString();
+            string type = tree["id"].ToTagString();
 
             Type t;
             if (!_registry.TryGetValue(type, out t)) {

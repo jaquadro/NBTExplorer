@@ -11,10 +11,10 @@ namespace Substrate.Entities
         public static readonly NBTCompoundNode MobSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
         {
             new NBTStringNode("id", "Mob"),
-            new NBTScalerNode("AttackTime", NBT_Type.TAG_SHORT),
-            new NBTScalerNode("DeathTime", NBT_Type.TAG_SHORT),
-            new NBTScalerNode("Health", NBT_Type.TAG_SHORT),
-            new NBTScalerNode("HurtTime", NBT_Type.TAG_SHORT),
+            new NBTScalerNode("AttackTime", TagType.TAG_SHORT),
+            new NBTScalerNode("DeathTime", TagType.TAG_SHORT),
+            new NBTScalerNode("Health", TagType.TAG_SHORT),
+            new NBTScalerNode("HurtTime", TagType.TAG_SHORT),
         });
 
         private short _attackTime;
@@ -71,33 +71,33 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (NBT_Value tree)
+        public override Entity LoadTree (TagValue tree)
         {
-            NBT_Compound ctree = tree as NBT_Compound;
+            TagCompound ctree = tree as TagCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
 
-            _attackTime = ctree["AttackTime"].ToNBTShort();
-            _deathTime = ctree["DeathTime"].ToNBTShort();
-            _health = ctree["Health"].ToNBTShort();
-            _hurtTime = ctree["HurtTime"].ToNBTShort();
+            _attackTime = ctree["AttackTime"].ToTagShort();
+            _deathTime = ctree["DeathTime"].ToTagShort();
+            _health = ctree["Health"].ToTagShort();
+            _hurtTime = ctree["HurtTime"].ToTagShort();
 
             return this;
         }
 
-        public override NBT_Value BuildTree ()
+        public override TagValue BuildTree ()
         {
-            NBT_Compound tree = base.BuildTree() as NBT_Compound;
-            tree["AttackTime"] = new NBT_Short(_attackTime);
-            tree["DeathTime"] = new NBT_Short(_deathTime);
-            tree["Health"] = new NBT_Short(_health);
-            tree["HurtTime"] = new NBT_Short(_hurtTime);
+            TagCompound tree = base.BuildTree() as TagCompound;
+            tree["AttackTime"] = new TagShort(_attackTime);
+            tree["DeathTime"] = new TagShort(_deathTime);
+            tree["Health"] = new TagShort(_health);
+            tree["HurtTime"] = new TagShort(_hurtTime);
 
             return tree;
         }
 
-        public override bool ValidateTree (NBT_Value tree)
+        public override bool ValidateTree (TagValue tree)
         {
             return new NBTVerifier(tree, MobSchema).Verify();
         }

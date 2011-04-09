@@ -11,10 +11,10 @@ namespace Substrate
     {
         public static readonly NBTCompoundNode BaseSchema = new NBTCompoundNode("")
         {
-            new NBTScalerNode("id", NBT_Type.TAG_STRING),
-            new NBTScalerNode("x", NBT_Type.TAG_INT),
-            new NBTScalerNode("y", NBT_Type.TAG_INT),
-            new NBTScalerNode("z", NBT_Type.TAG_INT),
+            new NBTScalerNode("id", TagType.TAG_STRING),
+            new NBTScalerNode("x", TagType.TAG_INT),
+            new NBTScalerNode("y", TagType.TAG_INT),
+            new NBTScalerNode("z", TagType.TAG_INT),
         };
 
         private string _id;
@@ -76,22 +76,22 @@ namespace Substrate
 
         #region INBTObject<TileEntity> Members
 
-        public virtual TileEntity LoadTree (NBT_Value tree)
+        public virtual TileEntity LoadTree (TagValue tree)
         {
-            NBT_Compound ctree = tree as NBT_Compound;
+            TagCompound ctree = tree as TagCompound;
             if (ctree == null) {
                 return null;
             }
 
-            _id = ctree["id"].ToNBTString();
-            _x = ctree["x"].ToNBTInt();
-            _y = ctree["y"].ToNBTInt();
-            _z = ctree["z"].ToNBTInt();
+            _id = ctree["id"].ToTagString();
+            _x = ctree["x"].ToTagInt();
+            _y = ctree["y"].ToTagInt();
+            _z = ctree["z"].ToTagInt();
 
             return this;
         }
 
-        public virtual TileEntity LoadTreeSafe (NBT_Value tree)
+        public virtual TileEntity LoadTreeSafe (TagValue tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -100,18 +100,18 @@ namespace Substrate
             return LoadTree(tree);
         }
 
-        public virtual NBT_Value BuildTree ()
+        public virtual TagValue BuildTree ()
         {
-            NBT_Compound tree = new NBT_Compound();
-            tree["id"] = new NBT_String(_id);
-            tree["x"] = new NBT_Int(_x);
-            tree["y"] = new NBT_Int(_y);
-            tree["z"] = new NBT_Int(_z);
+            TagCompound tree = new TagCompound();
+            tree["id"] = new TagString(_id);
+            tree["x"] = new TagInt(_x);
+            tree["y"] = new TagInt(_y);
+            tree["z"] = new TagInt(_z);
 
             return tree;
         }
 
-        public virtual bool ValidateTree (NBT_Value tree)
+        public virtual bool ValidateTree (TagValue tree)
         {
             return new NBTVerifier(tree, BaseSchema).Verify();
         }

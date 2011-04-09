@@ -11,9 +11,9 @@ namespace Substrate.Entities
         public static readonly NBTCompoundNode WolfSchema = MobSchema.MergeInto(new NBTCompoundNode("")
         {
             new NBTStringNode("id", "Wolf"),
-            new NBTScalerNode("Owner", NBT_Type.TAG_STRING),
-            new NBTScalerNode("Sitting", NBT_Type.TAG_BYTE),
-            new NBTScalerNode("Angry", NBT_Type.TAG_BYTE),
+            new NBTScalerNode("Owner", TagType.TAG_STRING),
+            new NBTScalerNode("Sitting", TagType.TAG_BYTE),
+            new NBTScalerNode("Angry", TagType.TAG_BYTE),
         });
 
         private string _owner;
@@ -57,31 +57,31 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (NBT_Value tree)
+        public override Entity LoadTree (TagValue tree)
         {
-            NBT_Compound ctree = tree as NBT_Compound;
+            TagCompound ctree = tree as TagCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
 
-            _owner = ctree["Owner"].ToNBTString();
-            _sitting = ctree["Sitting"].ToNBTByte() == 1;
-            _angry = ctree["Angry"].ToNBTByte() == 1;
+            _owner = ctree["Owner"].ToTagString();
+            _sitting = ctree["Sitting"].ToTagByte() == 1;
+            _angry = ctree["Angry"].ToTagByte() == 1;
 
             return this;
         }
 
-        public override NBT_Value BuildTree ()
+        public override TagValue BuildTree ()
         {
-            NBT_Compound tree = base.BuildTree() as NBT_Compound;
-            tree["Owner"] = new NBT_String(_owner);
-            tree["Sitting"] = new NBT_Byte((byte)(_sitting ? 1 : 0));
-            tree["Angry"] = new NBT_Byte((byte)(_angry ? 1 : 0));
+            TagCompound tree = base.BuildTree() as TagCompound;
+            tree["Owner"] = new TagString(_owner);
+            tree["Sitting"] = new TagByte((byte)(_sitting ? 1 : 0));
+            tree["Angry"] = new TagByte((byte)(_angry ? 1 : 0));
 
             return tree;
         }
 
-        public override bool ValidateTree (NBT_Value tree)
+        public override bool ValidateTree (TagValue tree)
         {
             return new NBTVerifier(tree, WolfSchema).Verify();
         }

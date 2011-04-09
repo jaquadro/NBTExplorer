@@ -11,7 +11,7 @@ namespace Substrate.Entities
         public static readonly NBTCompoundNode PrimedTntSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
         {
             new NBTStringNode("id", "PrimedTnt"),
-            new NBTScalerNode("Fuse", NBT_Type.TAG_BYTE),
+            new NBTScalerNode("Fuse", TagType.TAG_BYTE),
         });
 
         private byte _fuse;
@@ -39,27 +39,27 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (NBT_Value tree)
+        public override Entity LoadTree (TagValue tree)
         {
-            NBT_Compound ctree = tree as NBT_Compound;
+            TagCompound ctree = tree as TagCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
 
-            _fuse = ctree["Fuse"].ToNBTByte();
+            _fuse = ctree["Fuse"].ToTagByte();
 
             return this;
         }
 
-        public override NBT_Value BuildTree ()
+        public override TagValue BuildTree ()
         {
-            NBT_Compound tree = base.BuildTree() as NBT_Compound;
-            tree["Fuse"] = new NBT_Byte(_fuse);
+            TagCompound tree = base.BuildTree() as TagCompound;
+            tree["Fuse"] = new TagByte(_fuse);
 
             return tree;
         }
 
-        public override bool ValidateTree (NBT_Value tree)
+        public override bool ValidateTree (TagValue tree)
         {
             return new NBTVerifier(tree, PrimedTntSchema).Verify();
         }

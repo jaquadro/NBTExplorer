@@ -37,7 +37,7 @@ namespace Substrate.NBT
             _options = options;
         }
 
-        public virtual NBT_Value BuildDefaultTree ()
+        public virtual TagValue BuildDefaultTree ()
         {
             return null;
         }
@@ -45,48 +45,48 @@ namespace Substrate.NBT
 
     public class NBTScalerNode : NBTSchemaNode
     {
-        private NBT_Type _type;
+        private TagType _type;
 
-        public NBT_Type Type
+        public TagType Type
         {
             get { return _type; }
         }
 
-        public NBTScalerNode (string name, NBT_Type type)
+        public NBTScalerNode (string name, TagType type)
             : base(name)
         {
             _type = type;
         }
 
-        public NBTScalerNode (string name, NBT_Type type, NBTOptions options)
+        public NBTScalerNode (string name, TagType type, NBTOptions options)
             : base(name, options)
         {
             _type = type;
         }
 
-        public override NBT_Value BuildDefaultTree ()
+        public override TagValue BuildDefaultTree ()
         {
             switch (_type) {
-                case NBT_Type.TAG_STRING:
-                    return new NBT_String();
+                case TagType.TAG_STRING:
+                    return new TagString();
 
-                case NBT_Type.TAG_BYTE:
-                    return new NBT_Byte();
+                case TagType.TAG_BYTE:
+                    return new TagByte();
 
-                case NBT_Type.TAG_SHORT:
-                    return new NBT_Short();
+                case TagType.TAG_SHORT:
+                    return new TagShort();
 
-                case NBT_Type.TAG_INT:
-                    return new NBT_Int();
+                case TagType.TAG_INT:
+                    return new TagInt();
 
-                case NBT_Type.TAG_LONG:
-                    return new NBT_Long();
+                case TagType.TAG_LONG:
+                    return new TagLong();
 
-                case NBT_Type.TAG_FLOAT:
-                    return new NBT_Float();
+                case TagType.TAG_FLOAT:
+                    return new TagFloat();
 
-                case NBT_Type.TAG_DOUBLE:
-                    return new NBT_Double();
+                case TagType.TAG_DOUBLE:
+                    return new TagDouble();
             }
 
             return null;
@@ -125,13 +125,13 @@ namespace Substrate.NBT
             _length = length;
         }
 
-        public override NBT_Value BuildDefaultTree ()
+        public override TagValue BuildDefaultTree ()
         {
             if (_value.Length > 0) {
-                return new NBT_String(_value);
+                return new TagString(_value);
             }
 
-            return new NBT_String();
+            return new TagString();
         }
     }
 
@@ -168,15 +168,15 @@ namespace Substrate.NBT
             _length = length;
         }
 
-        public override NBT_Value BuildDefaultTree ()
+        public override TagValue BuildDefaultTree ()
         {
-            return new NBT_ByteArray(new byte[_length]);
+            return new TagByteArray(new byte[_length]);
         }
     }
 
     public class NBTListNode : NBTSchemaNode
     {
-        private NBT_Type _type;
+        private TagType _type;
         private int _length;
         private NBTSchemaNode _subschema;
 
@@ -185,7 +185,7 @@ namespace Substrate.NBT
             get { return _length; }
         }
 
-        public NBT_Type Type
+        public TagType Type
         {
             get { return _type; }
         }
@@ -195,47 +195,47 @@ namespace Substrate.NBT
             get { return _subschema; }
         }
 
-        public NBTListNode (string name, NBT_Type type)
+        public NBTListNode (string name, TagType type)
             : base(name)
         {
             _type = type;
         }
 
-        public NBTListNode (string name, NBT_Type type, NBTOptions options)
+        public NBTListNode (string name, TagType type, NBTOptions options)
             : base(name, options)
         {
             _type = type;
         }
 
-        public NBTListNode (string name, NBT_Type type, int length)
+        public NBTListNode (string name, TagType type, int length)
             : base(name)
         {
             _type = type;
             _length = length;
         }
 
-        public NBTListNode (string name, NBT_Type type, int length, NBTOptions options)
+        public NBTListNode (string name, TagType type, int length, NBTOptions options)
             : base(name, options)
         {
             _type = type;
             _length = length;
         }
 
-        public NBTListNode (string name, NBT_Type type, NBTSchemaNode subschema)
+        public NBTListNode (string name, TagType type, NBTSchemaNode subschema)
             : base(name)
         {
             _type = type;
             _subschema = subschema;
         }
 
-        public NBTListNode (string name, NBT_Type type, NBTSchemaNode subschema, NBTOptions options)
+        public NBTListNode (string name, TagType type, NBTSchemaNode subschema, NBTOptions options)
             : base(name, options)
         {
             _type = type;
             _subschema = subschema;
         }
 
-        public NBTListNode (string name, NBT_Type type, int length, NBTSchemaNode subschema)
+        public NBTListNode (string name, TagType type, int length, NBTSchemaNode subschema)
             : base(name)
         {
             _type = type;
@@ -243,7 +243,7 @@ namespace Substrate.NBT
             _subschema = subschema;
         }
 
-        public NBTListNode (string name, NBT_Type type, int length, NBTSchemaNode subschema, NBTOptions options)
+        public NBTListNode (string name, TagType type, int length, NBTSchemaNode subschema, NBTOptions options)
             : base(name, options)
         {
             _type = type;
@@ -251,13 +251,13 @@ namespace Substrate.NBT
             _subschema = subschema;
         }
 
-        public override NBT_Value BuildDefaultTree ()
+        public override TagValue BuildDefaultTree ()
         {
             if (_length == 0) {
-                return new NBT_List(_type);
+                return new TagList(_type);
             }
 
-            NBT_List list = new NBT_List(_type);
+            TagList list = new TagList(_type);
             for (int i = 0; i < _length; i++) {
                 list.Add(_subschema.BuildDefaultTree());
             }
@@ -395,9 +395,9 @@ namespace Substrate.NBT
             return tree;
         }
 
-        public override NBT_Value BuildDefaultTree ()
+        public override TagValue BuildDefaultTree ()
         {
-            NBT_Compound list = new NBT_Compound();
+            TagCompound list = new TagCompound();
             foreach (NBTSchemaNode node in _subnodes) {
                 list[node.Name] = node.BuildDefaultTree();
             }

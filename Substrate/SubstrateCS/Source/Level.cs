@@ -93,16 +93,16 @@ namespace Substrate
             {
                 new NBTCompoundNode("Data")
                 {
-                    new NBTScalerNode("Time", NBT_Type.TAG_LONG),
-                    new NBTScalerNode("LastPlayed", NBT_Type.TAG_LONG),
+                    new NBTScalerNode("Time", TagType.TAG_LONG),
+                    new NBTScalerNode("LastPlayed", TagType.TAG_LONG),
                     new NBTCompoundNode("Player", Player.PlayerSchema, NBTOptions.OPTIONAL),
-                    new NBTScalerNode("SpawnX", NBT_Type.TAG_INT),
-                    new NBTScalerNode("SpawnY", NBT_Type.TAG_INT),
-                    new NBTScalerNode("SpawnZ", NBT_Type.TAG_INT),
-                    new NBTScalerNode("SizeOnDisk", NBT_Type.TAG_LONG),
-                    new NBTScalerNode("RandomSeed", NBT_Type.TAG_LONG),
-                    new NBTScalerNode("version", NBT_Type.TAG_INT, NBTOptions.OPTIONAL),
-                    new NBTScalerNode("LevelName", NBT_Type.TAG_STRING, NBTOptions.OPTIONAL),
+                    new NBTScalerNode("SpawnX", TagType.TAG_INT),
+                    new NBTScalerNode("SpawnY", TagType.TAG_INT),
+                    new NBTScalerNode("SpawnZ", TagType.TAG_INT),
+                    new NBTScalerNode("SizeOnDisk", TagType.TAG_LONG),
+                    new NBTScalerNode("RandomSeed", TagType.TAG_LONG),
+                    new NBTScalerNode("version", TagType.TAG_INT, NBTOptions.OPTIONAL),
+                    new NBTScalerNode("LevelName", TagType.TAG_STRING, NBTOptions.OPTIONAL),
                 },
             };
         }
@@ -138,7 +138,7 @@ namespace Substrate
                 return false;
             }
 
-            new NBT_Tree(BuildTree() as NBT_Compound).WriteTo(zipstr);
+            new NBT_Tree(BuildTree() as TagCompound).WriteTo(zipstr);
             zipstr.Close();
 
             return true;
@@ -147,41 +147,41 @@ namespace Substrate
 
         #region INBTObject<Player> Members
 
-        public virtual Level LoadTree (NBT_Value tree)
+        public virtual Level LoadTree (TagValue tree)
         {
-            NBT_Compound dtree = tree as NBT_Compound;
+            TagCompound dtree = tree as TagCompound;
             if (dtree == null) {
                 return null;
             }
 
-            NBT_Compound ctree = dtree["Data"].ToNBTCompound();
+            TagCompound ctree = dtree["Data"].ToTagCompound();
 
-            _time = ctree["Time"].ToNBTLong();
-            _lastPlayed = ctree["LastPlayed"].ToNBTLong();
+            _time = ctree["Time"].ToTagLong();
+            _lastPlayed = ctree["LastPlayed"].ToTagLong();
 
             if (ctree.ContainsKey("Player")) {
                 _player = new Player().LoadTree(ctree["Player"]);
             }
 
-            _spawnX = ctree["SpawnX"].ToNBTInt();
-            _spawnY = ctree["SpawnY"].ToNBTInt();
-            _spawnZ = ctree["SpawnZ"].ToNBTInt();
+            _spawnX = ctree["SpawnX"].ToTagInt();
+            _spawnY = ctree["SpawnY"].ToTagInt();
+            _spawnZ = ctree["SpawnZ"].ToTagInt();
 
-            _sizeOnDisk = ctree["SizeOnDisk"].ToNBTLong();
-            _randomSeed = ctree["RandomSeed"].ToNBTLong();
+            _sizeOnDisk = ctree["SizeOnDisk"].ToTagLong();
+            _randomSeed = ctree["RandomSeed"].ToTagLong();
 
             if (ctree.ContainsKey("version")) {
-                _version = ctree["version"].ToNBTInt();
+                _version = ctree["version"].ToTagInt();
             }
 
             if (ctree.ContainsKey("LevelName")) {
-                _name = ctree["LevelName"].ToNBTString();
+                _name = ctree["LevelName"].ToTagString();
             }
 
             return this;
         }
 
-        public virtual Level LoadTreeSafe (NBT_Value tree)
+        public virtual Level LoadTreeSafe (TagValue tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -190,37 +190,37 @@ namespace Substrate
             return LoadTree(tree);
         }
 
-        public virtual NBT_Value BuildTree ()
+        public virtual TagValue BuildTree ()
         {
-            NBT_Compound data = new NBT_Compound();
-            data["Time"] = new NBT_Long(_time);
-            data["LastPlayed"] = new NBT_Long(_lastPlayed);
+            TagCompound data = new TagCompound();
+            data["Time"] = new TagLong(_time);
+            data["LastPlayed"] = new TagLong(_lastPlayed);
 
             if (_player != null) {
                 data["Player"] = _player.BuildTree();
             }
 
-            data["SpawnX"] = new NBT_Int(_spawnX);
-            data["SpawnY"] = new NBT_Int(_spawnY);
-            data["SpawnZ"] = new NBT_Int(_spawnZ);
-            data["SizeOnDisk"] = new NBT_Long(_sizeOnDisk);
-            data["RandomSeed"] = new NBT_Long(_randomSeed);
+            data["SpawnX"] = new TagInt(_spawnX);
+            data["SpawnY"] = new TagInt(_spawnY);
+            data["SpawnZ"] = new TagInt(_spawnZ);
+            data["SizeOnDisk"] = new TagLong(_sizeOnDisk);
+            data["RandomSeed"] = new TagLong(_randomSeed);
 
             if (_version != null) {
-                data["version"] = new NBT_Int(_version ?? 0);
+                data["version"] = new TagInt(_version ?? 0);
             }
 
             if (_name != null) {
-                data["LevelName"] = new NBT_String(_name);
+                data["LevelName"] = new TagString(_name);
             }
 
-            NBT_Compound tree = new NBT_Compound();
+            TagCompound tree = new TagCompound();
             tree.Add("Data", data);
 
             return tree;
         }
 
-        public virtual bool ValidateTree (NBT_Value tree)
+        public virtual bool ValidateTree (TagValue tree)
         {
             return new NBTVerifier(tree, LevelSchema).Verify();
         }

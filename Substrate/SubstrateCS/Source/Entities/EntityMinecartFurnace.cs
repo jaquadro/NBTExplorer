@@ -10,9 +10,9 @@ namespace Substrate.Entities
     {
         public static readonly NBTCompoundNode MinecartFurnaceSchema = MinecartSchema.MergeInto(new NBTCompoundNode("")
         {
-            new NBTScalerNode("PushX", NBT_Type.TAG_DOUBLE),
-            new NBTScalerNode("PushZ", NBT_Type.TAG_DOUBLE),
-            new NBTScalerNode("Fuel", NBT_Type.TAG_SHORT),
+            new NBTScalerNode("PushX", TagType.TAG_DOUBLE),
+            new NBTScalerNode("PushZ", TagType.TAG_DOUBLE),
+            new NBTScalerNode("Fuel", TagType.TAG_SHORT),
         });
 
         private double _pushX;
@@ -56,31 +56,31 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (NBT_Value tree)
+        public override Entity LoadTree (TagValue tree)
         {
-            NBT_Compound ctree = tree as NBT_Compound;
+            TagCompound ctree = tree as TagCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
 
-            _pushX = ctree["PushX"].ToNBTDouble();
-            _pushZ = ctree["PushZ"].ToNBTDouble();
-            _fuel = ctree["Fuel"].ToNBTShort();
+            _pushX = ctree["PushX"].ToTagDouble();
+            _pushZ = ctree["PushZ"].ToTagDouble();
+            _fuel = ctree["Fuel"].ToTagShort();
 
             return this;
         }
 
-        public override NBT_Value BuildTree ()
+        public override TagValue BuildTree ()
         {
-            NBT_Compound tree = base.BuildTree() as NBT_Compound;
-            tree["PushX"] = new NBT_Double(_pushX);
-            tree["PushZ"] = new NBT_Double(_pushZ);
-            tree["Fuel"] = new NBT_Short(_fuel);
+            TagCompound tree = base.BuildTree() as TagCompound;
+            tree["PushX"] = new TagDouble(_pushX);
+            tree["PushZ"] = new TagDouble(_pushZ);
+            tree["Fuel"] = new TagShort(_fuel);
 
             return tree;
         }
 
-        public override bool ValidateTree (NBT_Value tree)
+        public override bool ValidateTree (TagValue tree)
         {
             return new NBTVerifier(tree, MinecartFurnaceSchema).Verify();
         }

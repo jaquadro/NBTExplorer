@@ -11,7 +11,7 @@ namespace Substrate.Entities
         public static readonly NBTCompoundNode SlimeSchema = MobSchema.MergeInto(new NBTCompoundNode("")
         {
             new NBTStringNode("id", "Slime"),
-            new NBTScalerNode("Size", NBT_Type.TAG_INT),
+            new NBTScalerNode("Size", TagType.TAG_INT),
         });
 
         private int _size;
@@ -39,27 +39,27 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (NBT_Value tree)
+        public override Entity LoadTree (TagValue tree)
         {
-            NBT_Compound ctree = tree as NBT_Compound;
+            TagCompound ctree = tree as TagCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
 
-            _size = ctree["Size"].ToNBTInt();
+            _size = ctree["Size"].ToTagInt();
 
             return this;
         }
 
-        public override NBT_Value BuildTree ()
+        public override TagValue BuildTree ()
         {
-            NBT_Compound tree = base.BuildTree() as NBT_Compound;
-            tree["Size"] = new NBT_Int(_size);
+            TagCompound tree = base.BuildTree() as TagCompound;
+            tree["Size"] = new TagInt(_size);
 
             return tree;
         }
 
-        public override bool ValidateTree (NBT_Value tree)
+        public override bool ValidateTree (TagValue tree)
         {
             return new NBTVerifier(tree, SlimeSchema).Verify();
         }
