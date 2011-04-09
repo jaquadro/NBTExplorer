@@ -85,6 +85,18 @@ namespace Substrate
             return r.ChunkExists(cx & REGION_XMASK, cz & REGION_ZMASK);
         }
 
+        public ChunkRef CreateChunk (int cx, int cz)
+        {
+            Region r = GetRegion(cx, cz);
+            if (r == null) {
+                int rx = cx >> REGION_XLOG;
+                int rz = cz >> REGION_ZLOG;
+                r = _regionMan.CreateRegion(rx, rz);
+            }
+
+            return r.CreateChunk(cx & REGION_XMASK, cz & REGION_ZMASK, this);
+        }
+
         public bool MarkChunkDirty (ChunkRef chunk)
         {
             Region r = GetRegion(chunk.X, chunk.Z);

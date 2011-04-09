@@ -39,6 +39,7 @@ namespace Substrate
 
         Chunk GetChunk (int cx, int cz);
         ChunkRef GetChunkRef (int cx, int cz);
+        ChunkRef CreateChunk (int cx, int cz);
 
         bool ChunkExists (int cx, int cz);
 

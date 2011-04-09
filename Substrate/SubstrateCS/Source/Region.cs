@@ -213,6 +213,25 @@ namespace Substrate
             }
         }
 
+        public ChunkRef CreateChunk (int lcx, int lcz)
+        {
+            return CreateChunk(lcx, lcz, this);
+        }
+
+        public ChunkRef CreateChunk (int lcx, int lcz, IChunkCache cache)
+        {
+            DeleteChunk(lcx, lcz);
+
+            Chunk c = new Chunk(ChunkGlobalX(lcx), ChunkGlobalZ(lcz));
+            c.Save(GetChunkOutStream(lcx, lcz));
+
+            ChunkRef cr = new ChunkRef(this, cache, lcx, lcz);
+            ChunkKey k = new ChunkKey(lcx, lcz);
+            _cache[k] = new WeakReference(cr);
+
+            return cr;
+        }
+
 
         #region IChunkCollection Members
 

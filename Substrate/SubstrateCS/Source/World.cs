@@ -119,6 +119,11 @@ namespace Substrate
         private string _dim;
         private string _regionDir;
 
+        public RegionManager RegionManager
+        {
+            get { return _regionMan; }
+        }
+
         public BetaWorld (string path)
             : this(path, "region", "")
         {

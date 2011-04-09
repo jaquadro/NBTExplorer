@@ -71,7 +71,7 @@ namespace Substrate
         protected void ReadFile ()
         {
             // Get last udpate time
-            long newModified = 0;
+            long newModified = -1;
             try {
                 if (File.Exists(fileName)) {
                     newModified = Timestamp(File.GetLastWriteTime(fileName));

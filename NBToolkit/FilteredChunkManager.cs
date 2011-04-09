@@ -189,6 +189,11 @@ namespace NBToolkit
             return _cm.GetChunkRef(cx, cz);
         }
 
+        public ChunkRef CreateChunk (int cx, int cz)
+        {
+            return _cm.CreateChunk(cx, cz);
+        }
+
         public bool ChunkExists (int cx, int cz)
         {
             return _cm.ChunkExists(cx, cz);

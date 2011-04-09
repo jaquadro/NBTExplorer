@@ -5,7 +5,17 @@ using System.Collections;
 
 namespace Substrate
 {
-    public class RegionManager : IEnumerable<Region>
+    public interface IRegionContainer
+    {
+        bool RegionExists (int rx, int rz);
+
+        Region GetRegion (int rx, int rz);
+        Region CreateRegion (int rx, int rz);
+
+        bool DeleteRegion (int rx, int rz);
+    }
+
+    public class RegionManager : IRegionContainer, IEnumerable<Region>
     {
         protected string _regionPath;
 
@@ -35,6 +45,26 @@ namespace Substrate
             }
         }
 
+        public bool RegionExists (int rx, int rz)
+        {
+            Region r = GetRegion(rx, rz);
+            return r != null;
+        }
+
+        public Region CreateRegion (int rx, int rz)
+        {
+            Region r = GetRegion(rx, rz);
+            if (r == null) {
+                string fp = "r." + rx + "." + rz + ".mcr";
+                new RegionFile(Path.Combine(_regionPath, fp));
+
+                r = new Region(this, rx, rz);
+            }
+
+            return r;
+        }
+
+
         public Region GetRegion (string filename)
         {
             int rx, rz;
@@ -44,6 +74,7 @@ namespace Substrate
 
             return GetRegion(rx, rz);
         }
+
 
         public string GetRegionPath ()
         {

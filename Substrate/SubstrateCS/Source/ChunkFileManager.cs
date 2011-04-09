@@ -123,6 +123,19 @@ namespace Substrate
             }
         }
 
+        public ChunkRef CreateChunk (int cx, int cz)
+        {
+            DeleteChunk(cx, cz);
+            Chunk c = new Chunk(cx, cz);
+            c.Save(GetChunkOutStream(cx, cz));
+
+            ChunkRef cr = new ChunkRef(this, this, cx, cz);
+            ChunkKey k = new ChunkKey(cx, cz);
+            _cache[k] = new WeakReference(cr);
+
+            return cr;
+        }
+
         public bool ChunkExists (int cx, int cz)
         {
             return new ChunkFile(_mapPath, cx, cz).Exists();
