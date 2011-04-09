@@ -7,55 +7,58 @@ namespace Substrate
 {
     using NBT;
 
-    public class World
+    public abstract class World
     {
-        protected RegionManager _regionMan;
-        protected IChunkManager _chunkMan;
-        protected IBlockManager _blockMan;
-        protected PlayerManager _playerMan;
-
-        protected string _worldPath;
-
-        protected Level _level;
+        private string _worldPath;
 
         public string WorldPath
         {
             get { return _worldPath; }
         }
 
-        public World (string world)
+        protected World (string path)
         {
-            _worldPath = world;
+            _worldPath = path;
 
-            if (!File.Exists(Path.Combine(_worldPath, "level.dat"))) {
+            if (!File.Exists(Path.Combine(WorldPath, "level.dat"))) {
                 throw new Exception("Could not locate level.dat");
             }
+        }
+    }
 
+    public abstract class NBTWorld : World
+    {
+        private Level _level;
+        private PlayerManager _playerMan;
+
+        public Level Level
+        {
+            get { return _level; }
+        }
+
+        public PlayerManager PlayerManager
+        {
+            get { return _playerMan; }
+        }
+
+        public abstract IChunkManager ChunkManager { get; }
+        public abstract IBlockManager BlockManager { get; }
+
+        protected NBTWorld (string path) 
+            : base(path)
+        {
             if (!LoadLevel()) {
                 throw new Exception("Failed to load level.dat");
             }
 
-            if (Directory.Exists(Path.Combine(world, "region"))) {
-                _regionMan = new RegionManager(Path.Combine(world, "region"));
-                _chunkMan = new ChunkManager(_regionMan);
-            }
-            else if (Directory.Exists(Path.Combine(world, "0"))) {
-                _chunkMan = new ChunkFileManager(world);
-            }
-            else {
-                throw new Exception("Could not locate any world data");
-            }
-
-            _blockMan = new BlockManager(_chunkMan);
-
-            if (Directory.Exists(Path.Combine(world, "players"))) {
-                _playerMan = new PlayerManager(Path.Combine(world, "players"));
+            if (Directory.Exists(Path.Combine(path, "players"))) {
+                _playerMan = new PlayerManager(Path.Combine(path, "players"));
             }
         }
 
         protected bool LoadLevel ()
         {
-            NBTFile nf = new NBTFile(Path.Combine(_worldPath, "level.dat"));
+            NBTFile nf = new NBTFile(Path.Combine(WorldPath, "level.dat"));
             Stream nbtstr = nf.GetDataInputStream();
             if (nbtstr == null) {
                 return false;
@@ -68,25 +71,92 @@ namespace Substrate
 
             return _level != null;
         }
+    }
 
-        public RegionManager GetRegionManager ()
+    public class AlphaWorld : NBTWorld
+    {
+        private ChunkFileManager _chunkMan;
+        private BlockManager _blockMan;
+
+        private string _dim;
+
+        public AlphaWorld (string path)
+            : base(path)
         {
-            return _regionMan;
+            _chunkMan = new ChunkFileManager(path);
+            _blockMan = new BlockManager(_chunkMan);
         }
 
-        public IChunkManager GetChunkManager ()
+        public AlphaWorld (string path, string dim)
+            : base(path)
         {
-            return _chunkMan;
+            _dim = dim;
+            if (_dim.Length > 0) {
+                path = Path.Combine(path, dim);
+            }
+
+            _chunkMan = new ChunkFileManager(path);
+            _blockMan = new BlockManager(_chunkMan);
         }
 
-        public IBlockManager GetBlockManager ()
+        public override IChunkManager ChunkManager
         {
-            return _blockMan;
+            get { return _chunkMan; }
         }
 
-        public PlayerManager GetPlayerManager ()
+        public override IBlockManager BlockManager
         {
-            return _playerMan;
+            get { return _blockMan; }
         }
     }
+
+    public class BetaWorld : NBTWorld
+    {
+        private RegionManager _regionMan;
+        private ChunkManager _chunkMan;
+        private BlockManager _blockMan;
+
+        private string _dim;
+        private string _regionDir;
+
+        public BetaWorld (string path)
+            : this(path, "region", "")
+        {
+        }
+
+        public BetaWorld (string path, string region)
+            : this(path, region, "")
+        {
+        }
+
+        public BetaWorld (string path, string region, string dim)
+            : base(path)
+        {
+            _regionDir = region;
+
+            _dim = dim;
+            if (_dim.Length > 0) {
+                path = Path.Combine(path, dim);
+            }
+
+            if (!Directory.Exists(Path.Combine(path, _regionDir))) {
+                throw new Exception("Could not find region directory");
+            }
+
+            _regionMan = new RegionManager(Path.Combine(path, _regionDir));
+            _chunkMan = new ChunkManager(_regionMan);
+            _blockMan = new BlockManager(_chunkMan);
+        }
+
+        public override IChunkManager ChunkManager
+        {
+            get { return _chunkMan; }
+        }
+
+        public override IBlockManager BlockManager
+        {
+            get { return _blockMan; }
+        }
+    }
+
 }

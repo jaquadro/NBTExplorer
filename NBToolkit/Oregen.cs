@@ -181,10 +181,8 @@ namespace NBToolkit
 
         public override void Run ()
         {
-            World world = new World(opt.OPT_WORLD);
-
-            IChunkManager cm = world.GetChunkManager();
-            FilteredChunkManager fcm = new FilteredChunkManager(cm, opt.GetChunkFilter());
+            NBTWorld world = GetWorld(opt);
+            FilteredChunkManager fcm = new FilteredChunkManager(world.ChunkManager, opt.GetChunkFilter());
 
             int affectedChunks = 0;
             foreach (ChunkRef chunk in fcm) {
@@ -200,13 +198,13 @@ namespace NBToolkit
 
                 ApplyChunk(world, chunk);
 
-                world.GetChunkManager().Save();
+                fcm.Save();
             }
 
             Console.WriteLine("Affected Chunks: " + affectedChunks);
         }
 
-        public void ApplyChunk (World world, ChunkRef chunk)
+        public void ApplyChunk (NBTWorld world, ChunkRef chunk)
         {
             if (opt.OPT_V) {
                 Console.WriteLine("Generating {0} size {1} deposits of {2} between {3} and {4}",
@@ -223,7 +221,7 @@ namespace NBToolkit
                 ((NativeGenOre)generator).MathFix = opt.OPT_MATHFIX;
             }
 
-            BlockManager bm = new GenOreBlockManager(world.GetChunkManager(), opt);
+            BlockManager bm = new GenOreBlockManager(world.ChunkManager, opt);
 
             for (int i = 0; i < opt.OPT_ROUNDS; i++) {
                 if (opt.OPT_VV) {

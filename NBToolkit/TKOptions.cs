@@ -18,11 +18,13 @@ namespace NBToolkit
 
         public string OPT_WORLD = "";
         public string OPT_REGION = "region";
+        public string OPT_DIM = "";
 
         // Verbosity
         public bool OPT_V = false;
         public bool OPT_VV = false;
         public bool OPT_HELP = false;
+        public bool OPT_ALPHA = false;
 
         public TKOptions ()
         {
@@ -32,8 +34,12 @@ namespace NBToolkit
                     v => OPT_WORLD = v },
                 { "h|help", "Print this help message",
                     v => OPT_HELP = true },
+                { "alpha", "Specify that the world is stored as individual chunk files",
+                    v => OPT_ALPHA = true },
                 { "nether", "Update the Nether instead of the main region",
-                    v => OPT_REGION = "DIM-1/region" },
+                    v => OPT_DIM = "DIM-1" },
+                { "region", "Specify the name of the region directory",
+                    v => OPT_REGION = v },
                 { "v", "Verbose output",
                     v => OPT_V = true },
                 { "vv", "Very verbose output",
@@ -72,22 +78,6 @@ namespace NBToolkit
 
                 throw new TKOptionException();
             }
-
-            /*if (!File.Exists(Path.Combine(OPT_WORLD, "level.dat"))) {
-                Console.WriteLine("Error: The supplied world path is invalid");
-                Console.WriteLine();
-                this.PrintUsage();
-
-                throw new TKOptionException();
-            }
-
-            if (!Directory.Exists(Path.Combine(OPT_WORLD, OPT_REGION))) {
-                Console.WriteLine("Error: The supplied world path does not contain region: " + OPT_REGION);
-                Console.WriteLine();
-                this.PrintUsage();
-
-                throw new TKOptionException();
-            }*/
         }
     }
 

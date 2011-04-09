@@ -69,15 +69,13 @@ namespace NBToolkit
 
         public override void Run ()
         {
-            World world = new World(opt.OPT_WORLD);
-
-            ChunkManager cm = world.GetChunkManager() as ChunkManager;
-            FilteredChunkManager fcm = new FilteredChunkManager(cm, opt.GetChunkFilter());
+            NBTWorld world = GetWorld(opt);
+            FilteredChunkManager fcm = new FilteredChunkManager(world.ChunkManager, opt.GetChunkFilter());
 
             int affectedChunks = 0;
             foreach (ChunkRef chunk in fcm) {
                 affectedChunks++;
-                world.GetChunkManager().DeleteChunk(chunk.X, chunk.Z);
+                fcm.DeleteChunk(chunk.X, chunk.Z);
             }
 
             Console.WriteLine("Purged Chunks: " + affectedChunks);
