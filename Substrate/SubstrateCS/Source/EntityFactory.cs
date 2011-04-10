@@ -18,7 +18,7 @@ namespace Substrate
                 return null;
             }
 
-            return Activator.CreateInstance(t, new object[] { type } ) as Entity;
+            return Activator.CreateInstance(t) as Entity;
         }
 
         public static Entity Create (TagCompound tree)
