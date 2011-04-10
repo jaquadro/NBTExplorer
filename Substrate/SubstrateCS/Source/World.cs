@@ -162,6 +162,9 @@ namespace Substrate
         {
             get { return _blockMan; }
         }
+
+        //public static BetaWorld Open (string path);
+        //public static BetaWorld Create (string path);
     }
 
 }

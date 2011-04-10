@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Collections;
 
 namespace Substrate
 {
@@ -15,7 +15,11 @@ namespace Substrate
         bool DeleteRegion (int rx, int rz);
     }
 
-    public class RegionManager : IRegionContainer, IEnumerable<Region>
+    public interface IRegionManager : IRegionContainer, IEnumerable<Region>
+    {
+    }
+
+    public class RegionManager : IRegionManager
     {
         protected string _regionPath;
 

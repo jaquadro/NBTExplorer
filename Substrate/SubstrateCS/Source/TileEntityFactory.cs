@@ -18,7 +18,7 @@ namespace Substrate
                 return null;
             }
 
-            return Activator.CreateInstance(t, new object[] { type }) as TileEntity;
+            return Activator.CreateInstance(t) as TileEntity;
         }
 
         public static TileEntity Create (TagCompound tree)

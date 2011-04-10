@@ -82,9 +82,11 @@ namespace Substrate
 
     public interface IAlphaBlockContainer : ILitBlockContainer, IPropertyBlockContainer
     {
+        new Block GetBlock (int x, int y, int z);
+        new BlockRef GetBlockRef (int x, int y, int z);
     }
 
     public interface IBlockManager : IAlphaBlockContainer
-    {
+    { 
     }
 }
