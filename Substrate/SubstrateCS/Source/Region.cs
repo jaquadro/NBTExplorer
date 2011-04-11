@@ -10,6 +10,13 @@ namespace Substrate
 
     public class Region : IDisposable, IChunkContainer, IChunkCache
     {
+        private const int XDIM = 32;
+        private const int ZDIM = 32;
+        private const int XMASK = XDIM - 1;
+        private const int ZMASK = ZDIM - 1;
+        private const int XLOG = 5;
+        private const int ZLOG = 5;
+
         protected int _rx;
         protected int _rz;
         protected bool _disposed = false;
@@ -31,6 +38,16 @@ namespace Substrate
         public int Z
         {
             get { return _rz; }
+        }
+
+        public int XDim
+        {
+            get { return XDIM; }
+        }
+
+        public int ZDim
+        {
+            get { return ZDIM; }
         }
 
         public Region (RegionManager rm, int rx, int rz)
@@ -137,6 +154,11 @@ namespace Substrate
 
         public NBT_Tree GetChunkTree (int lcx, int lcz)
         {
+            if (!LocalBoundsCheck(lcx, lcz)) {
+                Region alt = GetForeignRegion(lcx, lcz);
+                return (alt == null) ? null : alt.GetChunkTree(ForeignX(lcx), ForeignZ(lcz));
+            }
+
             RegionFile rf = GetRegionFile();
             Stream nbtstr = rf.GetChunkDataInputStream(lcx, lcz);
             if (nbtstr == null) {
@@ -151,6 +173,11 @@ namespace Substrate
 
         public bool SaveChunkTree (int lcx, int lcz, NBT_Tree tree)
         {
+            if (!LocalBoundsCheck(lcx, lcz)) {
+                Region alt = GetForeignRegion(lcx, lcz);
+                return (alt == null) ? false : alt.SaveChunkTree(ForeignX(lcx), ForeignZ(lcz), tree);
+            }
+
             RegionFile rf = GetRegionFile();
             Stream zipstr = rf.GetChunkDataOutputStream(lcx, lcz);
             if (zipstr == null) {
@@ -165,6 +192,11 @@ namespace Substrate
 
         public Stream GetChunkOutStream (int lcx, int lcz)
         {
+            if (!LocalBoundsCheck(lcx, lcz)) {
+                Region alt = GetForeignRegion(lcx, lcz);
+                return (alt == null) ? null : alt.GetChunkOutStream(ForeignX(lcx), ForeignZ(lcz));
+            }
+
             RegionFile rf = GetRegionFile();
             return rf.GetChunkDataOutputStream(lcx, lcz);
         }
@@ -187,9 +219,9 @@ namespace Substrate
 
         public ChunkRef GetChunkRef (int lcx, int lcz, IChunkCache cache)
         {
-            if (lcx < 0 || lcx >= 32 || lcz < 0 || lcz >= 32) {
-                Region alt = _regionMan.GetRegion(_rx + (lcx >> 5), _rz + (lcz >> 5));
-                return alt.GetChunkRef((lcx + 3200) % 32, (lcz + 3200) % 32, cache);
+            if (!LocalBoundsCheck(lcx, lcz)) {
+                Region alt = GetForeignRegion(lcx, lcz);
+                return (alt == null) ? null : alt.GetChunkRef(ForeignX(lcx), ForeignZ(lcz), cache);
             }
 
             ChunkKey k = new ChunkKey(lcx, lcz);
@@ -225,6 +257,11 @@ namespace Substrate
 
         public ChunkRef CreateChunk (int lcx, int lcz, IChunkCache cache)
         {
+            if (!LocalBoundsCheck(lcx, lcz)) {
+                Region alt = GetForeignRegion(lcx, lcz);
+                return (alt == null) ? null : alt.CreateChunk(ForeignX(lcx), ForeignZ(lcz), cache);
+            }
+
             DeleteChunk(lcx, lcz);
 
             Chunk c = new Chunk(ChunkGlobalX(lcx), ChunkGlobalZ(lcz));
@@ -262,6 +299,11 @@ namespace Substrate
 
         public Chunk GetChunk (int lcx, int lcz)
         {
+            if (!LocalBoundsCheck(lcx, lcz)) {
+                Region alt = GetForeignRegion(lcx, lcz);
+                return (alt == null) ? null : alt.GetChunk(ForeignX(lcx), ForeignZ(lcz));
+            }
+
             if (!ChunkExists(lcx, lcz)) {
                 return null;
             }
@@ -276,8 +318,9 @@ namespace Substrate
 
         public bool ChunkExists (int lcx, int lcz)
         {
-            if (lcx < 0 || lcx >= 32 || lcz < 0 || lcz >= 32) {
-                return false;
+            if (!LocalBoundsCheck(lcx, lcz)) {
+                Region alt = GetForeignRegion(lcx, lcz);
+                return (alt == null) ? false : alt.ChunkExists(ForeignX(lcx), ForeignZ(lcz));
             }
 
             RegionFile rf = GetRegionFile();
@@ -286,6 +329,11 @@ namespace Substrate
 
         public bool DeleteChunk (int lcx, int lcz)
         {
+            if (!LocalBoundsCheck(lcx, lcz)) {
+                Region alt = GetForeignRegion(lcx, lcz);
+                return (alt == null) ? false : alt.DeleteChunk(ForeignX(lcx), ForeignZ(lcz));
+            }
+
             RegionFile rf = GetRegionFile();
             if (!rf.HasChunk(lcx, lcz)) {
                 return false;
@@ -361,5 +409,25 @@ namespace Substrate
         }
 
         #endregion
+
+        private bool LocalBoundsCheck (int lcx, int lcz)
+        {
+            return (lcx >= 0 && lcx < XDIM && lcz >= 0 && lcz < ZDIM);
+        }
+
+        private Region GetForeignRegion (int lcx, int lcz)
+        {
+            return _regionMan.GetRegion(_rx + (lcx >> XLOG), _rz + (lcz >> ZLOG));
+        }
+
+        private int ForeignX (int lcx)
+        {
+            return (lcx + XDIM * 10000) & XMASK;
+        }
+
+        private int ForeignZ (int lcz)
+        {
+            return (lcz + ZDIM * 10000) & ZMASK;
+        }
     }
 }
