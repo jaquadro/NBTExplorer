@@ -742,7 +742,7 @@ namespace Substrate
                     _blockLight[i] = 0;
                 }
                 else {
-                    _blockLight[i] = info.Luminance;
+                    _blockLight[i] = Math.Max(info.Luminance - info.Opacity, 0);
                 }
             }
         }
@@ -759,13 +759,17 @@ namespace Substrate
                         int lld = NeighborLight(x, y - 1, z, null);
                         int llu = NeighborLight(x, y + 1, z, null);
 
-                        int light = GetBlockLight(x, y, z);
+                        BlockInfo info = GetBlockInfo(x, y, z);
+
+                        int light = Math.Max(info.Luminance, 0);
                         light = Math.Max(light, lle - 1);
                         light = Math.Max(light, lln - 1);
                         light = Math.Max(light, lls - 1);
                         light = Math.Max(light, llw - 1);
                         light = Math.Max(light, lld - 1);
                         light = Math.Max(light, llu - 1);
+
+                        light = Math.Max(light - info.Opacity, 0);
 
                         SetBlockLight(x, y, z, light);
                     }
@@ -793,7 +797,7 @@ namespace Substrate
             BlockInfo info = src.GetBlockInfo(x, y, z);
             int light = src.GetBlockLight(x, y, z);
 
-            return Math.Max(light - info.Opacity, 0);
+            return Math.Max(light, info.Luminance);
         }
     }
 }
