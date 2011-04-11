@@ -187,6 +187,11 @@ namespace Substrate
 
         public ChunkRef GetChunkRef (int lcx, int lcz, IChunkCache cache)
         {
+            if (lcx < 0 || lcx >= 32 || lcz < 0 || lcz >= 32) {
+                Region alt = _regionMan.GetRegion(_rx + (lcx >> 5), _rz + (lcz >> 5));
+                return alt.GetChunkRef((lcx + 3200) % 32, (lcz + 3200) % 32, cache);
+            }
+
             ChunkKey k = new ChunkKey(lcx, lcz);
 
             ChunkRef c = null;
