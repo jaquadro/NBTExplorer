@@ -271,6 +271,10 @@ namespace Substrate
 
         public bool ChunkExists (int lcx, int lcz)
         {
+            if (lcx < 0 || lcx >= 32 || lcz < 0 || lcz >= 32) {
+                return false;
+            }
+
             RegionFile rf = GetRegionFile();
             return rf.HasChunk(lcx, lcz);
         }

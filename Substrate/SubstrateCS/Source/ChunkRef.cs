@@ -6,6 +6,7 @@ using System.IO;
 namespace Substrate
 {
     using NBT;
+    using System.Collections;
 
     public class ChunkRef : IChunk
     {
@@ -86,6 +87,9 @@ namespace Substrate
         {
             if (_chunk == null) {
                 _chunk = _container.GetChunk(_cx, _cz);
+
+                _lightbit = new BitArray(XDim * 3 * ZDim * 3 * YDim);
+                _update = new Queue<BlockKey>();
             }
             return _chunk;
         }
@@ -96,8 +100,9 @@ namespace Substrate
                 return false;
             }
 
-            _dirty = true;
             _cache.MarkChunkDirty(this);
+
+            _dirty = true;
             return true;
         }
 
@@ -259,8 +264,16 @@ namespace Substrate
 
         public bool SetBlockID (int lx, int ly, int lz, int id)
         {
+            BlockInfo info1 = GetChunk().GetBlockInfo(lx, ly, lz);
             if (GetChunk().SetBlockID(lx, ly, lz, id)) {
                 MarkDirty();
+
+                BlockInfo info2 = GetChunk().GetBlockInfo(lx, ly, lz);
+                if (info1.Luminance != info2.Luminance || info1.Opacity != info2.Opacity) {
+                    _update.Enqueue(new BlockKey(lx, ly, lz));
+                    UpdateBlockLight();
+                }
+
                 return true;
             }
             return false;
@@ -297,7 +310,7 @@ namespace Substrate
 
         public int GetBlockLight (int lx, int ly, int lz)
         {
-            return GetChunk().GetBlockSkyLight(lx, ly, lz);
+            return GetChunk().GetBlockLight(lx, ly, lz);
         }
 
         public int GetBlockSkyLight (int lx, int ly, int lz)
@@ -409,6 +422,137 @@ namespace Substrate
         }
 
         #endregion
+
+        private BitArray _lightbit;
+        private Queue<BlockKey> _update;
+
+        private void UpdateBlockLight ()
+        {
+            while (_update.Count > 0) {
+                BlockKey k = _update.Dequeue();
+                int index = LightBitmapIndex(k);
+                _lightbit[index] = false;
+
+                ChunkRef cc = LocalChunk(k.x, k.y, k.z);
+                if (cc == null) {
+                    continue;
+                }
+
+                int lle = NeighborLight(k.x, k.y, k.z - 1);
+                int lln = NeighborLight(k.x - 1, k.y, k.z);
+                int lls = NeighborLight(k.x, k.y, k.z + 1);
+                int llw = NeighborLight(k.x + 1, k.y, k.z);
+                int lld = NeighborLight(k.x, k.y - 1, k.z);
+                int llu = NeighborLight(k.x, k.y + 1, k.z);
+
+                int x = (k.x + XDim) % XDim;
+                int y = k.y;
+                int z = (k.z + ZDim) % ZDim;
+
+                int lightval = cc.GetBlockLight(x, y, z);
+                BlockInfo info = cc.GetBlockInfo(x, y, z);
+
+                int light = Math.Max(info.Luminance, 0);
+                light = Math.Max(light, lle - 1);
+                light = Math.Max(light, lln - 1);
+                light = Math.Max(light, lls - 1);
+                light = Math.Max(light, llw - 1);
+                light = Math.Max(light, lld - 1);
+                light = Math.Max(light, llu - 1);
+
+                light = Math.Max(light - info.Opacity, 0);
+
+                if (light != lightval) {
+                    //Console.WriteLine("Block Light: ({0},{1},{2}) " + lightval + " -> " + light, k.x, k.y, k.z);
+
+                    cc.SetBlockLight(x, y, z, light);
+
+                    QueueRelight(new BlockKey(k.x - 1, k.y, k.z));
+                    QueueRelight(new BlockKey(k.x + 1, k.y, k.z));
+                    QueueRelight(new BlockKey(k.x, k.y - 1, k.z));
+                    QueueRelight(new BlockKey(k.x, k.y + 1, k.z));
+                    QueueRelight(new BlockKey(k.x, k.y, k.z - 1));
+                    QueueRelight(new BlockKey(k.x, k.y, k.z + 1));
+                }
+            }
+        }
+
+        private int LightBitmapIndex (BlockKey key)
+        {
+            int x = key.x + XDim;
+            int y = key.y;
+            int z = key.z + ZDim;
+
+            int zstride = YDim;
+            int xstride = ZDim * 3 * zstride;
+
+            return (x * xstride) + (z * zstride) + y;
+        }
+
+        private void QueueRelight (BlockKey key)
+        {
+            if (key.x < -15 || key.x >= 31 || key.z < -15 || key.z >= 31) {
+                return;
+            }
+
+            int index = LightBitmapIndex(key);
+
+            if (!_lightbit[index]) {
+                _lightbit[index] = true;
+                _update.Enqueue(key);
+            }
+        }
+
+        private ChunkRef LocalChunk (int lx, int ly, int lz)
+        {
+            if (lx < 0) {
+                if (lz < 0) {
+                    return _container.GetChunkRef(_cx - 1, _cz - 1);
+                }
+                else if (lz >= ZDim) {
+                    return _container.GetChunkRef(_cx - 1, _cz + 1);
+                }
+                return _container.GetChunkRef(_cx - 1, _cz);
+            }
+            else if (lx >= XDim) {
+                if (lz < 0) {
+                    return _container.GetChunkRef(_cx + 1, _cz - 1);
+                }
+                else if (lz >= ZDim) {
+                    return _container.GetChunkRef(_cx + 1, _cz + 1);
+                }
+                return _container.GetChunkRef(_cx + 1, _cz);
+            }
+            else {
+                if (lz < 0) {
+                    return _container.GetChunkRef(_cx, _cz - 1);
+                }
+                else if (lz >= ZDim) {
+                    return _container.GetChunkRef(_cx, _cz + 1);
+                }
+                return this;
+            }
+        }
+
+        private int NeighborLight (int x, int y, int z)
+        {
+            if (y < 0 || y >= YDim) {
+                return 0;
+            }
+
+            ChunkRef src = LocalChunk(x, y, z);
+            if (src == null) {
+                return 0;
+            }
+
+            x = (x + XDim) % XDim;
+            z = (z + ZDim) % ZDim;
+
+            BlockInfo info = src.GetBlockInfo(x, y, z);
+            int light = src.GetBlockLight(x, y, z);
+
+            return Math.Max(light, info.Luminance);
+        }
     }
 
 }

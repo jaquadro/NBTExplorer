@@ -6,9 +6,9 @@ namespace Substrate
 {
     public struct BlockKey : IEquatable<BlockKey>
     {
-        readonly int x;
-        readonly int y;
-        readonly int z;
+        public readonly int x;
+        public readonly int y;
+        public readonly int z;
 
         public BlockKey (int _x, int _y, int _z)
         {
