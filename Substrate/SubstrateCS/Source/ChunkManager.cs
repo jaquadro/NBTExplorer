@@ -245,7 +245,10 @@ namespace Substrate
                             _region = _enum.Current;
                         }
                         if (MoveNextInRegion()) {
-                            _chunk = _cm.GetChunkRefInRegion(_region, _x, _z);
+                            _chunk = _region.GetChunkRef(_x, _z, _cm);
+                            if (_chunk == null) {
+                                throw new Exception();
+                            }
                             return true;
                         }
                     }

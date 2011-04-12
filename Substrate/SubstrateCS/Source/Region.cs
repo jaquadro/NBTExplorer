@@ -264,7 +264,7 @@ namespace Substrate
 
             DeleteChunk(lcx, lcz);
 
-            Chunk c = new Chunk(ChunkGlobalX(lcx), ChunkGlobalZ(lcz));
+            Chunk c = new Chunk(lcx, lcz);
             c.Save(GetChunkOutStream(lcx, lcz));
 
             ChunkRef cr = new ChunkRef(this, cache, lcx, lcz);
@@ -356,8 +356,10 @@ namespace Substrate
         {
             int saved = 0;
             foreach (ChunkRef c in _dirty.Values) {
-                int lcx = c.LocalX;
-                int lcz = c.LocalZ;
+                int cx = c.X;
+                int cz = c.Z;
+                int lcx = cx - _rx * ChunkManager.REGION_XLEN;
+                int lcz = cz - _rz * ChunkManager.REGION_ZLEN;
 
                 if (!ChunkExists(lcx, lcz)) {
                     throw new MissingChunkException();
@@ -384,8 +386,10 @@ namespace Substrate
 
         public bool MarkChunkDirty (ChunkRef chunk)
         {
-            int lcx = chunk.LocalX;
-            int lcz = chunk.LocalZ;
+            int cx = chunk.X;
+            int cz = chunk.Z;
+            int lcx = cx - _rx * ChunkManager.REGION_XLEN;
+            int lcz = cz - _rz * ChunkManager.REGION_ZLEN;
 
             ChunkKey k = new ChunkKey(lcx, lcz);
             if (!_dirty.ContainsKey(k)) {
@@ -397,10 +401,12 @@ namespace Substrate
 
         public bool MarkChunkClean (ChunkRef chunk)
         {
-            int lcx = chunk.LocalX;
-            int lcz = chunk.LocalZ;
+            int cx = chunk.X;
+            int cz = chunk.Z;
+            int lcx = cx - _rx * ChunkManager.REGION_XLEN;
+            int lcz = cz - _rz * ChunkManager.REGION_ZLEN;
 
-            ChunkKey k = new ChunkKey(lcx, lcz);
+            ChunkKey k = new ChunkKey(lcx, lcx);
             if (_dirty.ContainsKey(k)) {
                 _dirty.Remove(k);
                 return true;
