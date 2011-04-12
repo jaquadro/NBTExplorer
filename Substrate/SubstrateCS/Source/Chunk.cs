@@ -20,7 +20,7 @@ namespace Substrate
                 new NBTArrayNode("HeightMap", 256),
                 new NBTListNode("Entities", TagType.TAG_COMPOUND),
                 new NBTListNode("TileEntities", TagType.TAG_COMPOUND, TileEntity.BaseSchema),
-                new NBTScalerNode("LastUpdate", TagType.TAG_LONG),
+                //new NBTScalerNode("LastUpdate", TagType.TAG_LONG),
                 new NBTScalerNode("xPos", TagType.TAG_INT),
                 new NBTScalerNode("zPos", TagType.TAG_INT),
                 new NBTScalerNode("TerrainPopulated", TagType.TAG_BYTE),

@@ -270,8 +270,12 @@ namespace Substrate
 
                 BlockInfo info2 = GetChunk().GetBlockInfo(lx, ly, lz);
                 if (info1.Luminance != info2.Luminance || info1.Opacity != info2.Opacity) {
+                    UpdateBlockLight(lx, ly, lz);
+                }
+
+                if (info1.Opacity != info2.Opacity) {
                     _update.Enqueue(new BlockKey(lx, ly, lz));
-                    UpdateBlockLight();
+                    UpdateSkyLight();
                 }
 
                 return true;
@@ -426,8 +430,18 @@ namespace Substrate
         private BitArray _lightbit;
         private Queue<BlockKey> _update;
 
-        private void UpdateBlockLight ()
+        private void UpdateBlockLight (int lx, int ly, int lz)
         {
+            BlockKey primary = new BlockKey(lx, ly, lz);
+            _update.Enqueue(primary);
+
+            QueueRelight(new BlockKey(lx - 1, ly, lz));
+            QueueRelight(new BlockKey(lx + 1, ly, lz));
+            QueueRelight(new BlockKey(lx, ly - 1, lz));
+            QueueRelight(new BlockKey(lx, ly + 1, lz));
+            QueueRelight(new BlockKey(lx, ly, lz - 1));
+            QueueRelight(new BlockKey(lx, ly, lz + 1));
+
             while (_update.Count > 0) {
                 BlockKey k = _update.Dequeue();
                 int index = LightBitmapIndex(k);
@@ -466,6 +480,63 @@ namespace Substrate
                     //Console.WriteLine("Block Light: ({0},{1},{2}) " + lightval + " -> " + light, k.x, k.y, k.z);
 
                     cc.SetBlockLight(x, y, z, light);
+
+                    QueueRelight(new BlockKey(k.x - 1, k.y, k.z));
+                    QueueRelight(new BlockKey(k.x + 1, k.y, k.z));
+                    QueueRelight(new BlockKey(k.x, k.y - 1, k.z));
+                    QueueRelight(new BlockKey(k.x, k.y + 1, k.z));
+                    QueueRelight(new BlockKey(k.x, k.y, k.z - 1));
+                    QueueRelight(new BlockKey(k.x, k.y, k.z + 1));
+                }
+            }
+        }
+
+        private void UpdateSkyLight ()
+        {
+            while (_update.Count > 0) {
+                BlockKey k = _update.Dequeue();
+                int index = LightBitmapIndex(k);
+                _lightbit[index] = false;
+
+                ChunkRef cc = LocalChunk(k.x, k.y, k.z);
+                if (cc == null) {
+                    continue;
+                }
+
+                int x = (k.x + XDim) % XDim;
+                int y = k.y;
+                int z = (k.z + ZDim) % ZDim;
+
+                int lightval = cc.GetBlockSkyLight(x, y, z);
+                BlockInfo info = cc.GetBlockInfo(x, y, z);
+
+                int light = BlockInfo.MIN_LUMINANCE;
+
+                if (cc.GetHeight(x, z) <= y) {
+                    light = BlockInfo.MAX_LUMINANCE;
+                }
+                else {
+                    int lle = NeighborSkyLight(k.x, k.y, k.z - 1);
+                    int lln = NeighborSkyLight(k.x - 1, k.y, k.z);
+                    int lls = NeighborSkyLight(k.x, k.y, k.z + 1);
+                    int llw = NeighborSkyLight(k.x + 1, k.y, k.z);
+                    int lld = NeighborSkyLight(k.x, k.y - 1, k.z);
+                    int llu = NeighborSkyLight(k.x, k.y + 1, k.z);
+
+                    light = Math.Max(light, lle - 1);
+                    light = Math.Max(light, lln - 1);
+                    light = Math.Max(light, lls - 1);
+                    light = Math.Max(light, llw - 1);
+                    light = Math.Max(light, lld - 1);
+                    light = Math.Max(light, llu - 1);
+                }
+
+                light = Math.Max(light - info.Opacity, 0);
+
+                if (light != lightval) {
+                    //Console.WriteLine("Block SkyLight: ({0},{1},{2}) " + lightval + " -> " + light, k.x, k.y, k.z);
+
+                    cc.SetBlockSkyLight(x, y, z, light);
 
                     QueueRelight(new BlockKey(k.x - 1, k.y, k.z));
                     QueueRelight(new BlockKey(k.x + 1, k.y, k.z));
@@ -552,6 +623,25 @@ namespace Substrate
             int light = src.GetBlockLight(x, y, z);
 
             return Math.Max(light, info.Luminance);
+        }
+
+        private int NeighborSkyLight (int x, int y, int z)
+        {
+            if (y < 0 || y >= YDim) {
+                return 0;
+            }
+
+            ChunkRef src = LocalChunk(x, y, z);
+            if (src == null) {
+                return 0;
+            }
+
+            x = (x + XDim) % XDim;
+            z = (z + ZDim) % ZDim;
+
+            int light = src.GetBlockSkyLight(x, y, z);
+
+            return light;
         }
     }
 
