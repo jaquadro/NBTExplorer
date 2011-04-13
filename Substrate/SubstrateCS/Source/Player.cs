@@ -80,6 +80,11 @@ namespace Substrate
             : base()
         {
             _inventory = new ItemCollection(_CAPACITY);
+
+            // Sane defaults
+            _dimension = 0;
+            _sleeping = 0;
+            _sleepTimer = 0;
         }
 
         public Player (Player p)

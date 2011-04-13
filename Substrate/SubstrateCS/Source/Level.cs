@@ -10,9 +10,24 @@ namespace Substrate
 
     public class Level : INBTObject<Level>, ICopyable<Level>
     {
-        public static NBTCompoundNode LevelSchema;
+        public static NBTCompoundNode LevelSchema = new NBTCompoundNode()
+        {
+            new NBTCompoundNode("Data")
+            {
+                new NBTScalerNode("Time", TagType.TAG_LONG),
+                new NBTScalerNode("LastPlayed", TagType.TAG_LONG),
+                new NBTCompoundNode("Player", Player.PlayerSchema, NBTOptions.OPTIONAL),
+                new NBTScalerNode("SpawnX", TagType.TAG_INT),
+                new NBTScalerNode("SpawnY", TagType.TAG_INT),
+                new NBTScalerNode("SpawnZ", TagType.TAG_INT),
+                new NBTScalerNode("SizeOnDisk", TagType.TAG_LONG),
+                new NBTScalerNode("RandomSeed", TagType.TAG_LONG),
+                new NBTScalerNode("version", TagType.TAG_INT, NBTOptions.OPTIONAL),
+                new NBTScalerNode("LevelName", TagType.TAG_STRING, NBTOptions.OPTIONAL),
+            },
+        };
 
-        private World _world;
+        private INBTWorld _world;
 
         private long _time;
         private long _lastPlayed;
@@ -42,7 +57,11 @@ namespace Substrate
         public Player Player
         {
             get { return _player; }
-            set { _player = value; }
+            set
+            {
+                _player = value;
+                _player.World = _name;
+            }
         }
 
         public int SpawnX
@@ -82,29 +101,29 @@ namespace Substrate
         public string LevelName
         {
             get { return _name; }
-            set { _name = value; }
+            set
+            {
+                _name = value;
+                if (_player != null) {
+                    _player.World = value;
+                }
+            }
         }
 
-        public Level (World world)
+        public Level (INBTWorld world)
         {
             _world = world;
 
-            LevelSchema = new NBTCompoundNode()
-            {
-                new NBTCompoundNode("Data")
-                {
-                    new NBTScalerNode("Time", TagType.TAG_LONG),
-                    new NBTScalerNode("LastPlayed", TagType.TAG_LONG),
-                    new NBTCompoundNode("Player", Player.PlayerSchema, NBTOptions.OPTIONAL),
-                    new NBTScalerNode("SpawnX", TagType.TAG_INT),
-                    new NBTScalerNode("SpawnY", TagType.TAG_INT),
-                    new NBTScalerNode("SpawnZ", TagType.TAG_INT),
-                    new NBTScalerNode("SizeOnDisk", TagType.TAG_LONG),
-                    new NBTScalerNode("RandomSeed", TagType.TAG_LONG),
-                    new NBTScalerNode("version", TagType.TAG_INT, NBTOptions.OPTIONAL),
-                    new NBTScalerNode("LevelName", TagType.TAG_STRING, NBTOptions.OPTIONAL),
-                },
-            };
+            // Sane defaults
+            _time = 0;
+            _lastPlayed = 0;
+            _spawnX = 0;
+            _spawnY = 64;
+            _spawnZ = 0;
+            _sizeOnDisk = 0;
+            _randomSeed = new Random().Next();
+            _version = 19132;
+            _name = "Untitled";
         }
 
         public Level (Level p)
@@ -124,6 +143,12 @@ namespace Substrate
             if (p._player != null) {
                 _player = p._player.Copy();
             }
+        }
+
+        public void SetDefaultPlayer ()
+        {
+            _player = new Player();
+            _player.World = _name;
         }
 
         public bool Save ()

@@ -108,6 +108,16 @@ namespace Substrate
             return true;
         }
 
+        public int Save ()
+        {
+            int saved = 0;
+            foreach (Region r in _cache.Values) {
+                saved += r.Save();
+            }
+
+            return saved;
+        }
+
 
         #region IEnumerable<Region> Members
 
