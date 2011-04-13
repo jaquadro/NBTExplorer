@@ -60,9 +60,14 @@ namespace Substrate
             Region r = GetRegion(rx, rz);
             if (r == null) {
                 string fp = "r." + rx + "." + rz + ".mcr";
-                new RegionFile(Path.Combine(_regionPath, fp));
+                using (RegionFile rf = new RegionFile(Path.Combine(_regionPath, fp))) {
+                    
+                }
 
                 r = new Region(this, rx, rz);
+
+                RegionKey k = new RegionKey(rx, rz);
+                _cache[k] = r;
             }
 
             return r;

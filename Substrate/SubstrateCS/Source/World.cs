@@ -335,6 +335,11 @@ namespace Substrate
                 throw new DirectoryNotFoundException("Directory '" + path + "' not found");
             }
 
+            string regpath = Path.Combine(path, _REGION_DIR);
+            if (!Directory.Exists(regpath)) {
+                Directory.CreateDirectory(regpath);
+            }
+
             _path = path;
             _level = new Level(this);
 

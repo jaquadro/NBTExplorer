@@ -576,6 +576,10 @@ namespace Substrate
 
         private ChunkRef LocalChunk (int lx, int ly, int lz)
         {
+            if (ly < 0 || ly >= YDim) {
+                return null;
+            }
+
             if (lx < 0) {
                 if (lz < 0) {
                     return _container.GetChunkRef(_cx - 1, _cz - 1);

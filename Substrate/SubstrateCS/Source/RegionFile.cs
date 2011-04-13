@@ -102,6 +102,8 @@ namespace Substrate
                             file.Write(int0, 0, 4);
                         }
 
+                        file.Flush();
+
                         sizeDelta += SECTOR_BYTES * 2;
                     }
 
@@ -110,6 +112,8 @@ namespace Substrate
                         for (int i = 0; i < (file.Length & 0xfff); ++i) {
                             file.WriteByte(0);
                         }
+
+                        file.Flush();
                     }
 
                     /* set up the available sector map */

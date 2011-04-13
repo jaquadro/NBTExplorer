@@ -246,9 +246,6 @@ namespace Substrate
                         }
                         if (MoveNextInRegion()) {
                             _chunk = _region.GetChunkRef(_x, _z, _cm);
-                            if (_chunk == null) {
-                                throw new Exception();
-                            }
                             return true;
                         }
                     }
