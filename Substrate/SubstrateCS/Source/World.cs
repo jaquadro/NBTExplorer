@@ -17,6 +17,8 @@ namespace Substrate
     {
         string WorldPath { get; }
 
+        Level Level { get; }
+
         IBlockManager GetBlockManager ();
         IBlockManager GetBlockManager (int dim);
 
@@ -169,6 +171,11 @@ namespace Substrate
         public string WorldPath
         {
             get { return _path; }
+        }
+
+        public Level Level
+        {
+            get { return _level; }
         }
 
         IBlockManager INBTWorld.GetBlockManager ()
@@ -368,6 +375,11 @@ namespace Substrate
         public string WorldPath
         {
             get { return _path; }
+        }
+
+        public Level Level
+        {
+            get { return _level; }
         }
 
         IBlockManager INBTWorld.GetBlockManager ()

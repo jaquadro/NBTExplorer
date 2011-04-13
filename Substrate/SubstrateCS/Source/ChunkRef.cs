@@ -19,6 +19,8 @@ namespace Substrate
 
         private bool _dirty;
 
+        private bool _autoLight = true;
+
         public int X
         {
             get { return _container.ChunkGlobalX(_cx); }
@@ -29,8 +31,6 @@ namespace Substrate
             get { return _container.ChunkGlobalZ(_cz); }
         }
 
-        
-
         public int LocalX
         {
             get { return _container.ChunkLocalX(_cx); }
@@ -39,6 +39,12 @@ namespace Substrate
         public int LocalZ
         {
             get { return _container.ChunkLocalZ(_cz); }
+        }
+
+        public bool AutoRecalcLight
+        {
+            get { return _autoLight; }
+            set { _autoLight = value; }
         }
 
         public ChunkRef (IChunkContainer container, IChunkCache cache, int cx, int cz)
@@ -268,14 +274,16 @@ namespace Substrate
             if (GetChunk().SetBlockID(lx, ly, lz, id)) {
                 MarkDirty();
 
-                BlockInfo info2 = GetChunk().GetBlockInfo(lx, ly, lz);
-                if (info1.Luminance != info2.Luminance || info1.Opacity != info2.Opacity) {
-                    UpdateBlockLight(lx, ly, lz);
-                }
+                if (_autoLight) {
+                    BlockInfo info2 = GetChunk().GetBlockInfo(lx, ly, lz);
+                    if (info1.Luminance != info2.Luminance || info1.Opacity != info2.Opacity) {
+                        UpdateBlockLight(lx, ly, lz);
+                    }
 
-                if (info1.Opacity != info2.Opacity) {
-                    _update.Enqueue(new BlockKey(lx, ly, lz));
-                    UpdateSkyLight();
+                    if (info1.Opacity != info2.Opacity) {
+                        _update.Enqueue(new BlockKey(lx, ly, lz));
+                        UpdateSkyLight();
+                    }
                 }
 
                 return true;
@@ -430,6 +438,48 @@ namespace Substrate
         private BitArray _lightbit;
         private Queue<BlockKey> _update;
 
+        public void RebuildBlockLight ()
+        {
+            for (int x = 0; x < XDim; x++) {
+                for (int z = 0; z < ZDim; z++) {
+                    for (int y = 0; y < YDim; y++) {
+                        BlockInfo info = GetBlockInfo(x, y, z);
+                        if (info == null || info.Luminance == 0) {
+                            SetBlockLight(x, y, z, 0);
+                        }
+                        else {
+                            SetBlockLight(x, y, z, Math.Max(info.Luminance - info.Opacity, 0));
+                            QueueRelight(new BlockKey(x, y, z));
+                        }
+                    }
+                }
+            }
+
+            UpdateBlockLight();
+        }
+
+        public void RebuildSkyLight ()
+        {
+            for (int x = 0; x < XDim; x++) {
+                for (int z = 0; z < ZDim; z++) {
+                    int height = GetHeight(x, z);
+                    for (int y = 0; y < YDim; y++) {
+                        if (y > height) {
+                            SetBlockLight(x, y, z, BlockInfo.MAX_LUMINANCE);
+                        }
+                        else if (y < height) {
+                            SetBlockLight(x, y, z, 0);
+                        }
+                        else {
+                            QueueRelight(new BlockKey(x, y, z));
+                        }
+                    }
+                }
+            }
+
+            UpdateSkyLight();
+        }
+
         private void UpdateBlockLight (int lx, int ly, int lz)
         {
             BlockKey primary = new BlockKey(lx, ly, lz);
@@ -442,6 +492,11 @@ namespace Substrate
             QueueRelight(new BlockKey(lx, ly, lz - 1));
             QueueRelight(new BlockKey(lx, ly, lz + 1));
 
+            UpdateBlockLight();
+        }
+
+        private void UpdateBlockLight ()
+        {
             while (_update.Count > 0) {
                 BlockKey k = _update.Dequeue();
                 int index = LightBitmapIndex(k);
