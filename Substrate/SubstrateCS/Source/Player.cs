@@ -85,6 +85,10 @@ namespace Substrate
             _dimension = 0;
             _sleeping = 0;
             _sleepTimer = 0;
+
+            Air = 300;
+            //Health = 20;
+            Fire = -20;
         }
 
         public Player (Player p)

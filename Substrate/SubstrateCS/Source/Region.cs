@@ -264,7 +264,10 @@ namespace Substrate
 
             DeleteChunk(lcx, lcz);
 
-            Chunk c = new Chunk(lcx, lcz);
+            int cx = lcx + _rx * ChunkManager.REGION_XLEN;
+            int cz = lcz + _rz * ChunkManager.REGION_ZLEN;
+
+            Chunk c = new Chunk(cx, cz);
             c.Save(GetChunkOutStream(lcx, lcz));
 
             ChunkRef cr = new ChunkRef(this, cache, lcx, lcz);

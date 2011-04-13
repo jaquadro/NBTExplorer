@@ -97,6 +97,9 @@ namespace Substrate
 
         public UntypedEntity ()
         {
+            _pos = new Vector3();
+            _motion = new Vector3();
+            _rotation = new Orientation();
         }
 
         public UntypedEntity (UntypedEntity e)

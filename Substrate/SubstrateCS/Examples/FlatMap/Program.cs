@@ -13,10 +13,10 @@ namespace FlatMap
         static void Main (string[] args)
         {
             string dest = "F:\\Minecraft\\test";
-            int xmin = -10;
-            int xmax = 10;
-            int zmin = -10;
-            int zmaz = 10;
+            int xmin = -20;
+            int xmax = 20;
+            int zmin = -20;
+            int zmaz = 20;
 
             // This will instantly create any necessary directory structure
             BetaWorld world = BetaWorld.Create(dest);
@@ -24,6 +24,7 @@ namespace FlatMap
 
             // We can set different world parameters
             world.Level.LevelName = "Flatlands";
+            world.Level.SetDefaultPlayer();
 
             // We'll create chunks at chunk coordinates xmin,zmin to xmax,zmax
             for (int xi = xmin; xi < xmax; xi++) {
@@ -32,6 +33,10 @@ namespace FlatMap
                     // backing region file if necessary (which will immediately be
                     // written to disk)
                     ChunkRef chunk = cm.CreateChunk(xi, zi);
+
+                    // This will suppress generating caves, ores, and all those
+                    // other goodies.
+                    chunk.IsTerrainPopulated = true;
 
                     // Auto light recalculation is horrifically bad for creating
                     // chunks from scratch, because we're placing thousands

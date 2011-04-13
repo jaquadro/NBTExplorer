@@ -106,9 +106,9 @@ namespace Substrate
             level.Add("HeightMap", _heightMap);
             level.Add("Entities", _entities);
             level.Add("TileEntities", _tileEntities);
-            level.Add("LastUpdate", new TagLong());
-            level.Add("xPos", new TagInt());
-            level.Add("zPos", new TagInt());
+            level.Add("LastUpdate", new TagLong(Timestamp()));
+            level.Add("xPos", new TagInt(_cx));
+            level.Add("zPos", new TagInt(_cz));
             level.Add("TerrainPopulated", new TagByte());
 
             _tree = new NBT_Tree();
@@ -798,6 +798,12 @@ namespace Substrate
             int light = src.GetBlockLight(x, y, z);
 
             return Math.Max(light, info.Luminance);
+        }
+
+        private int Timestamp ()
+        {
+            DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            return (int)((DateTime.UtcNow - epoch).Ticks / (10000L * 1000L));
         }
     }
 }
