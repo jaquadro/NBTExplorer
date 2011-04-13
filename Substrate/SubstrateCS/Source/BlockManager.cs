@@ -28,6 +28,14 @@ namespace Substrate
 
         protected ChunkRef _cache;
 
+        private bool _autoLight;
+
+        public bool AutoRecalcLight
+        {
+            get { return _autoLight; }
+            set { _autoLight = value; }
+        }
+
         public BlockManager (IChunkManager cm)
         {
             _chunkMan = cm;
@@ -158,7 +166,14 @@ namespace Substrate
                 return false;
             }
 
-            return _cache.SetBlockID(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask, id);
+            bool autolight = _cache.AutoRecalcLight;
+            _cache.AutoRecalcLight = _autoLight;
+
+            bool ret = _cache.SetBlockID(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask, id);
+
+            _cache.AutoRecalcLight = autolight;
+
+            return ret;
         }
 
         public bool SetBlockData (int x, int y, int z, int data)
