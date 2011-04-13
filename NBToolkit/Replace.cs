@@ -149,8 +149,9 @@ namespace NBToolkit
 
         public override void Run ()
         {
-            NBTWorld world = GetWorld(opt);
-            FilteredChunkManager fcm = new FilteredChunkManager(world.ChunkManager, opt.GetChunkFilter());
+            INBTWorld world = GetWorld(opt);
+            IChunkManager cm = world.GetChunkManager(opt.OPT_DIM);
+            FilteredChunkManager fcm = new FilteredChunkManager(cm, opt.GetChunkFilter());
 
             int affectedChunks = 0;
             foreach (ChunkRef chunk in fcm) {
@@ -164,7 +165,7 @@ namespace NBToolkit
             Console.WriteLine("Affected Chunks: " + affectedChunks);
         }
 
-        public void ApplyChunk (World world, ChunkRef chunk)
+        public void ApplyChunk (INBTWorld world, ChunkRef chunk)
         {
             int xBase = chunk.X * chunk.XDim;
             int zBase = chunk.Z * chunk.ZDim;
@@ -242,7 +243,8 @@ namespace NBToolkit
                             chunk.SetBlockID(lx, ly, lz, (int)opt.OPT_AFTER);
 
                             if (opt.OPT_VV) {
-                                Console.WriteLine("Replaced block at {0},{1},{2}", lx, ly, lz);
+                                Console.WriteLine("Replaced block at {0},{1},{2}", 
+                                    chunk.BlockGlobalX(lx), chunk.BlockGlobalY(ly), chunk.BlockGlobalZ(lz));
                             }
 
                             if (opt.OPT_DATA != null) {

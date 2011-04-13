@@ -7,7 +7,7 @@ namespace NBToolkit
 {
     public interface IGenerator
     {
-        bool Generate (BlockManager blockMan, Random rand, int x, int y, int z);
+        bool Generate (IBlockManager blockMan, Random rand, int x, int y, int z);
     }
 
     /**
@@ -49,7 +49,7 @@ namespace NBToolkit
             }
         }
 
-        public bool Generate (BlockManager blockMan, Random rand, int x, int y, int z)
+        public bool Generate (IBlockManager blockMan, Random rand, int x, int y, int z)
         {
             float rpi = (float)(rand.NextDouble() * Math.PI);
 

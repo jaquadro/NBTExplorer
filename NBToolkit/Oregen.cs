@@ -181,8 +181,9 @@ namespace NBToolkit
 
         public override void Run ()
         {
-            NBTWorld world = GetWorld(opt);
-            FilteredChunkManager fcm = new FilteredChunkManager(world.ChunkManager, opt.GetChunkFilter());
+            INBTWorld world = GetWorld(opt);
+            IChunkManager cm = world.GetChunkManager(opt.OPT_DIM);
+            FilteredChunkManager fcm = new FilteredChunkManager(cm, opt.GetChunkFilter());
 
             int affectedChunks = 0;
             foreach (ChunkRef chunk in fcm) {
@@ -204,7 +205,7 @@ namespace NBToolkit
             Console.WriteLine("Affected Chunks: " + affectedChunks);
         }
 
-        public void ApplyChunk (NBTWorld world, ChunkRef chunk)
+        public void ApplyChunk (INBTWorld world, ChunkRef chunk)
         {
             if (opt.OPT_V) {
                 Console.WriteLine("Generating {0} size {1} deposits of {2} between {3} and {4}",
@@ -221,7 +222,8 @@ namespace NBToolkit
                 ((NativeGenOre)generator).MathFix = opt.OPT_MATHFIX;
             }
 
-            BlockManager bm = new GenOreBlockManager(world.ChunkManager, opt);
+            IChunkManager cm = world.GetChunkManager(opt.OPT_DIM);
+            IBlockManager bm = new GenOreBlockManager(cm, opt);
 
             for (int i = 0; i < opt.OPT_ROUNDS; i++) {
                 if (opt.OPT_VV) {
@@ -292,84 +294,5 @@ namespace NBToolkit
             return false;
         }
 
-        /*public override BlockRef GetBlockRef (int x, int y, int z)
-        {
-            BlockRef block;
-            try {
-                block = base.GetBlockRef(x, y, z);
-            }
-            catch {
-                return null;
-            }
-
-            if (block == null) {
-                return null;
-            }
-
-            int blockID = block.ID;
-
-            if (
-                ((opt.OPT_OA) && (blockID != opt.OPT_ID)) ||
-                ((opt.OPT_OO) && (
-                    blockID == BLOCK_COAL || blockID == BLOCK_IRON ||
-                    blockID == BLOCK_GOLD || blockID == BLOCK_REDSTONE ||
-                    blockID == BLOCK_DIAMOND || blockID == BLOCK_LAPIS ||
-                    blockID == BLOCK_DIRT || blockID == BLOCK_GRAVEL) && (blockID != opt.OPT_ID)) ||
-                (opt.OPT_OB_INCLUDE.Count > 0) ||
-                (blockID == BLOCK_STONE)
-            ) {
-                // If overriding list of ores, check membership
-                if (opt.OPT_OB_INCLUDE.Count > 0 && !opt.OPT_OB_INCLUDE.Contains(blockID)) {
-                    return null;
-                }
-
-                // Check for any excluded block
-                if (opt.OPT_OB_EXCLUDE.Contains(blockID)) {
-                    return null;
-                }
-
-                // We're allowed to update the block
-                return block;
-            }
-
-            return null;
-        }
-
-        public override bool SetBlockID (int x, int y, int z, int id)
-        {
-            int blockID = 0;
-            try {
-                blockID = GetBlockID(x, y, z);
-            }
-            catch {
-                return false;
-            }
-
-            if (
-                ((opt.OPT_OA) && (blockID != opt.OPT_ID)) ||
-                ((opt.OPT_OO) && (
-                    blockID == BLOCK_COAL || blockID == BLOCK_IRON ||
-                    blockID == BLOCK_GOLD || blockID == BLOCK_REDSTONE ||
-                    blockID == BLOCK_DIAMOND || blockID == BLOCK_LAPIS ||
-                    blockID == BLOCK_DIRT || blockID == BLOCK_GRAVEL) && (blockID != opt.OPT_ID)) ||
-                (opt.OPT_OB_INCLUDE.Count > 0) ||
-                (blockID == BLOCK_STONE)
-            ) {
-                // If overriding list of ores, check membership
-                if (opt.OPT_OB_INCLUDE.Count > 0 && !opt.OPT_OB_INCLUDE.Contains(blockID)) {
-                    return false;
-                }
-
-                // Check for any excluded block
-                if (opt.OPT_OB_EXCLUDE.Contains(blockID)) {
-                    return false;
-                }
-
-                // We're allowed to update the block
-                return base.SetBlockID(x, y, z, id);
-            }
-
-            return false;
-        }*/
     }
 }

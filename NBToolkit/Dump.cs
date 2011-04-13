@@ -96,8 +96,9 @@ namespace NBToolkit
 
         public override void Run ()
         {
-            NBTWorld world = GetWorld(opt);
-            FilteredChunkManager fcm = new FilteredChunkManager(world.ChunkManager, opt.GetChunkFilter());
+            INBTWorld world = GetWorld(opt);
+            IChunkManager cm = world.GetChunkManager(opt.OPT_DIM);
+            FilteredChunkManager fcm = new FilteredChunkManager(cm, opt.GetChunkFilter());
 
             StreamWriter fstr;
             try {

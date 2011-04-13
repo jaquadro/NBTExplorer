@@ -11,15 +11,15 @@ namespace NBToolkit
 
         public abstract void Run ();
 
-        public NBTWorld GetWorld (TKOptions opt)
+        public INBTWorld GetWorld (TKOptions opt)
         {
-            NBTWorld world = null;
+            INBTWorld world = null;
             try {
                 if (opt.OPT_ALPHA) {
-                    world = new AlphaWorld(opt.OPT_WORLD, opt.OPT_DIM);
+                    world = AlphaWorld.Open(opt.OPT_WORLD);
                 }
                 else {
-                    world = new BetaWorld(opt.OPT_WORLD, opt.OPT_REGION, opt.OPT_DIM);
+                    world = BetaWorld.Open(opt.OPT_WORLD);
                 }
             }
             catch (Exception ex) {
