@@ -734,6 +734,34 @@ namespace Substrate
 
         #endregion
 
+        public void ResetBlockLight ()
+        {
+            for (int i = 0; i < _blocks.Length; i++) {
+                //BlockInfo info = BlockInfo.BlockTable[_blocks[i]];
+                _blockLight[i] = 0; // Math.Max(info.Luminance - info.Opacity, 0);
+            }
+        }
+
+        public void ResetSkyLight ()
+        {
+            for (int x = 0; x < XDim; x++) {
+                for (int z = 0; z < ZDim; z++) {
+                    int height = GetHeight(x, z);
+                    int ystride = x << 11 | z << 7;
+                    for (int y = 0; y < YDim; y++ ) {
+                        int index = ystride + y;
+
+                        if (y >= height) {
+                            _skyLight[index] = BlockInfo.MIN_LUMINANCE;
+                        }
+                        else {
+                            _skyLight[index] = BlockInfo.MIN_LUMINANCE;
+                        }
+                    }
+                }
+            }
+        }
+
         private int Timestamp ()
         {
             DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
