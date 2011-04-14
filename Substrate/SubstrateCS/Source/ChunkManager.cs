@@ -5,7 +5,7 @@ using System.Collections;
 namespace Substrate
 {
 
-    public class ChunkManager : IChunkManager, IChunkCache, IEnumerable<ChunkRef>
+    public class ChunkManager : IChunkManager, IEnumerable<ChunkRef>
     {
         public const int REGION_XLEN = 32;
         public const int REGION_ZLEN = 32;
@@ -18,21 +18,25 @@ namespace Substrate
 
         protected RegionManager _regionMan;
 
-        protected Dictionary<RegionKey, Region> _cache;
-        protected Dictionary<RegionKey, Region> _dirty;
+        //protected Dictionary<RegionKey, Region> _cache;
+        //protected Dictionary<RegionKey, Region> _dirty;
 
-        public ChunkManager (RegionManager rm)
+        protected ChunkCache _cache;
+
+        public ChunkManager (RegionManager rm, ChunkCache cache)
         {
             _regionMan = rm;
-            _cache = new Dictionary<RegionKey, Region>();
-            _dirty = new Dictionary<RegionKey, Region>();
+            _cache = cache;
+            //_cache = new Dictionary<RegionKey, Region>();
+            //_dirty = new Dictionary<RegionKey, Region>();
         }
 
         public ChunkManager (ChunkManager cm)
         {
             _regionMan = cm._regionMan;
-            _cache = new Dictionary<RegionKey, Region>();
-            _dirty = new Dictionary<RegionKey, Region>();
+            _cache = cm._cache;
+            //_cache = new Dictionary<RegionKey, Region>();
+            //_dirty = new Dictionary<RegionKey, Region>();
         }
 
         public int ChunkGlobalX (int cx)
@@ -72,7 +76,7 @@ namespace Substrate
                 return null;
             }
 
-            return r.GetChunkRef(cx & REGION_XMASK, cz & REGION_ZMASK, this);
+            return r.GetChunkRef(cx & REGION_XMASK, cz & REGION_ZMASK);
         }
 
         public bool ChunkExists (int cx, int cz)
@@ -94,10 +98,10 @@ namespace Substrate
                 r = _regionMan.CreateRegion(rx, rz);
             }
 
-            return r.CreateChunk(cx & REGION_XMASK, cz & REGION_ZMASK, this);
+            return r.CreateChunk(cx & REGION_XMASK, cz & REGION_ZMASK);
         }
 
-        public bool MarkChunkDirty (ChunkRef chunk)
+        /*public bool MarkChunkDirty (ChunkRef chunk)
         {
             Region r = GetRegion(chunk.X, chunk.Z);
             if (r == null) {
@@ -125,16 +129,25 @@ namespace Substrate
             r.MarkChunkClean(chunk);
 
             return true;
-        }
+        }*/
 
         public int Save ()
         {
             int saved = 0;
-            foreach (Region r in _dirty.Values) {
-                saved += r.Save();
+            IEnumerator<ChunkRef> en = _cache.GetDirtyEnumerator();
+            while (en.MoveNext()) {
+                ChunkRef chunk = en.Current;
+
+                Region r = GetRegion(chunk.X, chunk.Z);
+                if (r == null) {
+                    continue;
+                }
+
+                chunk.Save(r.GetChunkOutStream(chunk.LocalX, chunk.LocalZ));
+                saved++;
             }
 
-            _dirty.Clear();
+            _cache.ClearDirty();
             return saved;
         }
 
@@ -160,10 +173,6 @@ namespace Substrate
             }
 
             if (r.ChunkCount() == 0) {
-                RegionKey k = new RegionKey(r.X, r.Z);
-                _cache.Remove(k);
-                _dirty.Remove(k);
-
                 _regionMan.DeleteRegion(r.X, r.Z);
             }
 
@@ -245,7 +254,7 @@ namespace Substrate
                             _region = _enum.Current;
                         }
                         if (MoveNextInRegion()) {
-                            _chunk = _region.GetChunkRef(_x, _z, _cm);
+                            _chunk = _region.GetChunkRef(_x, _z);
                             return true;
                         }
                     }

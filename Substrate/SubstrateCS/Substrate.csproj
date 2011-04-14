@@ -59,8 +59,11 @@
       <HintPath>Assemblies\Ionic.Zlib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Source\ChunkCache.cs" />
     <Compile Include="Source\Level.cs" />
     <Compile Include="Source\PlayerManager.cs" />
     <Compile Include="Source\PlayerFile.cs" />

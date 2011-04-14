@@ -281,8 +281,8 @@ namespace Substrate
         {
             _level.Save();
 
-            foreach (KeyValuePair<int, RegionManager> rm in _regionMgrs) {
-                rm.Value.Save();
+            foreach (KeyValuePair<int, ChunkManager> cm in _chunkMgrs) {
+                cm.Value.Save();
             }
         }
 
@@ -301,8 +301,10 @@ namespace Substrate
                 Directory.CreateDirectory(path);
             }
 
-            RegionManager rm = new RegionManager(path);
-            ChunkManager cm = new ChunkManager(rm);
+            ChunkCache cc = new ChunkCache();
+
+            RegionManager rm = new RegionManager(path, cc);
+            ChunkManager cm = new ChunkManager(rm, cc);
             BlockManager bm = new BlockManager(cm);
 
             _regionMgrs[dim] = rm;

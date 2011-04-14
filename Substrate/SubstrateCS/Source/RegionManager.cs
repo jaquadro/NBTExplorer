@@ -25,9 +25,12 @@ namespace Substrate
 
         protected Dictionary<RegionKey, Region> _cache;
 
-        public RegionManager (string regionDir)
+        protected ChunkCache _chunkCache;
+
+        public RegionManager (string regionDir, ChunkCache cache)
         {
             _regionPath = regionDir;
+            _chunkCache = cache;
             _cache = new Dictionary<RegionKey, Region>();
         }
 
@@ -38,7 +41,7 @@ namespace Substrate
 
             try {
                 if (_cache.TryGetValue(k, out r) == false) {
-                    r = new Region(this, rx, rz);
+                    r = new Region(this, _chunkCache, rx, rz);
                     _cache.Add(k, r);
                 }
                 return r;
@@ -64,7 +67,7 @@ namespace Substrate
                     
                 }
 
-                r = new Region(this, rx, rz);
+                r = new Region(this, _chunkCache, rx, rz);
 
                 RegionKey k = new RegionKey(rx, rz);
                 _cache[k] = r;
@@ -113,7 +116,7 @@ namespace Substrate
             return true;
         }
 
-        public int Save ()
+        /*public int Save ()
         {
             int saved = 0;
             foreach (Region r in _cache.Values) {
@@ -121,7 +124,7 @@ namespace Substrate
             }
 
             return saved;
-        }
+        }*/
 
 
         #region IEnumerable<Region> Members

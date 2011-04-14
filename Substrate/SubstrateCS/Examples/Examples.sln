@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoveSpawn", "MoveSpawn\Move
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skyscraper", "Skyscraper\Skyscraper.csproj", "{83F55F54-7253-4B4D-BC37-E9D1CB63E0B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{B34A66B6-6A3B-42FC-AF39-74A30F487840}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Relight", "Relight\Relight.csproj", "{EBDD447B-01FA-4A29-B4AB-380EC4379B5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +45,10 @@ Global
 		{83F55F54-7253-4B4D-BC37-E9D1CB63E0B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83F55F54-7253-4B4D-BC37-E9D1CB63E0B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83F55F54-7253-4B4D-BC37-E9D1CB63E0B8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B34A66B6-6A3B-42FC-AF39-74A30F487840}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B34A66B6-6A3B-42FC-AF39-74A30F487840}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B34A66B6-6A3B-42FC-AF39-74A30F487840}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B34A66B6-6A3B-42FC-AF39-74A30F487840}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBDD447B-01FA-4A29-B4AB-380EC4379B5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBDD447B-01FA-4A29-B4AB-380EC4379B5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBDD447B-01FA-4A29-B4AB-380EC4379B5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBDD447B-01FA-4A29-B4AB-380EC4379B5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

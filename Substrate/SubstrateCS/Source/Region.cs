@@ -8,7 +8,7 @@ namespace Substrate
 {
     using NBT;
 
-    public class Region : IDisposable, IChunkContainer, IChunkCache
+    public class Region : IDisposable, IChunkContainer
     {
         private const int XDIM = 32;
         private const int ZDIM = 32;
@@ -27,8 +27,10 @@ namespace Substrate
 
         protected WeakReference _regionFile;
 
-        protected Dictionary<ChunkKey, WeakReference> _cache;
-        protected Dictionary<ChunkKey, ChunkRef> _dirty;
+        //protected Dictionary<ChunkKey, WeakReference> _cache;
+        //protected Dictionary<ChunkKey, ChunkRef> _dirty;
+
+        protected ChunkCache _cache;
 
         public int X
         {
@@ -50,24 +52,26 @@ namespace Substrate
             get { return ZDIM; }
         }
 
-        public Region (RegionManager rm, int rx, int rz)
+        public Region (RegionManager rm, ChunkCache cache, int rx, int rz)
         {
             _regionMan = rm;
+            _cache = cache;
             _regionFile = new WeakReference(null);
             _rx = rx;
             _rz = rz;
 
-            _cache = new Dictionary<ChunkKey, WeakReference>();
-            _dirty = new Dictionary<ChunkKey, ChunkRef>();
+            //_cache = new Dictionary<ChunkKey, WeakReference>();
+            //_dirty = new Dictionary<ChunkKey, ChunkRef>();
 
             if (!File.Exists(GetFilePath())) {
                 throw new FileNotFoundException();
             }
         }
 
-        public Region (RegionManager rm, string filename)
+        public Region (RegionManager rm, ChunkCache cache, string filename)
         {
             _regionMan = rm;
+            _cache = cache;
             _regionFile = new WeakReference(null);
 
             ParseFileName(filename, out _rx, out _rz);
@@ -217,32 +221,25 @@ namespace Substrate
             return count;
         }
 
-        public ChunkRef GetChunkRef (int lcx, int lcz, IChunkCache cache)
+        public ChunkRef GetChunkRef (int lcx, int lcz)
         {
             if (!LocalBoundsCheck(lcx, lcz)) {
                 Region alt = GetForeignRegion(lcx, lcz);
-                return (alt == null) ? null : alt.GetChunkRef(ForeignX(lcx), ForeignZ(lcz), cache);
+                return (alt == null) ? null : alt.GetChunkRef(ForeignX(lcx), ForeignZ(lcz));
             }
 
-            ChunkKey k = new ChunkKey(lcx, lcz);
+            int cx = lcx + _rx * ChunkManager.REGION_XLEN;
+            int cz = lcz + _rz * ChunkManager.REGION_ZLEN;
 
-            ChunkRef c = null;
-
-            WeakReference chunkref = null;
-            if (_cache.TryGetValue(k, out chunkref)) {
-                c = chunkref.Target as ChunkRef;
-            }
-            else {
-                _cache.Add(k, new WeakReference(null));
-            }
-
+            ChunkKey k = new ChunkKey(cx, cz);
+            ChunkRef c = _cache.Fetch(k);
             if (c != null) {
                 return c;
             }
 
             try {
-                c = new ChunkRef(this, cache, lcx, lcz);
-                _cache[k].Target = c;
+                c = new ChunkRef(this, _cache, lcx, lcz);
+                _cache.Insert(c);
                 return c;
             }
             catch (MissingChunkException) {
@@ -252,14 +249,9 @@ namespace Substrate
 
         public ChunkRef CreateChunk (int lcx, int lcz)
         {
-            return CreateChunk(lcx, lcz, this);
-        }
-
-        public ChunkRef CreateChunk (int lcx, int lcz, IChunkCache cache)
-        {
             if (!LocalBoundsCheck(lcx, lcz)) {
                 Region alt = GetForeignRegion(lcx, lcz);
-                return (alt == null) ? null : alt.CreateChunk(ForeignX(lcx), ForeignZ(lcz), cache);
+                return (alt == null) ? null : alt.CreateChunk(ForeignX(lcx), ForeignZ(lcz));
             }
 
             DeleteChunk(lcx, lcz);
@@ -270,9 +262,8 @@ namespace Substrate
             Chunk c = new Chunk(cx, cz);
             c.Save(GetChunkOutStream(lcx, lcz));
 
-            ChunkRef cr = new ChunkRef(this, cache, lcx, lcz);
-            ChunkKey k = new ChunkKey(lcx, lcz);
-            _cache[k] = new WeakReference(cr);
+            ChunkRef cr = new ChunkRef(this, _cache, lcx, lcz);
+            _cache.Insert(cr);
 
             return cr;
         }
@@ -314,11 +305,6 @@ namespace Substrate
             return new Chunk(GetChunkTree(lcx, lcz));
         }
 
-        public ChunkRef GetChunkRef (int lcx, int lcz)
-        {
-            return GetChunkRef(lcx, lcz, this);
-        }
-
         public bool ChunkExists (int lcx, int lcz)
         {
             if (!LocalBoundsCheck(lcx, lcz)) {
@@ -346,7 +332,6 @@ namespace Substrate
 
             ChunkKey k = new ChunkKey(lcx, lcz);
             _cache.Remove(k);
-            _dirty.Remove(k);
 
             if (ChunkCount() == 0) {
                 _regionMan.DeleteRegion(X, Z);
@@ -358,22 +343,20 @@ namespace Substrate
         public int Save ()
         {
             int saved = 0;
-            foreach (ChunkRef c in _dirty.Values) {
-                int cx = c.X;
-                int cz = c.Z;
-                int lcx = cx - _rx * ChunkManager.REGION_XLEN;
-                int lcz = cz - _rz * ChunkManager.REGION_ZLEN;
+            IEnumerator<ChunkRef> en = _cache.GetDirtyEnumerator();
+            while (en.MoveNext()) {
+                ChunkRef chunk = en.Current;
 
-                if (!ChunkExists(lcx, lcz)) {
+                if (!ChunkExists(chunk.LocalX, chunk.LocalZ)) {
                     throw new MissingChunkException();
                 }
 
-                if (c.Save(GetChunkOutStream(lcx, lcz))) {
+                if (chunk.Save(GetChunkOutStream(chunk.LocalX, chunk.LocalZ))) {
                     saved++;
                 }
             }
 
-            _dirty.Clear();
+            _cache.ClearDirty();
             return saved;
         }
 
@@ -387,7 +370,7 @@ namespace Substrate
 
         #region IChunkCache Members
 
-        public bool MarkChunkDirty (ChunkRef chunk)
+        /*public bool MarkChunkDirty (ChunkRef chunk)
         {
             int cx = chunk.X;
             int cz = chunk.Z;
@@ -415,7 +398,7 @@ namespace Substrate
                 return true;
             }
             return false;
-        }
+        }*/
 
         #endregion
 
