@@ -40,6 +40,12 @@ namespace NBToolkit
                     options.SetDefaults();
                     filter.Run();
                 }
+                else if (args[0] == "relight") {
+                    RelightOptions options = new RelightOptions(args);
+                    Relight filter = new Relight(options);
+                    options.SetDefaults();
+                    filter.Run();
+                }
                 else if (args[0] == "help") {
                     if (args.Length < 2) {
                         args = new string[2] { "help", "help" };
@@ -78,8 +84,15 @@ namespace NBToolkit
                         Console.WriteLine();
                         options.PrintUsage();
                     }
+                    else if (args[1] == "relight") {
+                        options = new RelightOptions(args);
+
+                        WriteBlock("Recalculates the blocklight and/or skylight values for selected chunks.  This completely resets the lighting in a chunk, recalculates it from existing light sources, then stiches the lighting seamlessly back into neighboring chunks.");
+                        Console.WriteLine();
+                        options.PrintUsage();
+                    }
                     else {
-                        WriteBlock("Prints help and usage information for another command.  Available commands are 'oregen' and 'replace'.");
+                        WriteBlock("Prints help and usage information for another command.  Available commands are 'oregen', 'replace', 'purge', 'dump', 'relight'.");
                         Console.WriteLine();
                         Console.WriteLine("Usage: nbtoolkit help <command>");
                     }
@@ -101,6 +114,7 @@ namespace NBToolkit
                     Console.WriteLine("  replace     Replace one block type with another");
                     Console.WriteLine("  purge       Delete chunks");
                     Console.WriteLine("  dump        Dump parsed chunk data to a readable JSON file");
+                    Console.WriteLine("  relight     Recalculate lighting on chunks");
                     Console.WriteLine();
                     options.PrintUsage();
                     return;

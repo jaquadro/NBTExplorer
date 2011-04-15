@@ -63,6 +63,7 @@
     <Compile Include="NDesk\Options.cs" />
     <Compile Include="Oregen.cs" />
     <Compile Include="Purge.cs" />
+    <Compile Include="Relight.cs" />
     <Compile Include="Replace.cs" />
     <Compile Include="TKFilter.cs" />
     <Compile Include="TKOptions.cs" />

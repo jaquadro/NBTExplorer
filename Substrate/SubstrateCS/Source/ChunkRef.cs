@@ -548,7 +548,7 @@ namespace Substrate
             }
         }
 
-        private void UpdateBlockLight (int lx, int ly, int lz)
+        public void UpdateBlockLight (int lx, int ly, int lz)
         {
             BlockKey primary = new BlockKey(lx, ly, lz);
             _update.Enqueue(primary);
@@ -560,6 +560,11 @@ namespace Substrate
             QueueRelight(new BlockKey(lx, ly, lz - 1));
             QueueRelight(new BlockKey(lx, ly, lz + 1));
 
+            UpdateBlockLight();
+        }
+
+        private void UpdateBlockLight ()
+        {
             while (_update.Count > 0) {
                 BlockKey k = _update.Dequeue();
                 int index = LightBitmapIndex(k);
@@ -766,6 +771,37 @@ namespace Substrate
             int light = src.GetBlockSkyLight(x, y, z);
 
             return light;
+        }
+
+        public void UpdateEdgeBlockLight ()
+        {
+            QueueChunkEdges();
+            UpdateBlockLight();
+        }
+
+        public void UpdateEdgeSkyLight ()
+        {
+            QueueChunkEdges();
+            UpdateSkyLight();
+        }
+
+        private void QueueChunkEdges ()
+        {
+            // X = 0, X = XDim
+            for (int z = 0; z < ZDim; z++) {
+                for (int y = 0; y < YDim; y++) {
+                    QueueRelight(new BlockKey(0, y, z));
+                    QueueRelight(new BlockKey(XDim - 1, y, z));
+                }
+            }
+
+            // Z = 0, Z = ZDim
+            for (int x = 1; x < XDim - 1; x++) {
+                for (int y = 0; y < YDim; y++) {
+                    QueueRelight(new BlockKey(x, y, 0));
+                    QueueRelight(new BlockKey(x, y, ZDim - 1));
+                }
+            }
         }
     }
 
