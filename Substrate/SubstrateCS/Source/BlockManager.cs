@@ -28,7 +28,7 @@ namespace Substrate
 
         protected ChunkRef _cache;
 
-        private bool _autoLight;
+        private bool _autoLight = true;
 
         public bool AutoRecalcLight
         {

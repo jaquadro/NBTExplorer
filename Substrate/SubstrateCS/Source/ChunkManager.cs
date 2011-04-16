@@ -179,6 +179,31 @@ namespace Substrate
             return true;
         }
 
+        public void RelightDirtyChunks ()
+        {
+            List<ChunkRef> dirty = new List<ChunkRef>();
+
+            IEnumerator<ChunkRef> en = _cache.GetDirtyEnumerator();
+            while (en.MoveNext()) {
+                dirty.Add(en.Current);
+            }
+
+            foreach (ChunkRef chunk in dirty) {
+                chunk.ResetBlockLight();
+                chunk.ResetSkyLight();
+            }
+
+            foreach (ChunkRef chunk in dirty) {
+                chunk.RebuildBlockLight();
+                chunk.RebuildSkyLight();
+            }
+
+            foreach (ChunkRef chunk in dirty) {
+                chunk.UpdateEdgeBlockLight();
+                chunk.UpdateEdgeSkyLight();
+            }
+        }
+
         public RegionManager GetRegionManager ()
         {
             return _regionMan;

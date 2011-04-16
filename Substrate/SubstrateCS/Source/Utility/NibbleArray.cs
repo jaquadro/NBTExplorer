@@ -47,6 +47,13 @@ namespace Substrate.Utility
             }
         }
 
+        public void Clear ()
+        {
+            for (int i = 0; i < _data.Length; i++) {
+                _data[i] = 0;
+            }
+        }
+
         #region ICopyable<NibbleArray> Members
 
         public NibbleArray Copy ()

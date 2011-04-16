@@ -18,8 +18,8 @@ namespace Substrate
                 new NBTArrayNode("SkyLight", 16384),
                 new NBTArrayNode("BlockLight", 16384),
                 new NBTArrayNode("HeightMap", 256),
-                new NBTListNode("Entities", TagType.TAG_COMPOUND),
-                new NBTListNode("TileEntities", TagType.TAG_COMPOUND, TileEntity.BaseSchema),
+                new NBTListNode("Entities", TagType.TAG_COMPOUND, 0, NBTOptions.CREATE_ON_MISSING),
+                new NBTListNode("TileEntities", TagType.TAG_COMPOUND, TileEntity.BaseSchema, NBTOptions.CREATE_ON_MISSING),
                 new NBTScalerNode("LastUpdate", TagType.TAG_LONG, NBTOptions.CREATE_ON_MISSING),
                 new NBTScalerNode("xPos", TagType.TAG_INT),
                 new NBTScalerNode("zPos", TagType.TAG_INT),
@@ -633,7 +633,8 @@ namespace Substrate
 
         public bool ValidateTree (TagValue tree)
         {
-            return new NBTVerifier(tree, LevelSchema).Verify();
+            NBTVerifier v = new NBTVerifier(tree, LevelSchema);
+            return v.Verify();
         }
 
         #endregion
@@ -736,30 +737,12 @@ namespace Substrate
 
         public void ResetBlockLight ()
         {
-            for (int i = 0; i < _blocks.Length; i++) {
-                //BlockInfo info = BlockInfo.BlockTable[_blocks[i]];
-                _blockLight[i] = 0; // Math.Max(info.Luminance - info.Opacity, 0);
-            }
+            _blockLight.Clear();
         }
 
         public void ResetSkyLight ()
         {
-            for (int x = 0; x < XDim; x++) {
-                for (int z = 0; z < ZDim; z++) {
-                    int height = GetHeight(x, z);
-                    int ystride = x << 11 | z << 7;
-                    for (int y = 0; y < YDim; y++ ) {
-                        int index = ystride + y;
-
-                        if (y >= height) {
-                            _skyLight[index] = BlockInfo.MIN_LUMINANCE;
-                        }
-                        else {
-                            _skyLight[index] = BlockInfo.MIN_LUMINANCE;
-                        }
-                    }
-                }
-            }
+            _skyLight.Clear();
         }
 
         private int Timestamp ()

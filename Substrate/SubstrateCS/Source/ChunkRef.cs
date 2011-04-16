@@ -775,12 +775,14 @@ namespace Substrate
 
         public void UpdateEdgeBlockLight ()
         {
+            GetChunk();
             QueueChunkEdges();
             UpdateBlockLight();
         }
 
         public void UpdateEdgeSkyLight ()
         {
+            GetChunk();
             QueueChunkEdges();
             UpdateSkyLight();
         }

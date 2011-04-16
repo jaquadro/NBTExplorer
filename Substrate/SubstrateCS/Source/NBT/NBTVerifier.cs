@@ -211,7 +211,7 @@ namespace Substrate.NBT
 
                 if (value == null) {
                     if ((node.Options & NBTOptions.CREATE_ON_MISSING) == NBTOptions.CREATE_ON_MISSING) {
-                        _scratch[node.Name] = schema.BuildDefaultTree();
+                        _scratch[node.Name] = node.BuildDefaultTree();
                         continue;
                     }
                     else if ((node.Options & NBTOptions.OPTIONAL) == NBTOptions.OPTIONAL) {
