@@ -199,8 +199,29 @@ namespace Substrate
             }
 
             foreach (ChunkRef chunk in dirty) {
-                chunk.UpdateEdgeBlockLight();
-                chunk.UpdateEdgeSkyLight();
+                ChunkRef east = chunk.GetEastNeighbor();
+                if (!east.IsDirty) {
+                    chunk.UpdateEdgeBlockLight(east);
+                    chunk.UpdateEdgeSkyLight(east);
+                }
+
+                ChunkRef west = chunk.GetWestNeighbor();
+                if (!west.IsDirty) {
+                    chunk.UpdateEdgeBlockLight(west);
+                    chunk.UpdateEdgeSkyLight(west);
+                }
+
+                ChunkRef north = chunk.GetNorthNeighbor();
+                if (!north.IsDirty) {
+                    chunk.UpdateEdgeBlockLight(north);
+                    chunk.UpdateEdgeSkyLight(north);
+                }
+
+                ChunkRef south = chunk.GetSouthNeighbor();
+                if (!south.IsDirty) {
+                    chunk.UpdateEdgeBlockLight(south);
+                    chunk.UpdateEdgeSkyLight(south);
+                }
             }
         }
 

@@ -47,6 +47,11 @@ namespace Substrate
             set { _autoLight = value; }
         }
 
+        public bool IsDirty
+        {
+            get { return _dirty; }
+        }
+
         public ChunkRef (IChunkContainer container, IChunkCache cache, int cx, int cz)
         {
             _container = container;
@@ -803,6 +808,108 @@ namespace Substrate
                     QueueRelight(new BlockKey(x, y, 0));
                     QueueRelight(new BlockKey(x, y, ZDim - 1));
                 }
+            }
+        }
+
+        public void UpdateEdgeBlockLight (ChunkRef chunk)
+        {
+            GetChunk();
+
+            if (chunk.X == X && chunk.Z == Z - 1) {
+                for (int x = 0; x < XDim; x++) {
+                    for (int y = 0; y < YDim; y++) {
+                        TestBlockLight(chunk, x, y, 0, x, y, ZDim - 1);
+                    }
+                }
+            }
+
+            else if (chunk.X == X && chunk.Z == Z + 1) {
+                for (int x = 0; x < XDim; x++) {
+                    for (int y = 0; y < YDim; y++) {
+                        TestBlockLight(chunk, x, y, ZDim - 1, x, y, 0);
+                    }
+                }
+            }
+
+            else if (chunk.Z == Z && chunk.X == X - 1) {
+                for (int z = 0; z < ZDim; z++) {
+                    for (int y = 0; y < YDim; y++) {
+                        TestBlockLight(chunk, 0, y, z, XDim - 1, y, z);
+                    }
+                }
+            }
+
+            else if (chunk.Z == Z && chunk.X == X + 1) {
+                for (int z = 0; z < ZDim; z++) {
+                    for (int y = 0; y < YDim; y++) {
+                        TestBlockLight(chunk, XDim - 1, y, z, 0, y, z);
+                    }
+                }
+            }
+
+            UpdateBlockLight();
+        }
+
+        public void UpdateEdgeSkyLight (ChunkRef chunk)
+        {
+            GetChunk();
+
+            if (chunk.X == X && chunk.Z == Z - 1) {
+                for (int x = 0; x < XDim; x++) {
+                    for (int y = 0; y < YDim; y++) {
+                        TestSkyLight(chunk, x, y, 0, x, y, ZDim - 1);
+                    }
+                }
+            }
+
+            else if (chunk.X == X && chunk.Z == Z + 1) {
+                for (int x = 0; x < XDim; x++) {
+                    for (int y = 0; y < YDim; y++) {
+                        TestSkyLight(chunk, x, y, ZDim - 1, x, y, 0);
+                    }
+                }
+            }
+
+            else if (chunk.Z == Z && chunk.X == X - 1) {
+                for (int z = 0; z < ZDim; z++) {
+                    for (int y = 0; y < YDim; y++) {
+                        TestSkyLight(chunk, 0, y, z, XDim - 1, y, z);
+                    }
+                }
+            }
+
+            else if (chunk.Z == Z && chunk.X == X + 1) {
+                for (int z = 0; z < ZDim; z++) {
+                    for (int y = 0; y < YDim; y++) {
+                        TestSkyLight(chunk, XDim - 1, y, z, 0, y, z);
+                    }
+                }
+            }
+
+            UpdateSkyLight();
+        }
+
+        private void TestBlockLight (ChunkRef chunk, int x1, int y1, int z1, int x2, int y2, int z2)
+        {
+            int light1 = GetBlockLight(x1, y1, z1);
+            int light2 = chunk.GetBlockLight(x2, y2, z2);
+            int lum1 = GetBlockInfo(x1, y1, z1).Luminance;
+            int lum2 = chunk.GetBlockInfo(x2, y2, z2).Luminance;
+
+            int v1 = Math.Max(light1, lum1);
+            int v2 = Math.Max(light2, lum2);
+            if (Math.Abs(v1 - v2) > 1) {
+                QueueRelight(new BlockKey(x1, y1, z1));
+            }
+        }
+
+        private void TestSkyLight (ChunkRef chunk, int x1, int y1, int z1, int x2, int y2, int z2)
+        {
+            int light1 = GetBlockSkyLight(x1, y1, z1);
+            int light2 = chunk.GetBlockSkyLight(x2, y2, z2);
+
+            if (Math.Abs(light1 - light2) > 1) {
+                QueueRelight(new BlockKey(x1, y1, z1));
             }
         }
     }
