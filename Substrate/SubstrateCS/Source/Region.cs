@@ -257,7 +257,7 @@ namespace Substrate
             int cx = lcx + _rx * ChunkManager.REGION_XLEN;
             int cz = lcz + _rz * ChunkManager.REGION_ZLEN;
 
-            Chunk c = new Chunk(cx, cz);
+            Chunk c = Chunk.Create(cx, cz);
             c.Save(GetChunkOutStream(lcx, lcz));
 
             ChunkRef cr = ChunkRef.Create(this, _cache, lcx, lcz);
@@ -300,7 +300,7 @@ namespace Substrate
                 return null;
             }
 
-            return new Chunk(GetChunkTree(lcx, lcz));
+            return Chunk.CreateVerified(GetChunkTree(lcx, lcz));
         }
 
         public bool ChunkExists (int lcx, int lcz)

@@ -64,21 +64,35 @@ namespace Substrate
             set { _tree.Root["Level"].ToTagCompound()["TerrainPopulated"].ToTagByte().Data = (byte)(value ? 1 : 0); }
         }
 
-        public Chunk (int x, int z)
+        private Chunk ()
         {
-            _cx = x;
-            _cz = z;
-
-            BuildNBTTree();
-
-            BuildTileEntityCache();
         }
 
-        public Chunk (NBT_Tree tree)
+        public static Chunk Create (int x, int z)
         {
-            if (LoadTreeSafe(tree.Root) == null) {
-                throw new InvalidNBTObjectException();
-            }
+            Chunk c = new Chunk();
+
+            c._cx = x;
+            c._cz = z;
+
+            c.BuildNBTTree();
+            c.BuildTileEntityCache();
+
+            return c;
+        }
+
+        public static Chunk Create (NBT_Tree tree)
+        {
+            Chunk c = new Chunk();
+
+            return c.LoadTree(tree.Root);
+        }
+
+        public static Chunk CreateVerified (NBT_Tree tree)
+        {
+            Chunk c = new Chunk();
+
+            return c.LoadTreeSafe(tree.Root);
         }
 
         private void BuildNBTTree ()
@@ -570,7 +584,7 @@ namespace Substrate
 
         public Chunk Copy ()
         {
-            return new Chunk(_tree.Copy());
+            return Chunk.Create(_tree.Copy());
         }
 
         #endregion

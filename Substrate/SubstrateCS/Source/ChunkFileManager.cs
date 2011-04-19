@@ -92,7 +92,7 @@ namespace Substrate
                 return null;
             }
 
-            return new Chunk(GetChunkTree(cx, cz));
+            return Chunk.CreateVerified(GetChunkTree(cx, cz));
         }
 
         public ChunkRef GetChunkRef (int cx, int cz)
@@ -124,7 +124,7 @@ namespace Substrate
         public ChunkRef CreateChunk (int cx, int cz)
         {
             DeleteChunk(cx, cz);
-            Chunk c = new Chunk(cx, cz);
+            Chunk c = Chunk.Create(cx, cz);
             c.Save(GetChunkOutStream(cx, cz));
 
             ChunkRef cr = ChunkRef.Create(this, this, cx, cz);

@@ -52,12 +52,8 @@ namespace Substrate
             get { return _dirty; }
         }
 
-        private ChunkRef (IChunkContainer container, IChunkCache cache, int cx, int cz)
+        private ChunkRef ()
         {
-            _container = container;
-            _cache = cache;
-            _cx = cx;
-            _cz = cz;
         }
 
         public static ChunkRef Create (IChunkContainer container, IChunkCache cache, int cx, int cz)
@@ -66,7 +62,14 @@ namespace Substrate
                 return null;
             }
 
-            return new ChunkRef(container, cache, cx, cz);
+            ChunkRef c = new ChunkRef();
+
+            c._container = container;
+            c._cache = cache;
+            c._cx = cx;
+            c._cz = cz;
+
+            return c;
         }
 
         public int BlockGlobalX (int x)
@@ -480,9 +483,33 @@ namespace Substrate
         {
             GetChunk();
 
+            // Optimization - only need to queue at level of highest neighbor's height
             for (int x = 0; x < XDim; x++) {
                 for (int z = 0; z < ZDim; z++) {
-                    QueueRelight(new BlockKey(x, YDim - 1, z));
+                    ChunkRef ce = LocalChunk(x, 0, z - 1);
+                    ChunkRef cn = LocalChunk(x - 1, 0, z);
+                    ChunkRef cs = LocalChunk(x + 1, 0, z);
+                    ChunkRef cw = LocalChunk(x, 0, z + 1);
+
+                    int h = GetHeight(x, z);
+                    if (ce != null) {
+                        h = Math.Max(h, ce.GetHeight(x, ZDim - 1));
+                    }
+                    if (cn != null) {
+                        h = Math.Max(h, cn.GetHeight(XDim - 1, z));
+                    }
+                    if (cs != null) {
+                        h = Math.Max(h, cs.GetHeight(0, z));
+                    }
+                    if (cw != null) {
+                        h = Math.Max(h, cw.GetHeight(x, 0));
+                    }
+
+                    for (int y = h; y < YDim; y++) {
+                        SetBlockSkyLight(x, y, z, BlockInfo.MAX_LUMINANCE);
+                    }
+
+                    QueueRelight(new BlockKey(x, h, z));
                 }
             }
 
