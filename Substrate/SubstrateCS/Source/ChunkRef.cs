@@ -505,7 +505,7 @@ namespace Substrate
                         h = Math.Max(h, cw.GetHeight(x, 0));
                     }
 
-                    for (int y = h; y < YDim; y++) {
+                    for (int y = h + 1; y < YDim; y++) {
                         SetBlockSkyLight(x, y, z, BlockInfo.MAX_LUMINANCE);
                     }
 
