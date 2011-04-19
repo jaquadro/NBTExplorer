@@ -52,16 +52,21 @@ namespace Substrate
             get { return _dirty; }
         }
 
-        public ChunkRef (IChunkContainer container, IChunkCache cache, int cx, int cz)
+        private ChunkRef (IChunkContainer container, IChunkCache cache, int cx, int cz)
         {
             _container = container;
             _cache = cache;
             _cx = cx;
             _cz = cz;
+        }
 
-            if (!_container.ChunkExists(cx, cz)) {
-                throw new MissingChunkException();
+        public static ChunkRef Create (IChunkContainer container, IChunkCache cache, int cx, int cz)
+        {
+            if (!container.ChunkExists(cx, cz)) {
+                return null;
             }
+
+            return new ChunkRef(container, cache, cx, cz);
         }
 
         public int BlockGlobalX (int x)

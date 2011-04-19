@@ -113,14 +113,12 @@ namespace Substrate
                 return c;
             }
 
-            try {
-                c = new ChunkRef(this, this, cx, cz);
+            c = ChunkRef.Create(this, this, cx, cz);
+            if (c != null) {
                 _cache[k].Target = c;
-                return c;
             }
-            catch (MissingChunkException) {
-                return null;
-            }
+
+            return c;
         }
 
         public ChunkRef CreateChunk (int cx, int cz)
@@ -129,7 +127,7 @@ namespace Substrate
             Chunk c = new Chunk(cx, cz);
             c.Save(GetChunkOutStream(cx, cz));
 
-            ChunkRef cr = new ChunkRef(this, this, cx, cz);
+            ChunkRef cr = ChunkRef.Create(this, this, cx, cz);
             ChunkKey k = new ChunkKey(cx, cz);
             _cache[k] = new WeakReference(cr);
 

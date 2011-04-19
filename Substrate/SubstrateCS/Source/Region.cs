@@ -237,14 +237,12 @@ namespace Substrate
                 return c;
             }
 
-            try {
-                c = new ChunkRef(this, _cache, lcx, lcz);
+            c = ChunkRef.Create(this, _cache, lcx, lcz);
+            if (c != null) {
                 _cache.Insert(c);
-                return c;
             }
-            catch (MissingChunkException) {
-                return null;
-            }
+
+            return c;
         }
 
         public ChunkRef CreateChunk (int lcx, int lcz)
@@ -262,7 +260,7 @@ namespace Substrate
             Chunk c = new Chunk(cx, cz);
             c.Save(GetChunkOutStream(lcx, lcz));
 
-            ChunkRef cr = new ChunkRef(this, _cache, lcx, lcz);
+            ChunkRef cr = ChunkRef.Create(this, _cache, lcx, lcz);
             _cache.Insert(cr);
 
             return cr;

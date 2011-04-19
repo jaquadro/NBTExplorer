@@ -181,44 +181,47 @@ namespace Substrate
 
         public void RelightDirtyChunks ()
         {
-            List<ChunkRef> dirty = new List<ChunkRef>();
+            //List<ChunkRef> dirty = new List<ChunkRef>();
+            Dictionary<ChunkKey, ChunkRef> dirty = new Dictionary<ChunkKey, ChunkRef>();
 
             IEnumerator<ChunkRef> en = _cache.GetDirtyEnumerator();
             while (en.MoveNext()) {
-                dirty.Add(en.Current);
+                ChunkKey key = new ChunkKey(en.Current.X, en.Current.Z);
+                dirty[key] = en.Current;
             }
 
-            foreach (ChunkRef chunk in dirty) {
+            foreach (ChunkRef chunk in dirty.Values) {
                 chunk.ResetBlockLight();
                 chunk.ResetSkyLight();
             }
 
-            foreach (ChunkRef chunk in dirty) {
+            foreach (ChunkRef chunk in dirty.Values) {
                 chunk.RebuildBlockLight();
                 chunk.RebuildSkyLight();
             }
 
-            foreach (ChunkRef chunk in dirty) {
-                ChunkRef east = chunk.GetEastNeighbor();
-                if (!east.IsDirty) {
+            foreach (ChunkRef chunk in dirty.Values) {
+                
+                if (!dirty.ContainsKey(new ChunkKey(chunk.X, chunk.Z - 1))) {
+                    ChunkRef east = chunk.GetEastNeighbor();
                     chunk.UpdateEdgeBlockLight(east);
                     chunk.UpdateEdgeSkyLight(east);
                 }
 
-                ChunkRef west = chunk.GetWestNeighbor();
-                if (!west.IsDirty) {
+                if (!dirty.ContainsKey(new ChunkKey(chunk.X, chunk.Z + 1))) {
+                    ChunkRef west = chunk.GetWestNeighbor();
                     chunk.UpdateEdgeBlockLight(west);
                     chunk.UpdateEdgeSkyLight(west);
                 }
 
-                ChunkRef north = chunk.GetNorthNeighbor();
-                if (!north.IsDirty) {
+                if (!dirty.ContainsKey(new ChunkKey(chunk.X - 1, chunk.Z))) {
+                    ChunkRef north = chunk.GetNorthNeighbor();
                     chunk.UpdateEdgeBlockLight(north);
                     chunk.UpdateEdgeSkyLight(north);
                 }
 
-                ChunkRef south = chunk.GetSouthNeighbor();
-                if (!south.IsDirty) {
+                if (!dirty.ContainsKey(new ChunkKey(chunk.X + 1, chunk.Z))) {
+                    ChunkRef south = chunk.GetSouthNeighbor();
                     chunk.UpdateEdgeBlockLight(south);
                     chunk.UpdateEdgeSkyLight(south);
                 }

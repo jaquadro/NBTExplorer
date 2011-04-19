@@ -66,6 +66,11 @@ namespace Substrate
 
         bool SetBlockLight (int x, int y, int z, int light);
         bool SetBlockSkyLight (int x, int y, int z, int light);
+
+        //---
+
+        //void ResetBlockLight ();
+        //void ResetSkyLight ();
     }
 
     public interface IPropertyBlockContainer : IBlockContainer
