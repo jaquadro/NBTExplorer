@@ -35,6 +35,8 @@ namespace Substrate
         SANDSTONE = 24,
         NOTE_BLOCK = 25,
         BED = 26,
+        POWERED_RAIL = 27,
+        DETECTOR_RAIL = 28,
         WOOL = 35,
         YELLOW_FLOWER = 37,
         RED_ROSE = 38,
@@ -263,6 +265,8 @@ namespace Substrate
         public static BlockInfo Sandstone;
         public static BlockInfoEx NoteBlock;
         public static BlockInfo Bed;
+        public static BlockInfo PoweredRail;
+        public static BlockInfo DetectorRail;
         public static BlockInfo Wool;
         public static BlockInfo YellowFlower;
         public static BlockInfo RedRose;
@@ -360,6 +364,8 @@ namespace Substrate
             Sandstone = new BlockInfo(24, "Sandstone");
             NoteBlock = new BlockInfoEx(25, "Note Block");
             Bed = new BlockInfo(26, "Bed").SetOpacity(0);
+            PoweredRail = new BlockInfo(27, "Powered Rail").SetOpacity(0);
+            DetectorRail = new BlockInfo(28, "Detector Rail").SetOpacity(0);
             Wool = new BlockInfo(35, "Wool");
             YellowFlower = new BlockInfo(37, "Yellow Flower").SetOpacity(0);
             RedRose = new BlockInfo(38, "Red Rose").SetOpacity(0);
@@ -448,6 +454,8 @@ namespace Substrate
             Water.SetDataLimits(0, 7, 0x8);
             Lava.SetDataLimits(0, 7, 0x8);
             Crops.SetDataLimits(0, 7, 0);
+            PoweredRail.SetDataLimits(0, 5, 0x8);
+            DetectorRail.SetDataLimits(0, 5, 0x8);
             Wool.SetDataLimits(0, 15, 0);
             Torch.SetDataLimits(1, 5, 0);
             RedstoneTorch.SetDataLimits(0, 5, 0);
