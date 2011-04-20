@@ -509,12 +509,13 @@ namespace Substrate
                         SetBlockSkyLight(x, y, z, BlockInfo.MAX_LUMINANCE);
                     }
 
-                    QueueRelight(new BlockKey(x, h, z));
+                    //QueueRelight(new BlockKey(x, h, z));
+                    SpreadSkyLight(x, h, z);
                 }
             }
 
-            MarkDirty();
-            UpdateSkyLight();
+            //MarkDirty();
+            //UpdateSkyLight();
         }
 
         private struct LightRecord
@@ -581,6 +582,88 @@ namespace Substrate
                     spread.Enqueue(new LightRecord(rec.x, rec.y + 1, rec.z, dimStr - 1));
                     spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z - 1, dimStr - 1));
                     spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z + 1, dimStr - 1));
+                }
+            }
+        }
+
+        private void SpreadSkyLight (int lx, int ly, int lz)
+        {
+            BlockInfo primary = GetBlockInfo(lx, ly, lz);
+            int primaryLight = GetBlockSkyLight(lx, ly, lz);
+            int priLum = Math.Max(BlockInfo.MAX_LUMINANCE - primary.Opacity, 0);
+
+            if (primaryLight < priLum) {
+                SetBlockSkyLight(lx, ly, lz, priLum);
+            }
+
+            if (primaryLight > BlockInfo.MAX_LUMINANCE - 1) {
+                return;
+            }
+
+            Queue<LightRecord> spread = new Queue<LightRecord>();
+
+            if (GetHeight(lx, lz) > ly - 1) {
+                spread.Enqueue(new LightRecord(lx, ly - 1, lz, BlockInfo.MAX_LUMINANCE - 1));
+            }
+            else {
+                spread.Enqueue(new LightRecord(lx, ly - 1, lz, BlockInfo.MAX_LUMINANCE));
+            }
+
+            spread.Enqueue(new LightRecord(lx - 1, ly, lz, BlockInfo.MAX_LUMINANCE - 1));
+            spread.Enqueue(new LightRecord(lx + 1, ly, lz, BlockInfo.MAX_LUMINANCE - 1));
+            spread.Enqueue(new LightRecord(lx, ly + 1, lz, BlockInfo.MAX_LUMINANCE - 1));
+            spread.Enqueue(new LightRecord(lx, ly, lz - 1, BlockInfo.MAX_LUMINANCE - 1));
+            spread.Enqueue(new LightRecord(lx, ly, lz + 1, BlockInfo.MAX_LUMINANCE - 1));
+
+            while (spread.Count > 0) {
+                LightRecord rec = spread.Dequeue();
+
+                ChunkRef cc = LocalChunk(rec.x, rec.y, rec.z);
+                if (cc == null) {
+                    continue;
+                }
+
+                int x = (rec.x + XDim) % XDim;
+                int y = rec.y;
+                int z = (rec.z + ZDim) % ZDim;
+
+                BlockInfo info = cc.GetBlockInfo(x, y, z);
+                int light = cc.GetBlockSkyLight(x, y, z);
+
+                int dimStr = Math.Max(rec.str - info.Opacity, 0);
+
+                if (dimStr > light) {
+                    cc.SetBlockSkyLight(x, y, z, dimStr);
+
+                    spread.Enqueue(new LightRecord(rec.x - 1, rec.y, rec.z, dimStr - 1));
+                    spread.Enqueue(new LightRecord(rec.x + 1, rec.y, rec.z, dimStr - 1));
+                    spread.Enqueue(new LightRecord(rec.x, rec.y - 1, rec.z, dimStr - 1));
+                    spread.Enqueue(new LightRecord(rec.x, rec.y + 1, rec.z, dimStr - 1));
+                    spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z - 1, dimStr - 1));
+                    spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z + 1, dimStr - 1));
+
+                    if (cc.GetHeight(x, z) > rec.y - 1) {
+                        spread.Enqueue(new LightRecord(rec.x, rec.y - 1, rec.z, dimStr - 1));
+                    }
+                    else {
+                        spread.Enqueue(new LightRecord(rec.x, rec.y - 1, rec.z, dimStr));
+                    }
+
+                    if (NeighborHeight(rec.x - 1, rec.z) > rec.y) {
+                        spread.Enqueue(new LightRecord(rec.x - 1, rec.y, rec.z, dimStr - 1));
+                    }
+                    if (NeighborHeight(rec.x + 1, rec.z) > rec.y) {
+                        spread.Enqueue(new LightRecord(rec.x + 1, rec.y, rec.z, dimStr - 1));
+                    }
+                    if (cc.GetHeight(x, z) > rec.y + 1) {
+                        spread.Enqueue(new LightRecord(rec.x, rec.y + 1, rec.z, dimStr - 1));
+                    }
+                    if (NeighborHeight(rec.x, rec.z - 1) > rec.y) {
+                        spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z - 1, dimStr - 1));
+                    }
+                    if (NeighborHeight(rec.x, rec.z + 1) > rec.y) {
+                        spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z + 1, dimStr - 1));
+                    }
                 }
             }
         }
@@ -808,6 +891,19 @@ namespace Substrate
             int light = src.GetBlockSkyLight(x, y, z);
 
             return light;
+        }
+
+        private int NeighborHeight (int x, int z)
+        {
+            ChunkRef src = LocalChunk(x, 0, z);
+            if (src == null) {
+                return YDim - 1;
+            }
+
+            x = (x + XDim * 2) % XDim;
+            z = (z + ZDim * 2) % ZDim;
+
+            return src.GetHeight(x, z);
         }
 
         public void UpdateEdgeBlockLight ()
