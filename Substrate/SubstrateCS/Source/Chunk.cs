@@ -749,6 +749,21 @@ namespace Substrate
 
         #endregion
 
+        public void RebuildHeightMap ()
+        {
+            for (int x = 0; x < XDim; x++) {
+                for (int z = 0; z < ZDim; z++) {
+                    for (int y = YDim - 1; y >= 0; y--) {
+                        BlockInfo info = GetBlockInfo(x, y, z);
+                        if (BlockInfo.BlockTable[GetBlockID(x, y, z)].Opacity > BlockInfo.MIN_OPACITY) {
+                            _heightMap[z << 4 | x] = (byte)y;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         public void ResetBlockLight ()
         {
             _blockLight.Clear();

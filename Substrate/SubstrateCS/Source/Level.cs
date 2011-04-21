@@ -15,12 +15,12 @@ namespace Substrate
             new NBTCompoundNode("Data")
             {
                 new NBTScalerNode("Time", TagType.TAG_LONG),
-                new NBTScalerNode("LastPlayed", TagType.TAG_LONG),
+                new NBTScalerNode("LastPlayed", TagType.TAG_LONG, NBTOptions.CREATE_ON_MISSING),
                 new NBTCompoundNode("Player", Player.PlayerSchema, NBTOptions.OPTIONAL),
                 new NBTScalerNode("SpawnX", TagType.TAG_INT),
                 new NBTScalerNode("SpawnY", TagType.TAG_INT),
                 new NBTScalerNode("SpawnZ", TagType.TAG_INT),
-                new NBTScalerNode("SizeOnDisk", TagType.TAG_LONG),
+                new NBTScalerNode("SizeOnDisk", TagType.TAG_LONG, NBTOptions.CREATE_ON_MISSING),
                 new NBTScalerNode("RandomSeed", TagType.TAG_LONG),
                 new NBTScalerNode("version", TagType.TAG_INT, NBTOptions.OPTIONAL),
                 new NBTScalerNode("LevelName", TagType.TAG_STRING, NBTOptions.OPTIONAL),

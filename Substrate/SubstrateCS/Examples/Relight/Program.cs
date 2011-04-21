@@ -27,6 +27,7 @@ namespace Relight
 
             // First blank out all of the lighting in all of the chunks
             foreach (ChunkRef chunk in cm) {
+                chunk.RebuildHeightMap();
                 chunk.ResetBlockLight();
                 chunk.ResetSkyLight();
                 cm.Save();

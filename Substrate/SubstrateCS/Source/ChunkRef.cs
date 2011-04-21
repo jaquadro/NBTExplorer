@@ -448,6 +448,12 @@ namespace Substrate
 
         #endregion
 
+        public void RebuildHeightMap ()
+        {
+            GetChunk().RebuildHeightMap();
+            MarkDirty();
+        }
+
         private BitArray _lightbit;
         private Queue<BlockKey> _update;
 
