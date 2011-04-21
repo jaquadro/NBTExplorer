@@ -483,34 +483,27 @@ namespace Substrate
         {
             GetChunk();
 
+            ChunkRef[,] chunkMap = LocalChunkMap();
+            int[,] heightMap = LocalHeightMap(chunkMap);
+
             // Optimization - only need to queue at level of highest neighbor's height
             for (int x = 0; x < XDim; x++) {
                 for (int z = 0; z < ZDim; z++) {
-                    ChunkRef ce = LocalChunk(x, 0, z - 1);
-                    ChunkRef cn = LocalChunk(x - 1, 0, z);
-                    ChunkRef cs = LocalChunk(x + 1, 0, z);
-                    ChunkRef cw = LocalChunk(x, 0, z + 1);
+                    int xi = x + XDim;
+                    int zi = z + ZDim;
 
-                    int h = GetHeight(x, z);
-                    if (ce != null) {
-                        h = Math.Max(h, ce.GetHeight(x, ZDim - 1));
-                    }
-                    if (cn != null) {
-                        h = Math.Max(h, cn.GetHeight(XDim - 1, z));
-                    }
-                    if (cs != null) {
-                        h = Math.Max(h, cs.GetHeight(0, z));
-                    }
-                    if (cw != null) {
-                        h = Math.Max(h, cw.GetHeight(x, 0));
-                    }
+                    int h = heightMap[xi, zi];
+                    h = Math.Max(h, heightMap[xi, zi - 1]);
+                    h = Math.Max(h, heightMap[xi - 1, zi]);
+                    h = Math.Max(h, heightMap[xi + 1, zi]);
+                    h = Math.Max(h, heightMap[xi, zi + 1]);
 
                     for (int y = h + 1; y < YDim; y++) {
                         SetBlockSkyLight(x, y, z, BlockInfo.MAX_LUMINANCE);
                     }
 
                     //QueueRelight(new BlockKey(x, h, z));
-                    SpreadSkyLight(x, h, z);
+                    SpreadSkyLight(chunkMap, heightMap, x, h, z);
                 }
             }
 
@@ -586,7 +579,7 @@ namespace Substrate
             }
         }
 
-        private void SpreadSkyLight (int lx, int ly, int lz)
+        private void SpreadSkyLight (ChunkRef[,] chunkMap, int[,] heightMap, int lx, int ly, int lz)
         {
             BlockInfo primary = GetBlockInfo(lx, ly, lz);
             int primaryLight = GetBlockSkyLight(lx, ly, lz);
@@ -602,30 +595,46 @@ namespace Substrate
 
             Queue<LightRecord> spread = new Queue<LightRecord>();
 
-            if (GetHeight(lx, lz) > ly - 1) {
+            int lxi = lx + XDim;
+            int lzi = lz + ZDim;
+
+            if (heightMap[lxi, lzi] > ly - 1) {
                 spread.Enqueue(new LightRecord(lx, ly - 1, lz, BlockInfo.MAX_LUMINANCE - 1));
             }
             else {
                 spread.Enqueue(new LightRecord(lx, ly - 1, lz, BlockInfo.MAX_LUMINANCE));
             }
 
-            spread.Enqueue(new LightRecord(lx - 1, ly, lz, BlockInfo.MAX_LUMINANCE - 1));
-            spread.Enqueue(new LightRecord(lx + 1, ly, lz, BlockInfo.MAX_LUMINANCE - 1));
-            spread.Enqueue(new LightRecord(lx, ly + 1, lz, BlockInfo.MAX_LUMINANCE - 1));
-            spread.Enqueue(new LightRecord(lx, ly, lz - 1, BlockInfo.MAX_LUMINANCE - 1));
-            spread.Enqueue(new LightRecord(lx, ly, lz + 1, BlockInfo.MAX_LUMINANCE - 1));
+            if (heightMap[lxi - 1, lzi] > ly) {
+                spread.Enqueue(new LightRecord(lx - 1, ly, lz, BlockInfo.MAX_LUMINANCE - 1));
+            }
+            if (heightMap[lxi + 1, lzi] > ly) {
+                spread.Enqueue(new LightRecord(lx + 1, ly, lz, BlockInfo.MAX_LUMINANCE - 1));
+            }
+            if (heightMap[lxi, lzi] > ly + 1) {
+                spread.Enqueue(new LightRecord(lx, ly + 1, lz, BlockInfo.MAX_LUMINANCE - 1));
+            }
+            if (heightMap[lxi, lzi] > ly) {
+                spread.Enqueue(new LightRecord(lx, ly, lz - 1, BlockInfo.MAX_LUMINANCE - 1));
+            }
+            if (heightMap[lxi, lzi + 1] > ly) {
+                spread.Enqueue(new LightRecord(lx, ly, lz + 1, BlockInfo.MAX_LUMINANCE - 1));
+            }
 
             while (spread.Count > 0) {
                 LightRecord rec = spread.Dequeue();
 
-                ChunkRef cc = LocalChunk(rec.x, rec.y, rec.z);
+                int xi = rec.x + XDim;
+                int zi = rec.z + ZDim;
+
+                ChunkRef cc = chunkMap[xi / XDim, zi / ZDim];
                 if (cc == null) {
                     continue;
                 }
 
-                int x = (rec.x + XDim) % XDim;
+                int x = xi % XDim;
                 int y = rec.y;
-                int z = (rec.z + ZDim) % ZDim;
+                int z = zi % ZDim;
 
                 BlockInfo info = cc.GetBlockInfo(x, y, z);
                 int light = cc.GetBlockSkyLight(x, y, z);
@@ -642,26 +651,26 @@ namespace Substrate
                     spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z - 1, dimStr - 1));
                     spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z + 1, dimStr - 1));
 
-                    if (cc.GetHeight(x, z) > rec.y - 1) {
+                    if (heightMap[xi, zi] > rec.y - 1) {
                         spread.Enqueue(new LightRecord(rec.x, rec.y - 1, rec.z, dimStr - 1));
                     }
                     else {
                         spread.Enqueue(new LightRecord(rec.x, rec.y - 1, rec.z, dimStr));
                     }
 
-                    if (NeighborHeight(rec.x - 1, rec.z) > rec.y) {
+                    if (heightMap[xi - 1, zi] > rec.y) {
                         spread.Enqueue(new LightRecord(rec.x - 1, rec.y, rec.z, dimStr - 1));
                     }
-                    if (NeighborHeight(rec.x + 1, rec.z) > rec.y) {
+                    if (heightMap[xi + 1, zi] > rec.y) {
                         spread.Enqueue(new LightRecord(rec.x + 1, rec.y, rec.z, dimStr - 1));
                     }
-                    if (cc.GetHeight(x, z) > rec.y + 1) {
+                    if (heightMap[xi, zi] > rec.y + 1) {
                         spread.Enqueue(new LightRecord(rec.x, rec.y + 1, rec.z, dimStr - 1));
                     }
-                    if (NeighborHeight(rec.x, rec.z - 1) > rec.y) {
+                    if (heightMap[xi, zi] > rec.y) {
                         spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z - 1, dimStr - 1));
                     }
-                    if (NeighborHeight(rec.x, rec.z + 1) > rec.y) {
+                    if (heightMap[xi, zi + 1] > rec.y) {
                         spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z + 1, dimStr - 1));
                     }
                 }
@@ -1039,6 +1048,48 @@ namespace Substrate
             if (Math.Abs(light1 - light2) > 1) {
                 QueueRelight(new BlockKey(x1, y1, z1));
             }
+        }
+
+        private ChunkRef[,] LocalChunkMap ()
+        {
+            ChunkRef[,] map = new ChunkRef[3, 3];
+
+            map[0,0] = _container.GetChunkRef(_cx - 1, _cz - 1);
+            map[0,1] = _container.GetChunkRef(_cx - 1, _cz);
+            map[0,2] = _container.GetChunkRef(_cx - 1, _cz + 1);
+            map[1,0] = _container.GetChunkRef(_cx, _cz - 1);
+            map[1,1] = this;
+            map[1,2] = _container.GetChunkRef(_cx, _cz + 1);
+            map[2,0] = _container.GetChunkRef(_cx + 1, _cz - 1);
+            map[2,1] = _container.GetChunkRef(_cx + 1, _cz);
+            map[2,2] = _container.GetChunkRef(_cx + 1, _cz + 1);
+
+            return map;
+        }
+
+        private int[,] LocalHeightMap (ChunkRef[,] chunkMap)
+        {
+            int[,] map = new int[3 * XDim, 3 * ZDim];
+
+            for (int xi = 0; xi < 3; xi++) {
+                int xoff = xi * XDim;
+                for (int zi = 0; zi < 3; zi++) {
+                    int zoff = zi * ZDim;
+                    if (chunkMap[xi, zi] == null) {
+                        continue;
+                    }
+
+                    for (int x = 0; x < XDim; x++) {
+                        int xx = xoff + x;
+                        for (int z = 0; z < ZDim; z++) {
+                            int zz = zoff + z;
+                            map[xx, zz] = chunkMap[xi, zi].GetHeight(x, z);
+                        }
+                    }
+                }
+            }
+
+            return map;
         }
     }
 
