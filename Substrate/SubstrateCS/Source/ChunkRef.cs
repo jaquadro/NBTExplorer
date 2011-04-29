@@ -543,7 +543,7 @@ namespace Substrate
                 SetBlockLight(lx, ly, lz, priLum);
             }
 
-            if (primaryLight > primary.Luminance - 1) {
+            if (primaryLight > primary.Luminance - 1 || !primary.TransmitsLight) {
                 return;
             }
 
@@ -575,12 +575,14 @@ namespace Substrate
                 if (dimStr > light) {
                     cc.SetBlockLight(x, y, z, dimStr);
 
-                    spread.Enqueue(new LightRecord(rec.x - 1, rec.y, rec.z, dimStr - 1));
-                    spread.Enqueue(new LightRecord(rec.x + 1, rec.y, rec.z, dimStr - 1));
-                    spread.Enqueue(new LightRecord(rec.x, rec.y - 1, rec.z, dimStr - 1));
-                    spread.Enqueue(new LightRecord(rec.x, rec.y + 1, rec.z, dimStr - 1));
-                    spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z - 1, dimStr - 1));
-                    spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z + 1, dimStr - 1));
+                    if (info.TransmitsLight) {
+                        spread.Enqueue(new LightRecord(rec.x - 1, rec.y, rec.z, dimStr - 1));
+                        spread.Enqueue(new LightRecord(rec.x + 1, rec.y, rec.z, dimStr - 1));
+                        spread.Enqueue(new LightRecord(rec.x, rec.y - 1, rec.z, dimStr - 1));
+                        spread.Enqueue(new LightRecord(rec.x, rec.y + 1, rec.z, dimStr - 1));
+                        spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z - 1, dimStr - 1));
+                        spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z + 1, dimStr - 1));
+                    }
                 }
             }
         }
@@ -595,7 +597,7 @@ namespace Substrate
                 SetBlockSkyLight(lx, ly, lz, priLum);
             }
 
-            if (primaryLight > BlockInfo.MAX_LUMINANCE - 1) {
+            if (primaryLight > BlockInfo.MAX_LUMINANCE - 1 || !primary.TransmitsLight) {
                 return;
             }
 
@@ -650,34 +652,36 @@ namespace Substrate
                 if (dimStr > light) {
                     cc.SetBlockSkyLight(x, y, z, dimStr);
 
-                    spread.Enqueue(new LightRecord(rec.x - 1, rec.y, rec.z, dimStr - 1));
-                    spread.Enqueue(new LightRecord(rec.x + 1, rec.y, rec.z, dimStr - 1));
-                    spread.Enqueue(new LightRecord(rec.x, rec.y - 1, rec.z, dimStr - 1));
-                    spread.Enqueue(new LightRecord(rec.x, rec.y + 1, rec.z, dimStr - 1));
-                    spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z - 1, dimStr - 1));
-                    spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z + 1, dimStr - 1));
-
-                    if (heightMap[xi, zi] > rec.y - 1) {
-                        spread.Enqueue(new LightRecord(rec.x, rec.y - 1, rec.z, dimStr - 1));
-                    }
-                    else {
-                        spread.Enqueue(new LightRecord(rec.x, rec.y - 1, rec.z, dimStr));
-                    }
-
-                    if (heightMap[xi - 1, zi] > rec.y) {
+                    if (info.TransmitsLight) {
                         spread.Enqueue(new LightRecord(rec.x - 1, rec.y, rec.z, dimStr - 1));
-                    }
-                    if (heightMap[xi + 1, zi] > rec.y) {
                         spread.Enqueue(new LightRecord(rec.x + 1, rec.y, rec.z, dimStr - 1));
-                    }
-                    if (heightMap[xi, zi] > rec.y + 1) {
+                        spread.Enqueue(new LightRecord(rec.x, rec.y - 1, rec.z, dimStr - 1));
                         spread.Enqueue(new LightRecord(rec.x, rec.y + 1, rec.z, dimStr - 1));
-                    }
-                    if (heightMap[xi, zi] > rec.y) {
                         spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z - 1, dimStr - 1));
-                    }
-                    if (heightMap[xi, zi + 1] > rec.y) {
                         spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z + 1, dimStr - 1));
+
+                        if (heightMap[xi, zi] > rec.y - 1) {
+                            spread.Enqueue(new LightRecord(rec.x, rec.y - 1, rec.z, dimStr - 1));
+                        }
+                        else {
+                            spread.Enqueue(new LightRecord(rec.x, rec.y - 1, rec.z, dimStr));
+                        }
+
+                        if (heightMap[xi - 1, zi] > rec.y) {
+                            spread.Enqueue(new LightRecord(rec.x - 1, rec.y, rec.z, dimStr - 1));
+                        }
+                        if (heightMap[xi + 1, zi] > rec.y) {
+                            spread.Enqueue(new LightRecord(rec.x + 1, rec.y, rec.z, dimStr - 1));
+                        }
+                        if (heightMap[xi, zi] > rec.y + 1) {
+                            spread.Enqueue(new LightRecord(rec.x, rec.y + 1, rec.z, dimStr - 1));
+                        }
+                        if (heightMap[xi, zi] > rec.y) {
+                            spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z - 1, dimStr - 1));
+                        }
+                        if (heightMap[xi, zi + 1] > rec.y) {
+                            spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z + 1, dimStr - 1));
+                        }
                     }
                 }
             }
@@ -790,7 +794,7 @@ namespace Substrate
                     light = Math.Max(light, llu - 1);
                 }
 
-                light = Math.Max(light - info.Opacity, 0);
+                //light = Math.Max(light - info.Opacity, 0);
 
                 if (light != lightval) {
                     //Console.WriteLine("Block SkyLight: ({0},{1},{2}) " + lightval + " -> " + light, k.x, k.y, k.z);
@@ -884,6 +888,10 @@ namespace Substrate
             z = (z + ZDim * 2) % ZDim;
 
             BlockInfo info = src.GetBlockInfo(x, y, z);
+            if (!info.TransmitsLight) {
+                return info.Luminance;
+            }
+
             int light = src.GetBlockLight(x, y, z);
 
             return Math.Max(light, info.Luminance);
@@ -902,6 +910,11 @@ namespace Substrate
 
             x = (x + XDim * 2) % XDim;
             z = (z + ZDim * 2) % ZDim;
+
+            BlockInfo info = src.GetBlockInfo(x, y, z);
+            if (!info.TransmitsLight) {
+                return BlockInfo.MIN_LUMINANCE;
+            }
 
             int light = src.GetBlockSkyLight(x, y, z);
 

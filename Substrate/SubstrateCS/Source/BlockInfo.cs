@@ -166,6 +166,7 @@ namespace Substrate
         private string _name = "";
         private int _opacity = MAX_OPACITY;
         private int _luminance = MIN_LUMINANCE;
+        private bool _transmitLight = false;
 
         private DataLimits _dataLimits;
 
@@ -175,7 +176,7 @@ namespace Substrate
 
         public static ItemCache<int> LuminanceTable;
 
-        public static ItemCache<NBTCompoundNode> SchemaTable;
+        //public static ItemCache<NBTCompoundNode> SchemaTable;
 
         public int ID
         {
@@ -197,6 +198,11 @@ namespace Substrate
             get { return _luminance; }
         }
 
+        public bool TransmitsLight
+        {
+            get { return _transmitLight; }
+        }
+
         public BlockInfo (int id)
         {
             _id = id;
@@ -214,6 +220,14 @@ namespace Substrate
         {
             _opacity = MIN_OPACITY + opacity;
             _opacityTable[_id] = _opacity;
+
+            if (opacity == MAX_OPACITY) {
+                _transmitLight = false;
+            }
+            else {
+                _transmitLight = true;
+            }
+
             return this;
         }
 
@@ -221,6 +235,12 @@ namespace Substrate
         {
             _luminance = luminance;
             _luminanceTable[_id] = _luminance;
+            return this;
+        }
+
+        public BlockInfo SetLightTransmission (bool transmit)
+        {
+            _transmitLight = transmit;
             return this;
         }
 
@@ -374,7 +394,7 @@ namespace Substrate
             GoldBlock = new BlockInfo(41, "Gold Block");
             IronBlock = new BlockInfo(42, "Iron Block");
             DoubleSlab = new BlockInfo(43, "Double Slab");
-            Slab = new BlockInfo(44, "Slab");
+            Slab = new BlockInfo(44, "Slab").SetOpacity(0);
             BrickBlock = new BlockInfo(45, "Brick Block");
             TNT = new BlockInfo(46, "TNT");
             Bookshelf = new BlockInfo(47, "Bookshelf");
@@ -431,6 +451,15 @@ namespace Substrate
                     _blockTable[i] = new BlockInfo(i, "Uknown Block");
                 }
             }
+
+            // Override default light transmission rules
+
+            Lava.SetLightTransmission(false);
+            StationaryLava.SetLightTransmission(false);
+            Slab.SetLightTransmission(false);
+            WoodStairs.SetLightTransmission(false);
+            Farmland.SetLightTransmission(false);
+            CobbleStairs.SetLightTransmission(false);
 
             // Set Tile Entity Data
 
