@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Relight", "Relight\Relight.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maze", "Maze\Maze.csproj", "{62D70576-FE3A-4530-B283-889C14B52E9E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PurgeEntities", "PurgeEntities\PurgeEntities.csproj", "{A64F274A-D5B7-45C2-92BA-4C9A64863DDC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{62D70576-FE3A-4530-B283-889C14B52E9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62D70576-FE3A-4530-B283-889C14B52E9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62D70576-FE3A-4530-B283-889C14B52E9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A64F274A-D5B7-45C2-92BA-4C9A64863DDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A64F274A-D5B7-45C2-92BA-4C9A64863DDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A64F274A-D5B7-45C2-92BA-4C9A64863DDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A64F274A-D5B7-45C2-92BA-4C9A64863DDC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
