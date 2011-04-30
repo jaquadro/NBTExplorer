@@ -79,6 +79,7 @@ namespace Substrate
             _registry["Slime"] = typeof(EntitySlime);
             _registry["Snowball"] = typeof(EntitySnowball);
             _registry["Spider"] = typeof(EntitySpider);
+            _registry["Squid"] = typeof(EntitySquid);
             _registry["Wolf"] = typeof(EntityWolf);
             _registry["Zombie"] = typeof(EntityZombie);
         }
