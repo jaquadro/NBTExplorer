@@ -73,14 +73,6 @@ namespace Substrate.NBT
             return Verify(_root, _schema);
         }
 
-        static NBTCompoundNode inventorySchema = new NBTCompoundNode("")
-        {
-            new NBTScalerNode("id", TagType.TAG_SHORT),
-            new NBTScalerNode("Damage", TagType.TAG_SHORT),
-            new NBTScalerNode("Count", TagType.TAG_BYTE),
-            new NBTScalerNode("Slot", TagType.TAG_BYTE),
-        };
-
         private bool Verify (TagValue tag, NBTSchemaNode schema)
         {
             if (tag == null) {

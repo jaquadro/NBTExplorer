@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -13,10 +13,13 @@
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkSubset>
-    </TargetFrameworkSubset>
     <StartupObject>
     </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -67,6 +70,8 @@
   <ItemGroup>
     <Compile Include="Source\ChunkCache.cs" />
     <None Include="Source\Experimental\BlockInterface.cs" />
+    <Compile Include="Source\Entities\EntitySquid.cs" />
+    <None Include="Source\Experimental\Interface2.cs" />
     <Compile Include="Source\Level.cs" />
     <Compile Include="Source\PlayerManager.cs" />
     <Compile Include="Source\PlayerFile.cs" />
@@ -134,14 +139,16 @@
     <Compile Include="Source\TileEntity.cs" />
     <Compile Include="Source\TileEntityFactory.cs" />
     <Compile Include="Source\Utility\Base.cs" />
+    <Compile Include="Source\Utility\IndexedLinkedList.cs" />
     <Compile Include="Source\Utility\Interface.cs" />
+    <Compile Include="Source\Utility\LRUCache.cs" />
     <Compile Include="Source\Utility\NibbleArray.cs" />
     <Compile Include="Source\World.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
