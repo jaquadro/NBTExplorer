@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Substrate.Utility
 {
-    class IndexedLinkedList<T> : ICollection<T>, ICollection
+    public class IndexedLinkedList<T> : ICollection<T>, ICollection
     {
         private LinkedList<T> _list;
         private Dictionary<T, LinkedListNode<T>> _index;
@@ -111,7 +111,7 @@ namespace Substrate.Utility
 
         object ICollection.SyncRoot
         {
-            get { return this; }
+            get { return (_list as ICollection).SyncRoot; }
         }
 
         #endregion

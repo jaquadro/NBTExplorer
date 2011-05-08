@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Substrate.Utility
 {
+
     public class NibbleArray : ICopyable<NibbleArray>
     {
         protected readonly byte[] _data = null;
@@ -14,26 +14,30 @@ namespace Substrate.Utility
             _data = data;
         }
 
-        public int this[int index]
+        public byte this[int index]
         {
             get
             {
                 int subs = index >> 1;
-                if ((index & 1) == 0) {
-                    return _data[subs] & 0x0F;
+                if ((index & 1) == 0)
+                {
+                    return (byte)(_data[subs] & 0x0F);
                 }
-                else {
-                    return (_data[subs] >> 4) & 0x0F;
+                else
+                {
+                    return (byte)((_data[subs] >> 4) & 0x0F);
                 }
             }
 
             set
             {
                 int subs = index >> 1;
-                if ((index & 1) == 0) {
+                if ((index & 1) == 0)
+                {
                     _data[subs] = (byte)((_data[subs] & 0xF0) | (value & 0x0F));
                 }
-                else {
+                else
+                {
                     _data[subs] = (byte)((_data[subs] & 0x0F) | ((value & 0x0F) << 4));
                 }
             }
@@ -49,19 +53,82 @@ namespace Substrate.Utility
 
         public void Clear ()
         {
-            for (int i = 0; i < _data.Length; i++) {
+            for (int i = 0; i < _data.Length; i++)
+            {
                 _data[i] = 0;
             }
         }
 
         #region ICopyable<NibbleArray> Members
 
-        public NibbleArray Copy ()
+        public virtual NibbleArray Copy ()
         {
             byte[] data = new byte[_data.Length];
             _data.CopyTo(data, 0);
 
             return new NibbleArray(data);
+        }
+
+        #endregion
+    }
+
+    public sealed class XZYNibbleArray : NibbleArray
+    {
+        private readonly int _xdim;
+        private readonly int _ydim;
+        private readonly int _zdim;
+
+        public XZYNibbleArray (int xdim, int ydim, int zdim, byte[] data)
+            : base(data)
+        {
+            _xdim = xdim;
+            _ydim = ydim;
+            _zdim = zdim;
+
+            if (xdim * ydim * zdim != data.Length / 2)
+            {
+                throw new ArgumentException("Product of dimensions must equal half length of raw data");
+            }
+        }
+
+        public byte this[int x, int y, int z]
+        {
+            get
+            {
+                int index = _ydim * (x * _zdim + z) + y;
+                return this[index];
+            }
+
+            set
+            {
+                int index = _ydim * (x * _zdim + z) + y;
+                this[index] = value;
+            }
+        }
+
+        public int XDim
+        {
+            get { return _xdim; }
+        }
+
+        public int YDim
+        {
+            get { return _ydim; }
+        }
+
+        public int ZDim
+        {
+            get { return _zdim; }
+        }
+
+        #region ICopyable<NibbleArray> Members
+
+        public override NibbleArray Copy ()
+        {
+            byte[] data = new byte[_data.Length];
+            _data.CopyTo(data, 0);
+
+            return new XZYNibbleArray(_xdim, _ydim, _zdim, data);
         }
 
         #endregion

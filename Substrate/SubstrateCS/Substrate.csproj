@@ -72,6 +72,7 @@
     <None Include="Source\Experimental\BlockInterface.cs" />
     <Compile Include="Source\Entities\EntitySquid.cs" />
     <None Include="Source\Experimental\Interface2.cs" />
+    <Compile Include="Source\Experimental\BlockLight.cs" />
     <Compile Include="Source\Level.cs" />
     <Compile Include="Source\PlayerManager.cs" />
     <Compile Include="Source\PlayerFile.cs" />
@@ -139,6 +140,7 @@
     <Compile Include="Source\TileEntity.cs" />
     <Compile Include="Source\TileEntityFactory.cs" />
     <Compile Include="Source\Utility\Base.cs" />
+    <Compile Include="Source\Utility\ByteArray.cs" />
     <Compile Include="Source\Utility\IndexedLinkedList.cs" />
     <Compile Include="Source\Utility\Interface.cs" />
     <Compile Include="Source\Utility\LRUCache.cs" />

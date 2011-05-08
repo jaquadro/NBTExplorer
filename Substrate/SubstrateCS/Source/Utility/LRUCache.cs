@@ -4,8 +4,35 @@ using System.Collections.Generic;
 
 namespace Substrate.Utility
 {
-    class LRUCache<TKey, TValue> : IDictionary<TKey, TValue>
+
+    public class LRUCache<TKey, TValue> : IDictionary<TKey, TValue>
     {
+        public delegate void RemoveCacheValueHandler (Object o, CacheValueArgs e);
+
+        public class CacheValueArgs : EventArgs
+        {
+            private TKey _key;
+            private TValue _value;
+
+            public TKey Key
+            {
+                get { return _key; }
+            }
+
+            public TValue Value
+            {
+                get { return _value; }
+            }
+
+            public CacheValueArgs (TKey key, TValue value)
+            {
+                _key = key;
+                _value = value;
+            }
+        }
+
+        public event RemoveCacheValueHandler RemoveCacheValue;
+
         private Dictionary<TKey, TValue> _data;
         private IndexedLinkedList<TKey> _index;
 
@@ -38,6 +65,8 @@ namespace Substrate.Utility
 
             if (_data.Count > _capacity)
             {
+                OnRemoveCacheValue(new CacheValueArgs(_index.First, _data[_index.First]));
+
                 _data.Remove(_index.First);
                 _index.RemoveFirst();
             }
@@ -99,6 +128,8 @@ namespace Substrate.Utility
 
                 if (_data.Count > _capacity)
                 {
+                    OnRemoveCacheValue(new CacheValueArgs(_index.First, _data[_index.First]));
+
                     _data.Remove(_index.First);
                     _index.RemoveFirst();
                 }
@@ -170,5 +201,14 @@ namespace Substrate.Utility
         }
 
         #endregion
+
+        private void OnRemoveCacheValue (CacheValueArgs e)
+        {
+            if (RemoveCacheValue != null)
+            {
+                RemoveCacheValue(this, e);
+            }
+        }
     }
+
 }

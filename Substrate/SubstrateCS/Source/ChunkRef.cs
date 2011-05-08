@@ -653,12 +653,12 @@ namespace Substrate
                     cc.SetBlockSkyLight(x, y, z, dimStr);
 
                     if (info.TransmitsLight) {
-                        spread.Enqueue(new LightRecord(rec.x - 1, rec.y, rec.z, dimStr - 1));
+                        /*spread.Enqueue(new LightRecord(rec.x - 1, rec.y, rec.z, dimStr - 1));
                         spread.Enqueue(new LightRecord(rec.x + 1, rec.y, rec.z, dimStr - 1));
                         spread.Enqueue(new LightRecord(rec.x, rec.y - 1, rec.z, dimStr - 1));
                         spread.Enqueue(new LightRecord(rec.x, rec.y + 1, rec.z, dimStr - 1));
                         spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z - 1, dimStr - 1));
-                        spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z + 1, dimStr - 1));
+                        spread.Enqueue(new LightRecord(rec.x, rec.y, rec.z + 1, dimStr - 1));*/
 
                         if (heightMap[xi, zi] > rec.y - 1) {
                             spread.Enqueue(new LightRecord(rec.x, rec.y - 1, rec.z, dimStr - 1));
