@@ -27,8 +27,8 @@ namespace Substrate
 
         public Block (IAlphaBlockCollection chunk, int lx, int ly, int lz)
         {
-            _id = chunk.GetBlockID(lx, ly, lz);
-            _data = chunk.GetBlockData(lx, ly, lz);
+            _id = chunk.GetID(lx, ly, lz);
+            _data = chunk.GetData(lx, ly, lz);
             _tileEntity = chunk.GetTileEntity(lx, ly, lz).Copy();
         }
 

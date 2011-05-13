@@ -56,19 +56,19 @@ namespace Substrate
 
         public BlockInfo Info
         {
-            get { return BlockInfo.BlockTable[_container.GetBlockID(_x, _y, _z)]; }
+            get { return BlockInfo.BlockTable[_container.GetID(_x, _y, _z)]; }
         }
 
         public int ID
         {
-            get { return _container.GetBlockID(_x, _y, _z); }
-            set { _container.SetBlockID(_x, _y, _z, value); }
+            get { return _container.GetID(_x, _y, _z); }
+            set { _container.SetID(_x, _y, _z, value); }
         }
 
         public int Data
         {
-            get { return _container.GetBlockData(_x, _y, _z); }
-            set { _container.SetBlockData(_x, _y, _z, value); }
+            get { return _container.GetData(_x, _y, _z); }
+            set { _container.SetData(_x, _y, _z, value); }
         }
 
         #endregion
@@ -84,8 +84,8 @@ namespace Substrate
 
         public int SkyLight
         {
-            get { return _container.GetBlockSkyLight(_x, _y, _z); }
-            set { _container.SetBlockSkyLight(_x, _y, _z, value); }
+            get { return _container.GetSkyLight(_x, _y, _z); }
+            set { _container.SetSkyLight(_x, _y, _z, value); }
         }
 
         #endregion

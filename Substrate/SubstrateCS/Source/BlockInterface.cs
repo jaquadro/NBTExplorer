@@ -43,10 +43,10 @@ namespace Substrate
 
         void SetBlock (int x, int y, int z, IBlock block);
 
-        int GetBlockID (int x, int y, int z);
-        void SetBlockID (int x, int y, int z, int id);
+        int GetID (int x, int y, int z);
+        void SetID (int x, int y, int z, int id);
 
-        BlockInfo GetBlockInfo (int x, int y, int z);
+        BlockInfo GetInfo (int x, int y, int z);
     }
 
     public interface IBoundedBlockCollection : IBlockCollection
@@ -55,7 +55,7 @@ namespace Substrate
         int YDim { get; }
         int ZDim { get; }
 
-        int CountBlockID (int id);
+        int CountByID (int id);
     }
 
     public interface IDataBlockCollection : IBlockCollection
@@ -65,13 +65,13 @@ namespace Substrate
 
         void SetBlock (int x, int y, int z, IDataBlock block);
 
-        int GetBlockData (int x, int y, int z);
-        void SetBlockData (int x, int y, int z, int data);
+        int GetData (int x, int y, int z);
+        void SetData (int x, int y, int z, int data);
     }
 
     public interface IBoundedDataBlockCollection : IDataBlockCollection, IBoundedBlockCollection
     {
-        int CountBlockData (int id, int data);
+        int CountByData (int id, int data);
     }
 
     public interface ILitBlockCollection : IBlockCollection
@@ -83,36 +83,36 @@ namespace Substrate
 
         // Local Light
         int GetBlockLight (int x, int y, int z);
-        int GetBlockSkyLight (int x, int y, int z);
+        int GetSkyLight (int x, int y, int z);
 
         void SetBlockLight (int x, int y, int z, int light);
-        void SetBlockSkyLight (int x, int y, int z, int light);
+        void SetSkyLight (int x, int y, int z, int light);
 
         int GetHeight (int x, int z);
         void SetHeight (int x, int z, int height);
 
         // Update and propagate light at a single block
         void UpdateBlockLight (int x, int y, int z);
-        void UpdateBlockSkyLight (int x, int y, int z);
+        void UpdateSkyLight (int x, int y, int z);
     }
 
     public interface IBoundedLitBlockCollection : ILitBlockCollection, IBoundedBlockCollection
     {
         // Zero out light in entire collection
         void ResetBlockLight ();
-        void ResetBlockSkyLight ();
+        void ResetSkyLight ();
 
         // Recalculate light in entire collection
         void RebuildBlockLight ();
-        void RebuildBlockSkyLight ();
+        void RebuildSkyLight ();
         void RebuildHeightMap ();
 
         // Reconcile inconsistent lighting between the edges of two containers of same size
         void StitchBlockLight ();
-        void StitchBlockSkyLight ();
+        void StitchSkyLight ();
 
         void StitchBlockLight (IBoundedLitBlockCollection blockset, BlockCollectionEdge edge);
-        void StitchBlockSkyLight (IBoundedLitBlockCollection blockset, BlockCollectionEdge edge);
+        void StitchSkyLight (IBoundedLitBlockCollection blockset, BlockCollectionEdge edge);
     }
 
     public interface IPropertyBlockCollection : IBlockCollection

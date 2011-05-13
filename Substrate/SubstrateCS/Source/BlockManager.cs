@@ -129,27 +129,27 @@ namespace Substrate
             _cache.Blocks.SetBlock(x, y, z, block);
         }
 
-        public BlockInfo GetBlockInfo (int x, int y, int z)
+        public BlockInfo GetInfo (int x, int y, int z)
         {
             _cache = GetChunk(x, y, z);
             if (_cache == null || !Check(x, y, z)) {
                 return null;
             }
 
-            return _cache.Blocks.GetBlockInfo(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            return _cache.Blocks.GetInfo(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
         }
 
-        public int GetBlockID (int x, int y, int z)
+        public int GetID (int x, int y, int z)
         {
             _cache = GetChunk(x, y, z);
             if (_cache == null) {
                 return 0;
             }
 
-            return _cache.Blocks.GetBlockID(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            return _cache.Blocks.GetID(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
         }
 
-        public void SetBlockID (int x, int y, int z, int id)
+        public void SetID (int x, int y, int z, int id)
         {
             _cache = GetChunk(x, y, z);
             if (_cache == null || !Check(x, y, z)) {
@@ -159,7 +159,7 @@ namespace Substrate
             bool autolight = _cache.Blocks.AutoLight;
             _cache.Blocks.AutoLight = _autoLight;
 
-            _cache.Blocks.SetBlockID(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask, id);
+            _cache.Blocks.SetID(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask, id);
 
             _cache.Blocks.AutoLight = autolight;
         }
@@ -184,24 +184,24 @@ namespace Substrate
             _cache.Blocks.SetBlock(x, y, z, block);
         }
 
-        public int GetBlockData (int x, int y, int z)
+        public int GetData (int x, int y, int z)
         {
             _cache = GetChunk(x, y, z);
             if (_cache == null) {
                 return 0;
             }
 
-            return _cache.Blocks.GetBlockData(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            return _cache.Blocks.GetData(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
         }
 
-        public void SetBlockData (int x, int y, int z, int data)
+        public void SetData (int x, int y, int z, int data)
         {
             _cache = GetChunk(x, y, z);
             if (_cache == null || !Check(x, y, z)) {
                 return;
             }
 
-            _cache.Blocks.SetBlockData(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask, data);
+            _cache.Blocks.SetData(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask, data);
         }
 
         #endregion
@@ -234,14 +234,14 @@ namespace Substrate
             return _cache.Blocks.GetBlockLight(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
         }
 
-        public int GetBlockSkyLight (int x, int y, int z)
+        public int GetSkyLight (int x, int y, int z)
         {
             _cache = GetChunk(x, y, z);
             if (_cache == null) {
                 return 0;
             }
 
-            return _cache.Blocks.GetBlockSkyLight(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            return _cache.Blocks.GetSkyLight(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
         }
 
         public void SetBlockLight (int x, int y, int z, int light)
@@ -254,14 +254,14 @@ namespace Substrate
             _cache.Blocks.SetBlockLight(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask, light);
         }
 
-        public void SetBlockSkyLight (int x, int y, int z, int light)
+        public void SetSkyLight (int x, int y, int z, int light)
         {
             _cache = GetChunk(x, y, z);
             if (_cache == null || !Check(x, y, z)) {
                 return;
             }
 
-            _cache.Blocks.SetBlockSkyLight(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask, light);
+            _cache.Blocks.SetSkyLight(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask, light);
         }
 
         public int GetHeight (int x, int z)
@@ -294,7 +294,7 @@ namespace Substrate
             _cache.Blocks.UpdateBlockLight(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
         }
 
-        public void UpdateBlockSkyLight (int x, int y, int z)
+        public void UpdateSkyLight (int x, int y, int z)
         {
             _cache = GetChunk(x, y, z);
             if (_cache == null || !Check(x, y, z)) {

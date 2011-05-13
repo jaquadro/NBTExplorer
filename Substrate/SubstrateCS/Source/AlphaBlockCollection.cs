@@ -122,8 +122,8 @@ namespace Substrate
 
         public void SetBlock (int x, int y, int z, Block block)
         {
-            SetBlockID(x, y, z, block.ID);
-            SetBlockData(x, y, z, block.Data);
+            SetID(x, y, z, block.ID);
+            SetData(x, y, z, block.Data);
 
             SetTileEntity(x, y, z, block.GetTileEntity().Copy());
         }
@@ -157,20 +157,20 @@ namespace Substrate
 
         public void SetBlock (int x, int y, int z, IBlock block)
         {
-            SetBlockID(x, y, z, block.ID);
+            SetID(x, y, z, block.ID);
         }
 
-        public BlockInfo GetBlockInfo (int x, int y, int z)
+        public BlockInfo GetInfo (int x, int y, int z)
         {
             return BlockInfo.BlockTable[_blocks[x, y, z]];
         }
 
-        public int GetBlockID (int x, int y, int z)
+        public int GetID (int x, int y, int z)
         {
             return _blocks[x, y, z];
         }
 
-        public void SetBlockID (int x, int y, int z, int id)
+        public void SetID (int x, int y, int z, int id)
         {
             int oldid = _blocks[x, y, z];
             if (oldid == id) {
@@ -223,14 +223,14 @@ namespace Substrate
                 }
 
                 if (info1.Opacity != info2.Opacity) {
-                    UpdateBlockSkyLight(x, y, z);
+                    UpdateSkyLight(x, y, z);
                 }
             }
 
             _dirty = true;
         }
 
-        public int CountBlockID (int id)
+        public int CountByID (int id)
         {
             int c = 0;
             for (int i = 0; i < _blocks.Length; i++) {
@@ -259,16 +259,16 @@ namespace Substrate
 
         public void SetBlock (int x, int y, int z, IDataBlock block)
         {
-            SetBlockID(x, y, z, block.ID);
-            SetBlockData(x, y, z, block.Data);
+            SetID(x, y, z, block.ID);
+            SetData(x, y, z, block.Data);
         }
 
-        public int GetBlockData (int x, int y, int z)
+        public int GetData (int x, int y, int z)
         {
             return _data[x, y, z];
         }
 
-        public void SetBlockData (int x, int y, int z, int data)
+        public void SetData (int x, int y, int z, int data)
         {
             if (_data[x, y, z] != data) {
                 _data[x, y, z] = (byte)data;
@@ -282,7 +282,7 @@ namespace Substrate
             }*/
         }
 
-        public int CountBlockData (int id, int data)
+        public int CountByData (int id, int data)
         {
             int c = 0;
             for (int i = 0; i < _blocks.Length; i++) {
@@ -311,9 +311,9 @@ namespace Substrate
 
         public void SetBlock (int x, int y, int z, ILitBlock block)
         {
-            SetBlockID(x, y, z, block.ID);
+            SetID(x, y, z, block.ID);
             SetBlockLight(x, y, z, block.BlockLight);
-            SetBlockSkyLight(x, y, z, block.SkyLight);
+            SetSkyLight(x, y, z, block.SkyLight);
         }
 
         public int GetBlockLight (int x, int y, int z)
@@ -321,7 +321,7 @@ namespace Substrate
             return _blockLight[x, y, z];
         }
 
-        public int GetBlockSkyLight (int x, int y, int z)
+        public int GetSkyLight (int x, int y, int z)
         {
             return _skyLight[x, y, z];
         }
@@ -334,7 +334,7 @@ namespace Substrate
             }
         }
 
-        public void SetBlockSkyLight (int x, int y, int z, int light)
+        public void SetSkyLight (int x, int y, int z, int light)
         {
             if (_skyLight[x, y, z] != light) {
                 _skyLight[x, y, z] = (byte)light;
@@ -358,7 +358,7 @@ namespace Substrate
             _dirty = true;
         }
 
-        public void UpdateBlockSkyLight (int x, int y, int z)
+        public void UpdateSkyLight (int x, int y, int z)
         {
             _lightManager.UpdateBlockSkyLight(x, y, z);
             _dirty = true;
@@ -370,7 +370,7 @@ namespace Substrate
             _dirty = true;
         }
 
-        public void ResetBlockSkyLight ()
+        public void ResetSkyLight ()
         {
             _skyLight.Clear();
             _dirty = true;
@@ -382,7 +382,7 @@ namespace Substrate
             _dirty = true;
         }
 
-        public void RebuildBlockSkyLight ()
+        public void RebuildSkyLight ()
         {
             _lightManager.RebuildBlockSkyLight();
             _dirty = true;
@@ -400,7 +400,7 @@ namespace Substrate
             _dirty = true;
         }
 
-        public void StitchBlockSkyLight ()
+        public void StitchSkyLight ()
         {
             _lightManager.StitchBlockSkyLight();
             _dirty = true;
@@ -412,7 +412,7 @@ namespace Substrate
             _dirty = true;
         }
 
-        public void StitchBlockSkyLight (IBoundedLitBlockCollection blockset, BlockCollectionEdge edge)
+        public void StitchSkyLight (IBoundedLitBlockCollection blockset, BlockCollectionEdge edge)
         {
             _lightManager.StitchBlockSkyLight(blockset, edge);
             _dirty = true;
@@ -435,7 +435,7 @@ namespace Substrate
 
         public void SetBlock (int x, int y, int z, IPropertyBlock block)
         {
-            SetBlockID(x, y, z, block.ID);
+            SetID(x, y, z, block.ID);
             SetTileEntity(x, y, z, block.GetTileEntity().Copy());
         }
 

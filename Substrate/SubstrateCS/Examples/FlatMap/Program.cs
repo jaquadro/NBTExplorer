@@ -48,7 +48,7 @@ namespace FlatMap
 
                     // Reset and rebuild the lighting for the entire chunk at once
                     chunk.Blocks.RebuildBlockLight();
-                    chunk.Blocks.RebuildBlockSkyLight();
+                    chunk.Blocks.RebuildSkyLight();
 
                     Console.WriteLine("Built Chunk {0},{1}", chunk.X, chunk.Z);
 
@@ -68,7 +68,7 @@ namespace FlatMap
             for (int y = 0; y < 2; y++) {
                 for (int x = 0; x < 16; x++) {
                     for (int z = 0; z < 16; z++) {
-                        chunk.Blocks.SetBlockID(x, y, z, (int)BlockType.BEDROCK);
+                        chunk.Blocks.SetID(x, y, z, (int)BlockType.BEDROCK);
                     }
                 }
             }
@@ -77,7 +77,7 @@ namespace FlatMap
             for (int y = 2; y < height - 5; y++) {
                 for (int x = 0; x < 16; x++) {
                     for (int z = 0; z < 16; z++) {
-                        chunk.Blocks.SetBlockID(x, y, z, (int)BlockType.STONE);
+                        chunk.Blocks.SetID(x, y, z, (int)BlockType.STONE);
                     }
                 }
             }
@@ -86,7 +86,7 @@ namespace FlatMap
             for (int y = height - 5; y < height - 1; y++) {
                 for (int x = 0; x < 16; x++) {
                     for (int z = 0; z < 16; z++) {
-                        chunk.Blocks.SetBlockID(x, y, z, (int)BlockType.DIRT);
+                        chunk.Blocks.SetID(x, y, z, (int)BlockType.DIRT);
                     }
                 }
             }
@@ -95,7 +95,7 @@ namespace FlatMap
             for (int y = height - 1; y < height; y++) {
                 for (int x = 0; x < 16; x++) {
                     for (int z = 0; z < 16; z++) {
-                        chunk.Blocks.SetBlockID(x, y, z, (int)BlockType.GRASS);
+                        chunk.Blocks.SetID(x, y, z, (int)BlockType.GRASS);
                     }
                 }
             }

@@ -31,7 +31,7 @@ namespace Relight
 
                 chunk.Blocks.RebuildHeightMap();
                 chunk.Blocks.ResetBlockLight();
-                chunk.Blocks.ResetBlockSkyLight();
+                chunk.Blocks.ResetSkyLight();
                 cm.Save();
 
                 Console.WriteLine("Reset Chunk {0},{1}", chunk.X, chunk.Z);
@@ -42,7 +42,7 @@ namespace Relight
                 if (chunk.X < -20 || chunk.X > 0 || chunk.Z < -20 || chunk.Z > 0) continue;
 
                 chunk.Blocks.RebuildBlockLight();
-                chunk.Blocks.RebuildBlockSkyLight();
+                chunk.Blocks.RebuildSkyLight();
 
                 // Save the chunk to disk so it doesn't hang around in RAM
                 cm.Save();

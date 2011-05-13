@@ -80,7 +80,7 @@ namespace Substrate
             for (int x = 0; x < _blockset.XDim; x++) {
                 for (int z = 0; z < _blockset.ZDim; z++) {
                     for (int y = 0; y < _blockset.YDim; y++) {
-                        BlockInfo info = _blockset.GetBlockInfo(x, y, z);
+                        BlockInfo info = _blockset.GetInfo(x, y, z);
                         if (info.Luminance > 0) {
                             SpreadBlockLight(x, y, z);
                         }
@@ -107,7 +107,7 @@ namespace Substrate
                     h = Math.Max(h, heightMap[xi, zi + 1]);
 
                     for (int y = h + 1; y < _blockset.YDim; y++) {
-                        _blockset.SetBlockSkyLight(x, y, z, BlockInfo.MAX_LUMINANCE);
+                        _blockset.SetSkyLight(x, y, z, BlockInfo.MAX_LUMINANCE);
                     }
 
                     //QueueRelight(new BlockKey(x, h, z));
@@ -121,7 +121,7 @@ namespace Substrate
             for (int x = 0; x < _blockset.XDim; x++) {
                 for (int z = 0; z < _blockset.ZDim; z++) {
                     for (int y = _blockset.YDim - 1; y >= 0; y--) {
-                        BlockInfo info = _blockset.GetBlockInfo(x, y, z);
+                        BlockInfo info = _blockset.GetInfo(x, y, z);
                         if (info.Opacity > BlockInfo.MIN_OPACITY || !info.TransmitsLight) {
                             _blockset.SetHeight(x, z, y);
                             break;
@@ -284,7 +284,7 @@ namespace Substrate
                 int z = (k.z + _blockset.ZDim * 2) % _blockset.ZDim;
 
                 int lightval = cc.GetBlockLight(x, y, z);
-                BlockInfo info = cc.GetBlockInfo(x, y, z);
+                BlockInfo info = cc.GetInfo(x, y, z);
 
                 int light = Math.Max(info.Luminance, 0);
                 light = Math.Max(light, lle - 1);
@@ -327,8 +327,8 @@ namespace Substrate
                 int y = k.y;
                 int z = (k.z + _blockset.ZDim) % _blockset.ZDim;
 
-                int lightval = cc.GetBlockSkyLight(x, y, z);
-                BlockInfo info = cc.GetBlockInfo(x, y, z);
+                int lightval = cc.GetSkyLight(x, y, z);
+                BlockInfo info = cc.GetInfo(x, y, z);
 
                 int light = BlockInfo.MIN_LUMINANCE;
 
@@ -356,7 +356,7 @@ namespace Substrate
                 if (light != lightval) {
                     //Console.WriteLine("Block SkyLight: ({0},{1},{2}) " + lightval + " -> " + light, k.x, k.y, k.z);
 
-                    cc.SetBlockSkyLight(x, y, z, light);
+                    cc.SetSkyLight(x, y, z, light);
   
                     QueueRelight(new BlockKey(k.x - 1, k.y, k.z));
                     QueueRelight(new BlockKey(k.x + 1, k.y, k.z));
@@ -371,7 +371,7 @@ namespace Substrate
 
         private void SpreadBlockLight (int lx, int ly, int lz)
         {
-            BlockInfo primary = _blockset.GetBlockInfo(lx, ly, lz);
+            BlockInfo primary = _blockset.GetInfo(lx, ly, lz);
             int primaryLight = _blockset.GetBlockLight(lx, ly, lz);
             int priLum = Math.Max(primary.Luminance - primary.Opacity, 0);
 
@@ -403,7 +403,7 @@ namespace Substrate
                 int y = rec.y;
                 int z = (rec.z + _blockset.ZDim) % _blockset.ZDim;
 
-                BlockInfo info = cc.GetBlockInfo(x, y, z);
+                BlockInfo info = cc.GetInfo(x, y, z);
                 int light = cc.GetBlockLight(x, y, z);
 
                 int dimStr = Math.Max(rec.str - info.Opacity, 0);
@@ -425,12 +425,12 @@ namespace Substrate
 
         private void SpreadSkyLight (IBoundedLitBlockCollection[,] chunkMap, int[,] heightMap, int lx, int ly, int lz)
         {
-            BlockInfo primary = _blockset.GetBlockInfo(lx, ly, lz);
-            int primaryLight = _blockset.GetBlockSkyLight(lx, ly, lz);
+            BlockInfo primary = _blockset.GetInfo(lx, ly, lz);
+            int primaryLight = _blockset.GetSkyLight(lx, ly, lz);
             int priLum = Math.Max(BlockInfo.MAX_LUMINANCE - primary.Opacity, 0);
 
             if (primaryLight < priLum) {
-                _blockset.SetBlockSkyLight(lx, ly, lz, priLum);
+                _blockset.SetSkyLight(lx, ly, lz, priLum);
             }
 
             if (primaryLight > BlockInfo.MAX_LUMINANCE - 1 || !primary.TransmitsLight) {
@@ -480,13 +480,13 @@ namespace Substrate
                 int y = rec.y;
                 int z = zi % _blockset.ZDim;
 
-                BlockInfo info = cc.GetBlockInfo(x, y, z);
-                int light = cc.GetBlockSkyLight(x, y, z);
+                BlockInfo info = cc.GetInfo(x, y, z);
+                int light = cc.GetSkyLight(x, y, z);
 
                 int dimStr = Math.Max(rec.str - info.Opacity, 0);
 
                 if (dimStr > light) {
-                    cc.SetBlockSkyLight(x, y, z, dimStr);
+                    cc.SetSkyLight(x, y, z, dimStr);
 
                     if (info.TransmitsLight) {
                         /*spread.Enqueue(new LightRecord(rec.x - 1, rec.y, rec.z, dimStr - 1));
@@ -604,7 +604,7 @@ namespace Substrate
             x = (x + _blockset.XDim * 2) % _blockset.XDim;
             z = (z + _blockset.ZDim * 2) % _blockset.ZDim;
 
-            BlockInfo info = src.GetBlockInfo(x, y, z);
+            BlockInfo info = src.GetInfo(x, y, z);
             if (!info.TransmitsLight) {
                 return info.Luminance;
             }
@@ -628,12 +628,12 @@ namespace Substrate
             x = (x + _blockset.XDim * 2) % _blockset.XDim;
             z = (z + _blockset.ZDim * 2) % _blockset.ZDim;
 
-            BlockInfo info = src.GetBlockInfo(x, y, z);
+            BlockInfo info = src.GetInfo(x, y, z);
             if (!info.TransmitsLight) {
                 return BlockInfo.MIN_LUMINANCE;
             }
 
-            int light = src.GetBlockSkyLight(x, y, z);
+            int light = src.GetSkyLight(x, y, z);
 
             return light;
         }
@@ -656,8 +656,8 @@ namespace Substrate
         {
             int light1 = _blockset.GetBlockLight(x1, y1, z1);
             int light2 = chunk.GetBlockLight(x2, y2, z2);
-            int lum1 = _blockset.GetBlockInfo(x1, y1, z1).Luminance;
-            int lum2 = chunk.GetBlockInfo(x2, y2, z2).Luminance;
+            int lum1 = _blockset.GetInfo(x1, y1, z1).Luminance;
+            int lum2 = chunk.GetInfo(x2, y2, z2).Luminance;
 
             int v1 = Math.Max(light1, lum1);
             int v2 = Math.Max(light2, lum2);
@@ -668,8 +668,8 @@ namespace Substrate
 
         private void TestSkyLight (IBoundedLitBlockCollection chunk, int x1, int y1, int z1, int x2, int y2, int z2)
         {
-            int light1 = _blockset.GetBlockSkyLight(x1, y1, z1);
-            int light2 = chunk.GetBlockSkyLight(x2, y2, z2);
+            int light1 = _blockset.GetSkyLight(x1, y1, z1);
+            int light2 = chunk.GetSkyLight(x2, y2, z2);
 
             if (Math.Abs(light1 - light2) > 1) {
                 QueueRelight(new BlockKey(x1, y1, z1));
