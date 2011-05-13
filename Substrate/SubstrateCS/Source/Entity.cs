@@ -175,7 +175,7 @@ namespace Substrate
             pos.Add(new TagDouble(_pos.X));
             pos.Add(new TagDouble(_pos.Y));
             pos.Add(new TagDouble(_pos.Z));
-            tree["Position"] = pos;
+            tree["Pos"] = pos;
 
             TagList motion = new TagList(TagType.TAG_DOUBLE);
             motion.Add(new TagDouble(_motion.X));

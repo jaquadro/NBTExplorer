@@ -85,7 +85,7 @@ namespace Substrate.Utility
             _ydim = ydim;
             _zdim = zdim;
 
-            if (xdim * ydim * zdim != data.Length / 2)
+            if (xdim * ydim * zdim != data.Length * 2)
             {
                 throw new ArgumentException("Product of dimensions must equal half length of raw data");
             }

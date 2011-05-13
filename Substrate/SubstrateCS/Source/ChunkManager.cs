@@ -133,6 +133,8 @@ namespace Substrate
 
         public int Save ()
         {
+            _cache.SyncDirty();
+
             int saved = 0;
             IEnumerator<ChunkRef> en = _cache.GetDirtyEnumerator();
             while (en.MoveNext()) {
@@ -184,6 +186,8 @@ namespace Substrate
             //List<ChunkRef> dirty = new List<ChunkRef>();
             Dictionary<ChunkKey, ChunkRef> dirty = new Dictionary<ChunkKey, ChunkRef>();
 
+            _cache.SyncDirty();
+
             IEnumerator<ChunkRef> en = _cache.GetDirtyEnumerator();
             while (en.MoveNext()) {
                 ChunkKey key = new ChunkKey(en.Current.X, en.Current.Z);
@@ -191,39 +195,38 @@ namespace Substrate
             }
 
             foreach (ChunkRef chunk in dirty.Values) {
-                chunk.ResetBlockLight();
-                chunk.ResetSkyLight();
+                chunk.Blocks.ResetBlockLight();
+                chunk.Blocks.ResetBlockSkyLight();
             }
 
             foreach (ChunkRef chunk in dirty.Values) {
-                chunk.RebuildBlockLight();
-                chunk.RebuildSkyLight();
+                chunk.Blocks.RebuildBlockLight();
+                chunk.Blocks.RebuildBlockSkyLight();
             }
 
-            foreach (ChunkRef chunk in dirty.Values) {
-                
+            foreach (ChunkRef chunk in dirty.Values) {  
                 if (!dirty.ContainsKey(new ChunkKey(chunk.X, chunk.Z - 1))) {
                     ChunkRef east = chunk.GetEastNeighbor();
-                    chunk.UpdateEdgeBlockLight(east);
-                    chunk.UpdateEdgeSkyLight(east);
+                    chunk.Blocks.StitchBlockLight(east.Blocks, BlockCollectionEdge.EAST);
+                    chunk.Blocks.StitchBlockSkyLight(east.Blocks, BlockCollectionEdge.EAST);
                 }
 
                 if (!dirty.ContainsKey(new ChunkKey(chunk.X, chunk.Z + 1))) {
                     ChunkRef west = chunk.GetWestNeighbor();
-                    chunk.UpdateEdgeBlockLight(west);
-                    chunk.UpdateEdgeSkyLight(west);
+                    chunk.Blocks.StitchBlockLight(west.Blocks, BlockCollectionEdge.WEST);
+                    chunk.Blocks.StitchBlockSkyLight(west.Blocks, BlockCollectionEdge.WEST);
                 }
 
                 if (!dirty.ContainsKey(new ChunkKey(chunk.X - 1, chunk.Z))) {
                     ChunkRef north = chunk.GetNorthNeighbor();
-                    chunk.UpdateEdgeBlockLight(north);
-                    chunk.UpdateEdgeSkyLight(north);
+                    chunk.Blocks.StitchBlockLight(north.Blocks, BlockCollectionEdge.NORTH);
+                    chunk.Blocks.StitchBlockSkyLight(north.Blocks, BlockCollectionEdge.NORTH);
                 }
 
                 if (!dirty.ContainsKey(new ChunkKey(chunk.X + 1, chunk.Z))) {
                     ChunkRef south = chunk.GetSouthNeighbor();
-                    chunk.UpdateEdgeBlockLight(south);
-                    chunk.UpdateEdgeSkyLight(south);
+                    chunk.Blocks.StitchBlockLight(south.Blocks, BlockCollectionEdge.SOUTH);
+                    chunk.Blocks.StitchBlockSkyLight(south.Blocks, BlockCollectionEdge.SOUTH);
                 }
             }
         }

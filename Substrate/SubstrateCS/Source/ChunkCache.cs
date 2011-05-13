@@ -2,17 +2,21 @@
 using System.Collections.Generic;
 using System.Collections;
 
+using Substrate.Utility;
+
 namespace Substrate
 {
-    public class ChunkCache : IChunkCache
+    public class ChunkCache
     {
-        private Dictionary<ChunkKey, WeakReference> _cache;
+        private LRUCache<ChunkKey, ChunkRef> _cache;
         private Dictionary<ChunkKey, ChunkRef> _dirty;
 
         public ChunkCache ()
         {
-            _cache = new Dictionary<ChunkKey, WeakReference>();
+            _cache = new LRUCache<ChunkKey, ChunkRef>(256);
             _dirty = new Dictionary<ChunkKey, ChunkRef>();
+
+            _cache.RemoveCacheValue += EvictionHandler;
         }
 
         #region IChunkCache Members
@@ -21,14 +25,9 @@ namespace Substrate
         {
             ChunkKey key = new ChunkKey(chunk.X, chunk.Z);
 
-            WeakReference wref;
-            if (!_cache.TryGetValue(key, out wref)) {
-                _cache[key] = new WeakReference(chunk);
-                return true;
-            }
-
-            if (!wref.IsAlive) {
-                wref.Target = chunk;
+            ChunkRef c;
+            if (!_cache.TryGetValue(key, out c)) {
+                _cache[key] = chunk;
                 return true;
             }
 
@@ -43,12 +42,12 @@ namespace Substrate
 
         public ChunkRef Fetch (ChunkKey key)
         {
-            WeakReference wref;
-            if (!_cache.TryGetValue(key, out wref)) {
+            ChunkRef c;
+            if (!_cache.TryGetValue(key, out c)) {
                 return null;
             }
 
-            return wref.Target as ChunkRef;
+            return c;
         }
 
         public IEnumerator<ChunkRef> GetDirtyEnumerator ()
@@ -61,7 +60,24 @@ namespace Substrate
             _dirty.Clear();
         }
 
-        public bool MarkChunkDirty (ChunkRef chunk)
+        public void SyncDirty ()
+        {
+            foreach (KeyValuePair<ChunkKey, ChunkRef> e in _cache) {
+                if (e.Value.IsDirty) {
+                    _dirty[e.Key] = e.Value;
+                }
+            }
+        }
+
+
+        private void EvictionHandler (object sender, LRUCache<ChunkKey, ChunkRef>.CacheValueArgs e)
+        {
+            if (e.Value.IsDirty) {
+                _dirty[e.Key] = e.Value;
+            }
+        }
+
+        /*public bool MarkChunkDirty (ChunkRef chunk)
         {
             int cx = chunk.X;
             int cz = chunk.Z;
@@ -85,8 +101,8 @@ namespace Substrate
                 return true;
             }
             return false;
-        }
-
+        }*/
+        
         #endregion
     }
 }

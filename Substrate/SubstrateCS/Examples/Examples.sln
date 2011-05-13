@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual C# Express 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Convert", "Convert\Convert.csproj", "{5BD42656-9BCF-4C55-8272-A5D3507EFDF3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlatMap", "FlatMap\FlatMap.csproj", "{EDA894F2-00AF-456B-9D07-591ED61A9AE7}"

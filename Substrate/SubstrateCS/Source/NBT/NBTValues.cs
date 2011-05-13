@@ -48,7 +48,7 @@ namespace Substrate.NBT {
         }
     }
 
-    public class TagNull : TagValue
+    public sealed class TagNull : TagValue
     {
         public override TagNull ToTagNull () { return this; }
         public override TagType GetTagType () { return TagType.TAG_END; }
@@ -59,7 +59,7 @@ namespace Substrate.NBT {
         }
     }
 
-    public class TagByte : TagValue
+    public sealed class TagByte : TagValue
     {
         private byte _data = 0;
 
@@ -127,7 +127,7 @@ namespace Substrate.NBT {
         }
     }
 
-    public class TagShort : TagValue
+    public sealed class TagShort : TagValue
     {
         private short _data = 0;
 
@@ -193,7 +193,7 @@ namespace Substrate.NBT {
         }
     }
 
-    public class TagInt : TagValue
+    public sealed class TagInt : TagValue
     {
         private int _data = 0;
 
@@ -257,7 +257,7 @@ namespace Substrate.NBT {
         }
     }
 
-    public class TagLong : TagValue
+    public sealed class TagLong : TagValue
     {
         private long _data = 0;
 
@@ -314,7 +314,7 @@ namespace Substrate.NBT {
         }
     }
 
-    public class TagFloat : TagValue
+    public sealed class TagFloat : TagValue
     {
         private float _data = 0;
 
@@ -368,7 +368,7 @@ namespace Substrate.NBT {
         }
     }
 
-    public class TagDouble : TagValue
+    public sealed class TagDouble : TagValue
     {
         private double _data = 0;
 
@@ -415,7 +415,7 @@ namespace Substrate.NBT {
         }
     }
 
-    public class TagByteArray : TagValue
+    public sealed class TagByteArray : TagValue
     {
         private byte[] _data = null;
 
@@ -470,7 +470,7 @@ namespace Substrate.NBT {
         }
     }
 
-    public class TagString : TagValue
+    public sealed class TagString : TagValue
     {
         private string _data = "";
 
@@ -517,7 +517,7 @@ namespace Substrate.NBT {
         }
     }
 
-    public class TagList : TagValue, IList<TagValue>
+    public sealed class TagList : TagValue, IList<TagValue>
     {
         private TagType _type = TagType.TAG_END;
 
@@ -657,7 +657,7 @@ namespace Substrate.NBT {
         #endregion
     }
 
-    public class TagCompound : TagValue, IDictionary<string, TagValue>
+    public sealed class TagCompound : TagValue, IDictionary<string, TagValue>
     {
         private Dictionary<string, TagValue> _tags;
 

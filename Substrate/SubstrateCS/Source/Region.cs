@@ -237,7 +237,7 @@ namespace Substrate
                 return c;
             }
 
-            c = ChunkRef.Create(this, _cache, lcx, lcz);
+            c = ChunkRef.Create(this, lcx, lcz);
             if (c != null) {
                 _cache.Insert(c);
             }
@@ -260,7 +260,7 @@ namespace Substrate
             Chunk c = Chunk.Create(cx, cz);
             c.Save(GetChunkOutStream(lcx, lcz));
 
-            ChunkRef cr = ChunkRef.Create(this, _cache, lcx, lcz);
+            ChunkRef cr = ChunkRef.Create(this, lcx, lcz);
             _cache.Insert(cr);
 
             return cr;
@@ -340,6 +340,8 @@ namespace Substrate
 
         public int Save ()
         {
+            _cache.SyncDirty();
+
             int saved = 0;
             IEnumerator<ChunkRef> en = _cache.GetDirtyEnumerator();
             while (en.MoveNext()) {

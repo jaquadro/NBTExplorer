@@ -7,8 +7,6 @@ namespace Substrate.Utility
 
     public class LRUCache<TKey, TValue> : IDictionary<TKey, TValue>
     {
-        public delegate void RemoveCacheValueHandler (Object o, CacheValueArgs e);
-
         public class CacheValueArgs : EventArgs
         {
             private TKey _key;
@@ -31,7 +29,7 @@ namespace Substrate.Utility
             }
         }
 
-        public event RemoveCacheValueHandler RemoveCacheValue;
+        public event EventHandler<CacheValueArgs> RemoveCacheValue;
 
         private Dictionary<TKey, TValue> _data;
         private IndexedLinkedList<TKey> _index;
@@ -40,7 +38,7 @@ namespace Substrate.Utility
 
         public LRUCache (int capacity)
         {
-            if (_capacity <= 0)
+            if (capacity <= 0)
             {
                 throw new ArgumentException("Cache capacity must be positive");
             }

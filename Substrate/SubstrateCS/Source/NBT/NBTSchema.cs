@@ -43,7 +43,7 @@ namespace Substrate.NBT
         }
     }
 
-    public class NBTScalerNode : NBTSchemaNode
+    public sealed class NBTScalerNode : NBTSchemaNode
     {
         private TagType _type;
 
@@ -93,7 +93,7 @@ namespace Substrate.NBT
         }
     }
 
-    public class NBTStringNode : NBTSchemaNode
+    public sealed class NBTStringNode : NBTSchemaNode
     {
         private string _value = "";
         private int _length;
@@ -135,7 +135,7 @@ namespace Substrate.NBT
         }
     }
 
-    public class NBTArrayNode : NBTSchemaNode
+    public sealed class NBTArrayNode : NBTSchemaNode
     {
         private int _length;
 
@@ -174,7 +174,7 @@ namespace Substrate.NBT
         }
     }
 
-    public class NBTListNode : NBTSchemaNode
+    public sealed class NBTListNode : NBTSchemaNode
     {
         private TagType _type;
         private int _length;
@@ -266,7 +266,7 @@ namespace Substrate.NBT
         }
     }
 
-    public class NBTCompoundNode : NBTSchemaNode, ICollection<NBTSchemaNode>
+    public sealed class NBTCompoundNode : NBTSchemaNode, ICollection<NBTSchemaNode>
     {
         private List<NBTSchemaNode> _subnodes;
 

@@ -51,8 +51,6 @@ namespace Substrate.Utility
         private readonly int _ydim;
         private readonly int _zdim;
 
-        private readonly byte[] _data;
-
         public XZYByteArray (int xdim, int ydim, int zdim, byte[] data)
             : base(data)
         {
@@ -113,8 +111,6 @@ namespace Substrate.Utility
     {
         private readonly int _xdim;
         private readonly int _zdim;
-
-        private readonly byte[] _data;
 
         public ZXByteArray (int xdim, int zdim, byte[] data)
             : base(data)

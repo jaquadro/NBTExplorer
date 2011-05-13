@@ -10,11 +10,12 @@ namespace Substrate
     using NBT;
     using Utility;
 
-    public class ChunkFileManager : IChunkManager, IChunkCache
+    public class ChunkFileManager : IChunkManager
     {
         protected string _mapPath;
 
-        protected Dictionary<ChunkKey, WeakReference> _cache;
+        //protected Dictionary<ChunkKey, WeakReference> _cache;
+        protected LRUCache<ChunkKey, ChunkRef> _cache;
         protected Dictionary<ChunkKey, ChunkRef> _dirty;
 
         public string ChunkPath
@@ -25,7 +26,7 @@ namespace Substrate
         public ChunkFileManager (string mapDir)
         {
             _mapPath = mapDir;
-            _cache = new Dictionary<ChunkKey, WeakReference>();
+            _cache = new LRUCache<ChunkKey, ChunkRef>(256);
             _dirty = new Dictionary<ChunkKey, ChunkRef>();
         }
 
@@ -101,21 +102,14 @@ namespace Substrate
 
             ChunkRef c = null;
 
-            WeakReference chunkref = null;
-            if (_cache.TryGetValue(k, out chunkref)) {
-                c = chunkref.Target as ChunkRef;
-            }
-            else {
-                _cache.Add(k, new WeakReference(null));
-            }
-
-            if (c != null) {
+            //WeakReference chunkref = null;
+            if (_cache.TryGetValue(k, out c)) {
                 return c;
             }
 
-            c = ChunkRef.Create(this, this, cx, cz);
+            c = ChunkRef.Create(this, cx, cz);
             if (c != null) {
-                _cache[k].Target = c;
+                _cache[k] = c;
             }
 
             return c;
@@ -127,9 +121,9 @@ namespace Substrate
             Chunk c = Chunk.Create(cx, cz);
             c.Save(GetChunkOutStream(cx, cz));
 
-            ChunkRef cr = ChunkRef.Create(this, this, cx, cz);
+            ChunkRef cr = ChunkRef.Create(this, cx, cz);
             ChunkKey k = new ChunkKey(cx, cz);
-            _cache[k] = new WeakReference(cr);
+            _cache[k] = cr;
 
             return cr;
         }
@@ -152,6 +146,12 @@ namespace Substrate
 
         public int Save ()
         {
+            foreach (KeyValuePair<ChunkKey, ChunkRef> e in _cache) {
+                if (e.Value.IsDirty) {
+                    _dirty[e.Key] = e.Value;
+                }
+            }
+
             int saved = 0;
             foreach (ChunkRef c in _dirty.Values) {
                 int cx = ChunkGlobalX(c.X);
@@ -168,12 +168,17 @@ namespace Substrate
 
         public bool SaveChunk (Chunk chunk)
         {
-            return chunk.Save(GetChunkOutStream(ChunkGlobalX(chunk.X), ChunkGlobalZ(chunk.Z)));
+            if (chunk.Save(GetChunkOutStream(ChunkGlobalX(chunk.X), ChunkGlobalZ(chunk.Z)))) {
+                _dirty.Remove(new ChunkKey(chunk.X, chunk.Z));
+                return true;
+            }
+
+            return false;
         }
 
         #endregion
 
-        #region IChunkCache Members
+        /*#region IChunkCache Members
 
         public bool MarkChunkDirty (ChunkRef chunk)
         {
@@ -201,7 +206,7 @@ namespace Substrate
             return false;
         }
 
-        #endregion
+        #endregion*/
 
 
         #region IEnumerable<ChunkRef> Members

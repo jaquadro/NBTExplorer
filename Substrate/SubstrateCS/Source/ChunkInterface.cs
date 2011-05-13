@@ -6,7 +6,7 @@ using System.IO;
 namespace Substrate
 {
 
-    public interface IChunk : IBoundedBlockContainer, IAlphaBlockContainer, IEntityContainer
+    /*public interface IChunk : IBoundedBlockContainer, IAlphaBlockContainer, IEntityContainer
     {
         int X { get; }
         int Z { get; }
@@ -21,13 +21,26 @@ namespace Substrate
         int CountEntities ();
 
         int GetHeight (int lx, int lz);
+    }*/
+
+    public interface IChunk
+    {
+        int X { get; }
+        int Z { get; }
+
+        AlphaBlockCollection Blocks { get; }
+        EntityCollection Entities { get; }
+
+        bool IsTerrainPopulated { get; set; }
+
+        bool Save (Stream outStream);
     }
 
-    public interface IChunkCache
+    /*public interface IChunkCache
     {
         bool MarkChunkDirty (ChunkRef chunk);
         bool MarkChunkClean (ChunkRef chunk);
-    }
+    }*/
 
     public interface IChunkContainer
     {

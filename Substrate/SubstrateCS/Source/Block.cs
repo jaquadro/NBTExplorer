@@ -7,7 +7,7 @@ namespace Substrate
     using NBT;
     using Utility;
 
-    public class Block : IPropertyBlock, ICopyable<Block>
+    public class Block : IDataBlock, IPropertyBlock, ICopyable<Block>
     {
         private int _id;
         private int _data;
@@ -25,7 +25,7 @@ namespace Substrate
             _data = data;
         }
 
-        public Block (IChunk chunk, int lx, int ly, int lz)
+        public Block (IAlphaBlockCollection chunk, int lx, int ly, int lz)
         {
             _id = chunk.GetBlockID(lx, ly, lz);
             _data = chunk.GetBlockData(lx, ly, lz);
@@ -62,6 +62,11 @@ namespace Substrate
             }
         }
 
+        #endregion
+
+
+        #region IDataBlock Members
+
         public int Data
         {
             get { return _data; }
@@ -86,25 +91,23 @@ namespace Substrate
             return _tileEntity;
         }
 
-        public bool SetTileEntity (TileEntity te)
+        public void SetTileEntity (TileEntity te)
         {
             BlockInfoEx info = BlockInfo.BlockTable[_id] as BlockInfoEx;
             if (info == null) {
-                return false;
+                return;
             }
 
             if (te.GetType() != TileEntityFactory.Lookup(info.TileEntityName)) {
-                return false;
+                return;
             }
 
             _tileEntity = te;
-            return true;
         }
 
-        public bool ClearTileEntity ()
+        public void ClearTileEntity ()
         {
             _tileEntity = null;
-            return true;
         }
 
         #endregion

@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Substrate
 {
-    public class BlockRef : IPropertyBlock, ILitBlock
+    public class BlockRef : IDataBlock, IPropertyBlock, ILitBlock
     {
-        protected IAlphaBlockContainer _container;
+        protected IAlphaBlockCollection _container;
 
         protected int _x;
         protected int _y;
@@ -43,7 +43,7 @@ namespace Substrate
         }*/
 
 
-        public BlockRef (IAlphaBlockContainer container, int x, int y, int z)
+        public BlockRef (IAlphaBlockCollection container, int x, int y, int z)
         {
             _container = container;
             _x = x;
@@ -98,14 +98,14 @@ namespace Substrate
             return _container.GetTileEntity(_x, _y, _z);
         }
 
-        public bool SetTileEntity (TileEntity te)
+        public void SetTileEntity (TileEntity te)
         {
-            return _container.SetTileEntity(_x, _y, _z, te);
+            _container.SetTileEntity(_x, _y, _z, te);
         }
 
-        public bool ClearTileEntity ()
+        public void ClearTileEntity ()
         {
-            return _container.ClearTileEntity(_x, _y, _z);
+            _container.ClearTileEntity(_x, _y, _z);
         }
 
         #endregion

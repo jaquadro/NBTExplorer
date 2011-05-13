@@ -11,6 +11,10 @@ namespace Substrate
     {
         public static readonly NBTCompoundNode PlayerSchema = UTBaseSchema.MergeInto(new NBTCompoundNode("")
         {
+            new NBTScalerNode("AttackTime", TagType.TAG_SHORT),
+            new NBTScalerNode("DeathTime", TagType.TAG_SHORT),
+            new NBTScalerNode("Health", TagType.TAG_SHORT),
+            new NBTScalerNode("HurtTime", TagType.TAG_SHORT),
             new NBTScalerNode("Dimension", TagType.TAG_INT),
             new NBTListNode("Inventory", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),
             new NBTScalerNode("World", TagType.TAG_STRING, NBTOptions.OPTIONAL),
@@ -23,6 +27,11 @@ namespace Substrate
 
         private const int _CAPACITY = 105;
 
+        private short _attackTime;
+        private short _deathTime;
+        private short _health;
+        private short _hurtTime;
+
         private int _dimension;
         private byte _sleeping;
         private short _sleepTimer;
@@ -33,6 +42,30 @@ namespace Substrate
         private string _world;
 
         private ItemCollection _inventory;
+
+        public int AttackTime
+        {
+            get { return _attackTime; }
+            set { _attackTime = (short)value; }
+        }
+
+        public int DeathTime
+        {
+            get { return _deathTime; }
+            set { _deathTime = (short)value; }
+        }
+
+        public int Health
+        {
+            get { return _health; }
+            set { _health = (short)value; }
+        }
+
+        public int HurtTime
+        {
+            get { return _hurtTime; }
+            set { _hurtTime = (short)value; }
+        }
 
         public int Dimension
         {
@@ -87,13 +120,18 @@ namespace Substrate
             _sleepTimer = 0;
 
             Air = 300;
-            //Health = 20;
+            Health = 20;
             Fire = -20;
         }
 
         public Player (Player p)
             : base(p)
         {
+            _attackTime = p._attackTime;
+            _deathTime = p._deathTime;
+            _health = p._health;
+            _hurtTime = p._hurtTime;
+
             _dimension = p._dimension;
             _sleeping = p._sleeping;
             _sleepTimer = p._sleepTimer;
@@ -113,6 +151,11 @@ namespace Substrate
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
+
+            _attackTime = ctree["AttackTime"].ToTagShort();
+            _deathTime = ctree["DeathTime"].ToTagShort();
+            _health = ctree["Health"].ToTagShort();
+            _hurtTime = ctree["HurtTime"].ToTagShort();
 
             _dimension = ctree["Dimension"].ToTagInt();
             _sleeping = ctree["Sleeping"].ToTagByte();
@@ -149,6 +192,11 @@ namespace Substrate
         public virtual new TagValue BuildTree ()
         {
             TagCompound tree = base.BuildTree() as TagCompound;
+            tree["AttackTime"] = new TagShort(_attackTime);
+            tree["DeathTime"] = new TagShort(_deathTime);
+            tree["Health"] = new TagShort(_health);
+            tree["HurtTime"] = new TagShort(_hurtTime);
+
             tree["Dimension"] = new TagInt(_dimension);
             tree["Sleeping"] = new TagByte(_sleeping);
             tree["SleepTimer"] = new TagShort(_sleepTimer);

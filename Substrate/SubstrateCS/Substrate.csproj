@@ -69,10 +69,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Source\ChunkCache.cs" />
-    <None Include="Source\Experimental\BlockInterface.cs" />
     <Compile Include="Source\Entities\EntitySquid.cs" />
-    <None Include="Source\Experimental\Interface2.cs" />
-    <Compile Include="Source\Experimental\BlockLight.cs" />
+    <Compile Include="Source\EntityCollection.cs" />
+    <Compile Include="Source\AlphaBlockCollection.cs" />
+    <Compile Include="Source\BlockLight.cs" />
+    <Compile Include="Source\BlockTileEntities.cs" />
     <Compile Include="Source\Level.cs" />
     <Compile Include="Source\PlayerManager.cs" />
     <Compile Include="Source\PlayerFile.cs" />
@@ -178,6 +179,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Source\Experimental\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
