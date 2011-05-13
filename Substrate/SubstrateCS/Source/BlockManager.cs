@@ -30,7 +30,7 @@ namespace Substrate
 
         private bool _autoLight = true;
 
-        public bool AutoRecalcLight
+        public bool AutoLight
         {
             get { return _autoLight; }
             set { _autoLight = value; }

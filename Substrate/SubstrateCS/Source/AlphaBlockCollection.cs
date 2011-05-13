@@ -183,15 +183,18 @@ namespace Substrate
 
             // Update tile entities
 
-            BlockInfoEx info1 = BlockInfo.BlockTable[oldid] as BlockInfoEx;
-            BlockInfoEx info2 = BlockInfo.BlockTable[id] as BlockInfoEx;
+            BlockInfo info1 = BlockInfo.BlockTable[oldid];
+            BlockInfo info2 = BlockInfo.BlockTable[id];
 
-            if (info1 != info2) {
-                if (info1 != null) {
+            BlockInfoEx einfo1 = info1 as BlockInfoEx;
+            BlockInfoEx einfo2 = info2 as BlockInfoEx;
+
+            if (einfo1 != einfo2) {
+                if (einfo1 != null) {
                     ClearTileEntity(x, y, z);
                 }
 
-                if (info2 != null) {
+                if (einfo2 != null) {
                     CreateTileEntity(x, y, z);
                 }
             }
