@@ -24,7 +24,10 @@ namespace FlatMap
 
             // We can set different world parameters
             world.Level.LevelName = "Flatlands";
-            world.Level.SetDefaultPlayer();
+            world.Level.SpawnX = 20;
+            world.Level.SpawnZ = 20;
+            world.Level.SpawnY = 70;
+            //world.Level.SetDefaultPlayer();
 
             // We'll create chunks at chunk coordinates xmin,zmin to xmax,zmax
             for (int xi = xmin; xi < xmax; xi++) {

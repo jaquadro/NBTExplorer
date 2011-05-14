@@ -56,12 +56,15 @@ namespace Substrate
             BlockKey primary = new BlockKey(lx, ly, lz);
             _update.Enqueue(primary);
 
-            QueueRelight(new BlockKey(lx - 1, ly, lz));
-            QueueRelight(new BlockKey(lx + 1, ly, lz));
-            QueueRelight(new BlockKey(lx, ly - 1, lz));
-            QueueRelight(new BlockKey(lx, ly + 1, lz));
-            QueueRelight(new BlockKey(lx, ly, lz - 1));
-            QueueRelight(new BlockKey(lx, ly, lz + 1));
+            BlockInfo info = _blockset.GetInfo(lx, ly, lz);
+            if (info.Luminance > BlockInfo.MIN_LUMINANCE || info.TransmitsLight) {
+                QueueRelight(new BlockKey(lx - 1, ly, lz));
+                QueueRelight(new BlockKey(lx + 1, ly, lz));
+                QueueRelight(new BlockKey(lx, ly - 1, lz));
+                QueueRelight(new BlockKey(lx, ly + 1, lz));
+                QueueRelight(new BlockKey(lx, ly, lz - 1));
+                QueueRelight(new BlockKey(lx, ly, lz + 1));
+            }
 
             UpdateBlockLight();
         }
@@ -294,19 +297,21 @@ namespace Substrate
                 light = Math.Max(light, lld - 1);
                 light = Math.Max(light, llu - 1);
 
-                //light = Math.Max(light - info.Opacity, 0);
+                light = Math.Max(light - info.Opacity, 0);
 
                 if (light != lightval) {
                     //Console.WriteLine("Block Light: ({0},{1},{2}) " + lightval + " -> " + light, k.x, k.y, k.z);
 
                     cc.SetBlockLight(x, y, z, light);
 
-                    QueueRelight(new BlockKey(k.x - 1, k.y, k.z));
-                    QueueRelight(new BlockKey(k.x + 1, k.y, k.z));
-                    QueueRelight(new BlockKey(k.x, k.y - 1, k.z));
-                    QueueRelight(new BlockKey(k.x, k.y + 1, k.z));
-                    QueueRelight(new BlockKey(k.x, k.y, k.z - 1));
-                    QueueRelight(new BlockKey(k.x, k.y, k.z + 1));
+                    if (info.TransmitsLight) {
+                        QueueRelight(new BlockKey(k.x - 1, k.y, k.z));
+                        QueueRelight(new BlockKey(k.x + 1, k.y, k.z));
+                        QueueRelight(new BlockKey(k.x, k.y - 1, k.z));
+                        QueueRelight(new BlockKey(k.x, k.y + 1, k.z));
+                        QueueRelight(new BlockKey(k.x, k.y, k.z - 1));
+                        QueueRelight(new BlockKey(k.x, k.y, k.z + 1));
+                    }
                 }
             }
         }
@@ -351,19 +356,21 @@ namespace Substrate
                     light = Math.Max(light, llu - 1);
                 }
 
-                //light = Math.Max(light - info.Opacity, 0);
+                light = Math.Max(light - info.Opacity, 0);
 
                 if (light != lightval) {
                     //Console.WriteLine("Block SkyLight: ({0},{1},{2}) " + lightval + " -> " + light, k.x, k.y, k.z);
 
                     cc.SetSkyLight(x, y, z, light);
-  
-                    QueueRelight(new BlockKey(k.x - 1, k.y, k.z));
-                    QueueRelight(new BlockKey(k.x + 1, k.y, k.z));
-                    QueueRelight(new BlockKey(k.x, k.y - 1, k.z));
-                    QueueRelight(new BlockKey(k.x, k.y + 1, k.z));
-                    QueueRelight(new BlockKey(k.x, k.y, k.z - 1));
-                    QueueRelight(new BlockKey(k.x, k.y, k.z + 1));
+
+                    if (info.TransmitsLight) {
+                        QueueRelight(new BlockKey(k.x - 1, k.y, k.z));
+                        QueueRelight(new BlockKey(k.x + 1, k.y, k.z));
+                        QueueRelight(new BlockKey(k.x, k.y - 1, k.z));
+                        QueueRelight(new BlockKey(k.x, k.y + 1, k.z));
+                        QueueRelight(new BlockKey(k.x, k.y, k.z - 1));
+                        QueueRelight(new BlockKey(k.x, k.y, k.z + 1));
+                    }
                 }
             }
         }

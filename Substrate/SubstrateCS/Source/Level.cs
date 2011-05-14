@@ -24,6 +24,10 @@ namespace Substrate
                 new NBTScalerNode("RandomSeed", TagType.TAG_LONG),
                 new NBTScalerNode("version", TagType.TAG_INT, NBTOptions.OPTIONAL),
                 new NBTScalerNode("LevelName", TagType.TAG_STRING, NBTOptions.OPTIONAL),
+                new NBTScalerNode("raining", TagType.TAG_BYTE, NBTOptions.OPTIONAL),
+                new NBTScalerNode("thundering", TagType.TAG_BYTE, NBTOptions.OPTIONAL),
+                new NBTScalerNode("rainTime", TagType.TAG_INT, NBTOptions.OPTIONAL),
+                new NBTScalerNode("thunderTime", TagType.TAG_INT, NBTOptions.OPTIONAL),
             },
         };
 
@@ -42,6 +46,11 @@ namespace Substrate
         private long _randomSeed;
         private int? _version;
         private string _name;
+
+        private byte? _raining;
+        private byte? _thundering;
+        private int? _rainTime;
+        private int? _thunderTime;
 
         public long Time
         {
@@ -110,6 +119,30 @@ namespace Substrate
             }
         }
 
+        public bool IsRaining
+        {
+            get { return (_raining ?? 0) == 1; }
+            set { _raining = value ? (byte)1 : (byte)0; }
+        }
+
+        public bool IsThundering
+        {
+            get { return (_thundering ?? 0) == 1; }
+            set { _thundering = value ? (byte)1 : (byte)0; }
+        }
+
+        public int RainTime
+        {
+            get { return _rainTime ?? 0; }
+            set { _rainTime = value; }
+        }
+
+        public int ThunderTime
+        {
+            get { return _thunderTime ?? 0; }
+            set { _thunderTime = value; }
+        }
+
         public Level (INBTWorld world)
         {
             _world = world;
@@ -139,6 +172,11 @@ namespace Substrate
             _randomSeed = p._randomSeed;
             _version = p._version;
             _name = p._name;
+
+            _raining = p._raining;
+            _thundering = p._thundering;
+            _rainTime = p._rainTime;
+            _thunderTime = p._thunderTime;
 
             if (p._player != null) {
                 _player = p._player.Copy();
@@ -202,9 +240,21 @@ namespace Substrate
             if (ctree.ContainsKey("version")) {
                 _version = ctree["version"].ToTagInt();
             }
-
             if (ctree.ContainsKey("LevelName")) {
                 _name = ctree["LevelName"].ToTagString();
+            }
+
+            if (ctree.ContainsKey("raining")) {
+                _raining = ctree["raining"].ToTagByte();
+            }
+            if (ctree.ContainsKey("thundering")) {
+                _thundering = ctree["thundering"].ToTagByte();
+            }
+            if (ctree.ContainsKey("rainTime")) {
+                _rainTime = ctree["rainTime"].ToTagInt();
+            }
+            if (ctree.ContainsKey("thunderTime")) {
+                _thunderTime = ctree["thunderTime"].ToTagInt();
             }
 
             return this;
@@ -241,6 +291,19 @@ namespace Substrate
 
             if (_name != null) {
                 data["LevelName"] = new TagString(_name);
+            }
+
+            if (_raining != null) {
+                data["raining"] = new TagByte(_raining ?? 0);
+            }
+            if (_thundering != null) {
+                data["thundering"] = new TagByte(_thundering ?? 0);
+            }
+            if (_rainTime != null) {
+                data["rainTime"] = new TagInt(_rainTime ?? 0);
+            }
+            if (_thunderTime != null) {
+                data["thunderTime"] = new TagInt(_thunderTime ?? 0);
             }
 
             TagCompound tree = new TagCompound();
