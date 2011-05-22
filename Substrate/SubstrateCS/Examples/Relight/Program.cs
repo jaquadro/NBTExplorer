@@ -27,8 +27,6 @@ namespace Relight
 
             // First blank out all of the lighting in all of the chunks
             foreach (ChunkRef chunk in cm) {
-                if (chunk.X < -20 || chunk.X > 0 || chunk.Z < -20 || chunk.Z > 0) continue;
-
                 chunk.Blocks.RebuildHeightMap();
                 chunk.Blocks.ResetBlockLight();
                 chunk.Blocks.ResetSkyLight();
@@ -39,8 +37,6 @@ namespace Relight
 
             // In a separate pass, reconstruct the light
             foreach (ChunkRef chunk in cm) {
-                if (chunk.X < -20 || chunk.X > 0 || chunk.Z < -20 || chunk.Z > 0) continue;
-
                 chunk.Blocks.RebuildBlockLight();
                 chunk.Blocks.RebuildSkyLight();
 
