@@ -37,6 +37,9 @@ namespace Substrate
         public const int BED = 26;
         public const int POWERED_RAIL = 27;
         public const int DETECTOR_RAIL = 28;
+        public const int COBWEB = 30;
+        public const int TALL_GRASS = 31;
+        public const int DEAD_SHRUB = 32;
         public const int WOOL = 35;
         public const int YELLOW_FLOWER = 37;
         public const int RED_ROSE = 38;
@@ -97,6 +100,7 @@ namespace Substrate
         public const int REDSTONE_REPEATER_ON = 93;
         public const int REDSTONE_REPEATER_OFF = 94;
         public const int LOCKED_CHEST = 95;
+        public const int TRAPDOOR = 96;
     }
 
     public enum BlockState
@@ -307,6 +311,9 @@ namespace Substrate
         public static BlockInfo Bed;
         public static BlockInfo PoweredRail;
         public static BlockInfo DetectorRail;
+        public static BlockInfo Cobweb;
+        public static BlockInfo TallGrass;
+        public static BlockInfo DeadShrub;
         public static BlockInfo Wool;
         public static BlockInfo YellowFlower;
         public static BlockInfo RedRose;
@@ -366,6 +373,8 @@ namespace Substrate
         public static BlockInfo CakeBlock;
         public static BlockInfo RedstoneRepeater;
         public static BlockInfo RedstoneRepeaterOn;
+        public static BlockInfoEx LockedChest;
+        public static BlockInfo Trapdoor;
 
         static BlockInfo ()
         {
@@ -406,6 +415,9 @@ namespace Substrate
             Bed = new BlockInfo(26, "Bed").SetOpacity(0);
             PoweredRail = new BlockInfo(27, "Powered Rail").SetOpacity(0).SetState(BlockState.NONSOLID);
             DetectorRail = new BlockInfo(28, "Detector Rail").SetOpacity(0).SetState(BlockState.NONSOLID);
+            Cobweb = new BlockInfo(30, "Cobweb").SetOpacity(0).SetState(BlockState.NONSOLID);
+            TallGrass = new BlockInfo(31, "Tall Grass").SetOpacity(0).SetState(BlockState.NONSOLID);
+            DeadShrub = new BlockInfo(32, "Dead Shrub").SetOpacity(0).SetState(BlockState.NONSOLID);
             Wool = new BlockInfo(35, "Wool");
             YellowFlower = new BlockInfo(37, "Yellow Flower").SetOpacity(0).SetState(BlockState.NONSOLID);
             RedRose = new BlockInfo(38, "Red Rose").SetOpacity(0).SetState(BlockState.NONSOLID);
@@ -465,6 +477,8 @@ namespace Substrate
             CakeBlock = new BlockInfo(92, "Cake Block").SetOpacity(0);
             RedstoneRepeater = new BlockInfo(93, "Redstone Repeater (Off)").SetOpacity(0);
             RedstoneRepeaterOn = new BlockInfo(94, "Redstone Repeater (On)").SetOpacity(0).SetLuminance(7);
+            LockedChest = (BlockInfoEx)new BlockInfoEx(95, "Locked Chest").SetLuminance(MAX_LUMINANCE);
+            Trapdoor = new BlockInfo(96, "Trapdoor").SetOpacity(0);
 
             for (int i = 0; i < MAX_BLOCKS; i++) {
                 if (_blockTable[i] == null) {
@@ -502,6 +516,7 @@ namespace Substrate
             SugarCane.SetDataLimits(0, 15, 0);
             Water.SetDataLimits(0, 7, 0x8);
             Lava.SetDataLimits(0, 7, 0x8);
+            TallGrass.SetDataLimits(0, 2, 0);
             Crops.SetDataLimits(0, 7, 0);
             PoweredRail.SetDataLimits(0, 5, 0x8);
             DetectorRail.SetDataLimits(0, 5, 0x8);
@@ -532,6 +547,7 @@ namespace Substrate
             Bed.SetDataLimits(0, 3, 0x8);
             RedstoneRepeater.SetDataLimits(0, 0, 0xF);
             RedstoneRepeaterOn.SetDataLimits(0, 0, 0xF);
+            Trapdoor.SetDataLimits(0, 3, 0x4);
         }
     }
 
