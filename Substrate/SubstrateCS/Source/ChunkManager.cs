@@ -101,35 +101,27 @@ namespace Substrate
             return r.CreateChunk(cx & REGION_XMASK, cz & REGION_ZMASK);
         }
 
-        /*public bool MarkChunkDirty (ChunkRef chunk)
+        public ChunkRef CopyChunk (int src_cx, int src_cz, int dst_cx, int dst_cz)
         {
-            Region r = GetRegion(chunk.X, chunk.Z);
-            if (r == null) {
-                return false;
+            Region src_r = GetRegion(src_cx, src_cz);
+            if (src_r == null) {
+                return null;
             }
 
-            RegionKey k = new RegionKey(r.X, r.Z);
-            _dirty[k] = r;
+            Region dst_r = GetRegion(dst_cx, dst_cz);
+            if (dst_r == null) {
+                int rx = dst_cx >> REGION_XLOG;
+                int rz = dst_cz >> REGION_ZLOG;
+                dst_r = _regionMan.CreateRegion(rx, rz);
+            }
 
-            r.MarkChunkDirty(chunk);
+            Chunk c = src_r.GetChunk(src_cx & REGION_XMASK, src_cz & REGION_ZMASK).Copy();
+            c.SetLocation(dst_cx, dst_cz);
 
-            return true;
+            dst_r.SaveChunk(c);
+
+            return dst_r.GetChunkRef(dst_cx & REGION_XMASK, dst_cz & REGION_ZMASK);
         }
-
-        public bool MarkChunkClean (ChunkRef chunk)
-        {
-            Region r = GetRegion(chunk.X, chunk.Z);
-            if (r == null) {
-                return false;
-            }
-
-            RegionKey k = new RegionKey(r.X, r.Z);
-            _dirty.Remove(k);
-
-            r.MarkChunkClean(chunk);
-
-            return true;
-        }*/
 
         public int Save ()
         {
