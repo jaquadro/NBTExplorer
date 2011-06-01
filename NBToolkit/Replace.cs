@@ -167,8 +167,8 @@ namespace NBToolkit
 
         public void ApplyChunk (INBTWorld world, ChunkRef chunk)
         {
-            int xBase = chunk.X * chunk.XDim;
-            int zBase = chunk.Z * chunk.ZDim;
+            int xBase = chunk.X * chunk.Blocks.XDim;
+            int zBase = chunk.Z * chunk.Blocks.ZDim;
 
             // Determine X range
             int xmin = 0;
@@ -233,22 +233,22 @@ namespace NBToolkit
                             }
                         }
 
-                        int lx = x & (chunk.XDim - 1);
-                        int ly = y & (chunk.YDim - 1);
-                        int lz = z & (chunk.ZDim - 1);
+                        int lx = x & (chunk.Blocks.XDim - 1);
+                        int ly = y & (chunk.Blocks.YDim - 1);
+                        int lz = z & (chunk.Blocks.ZDim - 1);
 
                         // Attempt to replace block
-                        int oldBlock = chunk.GetBlockID(lx , ly, lz);
+                        int oldBlock = chunk.Blocks.GetID(lx , ly, lz);
                         if (oldBlock == opt.OPT_BEFORE) {
-                            chunk.SetBlockID(lx, ly, lz, (int)opt.OPT_AFTER);
+                            chunk.Blocks.SetID(lx, ly, lz, (int)opt.OPT_AFTER);
 
-                            if (opt.OPT_VV) {
+                            /*if (opt.OPT_VV) {
                                 Console.WriteLine("Replaced block at {0},{1},{2}", 
                                     chunk.BlockGlobalX(lx), chunk.BlockGlobalY(ly), chunk.BlockGlobalZ(lz));
-                            }
+                            }*/
 
                             if (opt.OPT_DATA != null) {
-                                chunk.SetBlockData(lx, ly, lz, (int)opt.OPT_DATA);
+                                chunk.Blocks.SetData(lx, ly, lz, (int)opt.OPT_DATA);
                             }
                         }
                     }

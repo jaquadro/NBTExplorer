@@ -42,7 +42,7 @@ namespace NBToolkit
             new OreType() { id = 16, name = "Coal", rounds = 20, min = 0, max = 127, size = 16 },
             new OreType() { id = 15, name = "Iron", rounds = 20, min = 0, max = 63, size = 8 },
             new OreType() { id = 14, name = "Gold", rounds = 2, min = 0, max = 31, size = 8 },
-            new OreType() { id = 73, name = "Redstone", rounds = 8, min = 0, max = 31, size = 7 },
+            new OreType() { id = 73, name = "Redstone", rounds = 8, min = 0, max = 15, size = 7 },
             new OreType() { id = 56, name = "Diamond", rounds = 1, min = 0, max = 15, size = 7 },
             new OreType() { id = 21, name = "Lapis", rounds = 1, min = 0, max = 31, size = 7 },
         };
@@ -230,9 +230,9 @@ namespace NBToolkit
                     Console.WriteLine("Generating round {0}...", i);
                 }
 
-                int x = chunk.X * chunk.XDim + rand.Next(chunk.XDim);
+                int x = chunk.X * chunk.Blocks.XDim + rand.Next(chunk.Blocks.XDim);
                 int y = (int)opt.OPT_MIN + rand.Next((int)opt.OPT_MAX - (int)opt.OPT_MIN);
-                int z = chunk.Z * chunk.ZDim + rand.Next(chunk.ZDim);
+                int z = chunk.Z * chunk.Blocks.ZDim + rand.Next(chunk.Blocks.ZDim);
 
                 generator.Generate(bm, rand, x, y, z);
             }
@@ -265,7 +265,7 @@ namespace NBToolkit
                 return false;
             }
 
-            int blockID = _cache.GetBlockID(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            int blockID = _cache.Blocks.GetID(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
 
             if (
                 ((opt.OPT_OA) && (blockID != opt.OPT_ID)) ||

@@ -13,6 +13,7 @@ namespace NBToolkit
 
         public bool BlockLight;
         public bool SkyLight;
+        public bool HeightMap;
 
         public RelightOptions ()
             : base()
@@ -23,6 +24,8 @@ namespace NBToolkit
                     v => BlockLight = true },
                 { "s|SkyLight", "Recalculate the skylight values (natural sunlight) of selected chunks",
                     v => SkyLight = true },
+                { "m|HeightMap", "Recalculate the height map of selected chunks",
+                    v => HeightMap = true },
             };
 
             _chunkFilter = new ChunkFilter();
@@ -94,11 +97,14 @@ namespace NBToolkit
                     Console.WriteLine("Resetting chunk {0},{1}...", chunk.X, chunk.Z);
                 }
 
+                if (opt.HeightMap) {
+                    chunk.Blocks.RebuildHeightMap();
+                }
                 if (opt.BlockLight) {
-                    chunk.ResetBlockLight();
+                    chunk.Blocks.ResetBlockLight();
                 }
                 if (opt.SkyLight) {
-                    chunk.ResetSkyLight();
+                    chunk.Blocks.ResetSkyLight();
                 }
                 fcm.Save();
 
@@ -115,10 +121,10 @@ namespace NBToolkit
                 }
 
                 if (opt.BlockLight) {
-                    chunk.RebuildBlockLight();
+                    chunk.Blocks.RebuildBlockLight();
                 }
                 if (opt.SkyLight) {
-                    chunk.RebuildSkyLight();
+                    chunk.Blocks.RebuildSkyLight();
                 }
                 fcm.Save();
             }
@@ -133,15 +139,15 @@ namespace NBToolkit
                 }
 
                 if (opt.BlockLight) {
-                    chunk.UpdateEdgeBlockLight();
+                    //chunk.UpdateEdgeBlockLight();
                 }
                 if (opt.SkyLight) {
-                    chunk.UpdateEdgeSkyLight();
+                    //chunk.UpdateEdgeSkyLight();
                 }
                 fcm.Save();
             }
 
-            Console.WriteLine("Purged Chunks: " + affectedChunks);
+            Console.WriteLine("Relit Chunks: " + affectedChunks);
         }
     }
 }

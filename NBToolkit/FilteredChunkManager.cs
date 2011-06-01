@@ -114,7 +114,7 @@ namespace NBToolkit
                     if (_filter.IncludedBlockCount > 0) {
                         int matchCount = 0;
                         foreach (int block in _filter.IncludedBlocks) {
-                            if (Current.CountBlockID(block) > 0) {
+                            if (Current.Blocks.CountByID(block) > 0) {
                                 matchCount++;
                             }
                         }
@@ -131,7 +131,7 @@ namespace NBToolkit
                     if (_filter.ExcludedBlockCount > 0) {
                         int matchCount = 0;
                         foreach (int block in _filter.ExcludedBlocks) {
-                            if (Current.CountBlockID(block) > 0) {
+                            if (Current.Blocks.CountByID(block) > 0) {
                                 matchCount++;
                             }
                         }
