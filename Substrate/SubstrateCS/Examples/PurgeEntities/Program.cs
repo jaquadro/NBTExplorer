@@ -35,15 +35,15 @@ namespace PurgeEntities
             // Remove entities
             foreach (ChunkRef chunk in cm) {
                 // Skip chunks that don't cover our selected area
-                if (((chunk.X + 1) * chunk.XDim < x1) ||
-                    (chunk.X * chunk.XDim >= x2) ||
-                    ((chunk.Z + 1) * chunk.ZDim < z1) ||
-                    (chunk.Z * chunk.ZDim >= z2)) {
+                if (((chunk.X + 1) * chunk.Blocks.XDim < x1) ||
+                    (chunk.X * chunk.Blocks.XDim >= x2) ||
+                    ((chunk.Z + 1) * chunk.Blocks.ZDim < z1) ||
+                    (chunk.Z * chunk.Blocks.ZDim >= z2)) {
                     continue;
                 }
 
                 // Delete the specified entities
-                chunk.RemoveEntities(eid);
+                chunk.Entities.RemoveAll(eid);
                 cm.Save();
             }
         }

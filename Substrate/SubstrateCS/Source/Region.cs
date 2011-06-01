@@ -367,41 +367,6 @@ namespace Substrate
 
         #endregion
 
-
-        #region IChunkCache Members
-
-        /*public bool MarkChunkDirty (ChunkRef chunk)
-        {
-            int cx = chunk.X;
-            int cz = chunk.Z;
-            int lcx = cx - _rx * ChunkManager.REGION_XLEN;
-            int lcz = cz - _rz * ChunkManager.REGION_ZLEN;
-
-            ChunkKey k = new ChunkKey(lcx, lcz);
-            if (!_dirty.ContainsKey(k)) {
-                _dirty.Add(k, GetChunkRef(lcx, lcz));
-                return true;
-            }
-            return false;
-        }
-
-        public bool MarkChunkClean (ChunkRef chunk)
-        {
-            int cx = chunk.X;
-            int cz = chunk.Z;
-            int lcx = cx - _rx * ChunkManager.REGION_XLEN;
-            int lcz = cz - _rz * ChunkManager.REGION_ZLEN;
-
-            ChunkKey k = new ChunkKey(lcx, lcx);
-            if (_dirty.ContainsKey(k)) {
-                _dirty.Remove(k);
-                return true;
-            }
-            return false;
-        }*/
-
-        #endregion
-
         private bool LocalBoundsCheck (int lcx, int lcz)
         {
             return (lcx >= 0 && lcx < XDIM && lcz >= 0 && lcz < ZDIM);

@@ -19,6 +19,8 @@ namespace Substrate
 
         Level Level { get; }
 
+        void Save ();
+
         IBlockManager GetBlockManager ();
         IBlockManager GetBlockManager (int dim);
 

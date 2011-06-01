@@ -6,7 +6,7 @@ namespace Substrate
 {
     using NBT;
 
-    public class EntityCollection
+    public class EntityCollection : IEnumerable<Entity>
     {
         private TagList _entities;
 
@@ -23,7 +23,7 @@ namespace Substrate
             _entities = entities;
         }
 
-        public List<Entity> FindEntities (string id)
+        public List<Entity> FindAll (string id)
         {
             List<Entity> set = new List<Entity>();
 
@@ -46,7 +46,7 @@ namespace Substrate
             return set;
         }
 
-        public List<Entity> FindEntities (Predicate<Entity> match)
+        public List<Entity> FindAll (Predicate<Entity> match)
         {
             List<Entity> set = new List<Entity>();
 
@@ -64,7 +64,7 @@ namespace Substrate
             return set;
         }
 
-        public bool AddEntity (Entity ent)
+        public bool Add (Entity ent)
         {
             /*double xlow = _cx * XDim;
             double xhigh = xlow + XDim;
@@ -82,7 +82,7 @@ namespace Substrate
             return true;
         }
 
-        public int RemoveEntities (string id)
+        public int RemoveAll (string id)
         {
             int rem = _entities.RemoveAll(val =>
             {
@@ -102,11 +102,11 @@ namespace Substrate
             if (rem > 0) {
                 _dirty = true;
             }
-
+            
             return rem;
         }
 
-        public int RemoveEntities (Predicate<Entity> match)
+        public int RemoveAll (Predicate<Entity> match)
         {
             int rem = _entities.RemoveAll(val =>
             {
@@ -128,6 +128,84 @@ namespace Substrate
             }
 
             return rem;
+        }
+
+        #region IEnumerable<Entity> Members
+
+        public IEnumerator<Entity> GetEnumerator ()
+        {
+            return new EntityEnumerator(_entities);
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
+        {
+            return new EntityEnumerator(_entities);
+        }
+
+        #endregion
+
+        public class EntityEnumerator : IEnumerator<Entity>
+        {
+            private TagList _entities;
+            private IEnumerator<TagValue> _enum;
+
+            private Entity _cur;
+
+            public EntityEnumerator (TagList entities)
+            {
+                _entities = entities;
+                _enum = entities.GetEnumerator();
+            }
+
+            #region IEnumerator<Entity> Members
+
+            public Entity Current
+            {
+                get 
+                {
+                    if (_cur == null) {
+                        throw new InvalidOperationException();
+                    } 
+                    return _cur;
+                }
+            }
+
+            #endregion
+
+            #region IDisposable Members
+
+            public void Dispose () { }
+
+            #endregion
+
+            #region IEnumerator Members
+
+            object System.Collections.IEnumerator.Current
+            {
+                get { return Current; }
+            }
+
+            public bool MoveNext ()
+            {
+                if (!_enum.MoveNext()) {
+                    return false;
+                }
+
+                _cur = EntityFactory.Create(_enum.Current.ToTagCompound());
+                return true;
+            }
+
+            public void Reset ()
+            {
+                _cur = null;
+                _enum.Reset();
+            }
+
+            #endregion
         }
     }
 }
