@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Source\ItemInfo.cs" />
     <Compile Include="Source\ChunkCache.cs" />
     <Compile Include="Source\Entities\EntitySquid.cs" />
     <Compile Include="Source\EntityCollection.cs" />

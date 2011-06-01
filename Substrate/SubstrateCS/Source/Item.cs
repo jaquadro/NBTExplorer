@@ -25,6 +25,11 @@ namespace Substrate
         private byte _count;
         private short _damage;
 
+        public ItemInfo Info
+        {
+            get { return ItemInfo.ItemTable[_id]; }
+        }
+
         public int ID
         {
             get { return _id; }
