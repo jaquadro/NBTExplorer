@@ -52,6 +52,11 @@ namespace Substrate
         {
         }
 
+        public Item (int id)
+        {
+            _id = (short)id;
+        }
+
         #region ICopyable<Item> Members
 
         public Item Copy ()

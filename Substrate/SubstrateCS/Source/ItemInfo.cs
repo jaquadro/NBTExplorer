@@ -120,6 +120,7 @@ namespace Substrate
         public class ItemCache<T>
         {
             private Dictionary<int, T> _cache;
+            private static Random _rand = new Random();
 
             public T this[int index]
             {
@@ -136,6 +137,12 @@ namespace Substrate
             public ItemCache (Dictionary<int, T> cache)
             {
                 _cache = cache;
+            }
+
+            public T Random ()
+            {
+                List<T> list = new List<T>(_cache.Values);
+                return list[_rand.Next(list.Count)];
             }
         }
 

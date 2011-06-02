@@ -179,8 +179,8 @@ namespace Substrate
 
         private BlockKey TranslateCoordinatesHandler (int lx, int ly, int lz)
         {
-            int x = _cx * _blocks.XDim + lx;
-            int z = _cz * _blocks.ZDim + lz;
+            int x = X * _blocks.XDim + lx;
+            int z = Z * _blocks.ZDim + lz;
 
             return new BlockKey(x, ly, z);
         }

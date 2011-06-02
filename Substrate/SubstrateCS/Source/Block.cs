@@ -17,12 +17,14 @@ namespace Substrate
         public Block (int id)
         {
             _id = id;
+            UpdateTileEntity(0, id);
         }
 
         public Block (int id, int data)
         {
             _id = id;
             _data = data;
+            UpdateTileEntity(0, id);
         }
 
         public Block (IAlphaBlockCollection chunk, int lx, int ly, int lz)
@@ -45,19 +47,7 @@ namespace Substrate
             get { return _id; }
             set
             {
-                BlockInfoEx info1 = BlockInfo.BlockTable[_id] as BlockInfoEx;
-                BlockInfoEx info2 = BlockInfo.BlockTable[value] as BlockInfoEx;
-
-                if (info1 != info2) {
-                    if (info1 != null) {
-                        _tileEntity = null;
-                    }
-
-                    if (info2 != null) {
-                        _tileEntity = TileEntityFactory.Create(info2.TileEntityName);
-                    }
-                }
-
+                UpdateTileEntity(_id, value);
                 _id = value;
             }
         }
@@ -124,5 +114,21 @@ namespace Substrate
         }
 
         #endregion
+
+        private void UpdateTileEntity (int old, int value)
+        {
+            BlockInfoEx info1 = BlockInfo.BlockTable[old] as BlockInfoEx;
+            BlockInfoEx info2 = BlockInfo.BlockTable[value] as BlockInfoEx;
+
+            if (info1 != info2) {
+                if (info1 != null) {
+                    _tileEntity = null;
+                }
+
+                if (info2 != null) {
+                    _tileEntity = TileEntityFactory.Create(info2.TileEntityName);
+                }
+            }
+        }
     }
 }

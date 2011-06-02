@@ -95,11 +95,20 @@ namespace Substrate
                 ? TranslateCoordinates(x, y, z)
                 : new BlockKey(x, y, z);
 
+            TagCompound oldte;
+
+            if (_tileEntityTable.TryGetValue(key, out oldte)) {
+                _tileEntities.Remove(oldte);
+            }
+
             te.X = key.x;
             te.Y = key.y;
             te.Z = key.z;
 
-            _tileEntities.Add(te.BuildTree());
+            TagCompound tree = te.BuildTree() as TagCompound;
+
+            _tileEntities.Add(tree);
+            _tileEntityTable[key] = tree;
         }
 
         public void ClearTileEntity (int x, int y, int z)
