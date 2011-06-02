@@ -123,6 +123,21 @@ namespace Substrate
             return dst_r.GetChunkRef(dst_cx & REGION_XMASK, dst_cz & REGION_ZMASK);
         }
 
+        public ChunkRef SetChunk (int cx, int cz, Chunk chunk)
+        {
+            Region r = GetRegion(cx, cz);
+            if (r == null) {
+                int rx = cx >> REGION_XLOG;
+                int rz = cz >> REGION_ZLOG;
+                r = _regionMan.CreateRegion(rx, rz);
+            }
+
+            chunk.SetLocation(cx, cz);
+            r.SaveChunk(chunk);
+
+            return r.GetChunkRef(cx & REGION_XMASK, cz & REGION_ZMASK);
+        }
+
         public int Save ()
         {
             _cache.SyncDirty();

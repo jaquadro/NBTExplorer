@@ -144,6 +144,19 @@ namespace Substrate
             return true;
         }
 
+        public ChunkRef SetChunk (int cx, int cz, Chunk chunk)
+        {
+            DeleteChunk(cx, cz);
+            chunk.SetLocation(cx, cz);
+            chunk.Save(GetChunkOutStream(cx, cz));
+
+            ChunkRef cr = ChunkRef.Create(this, cx, cz);
+            ChunkKey k = new ChunkKey(cx, cz);
+            _cache[k] = cr;
+
+            return cr;
+        }
+
         public int Save ()
         {
             foreach (KeyValuePair<ChunkKey, ChunkRef> e in _cache) {

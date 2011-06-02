@@ -54,6 +54,8 @@ namespace Substrate
         ChunkRef GetChunkRef (int cx, int cz);
         ChunkRef CreateChunk (int cx, int cz);
 
+        ChunkRef SetChunk (int cx, int cz, Chunk chunk);
+
         bool ChunkExists (int cx, int cz);
 
         bool DeleteChunk (int cx, int cz);

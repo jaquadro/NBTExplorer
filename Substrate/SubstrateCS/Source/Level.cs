@@ -105,6 +105,7 @@ namespace Substrate
         public int Version
         {
             get { return _version ?? 0; }
+            set { _version = value; }
         }
 
         public string LevelName
@@ -221,6 +222,12 @@ namespace Substrate
                 return null;
             }
 
+            _version = null;
+            _raining = null;
+            _rainTime = null;
+            _thundering = null;
+            _thunderTime = null;
+
             TagCompound ctree = dtree["Data"].ToTagCompound();
 
             _time = ctree["Time"].ToTagLong();
@@ -285,7 +292,7 @@ namespace Substrate
             data["SizeOnDisk"] = new TagLong(_sizeOnDisk);
             data["RandomSeed"] = new TagLong(_randomSeed);
 
-            if (_version != null) {
+            if (_version != null && _version != 0) {
                 data["version"] = new TagInt(_version ?? 0);
             }
 

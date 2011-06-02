@@ -146,7 +146,7 @@ namespace Substrate
         public void SetChunkRef (Chunk chunk)
         {
             _chunk = chunk;
-            _chunk.SetLocation(_cx, _cz);
+            _chunk.SetLocation(X, Z);
             _dirty = true;
         }
 

@@ -338,6 +338,27 @@ namespace Substrate
             return true;
         }
 
+        public ChunkRef SetChunk (int lcx, int lcz, Chunk chunk)
+        {
+            if (!LocalBoundsCheck(lcx, lcz)) {
+                Region alt = GetForeignRegion(lcx, lcz);
+                return (alt == null) ? null : alt.CreateChunk(ForeignX(lcx), ForeignZ(lcz));
+            }
+
+            DeleteChunk(lcx, lcz);
+
+            int cx = lcx + _rx * ChunkManager.REGION_XLEN;
+            int cz = lcz + _rz * ChunkManager.REGION_ZLEN;
+
+            chunk.SetLocation(cx, cz);
+            chunk.Save(GetChunkOutStream(lcx, lcz));
+
+            ChunkRef cr = ChunkRef.Create(this, lcx, lcz);
+            _cache.Insert(cr);
+
+            return cr;
+        }
+
         public int Save ()
         {
             _cache.SyncDirty();
@@ -362,7 +383,8 @@ namespace Substrate
 
         public bool SaveChunk (Chunk chunk)
         {
-            return chunk.Save(GetChunkOutStream(ChunkLocalX(chunk.X), ChunkLocalZ(chunk.Z)));
+            Console.WriteLine("Region[{0}, {1}].Save({2}, {3})", _rx, _rz, ForeignX(chunk.X),ForeignZ(chunk.Z));
+            return chunk.Save(GetChunkOutStream(ForeignX(chunk.X), ForeignZ(chunk.Z)));
         }
 
         #endregion

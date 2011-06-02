@@ -33,7 +33,15 @@ namespace Substrate
             string dir2 = Base36.Encode(cz % 64);
 
             _filename = Path.Combine(path, dir1);
+            if (!Directory.Exists(_filename)) {
+                Directory.CreateDirectory(_filename);
+            }
+
             _filename = Path.Combine(_filename, dir2);
+            if (!Directory.Exists(_filename)) {
+                Directory.CreateDirectory(_filename);
+            }
+
             _filename = Path.Combine(_filename, file);
         }
     }
