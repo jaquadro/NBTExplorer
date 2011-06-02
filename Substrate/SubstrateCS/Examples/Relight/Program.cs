@@ -1,6 +1,16 @@
 ﻿using System;
 using Substrate;
 
+// This example will reset and rebuild the lighting (heightmap, block light,
+// skylight) for all chunks in a map.
+
+// Note: If it looks silly to reset the lighting, loading and saving
+// all the chunks, just to load and save them again later: it's not.
+// If the world lighting is not correct, it must be completely reset
+// before rebuilding the light in any chunks.  That's just how the
+// algorithms work, in order to limit the number of chunks that must
+// be loaded at any given time.
+
 namespace Relight
 {
     class Program

@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using Substrate;
 
+// This example is a tool to delete all entities of a given type (e.g., "pig")
+// on a map.  It optionally can be restricted to boxed region in block coords.
+// Only 10% of the effort is actually spend purging anything.
+
 namespace PurgeEntities
 {
     class Program
@@ -16,11 +20,13 @@ namespace PurgeEntities
             string dest = args[0];
             string eid = args[1];
 
+            // Our initial bounding box is "infinite"
             int x1 = BlockManager.MIN_X;
             int x2 = BlockManager.MAX_X;
             int z1 = BlockManager.MIN_Z;
             int z2 = BlockManager.MAX_Z;
 
+            // If we have all coordinate parameters, set the bounding box
             if (args.Length == 6) {
                 x1 = Convert.ToInt32(args[2]);
                 z1 = Convert.ToInt32(args[3]);

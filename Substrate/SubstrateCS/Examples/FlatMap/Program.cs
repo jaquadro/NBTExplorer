@@ -27,7 +27,10 @@ namespace FlatMap
             world.Level.SpawnX = 20;
             world.Level.SpawnZ = 20;
             world.Level.SpawnY = 70;
-            //world.Level.SetDefaultPlayer();
+
+            // world.Level.SetDefaultPlayer();
+            // We'll let MC create the player for us, but you could use the above
+            // line to create the SSP player entry in level.dat.
 
             // We'll create chunks at chunk coordinates xmin,zmin to xmax,zmax
             for (int xi = xmin; xi < xmax; xi++) {
