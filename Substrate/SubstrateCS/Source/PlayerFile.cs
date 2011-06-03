@@ -16,6 +16,10 @@ namespace Substrate
         public PlayerFile (string path, string name)
             : base("")
         {
+            if (!Directory.Exists(path)) {
+                Directory.CreateDirectory(path);
+            }
+
             string file = name + ".dat";
             _filename = Path.Combine(path, file);
         }

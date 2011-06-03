@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GiveItem", "GiveItem\GiveIt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoveSpawn", "MoveSpawn\MoveSpawn.csproj", "{15C04C0C-FD50-47E9-B62C-AA0A814189ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skyscraper", "Skyscraper\Skyscraper.csproj", "{83F55F54-7253-4B4D-BC37-E9D1CB63E0B8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Relight", "Relight\Relight.csproj", "{EBDD447B-01FA-4A29-B4AB-380EC4379B5F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maze", "Maze\Maze.csproj", "{62D70576-FE3A-4530-B283-889C14B52E9E}"
@@ -81,16 +79,6 @@ Global
 		{15C04C0C-FD50-47E9-B62C-AA0A814189ED}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{15C04C0C-FD50-47E9-B62C-AA0A814189ED}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{15C04C0C-FD50-47E9-B62C-AA0A814189ED}.Release|x86.ActiveCfg = Release|Any CPU
-		{83F55F54-7253-4B4D-BC37-E9D1CB63E0B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{83F55F54-7253-4B4D-BC37-E9D1CB63E0B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{83F55F54-7253-4B4D-BC37-E9D1CB63E0B8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{83F55F54-7253-4B4D-BC37-E9D1CB63E0B8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{83F55F54-7253-4B4D-BC37-E9D1CB63E0B8}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{83F55F54-7253-4B4D-BC37-E9D1CB63E0B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{83F55F54-7253-4B4D-BC37-E9D1CB63E0B8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{83F55F54-7253-4B4D-BC37-E9D1CB63E0B8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{83F55F54-7253-4B4D-BC37-E9D1CB63E0B8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{83F55F54-7253-4B4D-BC37-E9D1CB63E0B8}.Release|x86.ActiveCfg = Release|Any CPU
 		{EBDD447B-01FA-4A29-B4AB-380EC4379B5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EBDD447B-01FA-4A29-B4AB-380EC4379B5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBDD447B-01FA-4A29-B4AB-380EC4379B5F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

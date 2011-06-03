@@ -26,10 +26,13 @@ namespace Substrate
 
         IChunkManager GetChunkManager ();
         IChunkManager GetChunkManager (int dim);
+
+        PlayerManager GetPlayerManager ();
     }
 
     public class AlphaWorld : INBTWorld
     {
+        private const string _PLAYER_DIR = "players";
         protected string _path;
         protected string _levelFile = "level.dat";
 
@@ -37,6 +40,8 @@ namespace Substrate
 
         private Dictionary<int, ChunkFileManager> _chunkMgrs;
         private Dictionary<int, BlockManager> _blockMgrs;
+
+        private PlayerManager _playerMan;
 
         private AlphaWorld ()
         {
@@ -74,6 +79,18 @@ namespace Substrate
 
             OpenDimension(dim);
             return _chunkMgrs[dim];
+        }
+
+        public PlayerManager GetPlayerManager ()
+        {
+            if (_playerMan != null) {
+                return _playerMan;
+            }
+
+            string path = Path.Combine(_path, _PLAYER_DIR);
+
+            _playerMan = new PlayerManager(path);
+            return _playerMan;
         }
 
         public static AlphaWorld Open (string path)
@@ -205,6 +222,7 @@ namespace Substrate
 
     public class BetaWorld : INBTWorld {
         private const string _REGION_DIR = "region";
+        private const string _PLAYER_DIR = "players";
         protected string _path;
         protected string _levelFile = "level.dat";
 
@@ -213,6 +231,8 @@ namespace Substrate
         private Dictionary<int, RegionManager> _regionMgrs;
         private Dictionary<int, ChunkManager> _chunkMgrs;
         private Dictionary<int, BlockManager> _blockMgrs;
+
+        private PlayerManager _playerMan;
 
         private BetaWorld ()
         {
@@ -267,6 +287,18 @@ namespace Substrate
 
             OpenDimension(dim);
             return _regionMgrs[dim];
+        }
+
+        public PlayerManager GetPlayerManager ()
+        {
+            if (_playerMan != null) {
+                return _playerMan;
+            }
+
+            string path = Path.Combine(_path, _PLAYER_DIR);
+
+            _playerMan = new PlayerManager(path);
+            return _playerMan;
         }
 
         public static BetaWorld Open (string path)
