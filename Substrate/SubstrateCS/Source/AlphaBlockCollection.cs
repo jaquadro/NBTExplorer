@@ -201,21 +201,8 @@ namespace Substrate
 
             // Update height map
 
-            if (BlockInfo.BlockTable[id] != null) {
-                int tileHeight = _heightMap[x, z];
-                int newOpacity = BlockInfo.BlockTable[id].Opacity;
-
-                if (y > tileHeight && newOpacity > BlockInfo.MIN_OPACITY) {
-                    _heightMap[x, z] = (byte)y;
-                }
-                else if (y == tileHeight && newOpacity == BlockInfo.MIN_OPACITY) {
-                    for (int i = y - 1; i >= 0; i--) {
-                        if (BlockInfo.BlockTable[_blocks[x, i, z]].Opacity > BlockInfo.MIN_OPACITY) {
-                            _heightMap[x, z] = (byte)i;
-                            break;
-                        }
-                    }
-                }
+            if (info1.ObscuresLight != info2.ObscuresLight) {
+                _lightManager.UpdateHeightMap(x, y, z);
             }
 
             // Light consistency

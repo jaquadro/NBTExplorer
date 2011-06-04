@@ -216,6 +216,11 @@ namespace Substrate
             get { return _transmitLight; }
         }
 
+        public bool ObscuresLight
+        {
+            get { return _opacity > MIN_OPACITY || !_transmitLight; }
+        }
+
         public BlockState State
         {
             get { return _state; }
