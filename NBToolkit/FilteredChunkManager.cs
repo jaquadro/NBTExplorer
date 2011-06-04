@@ -45,6 +45,8 @@ namespace NBToolkit
 
             private IEnumerator<ChunkRef> _enum;
 
+            private static Random _rand = new Random();
+
             public ChunkEnumerator (IChunkManager cm, IChunkFilter filter)
             {
                 _cm = cm;
@@ -144,6 +146,14 @@ namespace NBToolkit
                         }
                     }
 
+                    // Filter out randomly matching chunks (according to probability value)
+                    if (_filter.ProbMatch != null) {
+                        double r = _rand.NextDouble();
+                        if (r > _filter.ProbMatch) {
+                            continue;
+                        }
+                    }
+
                     return true;
                 }
             }
@@ -212,6 +222,11 @@ namespace NBToolkit
         public bool SaveChunk (Chunk chunk)
         {
             return _cm.SaveChunk(chunk);
+        }
+
+        public ChunkRef SetChunk (int cx, int cz, Chunk chunk)
+        {
+            return _cm.SetChunk(cx, cz, chunk);
         }
 
         #endregion

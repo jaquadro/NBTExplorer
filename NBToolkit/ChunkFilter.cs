@@ -29,6 +29,8 @@ namespace NBToolkit
         bool IncludeMatchAll { get; }
         bool ExcludeMatchAny { get; }
         bool ExcludeMatchAll { get; }
+
+        double? ProbMatch { get; }
     }
 
     public class ChunkFilter : IOptions, IChunkFilter
@@ -46,110 +48,78 @@ namespace NBToolkit
         protected bool _includeAny = true;
         protected bool _excludeAny = true;
 
+        protected double? _prob = null;
+
         protected OptionSet _options;
 
         public int? XAboveEq
         {
-            get
-            {
-                return _xAboveEq;
-            }
+            get { return _xAboveEq; }
         }
 
         public int? XBelowEq
         {
-            get
-            {
-                return _xBelowEq;
-            }
+            get { return _xBelowEq; }
         }
 
         public int? ZAboveEq
         {
-            get
-            {
-                return _zAboveEq;
-            }
+            get { return _zAboveEq; }
         }
 
         public int? ZBelowEq
         {
-            get
-            {
-                return _zBelowEq;
-            }
+            get { return _zBelowEq; }
         }
 
         public bool InvertXZ
         {
-            get
-            {
-                return _invertXZ;
-            }
+            get { return _invertXZ; }
         }
 
         public IEnumerable<int> IncludedBlocks
         {
-            get
-            {
-                return _includedBlocks;
-            }
+            get { return _includedBlocks; }
         }
 
         public IEnumerable<int> ExcludedBlocks
         {
-            get
-            {
-                return _excludedBlocks;
-            }
+            get { return _excludedBlocks; }
         }
 
         public int IncludedBlockCount
         {
-            get
-            {
-                return _includedBlocks.Count;
-            }
+            get { return _includedBlocks.Count; }
         }
 
         public int ExcludedBlockCount
         {
-            get
-            {
-                return _excludedBlocks.Count;
-            }
+            get { return _excludedBlocks.Count; }
         }
 
         public bool IncludeMatchAny
         {
-            get
-            {
-                return _includeAny;
-            }
+            get { return _includeAny; }
         }
 
         public bool IncludeMatchAll
         {
-            get
-            {
-                return !_includeAny;
-            }
+            get { return !_includeAny; }
         }
 
         public bool ExcludeMatchAny
         {
-            get
-            {
-                return _excludeAny;
-            }
+            get { return _excludeAny; }
         }
 
         public bool ExcludeMatchAll
         {
-            get
-            {
-                return !_excludeAny;
-            }
+            get { return !_excludeAny; }
+        }
+
+        public double? ProbMatch
+        {
+            get { return _prob; }
         }
 
         public ChunkFilter ()
@@ -179,6 +149,8 @@ namespace NBToolkit
                     v => _includeAny = false },
                 { "cxy|ChunkExcludeAny", "If multiple --cx options, chunk can match any of them to be excluded. (default)",
                     v => _includeAny = true },
+                { "cp|ChunkProbability=", "Selects a matching chunk with probability {VAL} (0.0-1.0)",
+                    v => _prob = Convert.ToDouble(v) },
             };
         }
 

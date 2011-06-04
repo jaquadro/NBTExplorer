@@ -57,6 +57,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlockFilter.cs" />
     <Compile Include="Dump.cs" />
     <Compile Include="ChunkFilter.cs" />
     <Compile Include="FilteredChunkManager.cs" />

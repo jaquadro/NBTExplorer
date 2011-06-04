@@ -139,10 +139,10 @@ namespace NBToolkit
                 }
 
                 if (opt.BlockLight) {
-                    //chunk.UpdateEdgeBlockLight();
+                    chunk.Blocks.StitchBlockLight();
                 }
                 if (opt.SkyLight) {
-                    //chunk.UpdateEdgeSkyLight();
+                    chunk.Blocks.StitchSkyLight();
                 }
                 fcm.Save();
             }

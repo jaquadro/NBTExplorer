@@ -7,10 +7,11 @@ using Substrate;
 
 namespace NBToolkit
 {
-    public class ReplaceOptions : TKOptions, IChunkFilterable
+    public class ReplaceOptions : TKOptions, IChunkFilterable, IBlockFilterable
     {
         private OptionSet _filterOpt = null;
         private ChunkFilter _chunkFilter = null;
+        private BlockFilter _blockFilter = null;        
 
         public int? OPT_BEFORE = null;
         public int? OPT_AFTER = null;
@@ -41,13 +42,13 @@ namespace NBToolkit
         {
             _filterOpt = new OptionSet()
             {
-                { "b|before=", "Replace instances of block type {ID} with another block type",
-                    v => OPT_BEFORE = Convert.ToInt32(v) % 256 },
+                /*{ "b|before=", "Replace instances of block type {ID} with another block type.  This option is repeatable.",
+                    v => _includedBlocks.Add(Convert.ToInt32(v) % 256) },*/
                 { "a|after=", "Replace the selected blocks with block type {ID}",
                     v => OPT_AFTER = Convert.ToInt32(v) % 256 },
                 { "d|data=", "Set the new block's data value to {VAL} (0-15)",
                     v => OPT_DATA = Convert.ToInt32(v) % 16 },
-                { "p|prob=", "Replace any matching block with probability {VAL} (0.0-1.0)",
+                /*{ "p|prob=", "Replace any matching block with probability {VAL} (0.0-1.0)",
                     v => { OPT_PROB = Convert.ToDouble(v, new CultureInfo("en-US")); 
                            OPT_PROB = Math.Max((double)OPT_PROB, 0.0); 
                            OPT_PROB = Math.Min((double)OPT_PROB, 1.0); } },
@@ -65,7 +66,7 @@ namespace NBToolkit
                     (v1, v2) => { 
                         try { BL_Z_GE = Convert.ToInt32(v1); } catch (FormatException) { }
                         try { BL_Z_LE = Convert.ToInt32(v2); } catch (FormatException) { } 
-                    } },
+                    } },*/
                 /*{ "nb=", "Update blocks that have block type {ID} as any neighbor",
                     v => OPT_NEIGHBOR = Convert.ToInt32(v) % 256 },
                 { "nbs=", "Update blocks that have block type {ID} as any x/z neighbor",
@@ -85,6 +86,7 @@ namespace NBToolkit
             };
 
             _chunkFilter = new ChunkFilter();
+            _blockFilter = new BlockFilter();
         }
 
         public ReplaceOptions (string[] args)
@@ -99,11 +101,12 @@ namespace NBToolkit
 
             _filterOpt.Parse(args);
             _chunkFilter.Parse(args);
+            _blockFilter.Parse(args);
         }
 
         public override void PrintUsage ()
         {
-            Console.WriteLine("Usage: nbtoolkit replace -b <id> -a <id> [options]");
+            Console.WriteLine("Usage: nbtoolkit replace -a <id> [options]");
             Console.WriteLine();
             Console.WriteLine("Options for command 'replace':");
 
@@ -111,6 +114,9 @@ namespace NBToolkit
 
             Console.WriteLine();
             _chunkFilter.PrintUsage();
+
+            Console.WriteLine();
+            _blockFilter.PrintUsage();
 
             Console.WriteLine();
             base.PrintUsage();
@@ -121,8 +127,8 @@ namespace NBToolkit
             base.SetDefaults();
 
             // Check for required parameters
-            if (OPT_BEFORE == null || OPT_AFTER == null) {
-                Console.WriteLine("Error: You must specify a before and after Block ID");
+            if (OPT_AFTER == null) {
+                Console.WriteLine("Error: You must specify a replacement Block ID");
                 Console.WriteLine();
                 PrintUsage();
 
@@ -133,6 +139,11 @@ namespace NBToolkit
         public IChunkFilter GetChunkFilter ()
         {
             return _chunkFilter;
+        }
+
+        public IBlockFilter GetBlockFilter ()
+        {
+            return _blockFilter;
         }
     }
 
@@ -167,6 +178,8 @@ namespace NBToolkit
 
         public void ApplyChunk (INBTWorld world, ChunkRef chunk)
         {
+            IBlockFilter opt_b = opt.GetBlockFilter();
+
             int xBase = chunk.X * chunk.Blocks.XDim;
             int zBase = chunk.Z * chunk.Blocks.ZDim;
 
@@ -174,11 +187,11 @@ namespace NBToolkit
             int xmin = 0;
             int xmax = 15;
 
-            if (opt.BL_X_GE != null) {
-                xmin = (int)opt.BL_X_GE - xBase;
+            if (opt_b.XAboveEq != null) {
+                xmin = (int)opt_b.XAboveEq - xBase;
             }
-            if (opt.BL_X_LE != null) {
-                xmax = (int)opt.BL_X_LE - xBase;
+            if (opt_b.XBelowEq != null) {
+                xmax = (int)opt_b.XBelowEq - xBase;
             }
 
             xmin = (xmin < 0) ? 0 : xmin;
@@ -192,11 +205,11 @@ namespace NBToolkit
             int ymin = 0;
             int ymax = 127;
 
-            if (opt.BL_Y_GE != null) {
-                ymin = (int)opt.BL_Y_GE;
+            if (opt_b.YAboveEq != null) {
+                ymin = (int)opt_b.YAboveEq;
             }
-            if (opt.BL_Y_LE != null) {
-                ymax = (int)opt.BL_Y_LE;
+            if (opt_b.YBelowEq != null) {
+                ymax = (int)opt_b.YBelowEq;
             }
 
             if (ymin > ymax) {
@@ -207,11 +220,11 @@ namespace NBToolkit
             int zmin = 0;
             int zmax = 15;
 
-            if (opt.BL_Z_GE != null) {
-                zmin = (int)opt.BL_Z_GE - zBase;
+            if (opt_b.ZAboveEq != null) {
+                zmin = (int)opt_b.ZAboveEq - zBase;
             }
-            if (opt.BL_Z_LE != null) {
-                zmax = (int)opt.BL_Z_LE - zBase;
+            if (opt_b.ZBelowEq != null) {
+                zmax = (int)opt_b.ZBelowEq - zBase;
             }
 
             zmin = (zmin < 0) ? 0 : zmin;
@@ -221,35 +234,70 @@ namespace NBToolkit
                 return;
             }
 
+            int xdim = chunk.Blocks.XDim;
+            int ydim = chunk.Blocks.YDim;
+            int zdim = chunk.Blocks.ZDim;
+
             // Process Chunk
             for (int y = ymin; y <= ymax; y++) {
                 for (int x = xmin; x <= xmax; x++) {
                     for (int z = zmin; z <= zmax; z++) {
                         // Probability test
-                        if (opt.OPT_PROB != null) {
+                        if (opt_b.ProbMatch != null) {
                             double c = rand.NextDouble();
-                            if (c > opt.OPT_PROB) {
+                            if (c > opt_b.ProbMatch) {
                                 continue;
                             }
                         }
 
-                        int lx = x & (chunk.Blocks.XDim - 1);
-                        int ly = y & (chunk.Blocks.YDim - 1);
-                        int lz = z & (chunk.Blocks.ZDim - 1);
+                        int lx = x % xdim;
+                        int ly = y % ydim;
+                        int lz = z % zdim;
 
-                        // Attempt to replace block
+                        // Get the old block
                         int oldBlock = chunk.Blocks.GetID(lx , ly, lz);
-                        if (oldBlock == opt.OPT_BEFORE) {
-                            chunk.Blocks.SetID(lx, ly, lz, (int)opt.OPT_AFTER);
 
-                            /*if (opt.OPT_VV) {
-                                Console.WriteLine("Replaced block at {0},{1},{2}", 
-                                    chunk.BlockGlobalX(lx), chunk.BlockGlobalY(ly), chunk.BlockGlobalZ(lz));
-                            }*/
-
-                            if (opt.OPT_DATA != null) {
-                                chunk.Blocks.SetData(lx, ly, lz, (int)opt.OPT_DATA);
+                        // Skip block if it doesn't match the inclusion list
+                        if (opt_b.IncludedBlockCount > 0) {
+                            bool match = false;
+                            foreach (int ib in opt_b.IncludedBlocks) {
+                                if (oldBlock == ib) {
+                                    match = true;
+                                    break;
+                                }
                             }
+
+                            if (!match) {
+                                continue;
+                            }
+                        }
+
+                        // Skip block if it does match the exclusion list
+                        if (opt_b.ExcludedBlockCount > 0) {
+                            bool match = false;
+                            foreach (int xb in opt_b.ExcludedBlocks) {
+                                if (oldBlock == xb) {
+                                    match = true;
+                                    break;
+                                }
+                            }
+
+                            if (match) {
+                                continue;
+                            }
+                        }
+
+                        // Replace the block
+                        chunk.Blocks.SetID(lx, ly, lz, (int)opt.OPT_AFTER);
+
+                        if (opt.OPT_VV) {
+                            int gx = chunk.X * xdim + lx;
+                            int gz = chunk.Z * zdim + lz;
+                            Console.WriteLine("Replaced block at {0},{1},{2}", gx, ly, gz);
+                        }
+
+                        if (opt.OPT_DATA != null) {
+                            chunk.Blocks.SetData(lx, ly, lz, (int)opt.OPT_DATA);
                         }
                     }
                 }
