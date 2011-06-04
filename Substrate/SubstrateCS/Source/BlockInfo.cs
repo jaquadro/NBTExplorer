@@ -401,8 +401,8 @@ namespace Substrate
             Bedrock = new BlockInfo(7, "Bedrock");
             Water = new BlockInfo(8, "Water").SetOpacity(3).SetState(BlockState.FLUID);
             StationaryWater = new BlockInfo(9, "Stationary Water").SetOpacity(3).SetState(BlockState.FLUID);
-            Lava = new BlockInfo(10, "Lava").SetLuminance(MAX_LUMINANCE).SetState(BlockState.FLUID);
-            StationaryLava = new BlockInfo(11, "Stationary Lava").SetLuminance(MAX_LUMINANCE).SetState(BlockState.FLUID);
+            Lava = new BlockInfo(10, "Lava").SetOpacity(0).SetLuminance(MAX_LUMINANCE).SetState(BlockState.FLUID);
+            StationaryLava = new BlockInfo(11, "Stationary Lava").SetOpacity(0).SetLuminance(MAX_LUMINANCE).SetState(BlockState.FLUID);
             Sand = new BlockInfo(12, "Sand");
             Gravel = new BlockInfo(13, "Gravel");
             GoldOre = new BlockInfo(14, "Gold Ore");

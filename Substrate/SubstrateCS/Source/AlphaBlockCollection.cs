@@ -199,20 +199,18 @@ namespace Substrate
                 }
             }
 
-            // Update height map
-
-            if (info1.ObscuresLight != info2.ObscuresLight) {
-                _lightManager.UpdateHeightMap(x, y, z);
-            }
-
             // Light consistency
 
             if (_autoLight) {
-                if (info1.Luminance != info2.Luminance || info1.Opacity != info2.Opacity) {
+                if (info1.ObscuresLight != info2.ObscuresLight) {
+                    _lightManager.UpdateHeightMap(x, y, z);
+                }
+
+                if (info1.Luminance != info2.Luminance || info1.Opacity != info2.Opacity || info1.TransmitsLight != info2.TransmitsLight) {
                     UpdateBlockLight(x, y, z);
                 }
 
-                if (info1.Opacity != info2.Opacity) {
+                if (info1.Opacity != info2.Opacity || info1.TransmitsLight != info2.TransmitsLight) {
                     UpdateSkyLight(x, y, z);
                 }
             }
