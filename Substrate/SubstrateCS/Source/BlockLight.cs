@@ -153,7 +153,7 @@ namespace Substrate
                     for (int y = ydim - 1; y >= 0; y--) {
                         BlockInfo info = _blockset.GetInfo(x, y, z);
                         if (info.Opacity > BlockInfo.MIN_OPACITY || !info.TransmitsLight) {
-                            _blockset.SetHeight(x, z, y);
+                            _blockset.SetHeight(x, z, Math.Min(y + 1, ydim - 1));
                             break;
                         }
                     }
