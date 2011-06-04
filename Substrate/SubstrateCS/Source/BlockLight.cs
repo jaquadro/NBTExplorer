@@ -69,13 +69,19 @@ namespace Substrate
             _update.Enqueue(primary);
 
             BlockInfo info = _blockset.GetInfo(lx, ly, lz);
+
             //if (info.Luminance > BlockInfo.MIN_LUMINANCE || info.TransmitsLight) {
-                QueueRelight(new BlockKey(lx - 1, ly, lz));
-                QueueRelight(new BlockKey(lx + 1, ly, lz));
+            if (ly > 0) {
                 QueueRelight(new BlockKey(lx, ly - 1, lz));
+            }
+            if (ly < _ydim - 1) {
                 QueueRelight(new BlockKey(lx, ly + 1, lz));
-                QueueRelight(new BlockKey(lx, ly, lz - 1));
-                QueueRelight(new BlockKey(lx, ly, lz + 1));
+            }
+
+            QueueRelight(new BlockKey(lx - 1, ly, lz));
+            QueueRelight(new BlockKey(lx + 1, ly, lz));
+            QueueRelight(new BlockKey(lx, ly, lz - 1));
+            QueueRelight(new BlockKey(lx, ly, lz + 1));
             //}
 
             UpdateBlockLight();
