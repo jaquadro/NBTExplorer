@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Source\BlockFluid.cs" />
     <Compile Include="Source\Data.cs" />
     <Compile Include="Source\ItemInfo.cs" />
     <Compile Include="Source\ChunkCache.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="Source\TileEntities\TileEntityFurnace.cs" />
     <Compile Include="Source\TileEntities\TileEntityMobSpawner.cs" />
     <Compile Include="Source\TileEntities\TileEntityMusic.cs" />
+    <Compile Include="Source\TileEntities\TileEntityRecordPlayer.cs" />
     <Compile Include="Source\TileEntities\TileEntitySign.cs" />
     <Compile Include="Source\TileEntities\TileEntityTrap.cs" />
     <Compile Include="Source\TileEntity.cs" />

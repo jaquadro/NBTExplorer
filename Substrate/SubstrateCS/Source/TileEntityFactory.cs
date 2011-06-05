@@ -58,6 +58,7 @@ namespace Substrate
             _registry["Furnace"] = typeof(TileEntityFurnace);
             _registry["MobSpawner"] = typeof(TileEntityMobSpawner);
             _registry["Music"] = typeof(TileEntityMusic);
+            _registry["RecordPlayer"] = typeof(TileEntityRecordPlayer);
             _registry["Sign"] = typeof(TileEntitySign);
             _registry["Trap"] = typeof(TileEntityTrap);
         }

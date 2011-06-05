@@ -6,33 +6,33 @@ namespace Substrate.TileEntities
 {
     using Substrate.NBT;
 
-    public class TileEntityMusic : TileEntity
+    public class TileEntityRecordPlayer : TileEntity
     {
-        public static readonly NBTCompoundNode MusicSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly NBTCompoundNode RecordPlayerSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
         {
-            new NBTStringNode("id", "Music"),
-            new NBTScalerNode("note", TagType.TAG_BYTE),
+            new NBTStringNode("id", "RecordPlayer"),
+            new NBTScalerNode("Record", TagType.TAG_INT, NBTOptions.OPTIONAL),
         });
 
-        private byte _note;
+        private int? _record = null;
 
-        public int Note
+        public int? Record
         {
-            get { return _note; }
-            set { _note = (byte)value; }
+            get { return _record; }
+            set { _record = value; }
         }
 
-        public TileEntityMusic ()
-            : base("Music")
+        public TileEntityRecordPlayer ()
+            : base("RecordPlayer")
         {
         }
 
-        public TileEntityMusic (TileEntity te)
+        public TileEntityRecordPlayer (TileEntity te)
             : base(te)
         {
-            TileEntityMusic tes = te as TileEntityMusic;
+            TileEntityRecordPlayer tes = te as TileEntityRecordPlayer;
             if (tes != null) {
-                _note = tes._note;
+                _record = tes._record;
             }
         }
 
@@ -41,7 +41,7 @@ namespace Substrate.TileEntities
 
         public override TileEntity Copy ()
         {
-            return new TileEntityMusic(this);
+            return new TileEntityRecordPlayer(this);
         }
 
         #endregion
@@ -56,7 +56,9 @@ namespace Substrate.TileEntities
                 return null;
             }
 
-            _note = ctree["note"].ToTagByte();
+            if (ctree.ContainsKey("Record")) {
+                _record = ctree["Record"].ToTagInt();
+            }
 
             return this;
         }
@@ -64,14 +66,17 @@ namespace Substrate.TileEntities
         public override TagValue BuildTree ()
         {
             TagCompound tree = base.BuildTree() as TagCompound;
-            tree["note"] = new TagByte(_note);
+
+            if (_record != null) {
+                tree["Record"] = new TagInt((int)_record);
+            }
 
             return tree;
         }
 
         public override bool ValidateTree (TagValue tree)
         {
-            return new NBTVerifier(tree, MusicSchema).Verify();
+            return new NBTVerifier(tree, RecordPlayerSchema).Verify();
         }
 
         #endregion
