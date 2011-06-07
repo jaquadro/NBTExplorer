@@ -109,7 +109,6 @@ namespace Substrate.NBT
 
         private static void SerializeScaler (TagValue tag, StringBuilder str)
         {
-            TagType type = tag.GetTagType();
             switch (tag.GetTagType()) {
                 case TagType.TAG_STRING:
                     str.Append("\"" + tag.ToTagString().Data + "\"");

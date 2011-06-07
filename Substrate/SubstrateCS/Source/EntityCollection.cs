@@ -150,14 +150,12 @@ namespace Substrate
 
         public class EntityEnumerator : IEnumerator<Entity>
         {
-            private TagList _entities;
             private IEnumerator<TagValue> _enum;
 
             private Entity _cur;
 
             public EntityEnumerator (TagList entities)
             {
-                _entities = entities;
                 _enum = entities.GetEnumerator();
             }
 

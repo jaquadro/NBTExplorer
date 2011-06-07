@@ -279,7 +279,7 @@ namespace Substrate.NBT
         {
             TagType type = (TagType)_stream.ReadByte();
             if (type == TagType.TAG_COMPOUND) {
-                string name = ReadString().ToTagString().Data;
+                ReadString(); // name
                 return ReadValue(type) as TagCompound;
             }
 

@@ -68,7 +68,7 @@ namespace Substrate
             BlockKey primary = new BlockKey(lx, ly, lz);
             _update.Enqueue(primary);
 
-            BlockInfo info = _blockset.GetInfo(lx, ly, lz);
+            //BlockInfo info = _blockset.GetInfo(lx, ly, lz);
 
             //if (info.Luminance > BlockInfo.MIN_LUMINANCE || info.TransmitsLight) {
             if (ly > 0) {

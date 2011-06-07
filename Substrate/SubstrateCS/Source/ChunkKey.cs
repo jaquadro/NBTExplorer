@@ -6,8 +6,8 @@ namespace Substrate
 {
     public struct ChunkKey : IEquatable<ChunkKey>
     {
-        readonly int cx;
-        readonly int cz;
+        public readonly int cx;
+        public readonly int cz;
 
         public ChunkKey (int _cx, int _cz)
         {

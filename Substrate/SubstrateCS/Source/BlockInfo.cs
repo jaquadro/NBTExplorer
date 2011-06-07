@@ -178,6 +178,7 @@ namespace Substrate
         private int _opacity = MAX_OPACITY;
         private int _luminance = MIN_LUMINANCE;
         private bool _transmitLight = false;
+        private bool _blocksFluid = true;
 
         private BlockState _state = BlockState.SOLID;
 
@@ -219,6 +220,11 @@ namespace Substrate
         public bool ObscuresLight
         {
             get { return _opacity > MIN_OPACITY || !_transmitLight; }
+        }
+
+        public bool BlocksFluid
+        {
+            get { return _blocksFluid; }
         }
 
         public BlockState State
@@ -276,6 +282,20 @@ namespace Substrate
         public BlockInfo SetState (BlockState state)
         {
             _state = state;
+
+            if (_state == BlockState.SOLID) {
+                _blocksFluid = true;
+            }
+            else {
+                _blocksFluid = false;
+            }
+
+            return this;
+        }
+
+        public BlockInfo SetBlocksFluid (bool blocks)
+        {
+            _blocksFluid = blocks;
             return this;
         }
 
@@ -499,6 +519,12 @@ namespace Substrate
             WoodStairs.SetLightTransmission(false);
             Farmland.SetLightTransmission(false);
             CobbleStairs.SetLightTransmission(false);
+
+            // Override default fluid blocking rules
+
+            SignPost.SetBlocksFluid(true);
+            WallSign.SetBlocksFluid(true);
+            Cactus.SetBlocksFluid(false);
 
             // Set Tile Entity Data
 

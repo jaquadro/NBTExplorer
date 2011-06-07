@@ -57,6 +57,7 @@ namespace Substrate
         private TagList _tileEntities;
 
         private BlockLight _lightManager;
+        private BlockFluid _fluidManager;
         private BlockTileEntities _tileEntityManager;
 
         private bool _dirty = false;
@@ -71,11 +72,16 @@ namespace Substrate
                 _lightManager.ResolveNeighbor += delegate(int relx, int rely, int relz) { 
                     return value(relx, rely, relz); 
                 };
+                _fluidManager.ResolveNeighbor += delegate(int relx, int rely, int relz)
+                {
+                    return value(relx, rely, relz);
+                };
             }
 
             remove
             {
                 _lightManager = new BlockLight(this);
+                _fluidManager = new BlockFluid(this);
             }
         }
 
@@ -107,6 +113,7 @@ namespace Substrate
             _tileEntities = properties.tileEntities;
 
             _lightManager = new BlockLight(this);
+            _fluidManager = new BlockFluid(this);
             _tileEntityManager = new BlockTileEntities(_blocks, _tileEntities);
         }
 
@@ -452,6 +459,16 @@ namespace Substrate
 
         #endregion
 
+        public void ResetBlockFluid ()
+        {
+            _fluidManager.ResetWater();
+            _dirty = true;
+        }
 
+        public void RebuildBlockFluid ()
+        {
+            _fluidManager.RebuildWater();
+            _dirty = true;
+        }
     }
 }
