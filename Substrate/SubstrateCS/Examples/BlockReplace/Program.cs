@@ -39,6 +39,8 @@ namespace BlockReplace
                 int ydim = chunk.Blocks.YDim;
                 int zdim = chunk.Blocks.ZDim;
 
+                chunk.Blocks.AutoFluid = true;
+
                 // x, z, y is the most efficient order to scan blocks (not that
                 // you should care about internal detail)
                 for (int x = 0; x < xdim; x++) {
@@ -47,6 +49,7 @@ namespace BlockReplace
 
                             // Replace the block with after if it matches before
                             if (chunk.Blocks.GetID(x, y, z) == before) {
+                                chunk.Blocks.SetData(x, y, z, 0);
                                 chunk.Blocks.SetID(x, y, z, after);
                             }
                         }

@@ -5,6 +5,13 @@ namespace Substrate
 {
     using Utility;
 
+    // Rules:
+    // - Water must be calculated in steps breadth-first
+    // - If there are any "holes" within 5 steps (manhattan distance) of a water tile, only the edges
+    //   that can be part of a shortest path to the closest hole(s) are part of the outflow.
+    // - Any blocks in the water tile's outflow are added to the queue
+    // - A water source's strength is calculated as strongest inflow - 1.
+
     public class BlockFluid
     {
         private IBoundedDataBlockCollection _blockset;
@@ -57,26 +64,40 @@ namespace Substrate
             _chunks = new Dictionary<ChunkKey, IBoundedDataBlockCollection>();
         }
 
-        public void ResetWater ()
+        public void ResetWater (ByteArray blocks, NibbleArray data)
         {
-            int xdim = _xdim;
-            int ydim = _ydim;
-            int zdim = _zdim;
-
-            for (int x = 0; x < xdim; x++) {
-                for (int z = 0; z < zdim; z++) {
-                    for (int y = 0; y < ydim; y++) {
-                        IDataBlock block = _blockset.GetBlockRef(x, y, z);
-                        if ((block.ID == BlockType.STATIONARY_WATER || block.ID == BlockType.WATER) && block.Data != (int)WaterFlow.FULL) {
-                            block.ID = BlockType.AIR;
-                            block.Data = 0;
-                        }
-                        else if (block.ID == BlockType.WATER) {
-                            block.ID = BlockType.STATIONARY_WATER;
-                        }
-                    }
+            for (int i = 0; i < blocks.Length; i++) {
+                if ((blocks[i] == BlockType.STATIONARY_WATER || blocks[i] == BlockType.WATER) && data[i] != 0) {
+                    blocks[i] = BlockType.AIR;
+                    data[i] = 0;
+                }
+                else if (blocks[i] == BlockType.WATER) {
+                    blocks[i] = BlockType.STATIONARY_WATER;
                 }
             }
+        }
+
+        public void ResetLava (ByteArray blocks, NibbleArray data)
+        {
+            for (int i = 0; i < blocks.Length; i++) {
+                if ((blocks[i] == BlockType.STATIONARY_LAVA || blocks[i] == BlockType.LAVA) && data[i] != 0) {
+                    blocks[i] = BlockType.AIR;
+                    data[i] = 0;
+                }
+                else if (blocks[i] == BlockType.LAVA) {
+                    blocks[i] = BlockType.STATIONARY_LAVA;
+                }
+            }
+        }
+
+        public void UpdateWater (int x, int y, int z)
+        {
+            DoWater(x, y, z);
+        }
+
+        public void UpdateLava (int x, int y, int z)
+        {
+            DoLava(x, y, z);
         }
 
         public void RebuildWater ()
@@ -91,7 +112,7 @@ namespace Substrate
                 for (int z = 0; z < zdim; z++) {
                     for (int y = 0; y < ydim; y++) {
                         BlockInfo info = _blockset.GetInfo(x, y, z);
-                        if (info.ID == BlockType.STATIONARY_WATER && _blockset.GetData(x, y, z) == (int)WaterFlow.FULL) {
+                        if (info.ID == BlockType.STATIONARY_WATER && _blockset.GetData(x, y, z) == 0) {
                             buildQueue.Add(new BlockKey(x, y, z));
                         }
                     }
@@ -99,175 +120,31 @@ namespace Substrate
             }
 
             foreach (BlockKey key in buildQueue) {
-                SpreadWater(key.x, key.y, key.z);
+                DoWater(key.x, key.y, key.z);
             }
         }
 
-        private void SpreadWater (int x, int y, int z)
+        public void RebuildLava ()
         {
-            Queue<KeyValuePair<BlockKey, int>> targets = new Queue<KeyValuePair<BlockKey, int>>();
-            targets.Enqueue(new KeyValuePair<BlockKey, int>(new BlockKey(x, y, z), 0));
+            int xdim = _xdim;
+            int ydim = _ydim;
+            int zdim = _zdim;
 
-            while (targets.Count > 0) {
-                KeyValuePair<BlockKey, int> skey = targets.Dequeue();
+            List<BlockKey> buildQueue = new List<BlockKey>();
 
-                BlockKey source = skey.Key;
-                int sourceDist = skey.Value;
- 
-                int nearestDrop = 7;
-                bool foundDrop = false;
-
-                Queue<BlockKey> searchQueue = new Queue<BlockKey>();
-                Queue<KeyValuePair<BlockKey, int>> sinkQueue = new Queue<KeyValuePair<BlockKey, int>>();
-                Dictionary<BlockKey, int> marked = new Dictionary<BlockKey, int>();
-
-                searchQueue.Enqueue(source);
-                marked.Add(source, sourceDist);
-
-                // Identify sinks
-                while (searchQueue.Count > 0) {
-                    BlockKey branch = searchQueue.Dequeue();
-                    int distance = marked[branch] & ~(int)LiquidState.FALLING;
-                    bool falling = (marked[branch] & (int)LiquidState.FALLING) > 0;
-
-                    // Ignore blocks out of range
-                    if (distance > nearestDrop) {
-                        continue;
-                    }
-
-                    // Ignore invalid blocks
-                    BlockCoord branchHigh = TranslateCoord(branch.x, branch.y, branch.z);
-                    if (branchHigh.chunk == null || branch.y == 0) {
-                        marked.Remove(branch);
-                        continue;
-                    }
-
-                    // If we're not the magical source block...
-                    if (distance > 0 && !falling) {
-                        // Ignore blocks that block fluid (and thus could not become a fluid)
-                        BlockInfo branchHighInfo = branchHigh.chunk.GetInfo(branchHigh.lx, branchHigh.ly, branchHigh.lz);
-                        if (branchHighInfo.BlocksFluid) {
-                            marked.Remove(branch);
-                            continue;
-                        }
-
-                        // Ignore blocks that have a "fuller" fluid level
-                        if (branchHighInfo.ID == BlockType.STATIONARY_WATER) {
-                            int cmp = branchHigh.chunk.GetData(branchHigh.lx, branchHigh.ly, branchHigh.lz);
-                            if (cmp <= distance || (cmp & (int)LiquidState.FALLING) > 0) {
-                                marked.Remove(branch);
-                                continue;
-                            }
-                        }
-                    }
-
-                    // If we found a hole, add as a sink, mark the sink distance.
-                    BlockCoord branchLow = TranslateCoord(branch.x, branch.y - 1, branch.z);
-                    BlockInfo branchLowInfo = branchLow.chunk.GetInfo(branchLow.lx, branchLow.ly, branchLow.lz);
-                    if (!branchLowInfo.BlocksFluid) {
-                        foundDrop = true;
-                        nearestDrop = falling ? 0 : distance;
-                        sinkQueue.Enqueue(new KeyValuePair<BlockKey, int>(branch, falling ? distance | (int)LiquidState.FALLING : distance));
-                        continue;
-                    }
-
-                    // Didn't find a hole, hit the bottom, reset distance
-                    if (falling) {
-                        distance = 0;
-                    }
-
-                    // Expand to neighbors
-                    if (distance < nearestDrop) {
-                        BlockKey[] keys = {
-                            new BlockKey(branch.x - 1, branch.y, branch.z),
-                            new BlockKey(branch.x + 1, branch.y, branch.z),
-                            new BlockKey(branch.x, branch.y, branch.z - 1),
-                            new BlockKey(branch.x, branch.y, branch.z + 1),
-                        };
-                        
-                        for (int i = 0; i < 4; i++) {
-                            if (!marked.ContainsKey(keys[i])) {
-                                searchQueue.Enqueue(keys[i]);
-                                marked.Add(keys[i], distance + 1);
-                            }
+            for (int x = 0; x < xdim; x++) {
+                for (int z = 0; z < zdim; z++) {
+                    for (int y = 0; y < ydim; y++) {
+                        BlockInfo info = _blockset.GetInfo(x, y, z);
+                        if (info.ID == BlockType.STATIONARY_LAVA && _blockset.GetData(x, y, z) == 0) {
+                            buildQueue.Add(new BlockKey(x, y, z));
                         }
                     }
                 }
+            }
 
-                // If we didn't find any drops, fill out the mark table
-                if (!foundDrop) {
-                    foreach (KeyValuePair<BlockKey, int> mark in marked) {
-                        BlockKey target = mark.Key;
-
-                        BlockCoord targetHigh = TranslateCoord(target.x, target.y, target.z);
-                        targetHigh.chunk.SetID(targetHigh.lx, targetHigh.ly, targetHigh.lz, BlockType.STATIONARY_WATER);
-                        targetHigh.chunk.SetData(targetHigh.lx, targetHigh.ly, targetHigh.lz, mark.Value);
-                    }
-
-                    // Skip sinks and tracing
-                    continue;
-                }
-
-                // Create new target for each sink
-                Queue<KeyValuePair<BlockKey, int>> traceQueue = new Queue<KeyValuePair<BlockKey, int>>();
-                while (sinkQueue.Count > 0) {
-                    KeyValuePair<BlockKey, int> tkey = sinkQueue.Dequeue();
-                    BlockKey target = tkey.Key;
-                    int distance = tkey.Value;
-
-                    //int distance = marked[target];
-                    marked.Remove(target);
-
-                    targets.Enqueue(new KeyValuePair<BlockKey, int>(new BlockKey(target.x, target.y - 1, target.z), distance | (int)LiquidState.FALLING));
-                    traceQueue.Enqueue(new KeyValuePair<BlockKey, int>(target, distance));
-
-                    /*BlockCoord targetLow = TranslateCoord(target.x, target.y - 1, target.z);
-                    targetLow.chunk.SetID(targetLow.lx, targetLow.ly, targetHigh.lz, BlockType.STATIONARY_WATER);
-                    targetLow.chunk.SetData(targetLow.lx, targetLow.ly, targetHigh.lz, tkey.Value);*/
-                }
-
-                // Trace back from sinks
-                while (traceQueue.Count > 0) {
-                    KeyValuePair<BlockKey, int> tkey = traceQueue.Dequeue();
-
-                    BlockKey target = tkey.Key;
-                    int distance = tkey.Value & ~(int)LiquidState.FALLING;
-                    bool falling = (tkey.Value & (int)LiquidState.FALLING) > 0;
-
-                    //if (distance == 0) {
-                    //   distance |= (int)LiquidState.FALLING;
-                    //}
-
-                    BlockCoord targetHigh = TranslateCoord(target.x, target.y, target.z);
-                    targetHigh.chunk.SetID(targetHigh.lx, targetHigh.ly, targetHigh.lz, BlockType.STATIONARY_WATER);
-                    targetHigh.chunk.SetData(targetHigh.lx, targetHigh.ly, targetHigh.lz, tkey.Value);
-
-                    if (falling) {
-                        continue;
-                    }
-
-                    BlockKey[] keys = {
-                        new BlockKey(target.x - 1, target.y, target.z),
-                        new BlockKey(target.x + 1, target.y, target.z),
-                        new BlockKey(target.x, target.y, target.z - 1),
-                        new BlockKey(target.x, target.y, target.z + 1),
-                    };
-
-                    for (int i = 0; i < 4; i++) {
-                        int nval;
-                        if (!marked.TryGetValue(keys[i], out nval)) {
-                            continue;
-                        }
-
-                        int ndist = nval & ~(int)LiquidState.FALLING;
-                        bool nfall = (nval & (int)LiquidState.FALLING) > 0;
-
-                        marked.Remove(keys[i]);
-                        if (ndist < distance || nfall) {
-                            traceQueue.Enqueue(new KeyValuePair<BlockKey, int>(keys[i], nval));
-                        }
-                    }
-                }
+            foreach (BlockKey key in buildQueue) {
+                DoLava(key.x, key.y, key.z);
             }
         }
 
@@ -316,6 +193,369 @@ namespace Substrate
             }
 
             return null;
+        }
+
+        // -----
+
+        private List<BlockKey> TileOutflow (BlockKey key, int reach = 5)
+        {
+            Queue<BlockKey> searchQueue = new Queue<BlockKey>();
+            Queue<KeyValuePair<BlockKey, int>> traceQueue = new Queue<KeyValuePair<BlockKey, int>>();
+            Dictionary<BlockKey, int> markTable = new Dictionary<BlockKey,int>();
+
+            searchQueue.Enqueue(key);
+            markTable.Add(key, 0);
+
+            // Identify sinks
+            while (searchQueue.Count > 0) {
+                BlockKey branch = searchQueue.Dequeue();
+                int distance = markTable[branch];
+
+                // Ignore blocks out of range
+                if (distance > reach) {
+                    continue;
+                }
+
+                // Ignore invalid blocks
+                BlockCoord branchHigh = TranslateCoord(branch.x, branch.y, branch.z);
+                if (branchHigh.chunk == null || branch.y == 0) {
+                    markTable.Remove(branch);
+                    continue;
+                }
+
+                // If we're not the magical source block...
+                if (distance > 0) {
+                    // Ignore blocks that block fluid (and thus could not become a fluid)
+                    BlockInfo branchHighInfo = branchHigh.chunk.GetInfo(branchHigh.lx, branchHigh.ly, branchHigh.lz);
+                    if (branchHighInfo.BlocksFluid) {
+                        markTable.Remove(branch);
+                        continue;
+                    }
+                }
+
+                // If we found a hole, add as a sink, mark the sink distance.
+                BlockCoord branchLow = TranslateCoord(branch.x, branch.y - 1, branch.z);
+                BlockInfo branchLowInfo = branchLow.chunk.GetInfo(branchLow.lx, branchLow.ly, branchLow.lz);
+                if (!branchLowInfo.BlocksFluid) {
+                    // If we are our own sink, return the only legal outflow
+                    if (key == branch) {
+                        List<BlockKey> ret = new List<BlockKey>();
+                        ret.Add(new BlockKey(branch.x, branch.y - 1, branch.z));
+                        return ret;
+                    }
+
+                    reach = distance;
+                    traceQueue.Enqueue(new KeyValuePair<BlockKey, int>(branch, distance));
+                    continue;
+                }
+
+                // Expand to neighbors
+                if (distance < reach) {
+                    BlockKey[] keys = {
+                        new BlockKey(branch.x - 1, branch.y, branch.z),
+                        new BlockKey(branch.x + 1, branch.y, branch.z),
+                        new BlockKey(branch.x, branch.y, branch.z - 1),
+                        new BlockKey(branch.x, branch.y, branch.z + 1),
+                    };
+
+                    for (int i = 0; i < 4; i++) {
+                        if (!markTable.ContainsKey(keys[i])) {
+                            searchQueue.Enqueue(keys[i]);
+                            markTable.Add(keys[i], distance + 1);
+                        }
+                    }
+                }
+            }
+
+            // Candidate outflows are marked
+            BlockKey[] neighbors = {
+                new BlockKey(key.x - 1, key.y, key.z),
+                new BlockKey(key.x + 1, key.y, key.z),
+                new BlockKey(key.x, key.y, key.z - 1),
+                new BlockKey(key.x, key.y, key.z + 1),
+            };
+
+            List<BlockKey> outflow = new List<BlockKey>();
+            foreach (BlockKey n in neighbors) {
+                if (markTable.ContainsKey(n)) {
+                    outflow.Add(n);
+                }
+            }
+
+            // If there's no sinks, all neighbors are valid outflows
+            if (traceQueue.Count == 0) {
+                return outflow;
+            }
+
+            // Trace back from each sink eliminating shortest path marks
+            while (traceQueue.Count > 0) {
+
+                KeyValuePair<BlockKey, int> tilekv = traceQueue.Dequeue();
+                BlockKey tile = tilekv.Key;
+
+                int distance = tilekv.Value;
+                markTable.Remove(tile);
+
+                BlockKey[] keys = {
+                    new BlockKey(tile.x - 1, tile.y, tile.z),
+                    new BlockKey(tile.x + 1, tile.y, tile.z),
+                    new BlockKey(tile.x, tile.y, tile.z - 1),
+                    new BlockKey(tile.x, tile.y, tile.z + 1),
+                };
+
+                for (int i = 0; i < 4; i++) {
+                    int nval;
+                    if (!markTable.TryGetValue(keys[i], out nval)) {
+                        continue;
+                    }
+
+                    if (nval < distance) {
+                        markTable.Remove(keys[i]);
+                        traceQueue.Enqueue(new KeyValuePair<BlockKey, int>(keys[i], nval));
+                    }
+                }
+            }
+
+            // Remove any candidates that are still marked
+            foreach (BlockKey n in neighbors) {
+                if (markTable.ContainsKey(n)) {
+                    outflow.Remove(n);
+                }
+            }
+
+            return outflow;
+        }
+
+        private int TileInflow (BlockKey key)
+        {
+            // Check if water is falling on us
+            if (key.y < _ydim - 1) {
+                BlockCoord up = TranslateCoord(key.x, key.y + 1, key.z);
+                BlockInfo upInfo = up.chunk.GetInfo(up.lx, up.ly, up.lz);
+
+                if (upInfo.State == BlockState.FLUID) {
+                    return up.chunk.GetData(up.lx, up.ly, up.lz) | (int)LiquidState.FALLING;
+                }
+            }
+
+            // Otherwise return the min inflow of our neighbors + step
+            BlockKey[] keys = {
+                new BlockKey(key.x - 1, key.y, key.z),
+                new BlockKey(key.x + 1, key.y, key.z),
+                new BlockKey(key.x, key.y, key.z - 1),
+                new BlockKey(key.x, key.y, key.z + 1),
+            };
+
+            int minFlow = 16;
+
+            // XXX: Might have different neighboring fluids
+            for (int i = 0; i < 4; i++) {
+                BlockCoord neighbor = TranslateCoord(keys[i].x, keys[i].y, keys[i].z);
+                if (neighbor.chunk == null) {
+                    continue;
+                }
+
+                BlockInfo neighborInfo = neighbor.chunk.GetInfo(neighbor.lx, neighbor.ly, neighbor.lz);
+
+                if (neighborInfo.State == BlockState.FLUID) {
+                    int flow = neighbor.chunk.GetData(neighbor.lx, neighbor.ly, neighbor.lz);
+                    bool flowFall = (flow & (int)LiquidState.FALLING) != 0;
+
+                    if (flowFall) {
+                        if (keys[i].y == 0) {
+                            continue;
+                        }
+
+                        BlockCoord low = TranslateCoord(keys[i].x, keys[i].y - 1, keys[i].z);
+                        BlockInfo lowinfo = low.chunk.GetInfo(low.lx, low.ly, low.lz);
+
+                        if (lowinfo.BlocksFluid) {
+                            return 0;
+                        }
+                        continue;
+                    }
+                    if (flow < minFlow) {
+                        minFlow = flow;
+                    }
+                }
+            }
+
+            return minFlow;
+        }
+
+        private void DoWater (int x, int y, int z)
+        {
+            Queue<BlockKey> flowQueue = new Queue<BlockKey>();
+
+            BlockKey prikey = new BlockKey(x, y, z);
+            flowQueue.Enqueue(prikey);
+
+            List<BlockKey> outflow = TileOutflow(prikey);
+            foreach (BlockKey outkey in outflow) {
+                flowQueue.Enqueue(outkey);
+            }
+
+            while (flowQueue.Count > 0) {
+                BlockKey key = flowQueue.Dequeue();
+
+                int curflow = 16;
+                int inflow = TileInflow(key);
+
+                BlockCoord tile = TranslateCoord(key.x, key.y, key.z);
+                BlockInfo tileInfo = tile.chunk.GetInfo(tile.lx, tile.ly, tile.lz);
+                if (tileInfo.ID == BlockType.STATIONARY_WATER || tileInfo.ID == BlockType.WATER) {
+                    curflow = tile.chunk.GetData(tile.lx, tile.ly, tile.lz);
+                }
+                else if (tileInfo.BlocksFluid) {
+                    continue;
+                }
+
+                bool curFall = (curflow & (int)LiquidState.FALLING) != 0;
+                bool inFall = (inflow & (int)LiquidState.FALLING) != 0;
+
+                // We won't update from the following states
+                if (curflow == 0 || curflow == inflow || curFall) {
+                    continue;
+                }
+
+                int newflow = curflow;
+
+                // Update from inflow if necessary
+                if (inFall) {
+                    newflow = inflow;
+                }
+                else if (inflow >= 7) {
+                    newflow = 16;
+                }
+                else {
+                    newflow = inflow + 1;
+                }
+
+                // If we haven't changed the flow, don't propagate
+                if (newflow == curflow) {
+                    continue;
+                }
+
+                // Update flow, add or remove water tile as necessary
+                if (newflow < 16 && curflow == 16) {
+                    // If we're overwriting lava, replace with appropriate stone type and abort propagation
+                    if (tileInfo.ID == BlockType.STATIONARY_LAVA || tileInfo.ID == BlockType.LAVA) {
+                        if ((newflow & (int)LiquidState.FALLING) != 0) {
+                            int odata = tile.chunk.GetData(tile.lx, tile.ly, tile.lz);
+                            if (odata == 0) {
+                                tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockType.OBSIDIAN);
+                            }
+                            else {
+                                tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockType.COBBLESTONE);
+                            }
+                            tile.chunk.SetData(tile.lx, tile.ly, tile.lz, 0);
+                            continue;
+                        }
+                    }
+
+                    // Otherwise replace the tile with our water flow
+                    tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockType.STATIONARY_WATER);
+                    tile.chunk.SetData(tile.lx, tile.ly, tile.lz, newflow);
+                }
+                else if (newflow == 16) {
+                    tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockType.AIR);
+                    tile.chunk.SetData(tile.lx, tile.ly, tile.lz, 0);
+                }
+                else {
+                    tile.chunk.SetData(tile.lx, tile.ly, tile.lz, newflow);
+                }
+
+                // Process outflows
+                outflow = TileOutflow(key);
+
+                foreach (BlockKey nkey in outflow) {
+                    flowQueue.Enqueue(nkey);
+                }
+            }
+        }
+
+        private void DoLava (int x, int y, int z)
+        {
+            Queue<BlockKey> flowQueue = new Queue<BlockKey>();
+
+            BlockKey prikey = new BlockKey(x, y, z);
+            flowQueue.Enqueue(prikey);
+
+            List<BlockKey> outflow = TileOutflow(prikey);
+            foreach (BlockKey outkey in outflow) {
+                flowQueue.Enqueue(outkey);
+            }
+
+            while (flowQueue.Count > 0) {
+                BlockKey key = flowQueue.Dequeue();
+
+                int curflow = 16;
+                int inflow = TileInflow(key);
+
+                BlockCoord tile = TranslateCoord(key.x, key.y, key.z);
+                BlockInfo tileInfo = tile.chunk.GetInfo(tile.lx, tile.ly, tile.lz);
+                if (tileInfo.ID == BlockType.STATIONARY_LAVA || tileInfo.ID == BlockType.LAVA) {
+                    curflow = tile.chunk.GetData(tile.lx, tile.ly, tile.lz);
+                }
+                else if (tileInfo.BlocksFluid) {
+                    continue;
+                }
+
+                bool curFall = (curflow & (int)LiquidState.FALLING) != 0;
+                bool inFall = (inflow & (int)LiquidState.FALLING) != 0;
+
+                // We won't update from the following states
+                if (curflow == 0 || curflow == inflow || curFall) {
+                    continue;
+                }
+
+                int newflow = curflow;
+
+                // Update from inflow if necessary
+                if (inFall) {
+                    newflow = inflow;
+                }
+                else if (inflow >= 6) {
+                    newflow = 16;
+                }
+                else {
+                    newflow = inflow + 2;
+                }
+
+                // If we haven't changed the flow, don't propagate
+                if (newflow == curflow) {
+                    continue;
+                }
+
+                // Update flow, add or remove lava tile as necessary
+                if (newflow < 16 && curflow == 16) {
+                    // If we're overwriting water, replace with appropriate stone type and abort propagation
+                    if (tileInfo.ID == BlockType.STATIONARY_WATER || tileInfo.ID == BlockType.WATER) {
+                        if ((newflow & (int)LiquidState.FALLING) == 0) {
+                            tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockType.COBBLESTONE);
+                            tile.chunk.SetData(tile.lx, tile.ly, tile.lz, 0);
+                            continue;
+                        }
+                    }
+
+                    tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockType.STATIONARY_LAVA);
+                    tile.chunk.SetData(tile.lx, tile.ly, tile.lz, newflow);
+                }
+                else if (newflow == 16) {
+                    tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockType.AIR);
+                    tile.chunk.SetData(tile.lx, tile.ly, tile.lz, 0);
+                }
+                else {
+                    tile.chunk.SetData(tile.lx, tile.ly, tile.lz, newflow);
+                }
+
+                // Process outflows
+                outflow = TileOutflow(key);
+
+                foreach (BlockKey nkey in outflow) {
+                    flowQueue.Enqueue(nkey);
+                }
+            }
         }
     }
 }

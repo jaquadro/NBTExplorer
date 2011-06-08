@@ -29,11 +29,18 @@ namespace Substrate
         protected ChunkRef _cache;
 
         private bool _autoLight = true;
+        private bool _autoFluid = false;
 
         public bool AutoLight
         {
             get { return _autoLight; }
             set { _autoLight = value; }
+        }
+
+        public bool AutoFluid
+        {
+            get { return _autoFluid; }
+            set { _autoFluid = value; }
         }
 
         public BlockManager (IChunkManager cm)
@@ -157,10 +164,14 @@ namespace Substrate
             }
 
             bool autolight = _cache.Blocks.AutoLight;
+            bool autofluid = _cache.Blocks.AutoFluid;
+
             _cache.Blocks.AutoLight = _autoLight;
+            _cache.Blocks.AutoFluid = _autoFluid;
 
             _cache.Blocks.SetID(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask, id);
 
+            _cache.Blocks.AutoFluid = autofluid;
             _cache.Blocks.AutoLight = autolight;
         }
 

@@ -62,6 +62,7 @@ namespace Substrate
 
         private bool _dirty = false;
         private bool _autoLight = true;
+        private bool _autoFluid = false;
 
         public delegate AlphaBlockCollection NeighborLookupHandler (int relx, int rely, int relz);
 
@@ -95,6 +96,12 @@ namespace Substrate
         {
             get { return _autoLight; }
             set { _autoLight = value; }
+        }
+
+        public bool AutoFluid
+        {
+            get { return _autoFluid; }
+            set { _autoFluid = value; }
         }
 
         public bool IsDirty
@@ -219,6 +226,14 @@ namespace Substrate
 
                 if (info1.Opacity != info2.Opacity || info1.TransmitsLight != info2.TransmitsLight) {
                     UpdateSkyLight(x, y, z);
+                }
+            }
+
+            // Fluid consistency
+
+            if (_autoFluid) {
+                if (info1.State == BlockState.FLUID || info2.State == BlockState.FLUID) {
+                    UpdateFluid(x, y, z);
                 }
             }
 
@@ -459,16 +474,37 @@ namespace Substrate
 
         #endregion
 
-        public void ResetBlockFluid ()
+        public void ResetFluid ()
         {
-            _fluidManager.ResetWater();
+            _fluidManager.ResetWater(_blocks, _data);
+            _fluidManager.ResetLava(_blocks, _data);
             _dirty = true;
         }
 
-        public void RebuildBlockFluid ()
+        public void RebuildFluid ()
         {
             _fluidManager.RebuildWater();
+            _fluidManager.RebuildLava();
             _dirty = true;
+        }
+
+        public void UpdateFluid (int x, int y, int z)
+        {
+            bool autofluid = _autoFluid;
+            _autoFluid = false;
+
+            int blocktype = _blocks[x, y, z];
+
+            if (blocktype == BlockType.WATER || blocktype == BlockType.STATIONARY_WATER) {
+                _fluidManager.UpdateWater(x, y, z);
+                _dirty = true;
+            }
+            else if (blocktype == BlockType.LAVA || blocktype == BlockType.STATIONARY_LAVA) {
+                _fluidManager.UpdateLava(x, y, z);
+                _dirty = true;
+            }
+
+            _autoFluid = autofluid;
         }
     }
 }

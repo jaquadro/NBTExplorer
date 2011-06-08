@@ -40,6 +40,7 @@ namespace Relight
                 chunk.Blocks.RebuildHeightMap();
                 chunk.Blocks.ResetBlockLight();
                 chunk.Blocks.ResetSkyLight();
+
                 cm.Save();
 
                 Console.WriteLine("Reset Chunk {0},{1}", chunk.X, chunk.Z);
