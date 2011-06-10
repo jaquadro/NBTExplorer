@@ -123,13 +123,13 @@ namespace Substrate
             _heightMap = light.heightMap;
             _tileEntities = properties.tileEntities;
 
-            _lightManager = new BlockLight(this);
-            _fluidManager = new BlockFluid(this);
-            _tileEntityManager = new BlockTileEntities(_blocks, _tileEntities);
-
             _xdim = _blocks.XDim;
             _ydim = _blocks.YDim;
             _zdim = _blocks.ZDim;
+
+            _lightManager = new BlockLight(this);
+            _fluidManager = new BlockFluid(this);
+            _tileEntityManager = new BlockTileEntities(_blocks, _tileEntities);
         }
 
         public Block GetBlock (int x, int y, int z)
