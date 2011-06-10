@@ -39,12 +39,24 @@ namespace Substrate
 
         public AlphaBlockCollection Blocks
         {
-            get { GetChunk(); return _blocks; }
+            get 
+            {
+                if (_blocks == null) {
+                    GetChunk();
+                }
+                return _blocks;
+            }
         }
 
         public EntityCollection Entities
         {
-            get { GetChunk(); return _entities; }
+            get
+            {
+                if (_entities == null) {
+                    GetChunk();
+                }
+                return _entities;
+            }
         }
 
         public bool IsDirty

@@ -46,8 +46,12 @@ namespace Substrate
         }
     }
 
-    public class AlphaBlockCollection : IBoundedAlphaBlockCollection
+    public class AlphaBlockCollection : IBoundedAlphaBlockCollection, IEnumerable<AlphaBlockRef>
     {
+        private readonly int _xdim;
+        private readonly int _ydim;
+        private readonly int _zdim;
+
         private XZYByteArray _blocks;
         private XZYNibbleArray _data;
         private XZYNibbleArray _blockLight;
@@ -122,6 +126,10 @@ namespace Substrate
             _lightManager = new BlockLight(this);
             _fluidManager = new BlockFluid(this);
             _tileEntityManager = new BlockTileEntities(_blocks, _tileEntities);
+
+            _xdim = _blocks.XDim;
+            _ydim = _blocks.YDim;
+            _zdim = _blocks.ZDim;
         }
 
         public Block GetBlock (int x, int y, int z)
@@ -146,17 +154,17 @@ namespace Substrate
 
         public int XDim
         {
-            get { return _blocks.XDim; }
+            get { return _xdim; }
         }
 
         public int YDim
         {
-            get { return _blocks.YDim; }
+            get { return _ydim; }
         }
 
         public int ZDim
         {
-            get { return _blocks.ZDim; }
+            get { return _zdim; }
         }
 
         IBlock IBlockCollection.GetBlock (int x, int y, int z)
@@ -179,9 +187,19 @@ namespace Substrate
             return BlockInfo.BlockTable[_blocks[x, y, z]];
         }
 
+        internal BlockInfo GetInfo (int index)
+        {
+            return BlockInfo.BlockTable[_blocks[index]];
+        }
+
         public int GetID (int x, int y, int z)
         {
             return _blocks[x, y, z];
+        }
+
+        internal int GetID (int index)
+        {
+            return _blocks[index];
         }
 
         public void SetID (int x, int y, int z, int id)
@@ -278,6 +296,11 @@ namespace Substrate
             return _data[x, y, z];
         }
 
+        internal int GetData (int index)
+        {
+            return _data[index];
+        }
+
         public void SetData (int x, int y, int z, int data)
         {
             if (_data[x, y, z] != data) {
@@ -290,6 +313,14 @@ namespace Substrate
                     return false;
                 }
             }*/
+        }
+
+        internal void SetData (int index, int data)
+        {
+            if (_data[index] != data) {
+                _data[index] = (byte)data;
+                _dirty = true;
+            }
         }
 
         public int CountByData (int id, int data)
@@ -331,9 +362,19 @@ namespace Substrate
             return _blockLight[x, y, z];
         }
 
+        internal int GetBlockLight (int index)
+        {
+            return _blockLight[index];
+        }
+
         public int GetSkyLight (int x, int y, int z)
         {
             return _skyLight[x, y, z];
+        }
+
+        internal int GetSkyLight (int index)
+        {
+            return _skyLight[index];
         }
 
         public void SetBlockLight (int x, int y, int z, int light)
@@ -344,10 +385,26 @@ namespace Substrate
             }
         }
 
+        internal void SetBlockLight (int index, int light)
+        {
+            if (_blockLight[index] != light) {
+                _blockLight[index] = (byte)light;
+                _dirty = true;
+            }
+        }
+
         public void SetSkyLight (int x, int y, int z, int light)
         {
             if (_skyLight[x, y, z] != light) {
                 _skyLight[x, y, z] = (byte)light;
+                _dirty = true;
+            }
+        }
+
+        internal void SetSkyLight (int index, int light)
+        {
+            if (_skyLight[index] != light) {
+                _skyLight[index] = (byte)light;
                 _dirty = true;
             }
         }
@@ -505,6 +562,83 @@ namespace Substrate
             }
 
             _autoFluid = autofluid;
+        }
+
+
+        #region IEnumerable<AlphaBlockRef> Members
+
+        public IEnumerator<AlphaBlockRef> GetEnumerator ()
+        {
+            return new AlphaBlockEnumerator(this);
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
+        {
+            return new AlphaBlockEnumerator(this);
+        }
+
+        #endregion
+
+        public class AlphaBlockEnumerator : IEnumerator<AlphaBlockRef>
+        {
+            private AlphaBlockCollection _collection;
+            private int _index;
+            private int _size;
+
+            public AlphaBlockEnumerator (AlphaBlockCollection collection)
+            {
+                _collection = collection;
+                _index = -1;
+                _size = collection.XDim * collection.YDim * collection.ZDim;
+            }
+
+            #region IEnumerator<Entity> Members
+
+            public AlphaBlockRef Current
+            {
+                get
+                {
+                    if (_index == -1 || _index == _size) {
+                        throw new InvalidOperationException();
+                    }
+                    return new AlphaBlockRef(_collection, _index);
+                }
+            }
+
+            #endregion
+
+            #region IDisposable Members
+
+            public void Dispose () { }
+
+            #endregion
+
+            #region IEnumerator Members
+
+            object System.Collections.IEnumerator.Current
+            {
+                get { return Current; }
+            }
+
+            public bool MoveNext ()
+            {
+                if (++_index == _size) {
+                    return false;
+                }
+
+                return true;
+            }
+
+            public void Reset ()
+            {
+                _index = -1;
+            }
+
+            #endregion
         }
     }
 }

@@ -110,4 +110,105 @@ namespace Substrate
 
         #endregion
     }
+
+    public struct AlphaBlockRef : IAlphaBlockRef
+    {
+        private readonly AlphaBlockCollection _collection;
+        private readonly int _index;
+
+        internal AlphaBlockRef (AlphaBlockCollection collection, int index)
+        {
+            _collection = collection;
+            _index = index;
+        }
+
+        #region IBlock Members
+
+        public BlockInfo Info
+        {
+            get { return _collection.GetInfo(_index); }
+        }
+
+        public int ID
+        {
+            get
+            {
+                return _collection.GetID(_index);
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        #endregion
+
+        #region IDataBlock Members
+
+        public int Data
+        {
+            get
+            {
+                return _collection.GetData(_index);
+            }
+            set
+            {
+                _collection.SetData(_index, value);
+            }
+        }
+
+        public void SetData (int value)
+        {
+            _collection.SetData(_index, value);
+        }
+
+        #endregion
+
+        #region ILitBlock Members
+
+        public int BlockLight
+        {
+            get
+            {
+                return _collection.GetBlockLight(_index);
+            }
+            set
+            {
+                _collection.SetBlockLight(_index, value);
+            }
+        }
+
+        public int SkyLight
+        {
+            get
+            {
+                return _collection.GetSkyLight(_index);
+            }
+            set
+            {
+                _collection.SetSkyLight(_index, value);
+            }
+        }
+
+        #endregion
+
+        #region IPropertyBlock Members
+
+        public TileEntity GetTileEntity ()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetTileEntity (TileEntity te)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClearTileEntity ()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
 }

@@ -36,6 +36,14 @@ namespace Substrate
         void ClearTileEntity ();
     }
 
+    public interface IAlphaBlock : IDataBlock, IPropertyBlock
+    {
+    }
+
+    public interface IAlphaBlockRef : IDataBlock, ILitBlock, IPropertyBlock
+    {
+    }
+
     public interface IBlockCollection
     {
         IBlock GetBlock (int x, int y, int z);
