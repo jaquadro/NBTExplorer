@@ -11,7 +11,7 @@ namespace Substrate.TileEntities
         public static readonly NBTCompoundNode TrapSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
         {
             new NBTStringNode("id", "Trap"),
-            new NBTListNode("Items", TagType.TAG_COMPOUND, ItemCollection.ListSchema),
+            new NBTListNode("Items", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),
         });
 
         private const int _CAPACITY = 8;

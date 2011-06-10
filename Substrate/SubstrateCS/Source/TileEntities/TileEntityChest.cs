@@ -11,7 +11,7 @@ namespace Substrate.TileEntities
         public static readonly NBTCompoundNode ChestSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
         {
             new NBTStringNode("id", "Chest"),
-            new NBTListNode("Items", TagType.TAG_COMPOUND, ItemCollection.ListSchema),
+            new NBTListNode("Items", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),
         });
 
         private const int _CAPACITY = 27;

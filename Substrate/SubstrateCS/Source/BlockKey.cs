@@ -50,5 +50,10 @@ namespace Substrate
         {
             return k1.x != k2.x || k1.y != k2.y || k1.z != k2.z;
         }
+
+        public override string ToString ()
+        {
+            return "(" + x + ", " + y + ", " + z + ")";
+        }
     }
 }

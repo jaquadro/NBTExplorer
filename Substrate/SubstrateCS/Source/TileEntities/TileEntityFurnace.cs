@@ -13,7 +13,7 @@ namespace Substrate.TileEntities
             new NBTStringNode("id", "Furnace"),
             new NBTScalerNode("BurnTime", TagType.TAG_SHORT),
             new NBTScalerNode("CookTime", TagType.TAG_SHORT),
-            new NBTListNode("Items", TagType.TAG_COMPOUND, ItemCollection.ListSchema),
+            new NBTListNode("Items", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),
         });
 
         private const int _CAPACITY = 3;

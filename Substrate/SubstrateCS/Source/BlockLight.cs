@@ -304,7 +304,7 @@ namespace Substrate
                 case BlockCollectionEdge.NORTH:
                     for (int z = 0; z < zdim; z++) {
                         for (int y = 0; y < ydim; y++) {
-                            TestSkyLight(chunk, 0, y, z, xdim, y, z);
+                            TestSkyLight(chunk, 0, y, z, xdim - 1, y, z);
                         }
                     }
                     break;

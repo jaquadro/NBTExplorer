@@ -93,11 +93,13 @@ namespace Substrate
         public void UpdateWater (int x, int y, int z)
         {
             DoWater(x, y, z);
+            _chunks.Clear();
         }
 
         public void UpdateLava (int x, int y, int z)
         {
             DoLava(x, y, z);
+            _chunks.Clear();
         }
 
         public void RebuildWater ()
@@ -122,6 +124,8 @@ namespace Substrate
             foreach (BlockKey key in buildQueue) {
                 DoWater(key.x, key.y, key.z);
             }
+
+            _chunks.Clear();
         }
 
         public void RebuildLava ()
@@ -146,6 +150,8 @@ namespace Substrate
             foreach (BlockKey key in buildQueue) {
                 DoLava(key.x, key.y, key.z);
             }
+
+            _chunks.Clear();
         }
 
         private BlockCoord TranslateCoord (int x, int y, int z)

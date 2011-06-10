@@ -47,5 +47,10 @@ namespace Substrate
         {
             return k1.cx != k2.cx || k1.cz != k2.cz;
         }
+
+        public override string ToString ()
+        {
+            return "(" + cx + ", " + cz + ")";
+        }
     }
 }
