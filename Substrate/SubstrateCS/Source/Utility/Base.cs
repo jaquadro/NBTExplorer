@@ -60,4 +60,31 @@ namespace Substrate.Utility
             return result;
         }
     }
+
+    public static class Base16
+    {
+        private const string _alphabet = "0123456789abcdef";
+
+        public static string Encode (byte[] input, int stride = 0, char strideChar = ' ')
+        {
+            List<char> result = new List<char>();
+
+            for (int i = 0; i < input.Length; i++) {
+                int hi = (input[i] >> 4) & 0xF;
+                int lo = input[i] & 0xF;
+
+                result.Add(_alphabet[hi]);
+                if (stride > 0 && (((i + 1) * 2 - 1) % stride) == 0) {
+                    result.Add(strideChar);
+                }
+
+                result.Add(_alphabet[lo]);
+                if (stride > 0 && (((i + 1) * 2) % stride) == 0) {
+                    result.Add(strideChar);
+                }
+            }
+
+            return new string(result.ToArray());
+        }
+    }
 }

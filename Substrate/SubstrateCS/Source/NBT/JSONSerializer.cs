@@ -4,6 +4,8 @@ using System.Text;
 
 namespace Substrate.NBT
 {
+    using Substrate.Utility;
+
     public class JSONSerializer
     {
         public static string Serialize (TagValue tag)
@@ -140,6 +142,12 @@ namespace Substrate.NBT
 
                 case TagType.TAG_BYTE_ARRAY:
                     str.Append(Convert.ToBase64String(tag.ToTagByteArray().Data));
+                    /*if (tag.ToTagByteArray().Length == (16 * 16 * 128 / 2)) {
+                        str.Append(Base16.Encode(tag.ToTagByteArray().Data, 1));
+                    }
+                    else {
+                        str.Append(Base16.Encode(tag.ToTagByteArray().Data, 2));
+                    }*/
                     break;
             }
         }
