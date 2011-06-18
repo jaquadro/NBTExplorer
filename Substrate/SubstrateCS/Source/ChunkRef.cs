@@ -5,9 +5,11 @@ using System.Collections.Generic;
 namespace Substrate
 {
     /// <summary>
-    /// Provides a wrapper around a physical Chunk stored in a chunk container.  Modifying data in a ChunkRef will signal to the chunk 
-    /// container that the physical chunk needs to be saved.
+    /// Provides a wrapper around a physical Chunk stored in a chunk container.
     /// </summary>
+    /// <remarks>
+    /// Modifying data in a ChunkRef will signal to the chunk container that the physical chunk needs to be saved.
+    /// </remarks>
     public class ChunkRef : IChunk
     {
         private IChunkContainer _container;
