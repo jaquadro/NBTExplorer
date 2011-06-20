@@ -8,9 +8,9 @@ namespace Substrate.Entities
 
     public class EntityGiant : EntityMob
     {
-        public static readonly NBTCompoundNode GiantSchema = MobSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound GiantSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Giant"),
+            new SchemaNodeString("id", "Giant"),
         });
 
         public EntityGiant ()
@@ -26,7 +26,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, GiantSchema).Verify();
         }

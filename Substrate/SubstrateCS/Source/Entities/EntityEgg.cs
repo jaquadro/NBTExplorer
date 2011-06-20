@@ -8,9 +8,9 @@ namespace Substrate.Entities
 
     public class EntityEgg : EntityThrowable
     {
-        public static readonly NBTCompoundNode EggSchema = ThrowableSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound EggSchema = ThrowableSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Egg"),
+            new SchemaNodeString("id", "Egg"),
         });
 
         public EntityEgg ()
@@ -26,7 +26,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, EggSchema).Verify();
         }

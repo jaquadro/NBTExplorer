@@ -8,9 +8,9 @@ namespace Substrate.Entities
 
     public class EntitySkeleton : EntityMob
     {
-        public static readonly NBTCompoundNode SkeletonSchema = MobSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound SkeletonSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Skeleton"),
+            new SchemaNodeString("id", "Skeleton"),
         });
 
         public EntitySkeleton ()
@@ -26,7 +26,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, SkeletonSchema).Verify();
         }

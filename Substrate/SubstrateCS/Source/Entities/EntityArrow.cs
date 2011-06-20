@@ -8,9 +8,9 @@ namespace Substrate.Entities
 
     public class EntityArrow : EntityThrowable
     {
-        public static readonly NBTCompoundNode ArrowSchema = ThrowableSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound ArrowSchema = ThrowableSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Arrow"),
+            new SchemaNodeString("id", "Arrow"),
         });
 
         public EntityArrow ()
@@ -26,7 +26,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, ArrowSchema).Verify();
         }

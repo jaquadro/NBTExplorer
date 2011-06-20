@@ -8,9 +8,9 @@ namespace Substrate.Entities
 
     public class EntitySquid : EntityMob
     {
-        public static readonly NBTCompoundNode SquidSchema = MobSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound SquidSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Squid"),
+            new SchemaNodeString("id", "Squid"),
         });
 
         public EntitySquid ()
@@ -26,7 +26,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, SquidSchema).Verify();
         }

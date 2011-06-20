@@ -8,9 +8,9 @@ namespace Substrate.Entities
 
     public class EntityMinecartChest : EntityMinecart, IItemContainer
     {
-        public static readonly NBTCompoundNode MinecartChestSchema = MinecartSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound MinecartChestSchema = MinecartSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTListNode("Items", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),
+            new SchemaNodeList("Items", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),
         });
 
         private static int _CAPACITY = 27;
@@ -44,28 +44,28 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (TagValue tree)
+        public override Entity LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
 
-            TagList items = ctree["Items"].ToTagList();
+            TagNodeList items = ctree["Items"].ToTagList();
             _items = _items.LoadTree(items);
 
             return this;
         }
 
-        public override TagValue BuildTree ()
+        public override TagNode BuildTree ()
         {
-            TagCompound tree = base.BuildTree() as TagCompound;
+            TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
             tree["Items"] = _items.BuildTree();
 
             return tree;
         }
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, MinecartChestSchema).Verify();
         }

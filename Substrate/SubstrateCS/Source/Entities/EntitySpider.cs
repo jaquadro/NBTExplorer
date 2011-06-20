@@ -8,9 +8,9 @@ namespace Substrate.Entities
 
     public class EntitySpider : EntityMob
     {
-        public static readonly NBTCompoundNode SpiderSchema = MobSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound SpiderSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Spider"),
+            new SchemaNodeString("id", "Spider"),
         });
 
         public EntitySpider ()
@@ -26,7 +26,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, SpiderSchema).Verify();
         }

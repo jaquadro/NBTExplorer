@@ -8,10 +8,10 @@ namespace Substrate.Entities
 
     public class EntityFallingSand : Entity
     {
-        public static readonly NBTCompoundNode FallingSandSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound FallingSandSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "FallingSand"),
-            new NBTScalerNode("Tile", TagType.TAG_BYTE),
+            new SchemaNodeString("id", "FallingSand"),
+            new SchemaNodeScaler("Tile", TagType.TAG_BYTE),
         });
 
         private byte _tile;
@@ -39,9 +39,9 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (TagValue tree)
+        public override Entity LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
@@ -51,15 +51,15 @@ namespace Substrate.Entities
             return this;
         }
 
-        public override TagValue BuildTree ()
+        public override TagNode BuildTree ()
         {
-            TagCompound tree = base.BuildTree() as TagCompound;
-            tree["Tile"] = new TagByte(_tile);
+            TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
+            tree["Tile"] = new TagNodeByte(_tile);
 
             return tree;
         }
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, FallingSandSchema).Verify();
         }

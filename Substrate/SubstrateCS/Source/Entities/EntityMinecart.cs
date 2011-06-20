@@ -15,10 +15,10 @@ namespace Substrate.Entities
             FURNACE = 2,
         }
 
-        public static readonly NBTCompoundNode MinecartSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound MinecartSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Minecart"),
-            new NBTScalerNode("Type", TagType.TAG_BYTE),
+            new SchemaNodeString("id", "Minecart"),
+            new SchemaNodeScaler("Type", TagType.TAG_BYTE),
         });
 
         private CartType _type;
@@ -45,9 +45,9 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (TagValue tree)
+        public override Entity LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
@@ -66,15 +66,15 @@ namespace Substrate.Entities
             }
         }
 
-        public override TagValue BuildTree ()
+        public override TagNode BuildTree ()
         {
-            TagCompound tree = base.BuildTree() as TagCompound;
-            tree["Type"] = new TagByte((byte)_type);
+            TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
+            tree["Type"] = new TagNodeByte((byte)_type);
 
             return tree;
         }
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, MinecartSchema).Verify();
         }

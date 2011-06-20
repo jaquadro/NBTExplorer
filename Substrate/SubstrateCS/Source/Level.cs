@@ -10,24 +10,24 @@ namespace Substrate
 
     public class Level : INBTObject<Level>, ICopyable<Level>
     {
-        public static NBTCompoundNode LevelSchema = new NBTCompoundNode()
+        public static SchemaNodeCompound LevelSchema = new SchemaNodeCompound()
         {
-            new NBTCompoundNode("Data")
+            new SchemaNodeCompound("Data")
             {
-                new NBTScalerNode("Time", TagType.TAG_LONG),
-                new NBTScalerNode("LastPlayed", TagType.TAG_LONG, NBTOptions.CREATE_ON_MISSING),
-                new NBTCompoundNode("Player", Player.PlayerSchema, NBTOptions.OPTIONAL),
-                new NBTScalerNode("SpawnX", TagType.TAG_INT),
-                new NBTScalerNode("SpawnY", TagType.TAG_INT),
-                new NBTScalerNode("SpawnZ", TagType.TAG_INT),
-                new NBTScalerNode("SizeOnDisk", TagType.TAG_LONG, NBTOptions.CREATE_ON_MISSING),
-                new NBTScalerNode("RandomSeed", TagType.TAG_LONG),
-                new NBTScalerNode("version", TagType.TAG_INT, NBTOptions.OPTIONAL),
-                new NBTScalerNode("LevelName", TagType.TAG_STRING, NBTOptions.OPTIONAL),
-                new NBTScalerNode("raining", TagType.TAG_BYTE, NBTOptions.OPTIONAL),
-                new NBTScalerNode("thundering", TagType.TAG_BYTE, NBTOptions.OPTIONAL),
-                new NBTScalerNode("rainTime", TagType.TAG_INT, NBTOptions.OPTIONAL),
-                new NBTScalerNode("thunderTime", TagType.TAG_INT, NBTOptions.OPTIONAL),
+                new SchemaNodeScaler("Time", TagType.TAG_LONG),
+                new SchemaNodeScaler("LastPlayed", TagType.TAG_LONG, SchemaOptions.CREATE_ON_MISSING),
+                new SchemaNodeCompound("Player", Player.PlayerSchema, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("SpawnX", TagType.TAG_INT),
+                new SchemaNodeScaler("SpawnY", TagType.TAG_INT),
+                new SchemaNodeScaler("SpawnZ", TagType.TAG_INT),
+                new SchemaNodeScaler("SizeOnDisk", TagType.TAG_LONG, SchemaOptions.CREATE_ON_MISSING),
+                new SchemaNodeScaler("RandomSeed", TagType.TAG_LONG),
+                new SchemaNodeScaler("version", TagType.TAG_INT, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("LevelName", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("raining", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("thundering", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("rainTime", TagType.TAG_INT, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("thunderTime", TagType.TAG_INT, SchemaOptions.OPTIONAL),
             },
         };
 
@@ -206,7 +206,7 @@ namespace Substrate
                 return false;
             }
 
-            new NBT_Tree(BuildTree() as TagCompound).WriteTo(zipstr);
+            new NBT_Tree(BuildTree() as TagNodeCompound).WriteTo(zipstr);
             zipstr.Close();
 
             return true;
@@ -215,9 +215,9 @@ namespace Substrate
 
         #region INBTObject<Player> Members
 
-        public virtual Level LoadTree (TagValue tree)
+        public virtual Level LoadTree (TagNode tree)
         {
-            TagCompound dtree = tree as TagCompound;
+            TagNodeCompound dtree = tree as TagNodeCompound;
             if (dtree == null) {
                 return null;
             }
@@ -228,7 +228,7 @@ namespace Substrate
             _thundering = null;
             _thunderTime = null;
 
-            TagCompound ctree = dtree["Data"].ToTagCompound();
+            TagNodeCompound ctree = dtree["Data"].ToTagCompound();
 
             _time = ctree["Time"].ToTagLong();
             _lastPlayed = ctree["LastPlayed"].ToTagLong();
@@ -267,7 +267,7 @@ namespace Substrate
             return this;
         }
 
-        public virtual Level LoadTreeSafe (TagValue tree)
+        public virtual Level LoadTreeSafe (TagNode tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -276,50 +276,50 @@ namespace Substrate
             return LoadTree(tree);
         }
 
-        public virtual TagValue BuildTree ()
+        public virtual TagNode BuildTree ()
         {
-            TagCompound data = new TagCompound();
-            data["Time"] = new TagLong(_time);
-            data["LastPlayed"] = new TagLong(_lastPlayed);
+            TagNodeCompound data = new TagNodeCompound();
+            data["Time"] = new TagNodeLong(_time);
+            data["LastPlayed"] = new TagNodeLong(_lastPlayed);
 
             if (_player != null) {
                 data["Player"] = _player.BuildTree();
             }
 
-            data["SpawnX"] = new TagInt(_spawnX);
-            data["SpawnY"] = new TagInt(_spawnY);
-            data["SpawnZ"] = new TagInt(_spawnZ);
-            data["SizeOnDisk"] = new TagLong(_sizeOnDisk);
-            data["RandomSeed"] = new TagLong(_randomSeed);
+            data["SpawnX"] = new TagNodeInt(_spawnX);
+            data["SpawnY"] = new TagNodeInt(_spawnY);
+            data["SpawnZ"] = new TagNodeInt(_spawnZ);
+            data["SizeOnDisk"] = new TagNodeLong(_sizeOnDisk);
+            data["RandomSeed"] = new TagNodeLong(_randomSeed);
 
             if (_version != null && _version != 0) {
-                data["version"] = new TagInt(_version ?? 0);
+                data["version"] = new TagNodeInt(_version ?? 0);
             }
 
             if (_name != null) {
-                data["LevelName"] = new TagString(_name);
+                data["LevelName"] = new TagNodeString(_name);
             }
 
             if (_raining != null) {
-                data["raining"] = new TagByte(_raining ?? 0);
+                data["raining"] = new TagNodeByte(_raining ?? 0);
             }
             if (_thundering != null) {
-                data["thundering"] = new TagByte(_thundering ?? 0);
+                data["thundering"] = new TagNodeByte(_thundering ?? 0);
             }
             if (_rainTime != null) {
-                data["rainTime"] = new TagInt(_rainTime ?? 0);
+                data["rainTime"] = new TagNodeInt(_rainTime ?? 0);
             }
             if (_thunderTime != null) {
-                data["thunderTime"] = new TagInt(_thunderTime ?? 0);
+                data["thunderTime"] = new TagNodeInt(_thunderTime ?? 0);
             }
 
-            TagCompound tree = new TagCompound();
+            TagNodeCompound tree = new TagNodeCompound();
             tree.Add("Data", data);
 
             return tree;
         }
 
-        public virtual bool ValidateTree (TagValue tree)
+        public virtual bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, LevelSchema).Verify();
         }

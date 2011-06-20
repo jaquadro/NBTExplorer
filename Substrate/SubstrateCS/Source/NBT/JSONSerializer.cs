@@ -8,20 +8,20 @@ namespace Substrate.NBT
 
     public class JSONSerializer
     {
-        public static string Serialize (TagValue tag)
+        public static string Serialize (TagNode tag)
         {
             return Serialize(tag, 0);
         }
 
-        public static string Serialize (TagValue tag, int level)
+        public static string Serialize (TagNode tag, int level)
         {
             StringBuilder str = new StringBuilder();
 
             if (tag.GetTagType() == TagType.TAG_COMPOUND) {
-                SerializeCompound(tag as TagCompound, str, level);
+                SerializeCompound(tag as TagNodeCompound, str, level);
             }
             else if (tag.GetTagType() == TagType.TAG_LIST) {
-                SerializeList(tag as TagList, str, level);
+                SerializeList(tag as TagNodeList, str, level);
             }
             else {
                 SerializeScaler(tag, str);
@@ -30,7 +30,7 @@ namespace Substrate.NBT
             return str.ToString();
         }
 
-        private static void SerializeCompound (TagCompound tag, StringBuilder str, int level)
+        private static void SerializeCompound (TagNodeCompound tag, StringBuilder str, int level)
         {
             if (tag.Count == 0) {
                 str.Append("{ }");
@@ -40,7 +40,7 @@ namespace Substrate.NBT
             str.AppendLine();
             AddLine(str, "{", level);
 
-            IEnumerator<KeyValuePair<string, TagValue>> en = tag.GetEnumerator();
+            IEnumerator<KeyValuePair<string, TagNode>> en = tag.GetEnumerator();
             bool first = true;
             while (en.MoveNext()) {
                 if (!first) {
@@ -48,14 +48,14 @@ namespace Substrate.NBT
                     str.AppendLine();
                 }
 
-                KeyValuePair<string, TagValue> item = en.Current;
+                KeyValuePair<string, TagNode> item = en.Current;
                 Add(str, "\"" + item.Key + "\": ", level + 1);
 
                 if (item.Value.GetTagType() == TagType.TAG_COMPOUND) {
-                    SerializeCompound(item.Value as TagCompound, str, level + 1);
+                    SerializeCompound(item.Value as TagNodeCompound, str, level + 1);
                 }
                 else if (item.Value.GetTagType() == TagType.TAG_LIST) {
-                    SerializeList(item.Value as TagList, str, level + 1);
+                    SerializeList(item.Value as TagNodeList, str, level + 1);
                 }
                 else {
                     SerializeScaler(item.Value, str);
@@ -68,7 +68,7 @@ namespace Substrate.NBT
             Add(str, "}", level);
         }
 
-        private static void SerializeList (TagList tag, StringBuilder str, int level)
+        private static void SerializeList (TagNodeList tag, StringBuilder str, int level)
         {
             if (tag.Count == 0) {
                 str.Append("[ ]");
@@ -78,20 +78,20 @@ namespace Substrate.NBT
             str.AppendLine();
             AddLine(str, "[", level);
 
-            IEnumerator<TagValue> en = tag.GetEnumerator();
+            IEnumerator<TagNode> en = tag.GetEnumerator();
             bool first = true;
             while (en.MoveNext()) {
                 if (!first) {
                     str.Append(",");
                 }
 
-                TagValue item = en.Current;
+                TagNode item = en.Current;
 
                 if (item.GetTagType() == TagType.TAG_COMPOUND) {
-                    SerializeCompound(item as TagCompound, str, level + 1);
+                    SerializeCompound(item as TagNodeCompound, str, level + 1);
                 }
                 else if (item.GetTagType() == TagType.TAG_LIST) {
-                    SerializeList(item as TagList, str, level + 1);
+                    SerializeList(item as TagNodeList, str, level + 1);
                 }
                 else {
                     if (!first) {
@@ -109,7 +109,7 @@ namespace Substrate.NBT
             Add(str, "]", level);
         }
 
-        private static void SerializeScaler (TagValue tag, StringBuilder str)
+        private static void SerializeScaler (TagNode tag, StringBuilder str)
         {
             switch (tag.GetTagType()) {
                 case TagType.TAG_STRING:

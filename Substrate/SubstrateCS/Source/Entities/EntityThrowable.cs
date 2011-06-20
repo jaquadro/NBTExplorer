@@ -8,14 +8,14 @@ namespace Substrate.Entities
 
     public class EntityThrowable : Entity
     {
-        public static readonly NBTCompoundNode ThrowableSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound ThrowableSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTScalerNode("xTile", TagType.TAG_SHORT),
-            new NBTScalerNode("yTile", TagType.TAG_SHORT),
-            new NBTScalerNode("zTile", TagType.TAG_SHORT),
-            new NBTScalerNode("inTile", TagType.TAG_BYTE),
-            new NBTScalerNode("shake", TagType.TAG_BYTE),
-            new NBTScalerNode("inGround", TagType.TAG_BYTE),
+            new SchemaNodeScaler("xTile", TagType.TAG_SHORT),
+            new SchemaNodeScaler("yTile", TagType.TAG_SHORT),
+            new SchemaNodeScaler("zTile", TagType.TAG_SHORT),
+            new SchemaNodeScaler("inTile", TagType.TAG_BYTE),
+            new SchemaNodeScaler("shake", TagType.TAG_BYTE),
+            new SchemaNodeScaler("inGround", TagType.TAG_BYTE),
         });
 
         private short _xTile;
@@ -83,9 +83,9 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (TagValue tree)
+        public override Entity LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
@@ -100,20 +100,20 @@ namespace Substrate.Entities
             return this;
         }
 
-        public override TagValue BuildTree ()
+        public override TagNode BuildTree ()
         {
-            TagCompound tree = base.BuildTree() as TagCompound;
-            tree["xTile"] = new TagShort(_xTile);
-            tree["yTile"] = new TagShort(_yTile);
-            tree["zTile"] = new TagShort(_zTile);
-            tree["inTile"] = new TagByte(_inTile);
-            tree["shake"] = new TagByte(_shake);
-            tree["inGround"] = new TagByte(_inGround);
+            TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
+            tree["xTile"] = new TagNodeShort(_xTile);
+            tree["yTile"] = new TagNodeShort(_yTile);
+            tree["zTile"] = new TagNodeShort(_zTile);
+            tree["inTile"] = new TagNodeByte(_inTile);
+            tree["shake"] = new TagNodeByte(_shake);
+            tree["inGround"] = new TagNodeByte(_inGround);
 
             return tree;
         }
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, ThrowableSchema).Verify();
         }

@@ -11,13 +11,13 @@ namespace Substrate
     public class BlockTileEntities
     {
         private XZYByteArray _blocks;
-        private TagList _tileEntities;
+        private TagNodeList _tileEntities;
 
-        private Dictionary<BlockKey, TagCompound> _tileEntityTable;
+        private Dictionary<BlockKey, TagNodeCompound> _tileEntityTable;
 
         public event BlockCoordinateHandler TranslateCoordinates;
 
-        public BlockTileEntities (XZYByteArray blocks, TagList tileEntities)
+        public BlockTileEntities (XZYByteArray blocks, TagNodeList tileEntities)
         {
             _blocks = blocks;
             _tileEntities = tileEntities;
@@ -39,7 +39,7 @@ namespace Substrate
                 ? TranslateCoordinates(x, y, z)
                 : new BlockKey(x, y, z);
 
-            TagCompound te;
+            TagNodeCompound te;
 
             if (!_tileEntityTable.TryGetValue(key, out te)) {
                 return null;
@@ -63,7 +63,7 @@ namespace Substrate
                 ? TranslateCoordinates(x, y, z)
                 : new BlockKey(x, y, z);
 
-            TagCompound oldte;
+            TagNodeCompound oldte;
 
             if (_tileEntityTable.TryGetValue(key, out oldte)) {
                 _tileEntities.Remove(oldte);
@@ -73,7 +73,7 @@ namespace Substrate
             te.Y = key.y;
             te.Z = key.z;
 
-            TagCompound tree = te.BuildTree() as TagCompound;
+            TagNodeCompound tree = te.BuildTree() as TagNodeCompound;
 
             _tileEntities.Add(tree);
             _tileEntityTable[key] = tree;
@@ -95,7 +95,7 @@ namespace Substrate
                 ? TranslateCoordinates(x, y, z)
                 : new BlockKey(x, y, z);
 
-            TagCompound oldte;
+            TagNodeCompound oldte;
 
             if (_tileEntityTable.TryGetValue(key, out oldte)) {
                 _tileEntities.Remove(oldte);
@@ -105,7 +105,7 @@ namespace Substrate
             te.Y = key.y;
             te.Z = key.z;
 
-            TagCompound tree = te.BuildTree() as TagCompound;
+            TagNodeCompound tree = te.BuildTree() as TagNodeCompound;
 
             _tileEntities.Add(tree);
             _tileEntityTable[key] = tree;
@@ -117,7 +117,7 @@ namespace Substrate
                 ? TranslateCoordinates(x, y, z)
                 : new BlockKey(x, y, z);
 
-            TagCompound te;
+            TagNodeCompound te;
 
             if (!_tileEntityTable.TryGetValue(key, out te)) {
                 return;
@@ -129,9 +129,9 @@ namespace Substrate
 
         private void BuildTileEntityCache ()
         {
-            _tileEntityTable = new Dictionary<BlockKey, TagCompound>();
+            _tileEntityTable = new Dictionary<BlockKey, TagNodeCompound>();
 
-            foreach (TagCompound te in _tileEntities) {
+            foreach (TagNodeCompound te in _tileEntities) {
                 int tex = te["x"].ToTagInt();
                 int tey = te["y"].ToTagInt();
                 int tez = te["z"].ToTagInt();

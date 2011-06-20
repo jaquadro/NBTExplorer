@@ -8,13 +8,13 @@ namespace Substrate.TileEntities
 
     public class TileEntitySign : TileEntity
     {
-        public static readonly NBTCompoundNode SignSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound SignSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Sign"),
-            new NBTScalerNode("Text1", TagType.TAG_STRING),
-            new NBTScalerNode("Text2", TagType.TAG_STRING),
-            new NBTScalerNode("Text3", TagType.TAG_STRING),
-            new NBTScalerNode("Text4", TagType.TAG_STRING),
+            new SchemaNodeString("id", "Sign"),
+            new SchemaNodeScaler("Text1", TagType.TAG_STRING),
+            new SchemaNodeScaler("Text2", TagType.TAG_STRING),
+            new SchemaNodeScaler("Text3", TagType.TAG_STRING),
+            new SchemaNodeScaler("Text4", TagType.TAG_STRING),
         });
 
         private string _text1 = "";
@@ -76,9 +76,9 @@ namespace Substrate.TileEntities
 
         #region INBTObject<TileEntity> Members
 
-        public override TileEntity LoadTree (TagValue tree)
+        public override TileEntity LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
@@ -91,18 +91,18 @@ namespace Substrate.TileEntities
             return this;
         }
 
-        public override TagValue BuildTree ()
+        public override TagNode BuildTree ()
         {
-            TagCompound tree = base.BuildTree() as TagCompound;
-            tree["Text1"] = new TagString(_text1);
-            tree["Text2"] = new TagString(_text2);
-            tree["Text3"] = new TagString(_text3);
-            tree["Text4"] = new TagString(_text4);
+            TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
+            tree["Text1"] = new TagNodeString(_text1);
+            tree["Text2"] = new TagNodeString(_text2);
+            tree["Text3"] = new TagNodeString(_text3);
+            tree["Text4"] = new TagNodeString(_text4);
 
             return tree;
         }
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, SignSchema).Verify();
         }

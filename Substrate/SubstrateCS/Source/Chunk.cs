@@ -22,21 +22,21 @@ namespace Substrate
         /// <summary>
         /// An NBT Schema definition for valid chunk data.
         /// </summary>
-        public static NBTCompoundNode LevelSchema = new NBTCompoundNode()
+        public static SchemaNodeCompound LevelSchema = new SchemaNodeCompound()
         {
-            new NBTCompoundNode("Level")
+            new SchemaNodeCompound("Level")
             {
-                new NBTArrayNode("Blocks", 32768),
-                new NBTArrayNode("Data", 16384),
-                new NBTArrayNode("SkyLight", 16384),
-                new NBTArrayNode("BlockLight", 16384),
-                new NBTArrayNode("HeightMap", 256),
-                new NBTListNode("Entities", TagType.TAG_COMPOUND, 0, NBTOptions.CREATE_ON_MISSING),
-                new NBTListNode("TileEntities", TagType.TAG_COMPOUND, TileEntity.BaseSchema, NBTOptions.CREATE_ON_MISSING),
-                new NBTScalerNode("LastUpdate", TagType.TAG_LONG, NBTOptions.CREATE_ON_MISSING),
-                new NBTScalerNode("xPos", TagType.TAG_INT),
-                new NBTScalerNode("zPos", TagType.TAG_INT),
-                new NBTScalerNode("TerrainPopulated", TagType.TAG_BYTE, NBTOptions.CREATE_ON_MISSING),
+                new SchemaNodeArray("Blocks", 32768),
+                new SchemaNodeArray("Data", 16384),
+                new SchemaNodeArray("SkyLight", 16384),
+                new SchemaNodeArray("BlockLight", 16384),
+                new SchemaNodeArray("HeightMap", 256),
+                new SchemaNodeList("Entities", TagType.TAG_COMPOUND, 0, SchemaOptions.CREATE_ON_MISSING),
+                new SchemaNodeList("TileEntities", TagType.TAG_COMPOUND, TileEntity.BaseSchema, SchemaOptions.CREATE_ON_MISSING),
+                new SchemaNodeScaler("LastUpdate", TagType.TAG_LONG, SchemaOptions.CREATE_ON_MISSING),
+                new SchemaNodeScaler("xPos", TagType.TAG_INT),
+                new SchemaNodeScaler("zPos", TagType.TAG_INT),
+                new SchemaNodeScaler("TerrainPopulated", TagType.TAG_BYTE, SchemaOptions.CREATE_ON_MISSING),
             },
         };
 
@@ -51,8 +51,8 @@ namespace Substrate
         private XZYNibbleArray _skyLight;
         private ZXByteArray _heightMap;
 
-        private TagList _entities;
-        private TagList _tileEntities;
+        private TagNodeList _entities;
+        private TagNodeList _tileEntities;
 
         private AlphaBlockCollection _blockManager;
         private EntityCollection _entityManager;
@@ -189,35 +189,35 @@ namespace Substrate
         /// </summary>
         /// <param name="tree">Root node of an NBT tree.</param>
         /// <returns>A reference to the current Chunk, or null if the tree is unparsable.</returns>
-        public Chunk LoadTree (TagValue tree)
+        public Chunk LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null) {
                 return null;
             }
 
             _tree = new NBT_Tree(ctree);
 
-            TagCompound level = _tree.Root["Level"] as TagCompound;
+            TagNodeCompound level = _tree.Root["Level"] as TagNodeCompound;
 
-            _blocks = new XZYByteArray(XDIM, YDIM, ZDIM, level["Blocks"] as TagByteArray);
-            _data = new XZYNibbleArray(XDIM, YDIM, ZDIM, level["Data"] as TagByteArray);
-            _blockLight = new XZYNibbleArray(XDIM, YDIM, ZDIM, level["BlockLight"] as TagByteArray);
-            _skyLight = new XZYNibbleArray(XDIM, YDIM, ZDIM, level["SkyLight"] as TagByteArray);
-            _heightMap = new ZXByteArray(XDIM, ZDIM, level["HeightMap"] as TagByteArray);
+            _blocks = new XZYByteArray(XDIM, YDIM, ZDIM, level["Blocks"] as TagNodeByteArray);
+            _data = new XZYNibbleArray(XDIM, YDIM, ZDIM, level["Data"] as TagNodeByteArray);
+            _blockLight = new XZYNibbleArray(XDIM, YDIM, ZDIM, level["BlockLight"] as TagNodeByteArray);
+            _skyLight = new XZYNibbleArray(XDIM, YDIM, ZDIM, level["SkyLight"] as TagNodeByteArray);
+            _heightMap = new ZXByteArray(XDIM, ZDIM, level["HeightMap"] as TagNodeByteArray);
 
-            _entities = level["Entities"] as TagList;
-            _tileEntities = level["TileEntities"] as TagList;
+            _entities = level["Entities"] as TagNodeList;
+            _tileEntities = level["TileEntities"] as TagNodeList;
 
             // List-type patch up
             if (_entities.Count == 0) {
-                level["Entities"] = new TagList(TagType.TAG_COMPOUND);
-                _entities = level["Entities"] as TagList;
+                level["Entities"] = new TagNodeList(TagType.TAG_COMPOUND);
+                _entities = level["Entities"] as TagNodeList;
             }
 
             if (_tileEntities.Count == 0) {
-                level["TileEntities"] = new TagList(TagType.TAG_COMPOUND);
-                _tileEntities = level["TileEntities"] as TagList;
+                level["TileEntities"] = new TagNodeList(TagType.TAG_COMPOUND);
+                _tileEntities = level["TileEntities"] as TagNodeList;
             }
 
             _cx = level["xPos"].ToTagInt();
@@ -240,7 +240,7 @@ namespace Substrate
         /// </summary>
         /// <param name="tree">Root node of an NBT tree.</param>
         /// <returns>A reference to the current Chunk, or null if the tree does not conform to the chunk's NBT Schema definition.</returns>
-        public Chunk LoadTreeSafe (TagValue tree)
+        public Chunk LoadTreeSafe (TagNode tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -253,7 +253,7 @@ namespace Substrate
         /// Gets a valid NBT tree representing the Chunk.
         /// </summary>
         /// <returns>The root node of the Chunk's NBT tree.</returns>
-        public TagValue BuildTree ()
+        public TagNode BuildTree ()
         {
             return _tree.Root;
         }
@@ -263,7 +263,7 @@ namespace Substrate
         /// </summary>
         /// <param name="tree">The root node of the NBT tree to verify.</param>
         /// <returns>Status indicating if the tree represents a valid chunk.</returns>
-        public bool ValidateTree (TagValue tree)
+        public bool ValidateTree (TagNode tree)
         {
             NBTVerifier v = new NBTVerifier(tree, LevelSchema);
             return v.Verify();
@@ -291,11 +291,11 @@ namespace Substrate
             int elements2 = XDIM * ZDIM;
             int elements3 = elements2 * YDIM;
 
-            TagByteArray blocks = new TagByteArray(new byte[elements3]);
-            TagByteArray data = new TagByteArray(new byte[elements3 >> 1]);
-            TagByteArray blocklight = new TagByteArray(new byte[elements3 >> 1]);
-            TagByteArray skylight = new TagByteArray(new byte[elements3 >> 1]);
-            TagByteArray heightMap = new TagByteArray(new byte[elements2]);
+            TagNodeByteArray blocks = new TagNodeByteArray(new byte[elements3]);
+            TagNodeByteArray data = new TagNodeByteArray(new byte[elements3 >> 1]);
+            TagNodeByteArray blocklight = new TagNodeByteArray(new byte[elements3 >> 1]);
+            TagNodeByteArray skylight = new TagNodeByteArray(new byte[elements3 >> 1]);
+            TagNodeByteArray heightMap = new TagNodeByteArray(new byte[elements2]);
 
             _blocks = new XZYByteArray(XDIM, YDIM, ZDIM, blocks);
             _data = new XZYNibbleArray(XDIM, YDIM, ZDIM, data);
@@ -303,10 +303,10 @@ namespace Substrate
             _skyLight = new XZYNibbleArray(XDIM, YDIM, ZDIM, skylight);
             _heightMap = new ZXByteArray(XDIM, ZDIM, heightMap);
 
-            _entities = new TagList(TagType.TAG_COMPOUND);
-            _tileEntities = new TagList(TagType.TAG_COMPOUND);
+            _entities = new TagNodeList(TagType.TAG_COMPOUND);
+            _tileEntities = new TagNodeList(TagType.TAG_COMPOUND);
 
-            TagCompound level = new TagCompound();
+            TagNodeCompound level = new TagNodeCompound();
             level.Add("Blocks", blocks);
             level.Add("Data", data);
             level.Add("SkyLight", blocklight);
@@ -314,10 +314,10 @@ namespace Substrate
             level.Add("HeightMap", heightMap);
             level.Add("Entities", _entities);
             level.Add("TileEntities", _tileEntities);
-            level.Add("LastUpdate", new TagLong(Timestamp()));
-            level.Add("xPos", new TagInt(_cx));
-            level.Add("zPos", new TagInt(_cz));
-            level.Add("TerrainPopulated", new TagByte());
+            level.Add("LastUpdate", new TagNodeLong(Timestamp()));
+            level.Add("xPos", new TagNodeInt(_cx));
+            level.Add("zPos", new TagNodeInt(_cz));
+            level.Add("TerrainPopulated", new TagNodeByte());
 
             _tree = new NBT_Tree();
             _tree.Root.Add("Level", level);

@@ -8,9 +8,9 @@ namespace Substrate.Entities
 
     public class EntityBoat : Entity
     {
-        public static readonly NBTCompoundNode BoatSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound BoatSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Boat"),
+            new SchemaNodeString("id", "Boat"),
         });
 
         public EntityBoat ()
@@ -26,7 +26,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, BoatSchema).Verify();
         }

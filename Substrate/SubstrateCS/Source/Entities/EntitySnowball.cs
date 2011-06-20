@@ -8,9 +8,9 @@ namespace Substrate.Entities
 
     public class EntitySnowball : EntityThrowable
     {
-        public static readonly NBTCompoundNode SnowballSchema = ThrowableSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound SnowballSchema = ThrowableSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Snowball"),
+            new SchemaNodeString("id", "Snowball"),
         });
 
         public EntitySnowball ()
@@ -26,7 +26,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, SnowballSchema).Verify();
         }

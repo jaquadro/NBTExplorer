@@ -8,10 +8,10 @@ namespace Substrate.TileEntities
 
     public class TileEntityTrap : TileEntity, IItemContainer
     {
-        public static readonly NBTCompoundNode TrapSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound TrapSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Trap"),
-            new NBTListNode("Items", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),
+            new SchemaNodeString("id", "Trap"),
+            new SchemaNodeList("Items", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),
         });
 
         private const int _CAPACITY = 8;
@@ -59,28 +59,28 @@ namespace Substrate.TileEntities
 
         #region INBTObject<TileEntity> Members
 
-        public override TileEntity LoadTree (TagValue tree)
+        public override TileEntity LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
 
-            TagList items = ctree["Items"].ToTagList();
+            TagNodeList items = ctree["Items"].ToTagList();
             _items = new ItemCollection(_CAPACITY).LoadTree(items);
 
             return this;
         }
 
-        public override TagValue BuildTree ()
+        public override TagNode BuildTree ()
         {
-            TagCompound tree = base.BuildTree() as TagCompound;
+            TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
             tree["Items"] = _items.BuildTree();
 
             return tree;
         }
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, TrapSchema).Verify();
         }

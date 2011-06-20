@@ -76,6 +76,19 @@
     <Compile Include="Source\BlockLight.cs" />
     <Compile Include="Source\BlockTileEntities.cs" />
     <Compile Include="Source\Level.cs" />
+    <Compile Include="Source\NBT\TagNode.cs" />
+    <Compile Include="Source\NBT\TagNodeByteArray.cs" />
+    <Compile Include="Source\NBT\TagNodeCompound.cs" />
+    <Compile Include="Source\NBT\TagNodeDouble.cs" />
+    <Compile Include="Source\NBT\TagNodeFloat.cs" />
+    <Compile Include="Source\NBT\TagNodeInt.cs" />
+    <Compile Include="Source\NBT\TagNodeList.cs" />
+    <Compile Include="Source\NBT\TagNodeLong.cs" />
+    <Compile Include="Source\NBT\TagNodeShort.cs" />
+    <Compile Include="Source\NBT\TagNodeString.cs" />
+    <Compile Include="Source\NBT\TagType.cs" />
+    <Compile Include="Source\NBT\TagNodeByte.cs" />
+    <Compile Include="Source\NBT\TagNodeNull.cs" />
     <Compile Include="Source\PlayerManager.cs" />
     <Compile Include="Source\PlayerFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -126,7 +139,6 @@
     <Compile Include="Source\NBT\JSONSerializer.cs" />
     <Compile Include="Source\NBT\NBT.cs" />
     <Compile Include="Source\NBT\NBTSchema.cs" />
-    <Compile Include="Source\NBT\NBTValues.cs" />
     <Compile Include="Source\NBT\NBTVerifier.cs" />
     <Compile Include="Source\Player.cs" />
     <Compile Include="Source\Region.cs" />

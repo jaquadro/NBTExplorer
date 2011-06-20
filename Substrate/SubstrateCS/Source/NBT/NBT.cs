@@ -8,43 +8,93 @@ namespace Substrate.NBT
 {
     using Substrate.Utility;
 
+    /// <summary>
+    /// Defines methods for loading or extracting an NBT tree.
+    /// </summary>
+    /// <typeparam name="T">Object type that supports this interface.</typeparam>
     public interface INBTObject<T>
     {
-        T LoadTree (TagValue tree);
-        T LoadTreeSafe (TagValue tree);
+        /// <summary>
+        /// Attempt to load an NBT tree into the object without validation.
+        /// </summary>
+        /// <param name="tree">The root node of an NBT tree.</param>
+        /// <returns>The object returns itself on success, or null if the tree was unparsable.</returns>
+        T LoadTree (TagNode tree);
 
-        TagValue BuildTree ();
+        /// <summary>
+        /// Attempt to load an NBT tree into the object with validation.
+        /// </summary>
+        /// <param name="tree">The root node of an NBT tree.</param>
+        /// <returns>The object returns itself on success, or null if the tree failed validation.</returns>
+        T LoadTreeSafe (TagNode tree);
 
-        bool ValidateTree (TagValue tree);
+        /// <summary>
+        /// Builds an NBT tree from the object's data.
+        /// </summary>
+        /// <returns>The root node of an NBT tree representing the object's data.</returns>
+        TagNode BuildTree ();
+
+        /// <summary>
+        /// Validate an NBT tree, usually against an object-supplied schema.
+        /// </summary>
+        /// <param name="tree">The root node of an NBT tree.</param>
+        /// <returns>Status indicating whether the tree was valid for this object.</returns>
+        bool ValidateTree (TagNode tree);
     }
 
+    /// <summary>
+    /// Contains the root node of an NBT tree and handles IO of tree nodes.
+    /// </summary>
+    /// <remarks>
+    /// NBT, or Named Byte Tag, is a tree-based data structure for storing most Minecraft data.
+    /// NBT_Tree is more of a helper class for NBT trees that handles reading and writing nodes to data streams.
+    /// Most of the API takes a TagValue or derived node as the root of the tree, rather than an NBT_Tree object itself.
+    /// </remarks>
     public class NBT_Tree : ICopyable<NBT_Tree>
     {
         private Stream _stream = null;
-        private TagCompound _root = null;
+        private TagNodeCompound _root = null;
 
-        private static TagNull _nulltag = new TagNull();
+        private static TagNodeNull _nulltag = new TagNodeNull();
 
-        public TagCompound Root
+        /// <summary>
+        /// Gets the root node of this tree.
+        /// </summary>
+        public TagNodeCompound Root
         {
             get { return _root; }
         }
 
+        /// <summary>
+        /// Constructs a wrapper around a new NBT tree with an empty root node.
+        /// </summary>
         public NBT_Tree ()
         {
-            _root = new TagCompound();
+            _root = new TagNodeCompound();
         }
 
-        public NBT_Tree (TagCompound tree)
+        /// <summary>
+        /// Constructs a wrapper around another NBT tree.
+        /// </summary>
+        /// <param name="tree">The root node of an NBT tree.</param>
+        public NBT_Tree (TagNodeCompound tree)
         {
             _root = tree;
         }
 
+        /// <summary>
+        /// Constructs and wrapper around a new NBT tree parsed from a source data stream.
+        /// </summary>
+        /// <param name="s">An open, readable data stream containing NBT data.</param>
         public NBT_Tree (Stream s)
         {
             ReadFrom(s);
         }
 
+        /// <summary>
+        /// Rebuild the internal NBT tree from a source data stream.
+        /// </summary>
+        /// <param name="s">An open, readable data stream containing NBT data.</param>
         public void ReadFrom (Stream s)
         {
             if (s != null) {
@@ -54,6 +104,10 @@ namespace Substrate.NBT
             }
         }
 
+        /// <summary>
+        /// Writes out the internal NBT tree to a destination data stream.
+        /// </summary>
+        /// <param name="s">An open, writable data stream.</param>
         public void WriteTo (Stream s)
         {
             if (s != null) {
@@ -67,7 +121,7 @@ namespace Substrate.NBT
             }
         }
 
-        private TagValue ReadValue (TagType type)
+        private TagNode ReadValue (TagType type)
         {
             switch (type) {
                 case TagType.TAG_END:
@@ -107,19 +161,19 @@ namespace Substrate.NBT
             throw new Exception();
         }
 
-        private TagValue ReadByte ()
+        private TagNode ReadByte ()
         {
             int gzByte = _stream.ReadByte();
             if (gzByte == -1) {
                 throw new NBTException(NBTException.MSG_GZIP_ENDOFSTREAM);
             }
 
-            TagByte val = new TagByte((byte)gzByte);
+            TagNodeByte val = new TagNodeByte((byte)gzByte);
 
             return val;
         }
 
-        private TagValue ReadShort ()
+        private TagNode ReadShort ()
         {
             byte[] gzBytes = new byte[2];
             _stream.Read(gzBytes, 0, 2);
@@ -128,12 +182,12 @@ namespace Substrate.NBT
                 Array.Reverse(gzBytes);
             }
 
-            TagShort val = new TagShort(BitConverter.ToInt16(gzBytes, 0));
+            TagNodeShort val = new TagNodeShort(BitConverter.ToInt16(gzBytes, 0));
 
             return val;
         }
 
-        private TagValue ReadInt ()
+        private TagNode ReadInt ()
         {
             byte[] gzBytes = new byte[4];
             _stream.Read(gzBytes, 0, 4);
@@ -142,12 +196,12 @@ namespace Substrate.NBT
                 Array.Reverse(gzBytes);
             }
 
-            TagInt val = new TagInt(BitConverter.ToInt32(gzBytes, 0));
+            TagNodeInt val = new TagNodeInt(BitConverter.ToInt32(gzBytes, 0));
 
             return val;
         }
 
-        private TagValue ReadLong ()
+        private TagNode ReadLong ()
         {
             byte[] gzBytes = new byte[8];
             _stream.Read(gzBytes, 0, 8);
@@ -156,12 +210,12 @@ namespace Substrate.NBT
                 Array.Reverse(gzBytes);
             }
 
-            TagLong val = new TagLong(BitConverter.ToInt64(gzBytes, 0));
+            TagNodeLong val = new TagNodeLong(BitConverter.ToInt64(gzBytes, 0));
 
             return val;
         }
 
-        private TagValue ReadFloat ()
+        private TagNode ReadFloat ()
         {
             byte[] gzBytes = new byte[4];
             _stream.Read(gzBytes, 0, 4);
@@ -170,12 +224,12 @@ namespace Substrate.NBT
                 Array.Reverse(gzBytes);
             }
 
-            TagFloat val = new TagFloat(BitConverter.ToSingle(gzBytes, 0));
+            TagNodeFloat val = new TagNodeFloat(BitConverter.ToSingle(gzBytes, 0));
 
             return val;
         }
 
-        private TagValue ReadDouble ()
+        private TagNode ReadDouble ()
         {
             byte[] gzBytes = new byte[8];
             _stream.Read(gzBytes, 0, 8);
@@ -184,12 +238,12 @@ namespace Substrate.NBT
                 Array.Reverse(gzBytes);
             }
 
-            TagDouble val = new TagDouble(BitConverter.ToDouble(gzBytes, 0));
+            TagNodeDouble val = new TagNodeDouble(BitConverter.ToDouble(gzBytes, 0));
 
             return val;
         }
 
-        private TagValue ReadByteArray ()
+        private TagNode ReadByteArray ()
         {
             byte[] lenBytes = new byte[4];
             _stream.Read(lenBytes, 0, 4);
@@ -206,12 +260,12 @@ namespace Substrate.NBT
             byte[] data = new byte[length];
             _stream.Read(data, 0, length);
 
-            TagByteArray val = new TagByteArray(data);
+            TagNodeByteArray val = new TagNodeByteArray(data);
 
             return val;
         }
 
-        private TagValue ReadString ()
+        private TagNode ReadString ()
         {
             byte[] lenBytes = new byte[2];
             _stream.Read(lenBytes, 0, 2);
@@ -230,19 +284,19 @@ namespace Substrate.NBT
 
             System.Text.Encoding str = Encoding.GetEncoding(28591);
 
-            TagString val = new TagString(str.GetString(strBytes));
+            TagNodeString val = new TagNodeString(str.GetString(strBytes));
 
             return val;
         }
 
-        private TagValue ReadList ()
+        private TagNode ReadList ()
         {
             int gzByte = _stream.ReadByte();
             if (gzByte == -1) {
                 throw new NBTException(NBTException.MSG_GZIP_ENDOFSTREAM);
             }
 
-            TagList val = new TagList((TagType)gzByte);
+            TagNodeList val = new TagNodeList((TagType)gzByte);
             if (val.ValueType > (TagType)Enum.GetValues(typeof(TagType)).GetUpperBound(0)) {
                 throw new NBTException(NBTException.MSG_READ_TYPE);
             }
@@ -266,27 +320,27 @@ namespace Substrate.NBT
             return val;
         }
 
-        private TagValue ReadCompound ()
+        private TagNode ReadCompound ()
         {
-            TagCompound val = new TagCompound();
+            TagNodeCompound val = new TagNodeCompound();
 
             while (ReadTag(val)) ;
 
             return val;
         }
 
-        private TagCompound ReadRoot ()
+        private TagNodeCompound ReadRoot ()
         {
             TagType type = (TagType)_stream.ReadByte();
             if (type == TagType.TAG_COMPOUND) {
                 ReadString(); // name
-                return ReadValue(type) as TagCompound;
+                return ReadValue(type) as TagNodeCompound;
             }
 
             return null;
         }
 
-        private bool ReadTag (TagCompound parent)
+        private bool ReadTag (TagNodeCompound parent)
         {
             //NBT_Tag tag = new NBT_Tag();
 
@@ -304,7 +358,7 @@ namespace Substrate.NBT
             //return tag;
         }
 
-        private void WriteValue (TagValue val)
+        private void WriteValue (TagNode val)
         {
             switch (val.GetTagType()) {
                 case TagType.TAG_END:
@@ -352,12 +406,12 @@ namespace Substrate.NBT
             }
         }
 
-        private void WriteByte (TagByte val)
+        private void WriteByte (TagNodeByte val)
         {
             _stream.WriteByte(val.Data);
         }
 
-        private void WriteShort (TagShort val)
+        private void WriteShort (TagNodeShort val)
         {
             byte[] gzBytes = BitConverter.GetBytes(val.Data);
 
@@ -368,7 +422,7 @@ namespace Substrate.NBT
             _stream.Write(gzBytes, 0, 2);
         }
 
-        private void WriteInt (TagInt val)
+        private void WriteInt (TagNodeInt val)
         {
             byte[] gzBytes = BitConverter.GetBytes(val.Data);
 
@@ -379,7 +433,7 @@ namespace Substrate.NBT
             _stream.Write(gzBytes, 0, 4);
         }
 
-        private void WriteLong (TagLong val)
+        private void WriteLong (TagNodeLong val)
         {
             byte[] gzBytes = BitConverter.GetBytes(val.Data);
 
@@ -390,7 +444,7 @@ namespace Substrate.NBT
             _stream.Write(gzBytes, 0, 8);
         }
 
-        private void WriteFloat (TagFloat val)
+        private void WriteFloat (TagNodeFloat val)
         {
             byte[] gzBytes = BitConverter.GetBytes(val.Data);
 
@@ -401,7 +455,7 @@ namespace Substrate.NBT
             _stream.Write(gzBytes, 0, 4);
         }
 
-        private void WriteDouble (TagDouble val)
+        private void WriteDouble (TagNodeDouble val)
         {
             byte[] gzBytes = BitConverter.GetBytes(val.Data);
 
@@ -412,7 +466,7 @@ namespace Substrate.NBT
             _stream.Write(gzBytes, 0, 8);
         }
 
-        private void WriteByteArray (TagByteArray val)
+        private void WriteByteArray (TagNodeByteArray val)
         {
             byte[] lenBytes = BitConverter.GetBytes(val.Length);
 
@@ -424,7 +478,7 @@ namespace Substrate.NBT
             _stream.Write(val.Data, 0, val.Length);
         }
 
-        private void WriteString (TagString val)
+        private void WriteString (TagNodeString val)
         {
             byte[] lenBytes = BitConverter.GetBytes((short)val.Length);
 
@@ -440,7 +494,7 @@ namespace Substrate.NBT
             _stream.Write(gzBytes, 0, gzBytes.Length);
         }
 
-        private void WriteList (TagList val)
+        private void WriteList (TagNodeList val)
         {
             byte[] lenBytes = BitConverter.GetBytes(val.Count);
 
@@ -451,21 +505,21 @@ namespace Substrate.NBT
             _stream.WriteByte((byte)val.ValueType);
             _stream.Write(lenBytes, 0, 4);
 
-            foreach (TagValue v in val) {
+            foreach (TagNode v in val) {
                 WriteValue(v);
             }
         }
 
-        private void WriteCompound (TagCompound val)
+        private void WriteCompound (TagNodeCompound val)
         {
-            foreach (KeyValuePair<string, TagValue> item in val) {
+            foreach (KeyValuePair<string, TagNode> item in val) {
                 WriteTag(item.Key, item.Value);
             }
 
             WriteTag(null, _nulltag);
         }
 
-        private void WriteTag (string name, TagValue val)
+        private void WriteTag (string name, TagNode val)
         {
             _stream.WriteByte((byte)val.GetTagType());
 
@@ -477,10 +531,14 @@ namespace Substrate.NBT
 
         #region ICopyable<NBT_Tree> Members
 
+        /// <summary>
+        /// Creates a deep copy of the NBT_Tree and underlying nodes.
+        /// </summary>
+        /// <returns>A new NBT_tree.</returns>
         public NBT_Tree Copy ()
         {
             NBT_Tree tree = new NBT_Tree();
-            tree._root = _root.Copy() as TagCompound;
+            tree._root = _root.Copy() as TagNodeCompound;
 
             return tree;
         }
@@ -488,6 +546,7 @@ namespace Substrate.NBT
         #endregion
     }
 
+    // TODO: Revise exceptions?
     public class NBTException : Exception
     {
         public const String MSG_GZIP_ENDOFSTREAM = "Gzip Error: Unexpected end of stream";

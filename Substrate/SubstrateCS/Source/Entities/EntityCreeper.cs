@@ -8,9 +8,9 @@ namespace Substrate.Entities
 
     public class EntityCreeper : EntityMob
     {
-        public static readonly NBTCompoundNode CreeperSchema = MobSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound CreeperSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Creeper"),
+            new SchemaNodeString("id", "Creeper"),
         });
 
         public EntityCreeper ()
@@ -26,7 +26,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, CreeperSchema).Verify();
         }

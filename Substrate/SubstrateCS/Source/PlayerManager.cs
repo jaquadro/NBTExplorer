@@ -57,7 +57,7 @@ namespace Substrate
 
         public bool SetPlayer (string name, Player player)
         {
-            return SavePlayerTree(name, new NBT_Tree(player.BuildTree() as TagCompound));
+            return SavePlayerTree(name, new NBT_Tree(player.BuildTree() as TagNodeCompound));
         }
 
         public bool PlayerExists (string name)

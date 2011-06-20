@@ -8,11 +8,11 @@ namespace Substrate.Entities
 
     public class EntityMinecartFurnace : EntityMinecart
     {
-        public static readonly NBTCompoundNode MinecartFurnaceSchema = MinecartSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound MinecartFurnaceSchema = MinecartSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTScalerNode("PushX", TagType.TAG_DOUBLE),
-            new NBTScalerNode("PushZ", TagType.TAG_DOUBLE),
-            new NBTScalerNode("Fuel", TagType.TAG_SHORT),
+            new SchemaNodeScaler("PushX", TagType.TAG_DOUBLE),
+            new SchemaNodeScaler("PushZ", TagType.TAG_DOUBLE),
+            new SchemaNodeScaler("Fuel", TagType.TAG_SHORT),
         });
 
         private double _pushX;
@@ -56,9 +56,9 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (TagValue tree)
+        public override Entity LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
@@ -70,17 +70,17 @@ namespace Substrate.Entities
             return this;
         }
 
-        public override TagValue BuildTree ()
+        public override TagNode BuildTree ()
         {
-            TagCompound tree = base.BuildTree() as TagCompound;
-            tree["PushX"] = new TagDouble(_pushX);
-            tree["PushZ"] = new TagDouble(_pushZ);
-            tree["Fuel"] = new TagShort(_fuel);
+            TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
+            tree["PushX"] = new TagNodeDouble(_pushX);
+            tree["PushZ"] = new TagNodeDouble(_pushZ);
+            tree["Fuel"] = new TagNodeShort(_fuel);
 
             return tree;
         }
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, MinecartFurnaceSchema).Verify();
         }

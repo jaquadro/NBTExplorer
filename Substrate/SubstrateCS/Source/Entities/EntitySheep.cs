@@ -8,11 +8,11 @@ namespace Substrate.Entities
 
     public class EntitySheep : EntityMob
     {
-        public static readonly NBTCompoundNode SheepSchema = MobSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound SheepSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Sheep"),
-            new NBTScalerNode("Sheared", TagType.TAG_BYTE),
-            new NBTScalerNode("Color", TagType.TAG_BYTE, NBTOptions.CREATE_ON_MISSING),
+            new SchemaNodeString("id", "Sheep"),
+            new SchemaNodeScaler("Sheared", TagType.TAG_BYTE),
+            new SchemaNodeScaler("Color", TagType.TAG_BYTE, SchemaOptions.CREATE_ON_MISSING),
         });
 
         private bool _sheared;
@@ -48,9 +48,9 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (TagValue tree)
+        public override Entity LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
@@ -61,16 +61,16 @@ namespace Substrate.Entities
             return this;
         }
 
-        public override TagValue BuildTree ()
+        public override TagNode BuildTree ()
         {
-            TagCompound tree = base.BuildTree() as TagCompound;
-            tree["Sheared"] = new TagByte((byte)(_sheared ? 1 : 0));
-            tree["Color"] = new TagByte(_color);
+            TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
+            tree["Sheared"] = new TagNodeByte((byte)(_sheared ? 1 : 0));
+            tree["Color"] = new TagNodeByte(_color);
 
             return tree;
         }
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, SheepSchema).Verify();
         }

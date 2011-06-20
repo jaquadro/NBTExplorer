@@ -14,11 +14,11 @@ namespace Substrate
 
     public class Item : INBTObject<Item>, ICopyable<Item>
     {
-        public static readonly NBTCompoundNode ItemSchema = new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound ItemSchema = new SchemaNodeCompound("")
         {
-            new NBTScalerNode("id", TagType.TAG_SHORT),
-            new NBTScalerNode("Damage", TagType.TAG_SHORT),
-            new NBTScalerNode("Count", TagType.TAG_BYTE),
+            new SchemaNodeScaler("id", TagType.TAG_SHORT),
+            new SchemaNodeScaler("Damage", TagType.TAG_SHORT),
+            new SchemaNodeScaler("Count", TagType.TAG_BYTE),
         };
 
         private short _id;
@@ -73,9 +73,9 @@ namespace Substrate
 
         #region INBTObject<Item> Members
 
-        public Item LoadTree (TagValue tree)
+        public Item LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null) {
                 return null;
             }
@@ -87,7 +87,7 @@ namespace Substrate
             return this;
         }
 
-        public Item LoadTreeSafe (TagValue tree)
+        public Item LoadTreeSafe (TagNode tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -96,17 +96,17 @@ namespace Substrate
             return LoadTree(tree);
         }
 
-        public TagValue BuildTree ()
+        public TagNode BuildTree ()
         {
-            TagCompound tree = new TagCompound();
-            tree["id"] = new TagShort(_id);
-            tree["Count"] = new TagByte(_count);
-            tree["Damage"] = new TagShort(_damage);
+            TagNodeCompound tree = new TagNodeCompound();
+            tree["id"] = new TagNodeShort(_id);
+            tree["Count"] = new TagNodeByte(_count);
+            tree["Damage"] = new TagNodeShort(_damage);
 
             return tree;
         }
 
-        public bool ValidateTree (TagValue tree)
+        public bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, ItemSchema).Verify();
         }
@@ -116,12 +116,12 @@ namespace Substrate
 
     public class ItemCollection : INBTObject<ItemCollection>, ICopyable<ItemCollection>
     {
-        public static readonly NBTCompoundNode InventorySchema = Item.ItemSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound InventorySchema = Item.ItemSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTScalerNode("Slot", TagType.TAG_BYTE),
+            new SchemaNodeScaler("Slot", TagType.TAG_BYTE),
         });
 
-        public static readonly NBTListNode ListSchema = new NBTListNode("", TagType.TAG_COMPOUND, InventorySchema);
+        public static readonly SchemaNodeList ListSchema = new SchemaNodeList("", TagType.TAG_COMPOUND, InventorySchema);
 
         protected Dictionary<int, Item> _items;
         protected int _capacity;
@@ -190,14 +190,14 @@ namespace Substrate
 
         #region INBTObject<ItemCollection> Members
 
-        public ItemCollection LoadTree (TagValue tree)
+        public ItemCollection LoadTree (TagNode tree)
         {
-            TagList ltree = tree as TagList;
+            TagNodeList ltree = tree as TagNodeList;
             if (ltree == null) {
                 return null;
             }
 
-            foreach (TagCompound item in ltree) {
+            foreach (TagNodeCompound item in ltree) {
                 int slot = item["Slot"].ToTagByte();
                 _items[slot] = new Item().LoadTree(item);
             }
@@ -205,7 +205,7 @@ namespace Substrate
             return this;
         }
 
-        public ItemCollection LoadTreeSafe (TagValue tree)
+        public ItemCollection LoadTreeSafe (TagNode tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -214,20 +214,20 @@ namespace Substrate
             return LoadTree(tree);
         }
 
-        public TagValue BuildTree ()
+        public TagNode BuildTree ()
         {
-            TagList list = new TagList(TagType.TAG_COMPOUND);
+            TagNodeList list = new TagNodeList(TagType.TAG_COMPOUND);
 
             foreach (KeyValuePair<int, Item> item in _items) {
-                TagCompound itemtree = item.Value.BuildTree() as TagCompound;
-                itemtree["Slot"] = new TagByte((byte)item.Key);
+                TagNodeCompound itemtree = item.Value.BuildTree() as TagNodeCompound;
+                itemtree["Slot"] = new TagNodeByte((byte)item.Key);
                 list.Add(itemtree);
             }
 
             return list;
         }
 
-        public bool ValidateTree (TagValue tree)
+        public bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, ListSchema).Verify();
         }

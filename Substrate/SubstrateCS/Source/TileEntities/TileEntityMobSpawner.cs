@@ -8,11 +8,11 @@ namespace Substrate.TileEntities
 
     public class TileEntityMobSpawner : TileEntity
     {
-        public static readonly NBTCompoundNode MobSpawnerSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound MobSpawnerSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "MobSpawner"),
-            new NBTScalerNode("EntityId", TagType.TAG_STRING),
-            new NBTScalerNode("Delay", TagType.TAG_SHORT),
+            new SchemaNodeString("id", "MobSpawner"),
+            new SchemaNodeScaler("EntityId", TagType.TAG_STRING),
+            new SchemaNodeScaler("Delay", TagType.TAG_SHORT),
         });
 
         private short _delay;
@@ -58,9 +58,9 @@ namespace Substrate.TileEntities
 
         #region INBTObject<TileEntity> Members
 
-        public override TileEntity LoadTree (TagValue tree)
+        public override TileEntity LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
@@ -71,16 +71,16 @@ namespace Substrate.TileEntities
             return this;
         }
 
-        public override TagValue BuildTree ()
+        public override TagNode BuildTree ()
         {
-            TagCompound tree = base.BuildTree() as TagCompound;
-            tree["EntityID"] = new TagString(_entityID);
-            tree["Delay"] = new TagShort(_delay);
+            TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
+            tree["EntityID"] = new TagNodeString(_entityID);
+            tree["Delay"] = new TagNodeShort(_delay);
 
             return tree;
         }
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, MobSpawnerSchema).Verify();
         }

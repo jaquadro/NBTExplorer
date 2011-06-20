@@ -8,9 +8,9 @@ namespace Substrate.Entities
 
     public class EntityGhast : EntityMob
     {
-        public static readonly NBTCompoundNode GhastSchema = MobSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound GhastSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Ghast"),
+            new SchemaNodeString("id", "Ghast"),
         });
 
         public EntityGhast ()
@@ -26,7 +26,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, GhastSchema).Verify();
         }

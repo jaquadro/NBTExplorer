@@ -9,20 +9,20 @@ namespace Substrate
 
     public class Player : UntypedEntity, INBTObject<Player>, ICopyable<Player>, IItemContainer
     {
-        public static readonly NBTCompoundNode PlayerSchema = UTBaseSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound PlayerSchema = UTBaseSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTScalerNode("AttackTime", TagType.TAG_SHORT),
-            new NBTScalerNode("DeathTime", TagType.TAG_SHORT),
-            new NBTScalerNode("Health", TagType.TAG_SHORT),
-            new NBTScalerNode("HurtTime", TagType.TAG_SHORT),
-            new NBTScalerNode("Dimension", TagType.TAG_INT),
-            new NBTListNode("Inventory", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),
-            new NBTScalerNode("World", TagType.TAG_STRING, NBTOptions.OPTIONAL),
-            new NBTScalerNode("Sleeping", TagType.TAG_BYTE, NBTOptions.CREATE_ON_MISSING),
-            new NBTScalerNode("SleepTimer", TagType.TAG_SHORT, NBTOptions.CREATE_ON_MISSING),
-            new NBTScalerNode("SpawnX", TagType.TAG_INT, NBTOptions.OPTIONAL),
-            new NBTScalerNode("SpawnY", TagType.TAG_INT, NBTOptions.OPTIONAL),
-            new NBTScalerNode("SpawnZ", TagType.TAG_INT, NBTOptions.OPTIONAL),
+            new SchemaNodeScaler("AttackTime", TagType.TAG_SHORT),
+            new SchemaNodeScaler("DeathTime", TagType.TAG_SHORT),
+            new SchemaNodeScaler("Health", TagType.TAG_SHORT),
+            new SchemaNodeScaler("HurtTime", TagType.TAG_SHORT),
+            new SchemaNodeScaler("Dimension", TagType.TAG_INT),
+            new SchemaNodeList("Inventory", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),
+            new SchemaNodeScaler("World", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
+            new SchemaNodeScaler("Sleeping", TagType.TAG_BYTE, SchemaOptions.CREATE_ON_MISSING),
+            new SchemaNodeScaler("SleepTimer", TagType.TAG_SHORT, SchemaOptions.CREATE_ON_MISSING),
+            new SchemaNodeScaler("SpawnX", TagType.TAG_INT, SchemaOptions.OPTIONAL),
+            new SchemaNodeScaler("SpawnY", TagType.TAG_INT, SchemaOptions.OPTIONAL),
+            new SchemaNodeScaler("SpawnZ", TagType.TAG_INT, SchemaOptions.OPTIONAL),
         });
 
         private const int _CAPACITY = 105;
@@ -145,9 +145,9 @@ namespace Substrate
 
         #region INBTObject<Player> Members
 
-        public virtual new Player LoadTree (TagValue tree)
+        public virtual new Player LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
@@ -180,7 +180,7 @@ namespace Substrate
             return this;
         }
 
-        public virtual new Player LoadTreeSafe (TagValue tree)
+        public virtual new Player LoadTreeSafe (TagNode tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -189,26 +189,26 @@ namespace Substrate
             return LoadTree(tree);
         }
 
-        public virtual new TagValue BuildTree ()
+        public virtual new TagNode BuildTree ()
         {
-            TagCompound tree = base.BuildTree() as TagCompound;
-            tree["AttackTime"] = new TagShort(_attackTime);
-            tree["DeathTime"] = new TagShort(_deathTime);
-            tree["Health"] = new TagShort(_health);
-            tree["HurtTime"] = new TagShort(_hurtTime);
+            TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
+            tree["AttackTime"] = new TagNodeShort(_attackTime);
+            tree["DeathTime"] = new TagNodeShort(_deathTime);
+            tree["Health"] = new TagNodeShort(_health);
+            tree["HurtTime"] = new TagNodeShort(_hurtTime);
 
-            tree["Dimension"] = new TagInt(_dimension);
-            tree["Sleeping"] = new TagByte(_sleeping);
-            tree["SleepTimer"] = new TagShort(_sleepTimer);
+            tree["Dimension"] = new TagNodeInt(_dimension);
+            tree["Sleeping"] = new TagNodeByte(_sleeping);
+            tree["SleepTimer"] = new TagNodeShort(_sleepTimer);
 
             if (_spawnX != null && _spawnY != null && _spawnZ != null) {
-                tree["SpawnX"] = new TagInt(_spawnX ?? 0);
-                tree["SpawnY"] = new TagInt(_spawnY ?? 0);
-                tree["SpawnZ"] = new TagInt(_spawnZ ?? 0);
+                tree["SpawnX"] = new TagNodeInt(_spawnX ?? 0);
+                tree["SpawnY"] = new TagNodeInt(_spawnY ?? 0);
+                tree["SpawnZ"] = new TagNodeInt(_spawnZ ?? 0);
             }
 
             if (_world != null) {
-                tree["World"] = new TagString(_world);
+                tree["World"] = new TagNodeString(_world);
             }
 
             tree["Inventory"] = _inventory.BuildTree();
@@ -216,7 +216,7 @@ namespace Substrate
             return tree;
         }
 
-        public virtual new bool ValidateTree (TagValue tree)
+        public virtual new bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, PlayerSchema).Verify();
         }

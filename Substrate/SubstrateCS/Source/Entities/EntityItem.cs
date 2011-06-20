@@ -8,12 +8,12 @@ namespace Substrate.Entities
 
     public class EntityItem : Entity
     {
-        public static readonly NBTCompoundNode ItemSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound ItemSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Item"),
-            new NBTScalerNode("Health", TagType.TAG_SHORT),
-            new NBTScalerNode("Age", TagType.TAG_SHORT),
-            new NBTCompoundNode("Item", Item.ItemSchema),
+            new SchemaNodeString("id", "Item"),
+            new SchemaNodeScaler("Health", TagType.TAG_SHORT),
+            new SchemaNodeScaler("Age", TagType.TAG_SHORT),
+            new SchemaNodeCompound("Item", Item.ItemSchema),
         });
 
         private short _health;
@@ -58,9 +58,9 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (TagValue tree)
+        public override Entity LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
@@ -73,17 +73,17 @@ namespace Substrate.Entities
             return this;
         }
 
-        public override TagValue BuildTree ()
+        public override TagNode BuildTree ()
         {
-            TagCompound tree = base.BuildTree() as TagCompound;
-            tree["Health"] = new TagShort(_health);
-            tree["Age"] = new TagShort(_age);
+            TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
+            tree["Health"] = new TagNodeShort(_health);
+            tree["Age"] = new TagNodeShort(_age);
             tree["Item"] = _item.BuildTree();
 
             return tree;
         }
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, ItemSchema).Verify();
         }

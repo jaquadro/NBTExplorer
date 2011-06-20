@@ -8,10 +8,10 @@ namespace Substrate.TileEntities
 
     public class TileEntityMusic : TileEntity
     {
-        public static readonly NBTCompoundNode MusicSchema = BaseSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound MusicSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Music"),
-            new NBTScalerNode("note", TagType.TAG_BYTE),
+            new SchemaNodeString("id", "Music"),
+            new SchemaNodeScaler("note", TagType.TAG_BYTE),
         });
 
         private byte _note;
@@ -49,9 +49,9 @@ namespace Substrate.TileEntities
 
         #region INBTObject<TileEntity> Members
 
-        public override TileEntity LoadTree (TagValue tree)
+        public override TileEntity LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
@@ -61,15 +61,15 @@ namespace Substrate.TileEntities
             return this;
         }
 
-        public override TagValue BuildTree ()
+        public override TagNode BuildTree ()
         {
-            TagCompound tree = base.BuildTree() as TagCompound;
-            tree["note"] = new TagByte(_note);
+            TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
+            tree["note"] = new TagNodeByte(_note);
 
             return tree;
         }
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, MusicSchema).Verify();
         }

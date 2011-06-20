@@ -21,9 +21,9 @@ namespace Substrate
             return Activator.CreateInstance(t) as Entity;
         }
 
-        public static Entity Create (TagCompound tree)
+        public static Entity Create (TagNodeCompound tree)
         {
-            TagValue type;
+            TagNode type;
             if (!tree.TryGetValue("id", out type)) {
                 return null;
             }

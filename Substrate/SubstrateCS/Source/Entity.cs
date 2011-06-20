@@ -33,15 +33,15 @@ namespace Substrate
             public double Yaw { get; set; }
         }
 
-        public static readonly NBTCompoundNode UTBaseSchema = new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound UTBaseSchema = new SchemaNodeCompound("")
         {
-            new NBTListNode("Pos", TagType.TAG_DOUBLE, 3),
-            new NBTListNode("Motion", TagType.TAG_DOUBLE, 3),
-            new NBTListNode("Rotation", TagType.TAG_FLOAT, 2),
-            new NBTScalerNode("FallDistance", TagType.TAG_FLOAT),
-            new NBTScalerNode("Fire", TagType.TAG_SHORT),
-            new NBTScalerNode("Air", TagType.TAG_SHORT),
-            new NBTScalerNode("OnGround", TagType.TAG_BYTE),
+            new SchemaNodeList("Pos", TagType.TAG_DOUBLE, 3),
+            new SchemaNodeList("Motion", TagType.TAG_DOUBLE, 3),
+            new SchemaNodeList("Rotation", TagType.TAG_FLOAT, 2),
+            new SchemaNodeScaler("FallDistance", TagType.TAG_FLOAT),
+            new SchemaNodeScaler("Fire", TagType.TAG_SHORT),
+            new SchemaNodeScaler("Air", TagType.TAG_SHORT),
+            new SchemaNodeScaler("OnGround", TagType.TAG_BYTE),
         };
 
         private Vector3 _pos;
@@ -127,26 +127,26 @@ namespace Substrate
 
         #region INBTObject<Entity> Members
 
-        public UntypedEntity LoadTree (TagValue tree)
+        public UntypedEntity LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null) {
                 return null;
             }
 
-            TagList pos = ctree["Pos"].ToTagList();
+            TagNodeList pos = ctree["Pos"].ToTagList();
             _pos = new Vector3();
             _pos.X = pos[0].ToTagDouble();
             _pos.Y = pos[1].ToTagDouble();
             _pos.Z = pos[2].ToTagDouble();
 
-            TagList motion = ctree["Motion"].ToTagList();
+            TagNodeList motion = ctree["Motion"].ToTagList();
             _motion = new Vector3();
             _motion.X = motion[0].ToTagDouble();
             _motion.Y = motion[1].ToTagDouble();
             _motion.Z = motion[2].ToTagDouble();
 
-            TagList rotation = ctree["Rotation"].ToTagList();
+            TagNodeList rotation = ctree["Rotation"].ToTagList();
             _rotation = new Orientation();
             _rotation.Yaw = rotation[0].ToTagFloat();
             _rotation.Pitch = rotation[1].ToTagFloat();
@@ -158,7 +158,7 @@ namespace Substrate
             return this;
         }
 
-        public UntypedEntity LoadTreeSafe (TagValue tree)
+        public UntypedEntity LoadTreeSafe (TagNode tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -167,36 +167,36 @@ namespace Substrate
             return LoadTree(tree);
         }
 
-        public TagValue BuildTree ()
+        public TagNode BuildTree ()
         {
-            TagCompound tree = new TagCompound();
+            TagNodeCompound tree = new TagNodeCompound();
 
-            TagList pos = new TagList(TagType.TAG_DOUBLE);
-            pos.Add(new TagDouble(_pos.X));
-            pos.Add(new TagDouble(_pos.Y));
-            pos.Add(new TagDouble(_pos.Z));
+            TagNodeList pos = new TagNodeList(TagType.TAG_DOUBLE);
+            pos.Add(new TagNodeDouble(_pos.X));
+            pos.Add(new TagNodeDouble(_pos.Y));
+            pos.Add(new TagNodeDouble(_pos.Z));
             tree["Pos"] = pos;
 
-            TagList motion = new TagList(TagType.TAG_DOUBLE);
-            motion.Add(new TagDouble(_motion.X));
-            motion.Add(new TagDouble(_motion.Y));
-            motion.Add(new TagDouble(_motion.Z));
+            TagNodeList motion = new TagNodeList(TagType.TAG_DOUBLE);
+            motion.Add(new TagNodeDouble(_motion.X));
+            motion.Add(new TagNodeDouble(_motion.Y));
+            motion.Add(new TagNodeDouble(_motion.Z));
             tree["Motion"] = motion;
 
-            TagList rotation = new TagList(TagType.TAG_FLOAT);
-            rotation.Add(new TagFloat((float)_rotation.Yaw));
-            rotation.Add(new TagFloat((float)_rotation.Pitch));
+            TagNodeList rotation = new TagNodeList(TagType.TAG_FLOAT);
+            rotation.Add(new TagNodeFloat((float)_rotation.Yaw));
+            rotation.Add(new TagNodeFloat((float)_rotation.Pitch));
             tree["Rotation"] = rotation;
 
-            tree["FallDistance"] = new TagFloat(_fallDistance);
-            tree["Fire"] = new TagShort(_fire);
-            tree["Air"] = new TagShort(_air);
-            tree["OnGround"] = new TagByte(_onGround);
+            tree["FallDistance"] = new TagNodeFloat(_fallDistance);
+            tree["Fire"] = new TagNodeShort(_fire);
+            tree["Air"] = new TagNodeShort(_air);
+            tree["OnGround"] = new TagNodeByte(_onGround);
 
             return tree;
         }
 
-        public bool ValidateTree (TagValue tree)
+        public bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, UTBaseSchema).Verify();
         }
@@ -216,9 +216,9 @@ namespace Substrate
 
     public class Entity : UntypedEntity, INBTObject<Entity>, ICopyable<Entity>
     {
-        public static readonly NBTCompoundNode BaseSchema = UTBaseSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound BaseSchema = UTBaseSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTScalerNode("id", TagType.TAG_STRING),
+            new SchemaNodeScaler("id", TagType.TAG_STRING),
         });
 
         private string _id;
@@ -243,9 +243,9 @@ namespace Substrate
 
         #region INBTObject<Entity> Members
 
-        public virtual new Entity LoadTree (TagValue tree)
+        public virtual new Entity LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
@@ -255,7 +255,7 @@ namespace Substrate
             return this;
         }
 
-        public virtual new Entity LoadTreeSafe (TagValue tree)
+        public virtual new Entity LoadTreeSafe (TagNode tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -264,15 +264,15 @@ namespace Substrate
             return LoadTree(tree);
         }
 
-        public virtual new TagValue BuildTree ()
+        public virtual new TagNode BuildTree ()
         {
-            TagCompound tree = base.BuildTree() as TagCompound;
-            tree["id"] = new TagString(_id);
+            TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
+            tree["id"] = new TagNodeString(_id);
 
             return tree;
         }
 
-        public virtual new bool ValidateTree (TagValue tree)
+        public virtual new bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, BaseSchema).Verify();
         }

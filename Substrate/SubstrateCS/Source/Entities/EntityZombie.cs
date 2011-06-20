@@ -8,9 +8,9 @@ namespace Substrate.Entities
 
     public class EntityZombie : EntityMob
     {
-        public static readonly NBTCompoundNode ZombieSchema = MobSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound ZombieSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Zombie"),
+            new SchemaNodeString("id", "Zombie"),
         });
 
         public EntityZombie ()
@@ -26,7 +26,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, ZombieSchema).Verify();
         }

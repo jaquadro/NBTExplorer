@@ -8,7 +8,7 @@ namespace Substrate
 
     public class EntityCollection : IEnumerable<Entity>
     {
-        private TagList _entities;
+        private TagNodeList _entities;
 
         private bool _dirty;
 
@@ -18,7 +18,7 @@ namespace Substrate
             set { _dirty = value; }
         }
 
-        public EntityCollection (TagList entities)
+        public EntityCollection (TagNodeList entities)
         {
             _entities = entities;
         }
@@ -27,8 +27,8 @@ namespace Substrate
         {
             List<Entity> set = new List<Entity>();
 
-            foreach (TagCompound ent in _entities) {
-                TagValue eid;
+            foreach (TagNodeCompound ent in _entities) {
+                TagNode eid;
                 if (!ent.TryGetValue("id", out eid)) {
                     continue;
                 }
@@ -50,7 +50,7 @@ namespace Substrate
         {
             List<Entity> set = new List<Entity>();
 
-            foreach (TagCompound ent in _entities) {
+            foreach (TagNodeCompound ent in _entities) {
                 Entity obj = EntityFactory.Create(ent);
                 if (obj == null) {
                     continue;
@@ -86,12 +86,12 @@ namespace Substrate
         {
             int rem = _entities.RemoveAll(val =>
             {
-                TagCompound cval = val as TagCompound;
+                TagNodeCompound cval = val as TagNodeCompound;
                 if (cval == null) {
                     return false;
                 }
 
-                TagValue sval;
+                TagNode sval;
                 if (!cval.TryGetValue("id", out sval)) {
                     return false;
                 }
@@ -110,7 +110,7 @@ namespace Substrate
         {
             int rem = _entities.RemoveAll(val =>
             {
-                TagCompound cval = val as TagCompound;
+                TagNodeCompound cval = val as TagNodeCompound;
                 if (cval == null) {
                     return false;
                 }
@@ -150,11 +150,11 @@ namespace Substrate
 
         public class EntityEnumerator : IEnumerator<Entity>
         {
-            private IEnumerator<TagValue> _enum;
+            private IEnumerator<TagNode> _enum;
 
             private Entity _cur;
 
-            public EntityEnumerator (TagList entities)
+            public EntityEnumerator (TagNodeList entities)
             {
                 _enum = entities.GetEnumerator();
             }

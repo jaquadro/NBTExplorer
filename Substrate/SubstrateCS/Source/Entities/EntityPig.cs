@@ -8,10 +8,10 @@ namespace Substrate.Entities
 
     public class EntityPig : EntityMob
     {
-        public static readonly NBTCompoundNode PigSchema = MobSchema.MergeInto(new NBTCompoundNode("")
+        public static readonly SchemaNodeCompound PigSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new NBTStringNode("id", "Pig"),
-            new NBTScalerNode("Saddle", TagType.TAG_BYTE),
+            new SchemaNodeString("id", "Pig"),
+            new SchemaNodeScaler("Saddle", TagType.TAG_BYTE),
         });
 
         private bool _saddle;
@@ -39,9 +39,9 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (TagValue tree)
+        public override Entity LoadTree (TagNode tree)
         {
-            TagCompound ctree = tree as TagCompound;
+            TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
                 return null;
             }
@@ -51,15 +51,15 @@ namespace Substrate.Entities
             return this;
         }
 
-        public override TagValue BuildTree ()
+        public override TagNode BuildTree ()
         {
-            TagCompound tree = base.BuildTree() as TagCompound;
-            tree["Saddle"] = new TagByte((byte)(_saddle ? 1 : 0));
+            TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
+            tree["Saddle"] = new TagNodeByte((byte)(_saddle ? 1 : 0));
 
             return tree;
         }
 
-        public override bool ValidateTree (TagValue tree)
+        public override bool ValidateTree (TagNode tree)
         {
             return new NBTVerifier(tree, PigSchema).Verify();
         }

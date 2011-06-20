@@ -38,9 +38,9 @@ namespace Substrate
     }
 
     public struct BlockPropertyData {
-        public TagList tileEntities;
+        public TagNodeList tileEntities;
 
-        public BlockPropertyData (TagList t)
+        public BlockPropertyData (TagNodeList t)
         {
             tileEntities = t;
         }
@@ -58,7 +58,7 @@ namespace Substrate
         private XZYNibbleArray _skyLight;
         private ZXByteArray _heightMap;
 
-        private TagList _tileEntities;
+        private TagNodeList _tileEntities;
 
         private BlockLight _lightManager;
         private BlockFluid _fluidManager;

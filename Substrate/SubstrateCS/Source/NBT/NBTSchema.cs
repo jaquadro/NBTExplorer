@@ -5,45 +5,45 @@ using System.Text;
 namespace Substrate.NBT
 {
     [Flags]
-    public enum NBTOptions
+    public enum SchemaOptions
     {
         OPTIONAL = 0x1,
         CREATE_ON_MISSING = 0x2,
     }
 
-    public abstract class NBTSchemaNode
+    public abstract class SchemaNode
     {
         private string _name;
-        private NBTOptions _options;
+        private SchemaOptions _options;
 
         public string Name
         {
             get { return _name; }
         }
 
-        public NBTOptions Options
+        public SchemaOptions Options
         {
             get { return _options; }
         }
 
-        public NBTSchemaNode (string name)
+        public SchemaNode (string name)
         {
             _name = name;
         }
 
-        public NBTSchemaNode (string name, NBTOptions options)
+        public SchemaNode (string name, SchemaOptions options)
         {
             _name = name;
             _options = options;
         }
 
-        public virtual TagValue BuildDefaultTree ()
+        public virtual TagNode BuildDefaultTree ()
         {
             return null;
         }
     }
 
-    public sealed class NBTScalerNode : NBTSchemaNode
+    public sealed class SchemaNodeScaler : SchemaNode
     {
         private TagType _type;
 
@@ -52,48 +52,48 @@ namespace Substrate.NBT
             get { return _type; }
         }
 
-        public NBTScalerNode (string name, TagType type)
+        public SchemaNodeScaler (string name, TagType type)
             : base(name)
         {
             _type = type;
         }
 
-        public NBTScalerNode (string name, TagType type, NBTOptions options)
+        public SchemaNodeScaler (string name, TagType type, SchemaOptions options)
             : base(name, options)
         {
             _type = type;
         }
 
-        public override TagValue BuildDefaultTree ()
+        public override TagNode BuildDefaultTree ()
         {
             switch (_type) {
                 case TagType.TAG_STRING:
-                    return new TagString();
+                    return new TagNodeString();
 
                 case TagType.TAG_BYTE:
-                    return new TagByte();
+                    return new TagNodeByte();
 
                 case TagType.TAG_SHORT:
-                    return new TagShort();
+                    return new TagNodeShort();
 
                 case TagType.TAG_INT:
-                    return new TagInt();
+                    return new TagNodeInt();
 
                 case TagType.TAG_LONG:
-                    return new TagLong();
+                    return new TagNodeLong();
 
                 case TagType.TAG_FLOAT:
-                    return new TagFloat();
+                    return new TagNodeFloat();
 
                 case TagType.TAG_DOUBLE:
-                    return new TagDouble();
+                    return new TagNodeDouble();
             }
 
             return null;
         }
     }
 
-    public sealed class NBTStringNode : NBTSchemaNode
+    public sealed class SchemaNodeString : SchemaNode
     {
         private string _value = "";
         private int _length;
@@ -108,34 +108,34 @@ namespace Substrate.NBT
             get { return _value; }
         }
 
-        public NBTStringNode (string name, NBTOptions options)
+        public SchemaNodeString (string name, SchemaOptions options)
             : base(name, options)
         {
         }
 
-        public NBTStringNode (string name, string value)
+        public SchemaNodeString (string name, string value)
             : base(name)
         {
             _value = value;
         }
 
-        public NBTStringNode (string name, int length)
+        public SchemaNodeString (string name, int length)
             : base(name)
         {
             _length = length;
         }
 
-        public override TagValue BuildDefaultTree ()
+        public override TagNode BuildDefaultTree ()
         {
             if (_value.Length > 0) {
-                return new TagString(_value);
+                return new TagNodeString(_value);
             }
 
-            return new TagString();
+            return new TagNodeString();
         }
     }
 
-    public sealed class NBTArrayNode : NBTSchemaNode
+    public sealed class SchemaNodeArray : SchemaNode
     {
         private int _length;
 
@@ -144,41 +144,41 @@ namespace Substrate.NBT
             get { return _length; }
         }
 
-        public NBTArrayNode (string name)
+        public SchemaNodeArray (string name)
             : base(name)
         {
             _length = 0;
         }
 
-        public NBTArrayNode (string name, NBTOptions options)
+        public SchemaNodeArray (string name, SchemaOptions options)
             : base(name, options)
         {
             _length = 0;
         }
 
-        public NBTArrayNode (string name, int length)
+        public SchemaNodeArray (string name, int length)
             : base(name)
         {
             _length = length;
         }
 
-        public NBTArrayNode (string name, int length, NBTOptions options)
+        public SchemaNodeArray (string name, int length, SchemaOptions options)
             : base(name, options)
         {
             _length = length;
         }
 
-        public override TagValue BuildDefaultTree ()
+        public override TagNode BuildDefaultTree ()
         {
-            return new TagByteArray(new byte[_length]);
+            return new TagNodeByteArray(new byte[_length]);
         }
     }
 
-    public sealed class NBTListNode : NBTSchemaNode
+    public sealed class SchemaNodeList : SchemaNode
     {
         private TagType _type;
         private int _length;
-        private NBTSchemaNode _subschema;
+        private SchemaNode _subschema;
 
         public int Length
         {
@@ -190,52 +190,52 @@ namespace Substrate.NBT
             get { return _type; }
         }
 
-        public NBTSchemaNode SubSchema
+        public SchemaNode SubSchema
         {
             get { return _subschema; }
         }
 
-        public NBTListNode (string name, TagType type)
+        public SchemaNodeList (string name, TagType type)
             : base(name)
         {
             _type = type;
         }
 
-        public NBTListNode (string name, TagType type, NBTOptions options)
+        public SchemaNodeList (string name, TagType type, SchemaOptions options)
             : base(name, options)
         {
             _type = type;
         }
 
-        public NBTListNode (string name, TagType type, int length)
+        public SchemaNodeList (string name, TagType type, int length)
             : base(name)
         {
             _type = type;
             _length = length;
         }
 
-        public NBTListNode (string name, TagType type, int length, NBTOptions options)
+        public SchemaNodeList (string name, TagType type, int length, SchemaOptions options)
             : base(name, options)
         {
             _type = type;
             _length = length;
         }
 
-        public NBTListNode (string name, TagType type, NBTSchemaNode subschema)
+        public SchemaNodeList (string name, TagType type, SchemaNode subschema)
             : base(name)
         {
             _type = type;
             _subschema = subschema;
         }
 
-        public NBTListNode (string name, TagType type, NBTSchemaNode subschema, NBTOptions options)
+        public SchemaNodeList (string name, TagType type, SchemaNode subschema, SchemaOptions options)
             : base(name, options)
         {
             _type = type;
             _subschema = subschema;
         }
 
-        public NBTListNode (string name, TagType type, int length, NBTSchemaNode subschema)
+        public SchemaNodeList (string name, TagType type, int length, SchemaNode subschema)
             : base(name)
         {
             _type = type;
@@ -243,7 +243,7 @@ namespace Substrate.NBT
             _subschema = subschema;
         }
 
-        public NBTListNode (string name, TagType type, int length, NBTSchemaNode subschema, NBTOptions options)
+        public SchemaNodeList (string name, TagType type, int length, SchemaNode subschema, SchemaOptions options)
             : base(name, options)
         {
             _type = type;
@@ -251,13 +251,13 @@ namespace Substrate.NBT
             _subschema = subschema;
         }
 
-        public override TagValue BuildDefaultTree ()
+        public override TagNode BuildDefaultTree ()
         {
             if (_length == 0) {
-                return new TagList(_type);
+                return new TagNodeList(_type);
             }
 
-            TagList list = new TagList(_type);
+            TagNodeList list = new TagNodeList(_type);
             for (int i = 0; i < _length; i++) {
                 list.Add(_subschema.BuildDefaultTree());
             }
@@ -266,13 +266,13 @@ namespace Substrate.NBT
         }
     }
 
-    public sealed class NBTCompoundNode : NBTSchemaNode, ICollection<NBTSchemaNode>
+    public sealed class SchemaNodeCompound : SchemaNode, ICollection<SchemaNode>
     {
-        private List<NBTSchemaNode> _subnodes;
+        private List<SchemaNode> _subnodes;
 
         #region ICollection<NBTSchemaNode> Members
 
-        public void Add (NBTSchemaNode item)
+        public void Add (SchemaNode item)
         {
             _subnodes.Add(item);
         }
@@ -282,12 +282,12 @@ namespace Substrate.NBT
             _subnodes.Clear();
         }
 
-        public bool Contains (NBTSchemaNode item)
+        public bool Contains (SchemaNode item)
         {
             return _subnodes.Contains(item);
         }
 
-        public void CopyTo (NBTSchemaNode[] array, int arrayIndex)
+        public void CopyTo (SchemaNode[] array, int arrayIndex)
         {
             _subnodes.CopyTo(array, arrayIndex);
         }
@@ -302,7 +302,7 @@ namespace Substrate.NBT
             get { return false; }
         }
 
-        public bool Remove (NBTSchemaNode item)
+        public bool Remove (SchemaNode item)
         {
             return _subnodes.Remove(item);
         }
@@ -311,7 +311,7 @@ namespace Substrate.NBT
 
         #region IEnumerable<NBTSchemaNode> Members
 
-        public IEnumerator<NBTSchemaNode> GetEnumerator ()
+        public IEnumerator<SchemaNode> GetEnumerator ()
         {
             return _subnodes.GetEnumerator();
         }
@@ -327,65 +327,65 @@ namespace Substrate.NBT
 
         #endregion
 
-        public NBTCompoundNode ()
+        public SchemaNodeCompound ()
             : base("")
         {
-            _subnodes = new List<NBTSchemaNode>();
+            _subnodes = new List<SchemaNode>();
         }
 
-        public NBTCompoundNode (NBTOptions options)
+        public SchemaNodeCompound (SchemaOptions options)
             : base("", options)
         {
-            _subnodes = new List<NBTSchemaNode>();
+            _subnodes = new List<SchemaNode>();
         }
 
-        public NBTCompoundNode (string name)
+        public SchemaNodeCompound (string name)
             : base(name)
         {
-            _subnodes = new List<NBTSchemaNode>();
+            _subnodes = new List<SchemaNode>();
         }
 
-        public NBTCompoundNode (string name, NBTOptions options)
+        public SchemaNodeCompound (string name, SchemaOptions options)
             : base(name, options)
         {
-            _subnodes = new List<NBTSchemaNode>();
+            _subnodes = new List<SchemaNode>();
         }
 
-        public NBTCompoundNode (string name, NBTSchemaNode subschema)
+        public SchemaNodeCompound (string name, SchemaNode subschema)
             : base(name)
         {
-            _subnodes = new List<NBTSchemaNode>();
+            _subnodes = new List<SchemaNode>();
 
-            NBTCompoundNode schema = subschema as NBTCompoundNode;
+            SchemaNodeCompound schema = subschema as SchemaNodeCompound;
             if (schema == null) {
                 return;
             }
 
-            foreach (NBTSchemaNode node in schema._subnodes)
+            foreach (SchemaNode node in schema._subnodes)
             {
                 _subnodes.Add(node);
             }
         }
 
-        public NBTCompoundNode (string name, NBTSchemaNode subschema, NBTOptions options)
+        public SchemaNodeCompound (string name, SchemaNode subschema, SchemaOptions options)
             : base(name, options)
         {
-            _subnodes = new List<NBTSchemaNode>();
+            _subnodes = new List<SchemaNode>();
 
-            NBTCompoundNode schema = subschema as NBTCompoundNode;
+            SchemaNodeCompound schema = subschema as SchemaNodeCompound;
             if (schema == null) {
                 return;
             }
 
-            foreach (NBTSchemaNode node in schema._subnodes) {
+            foreach (SchemaNode node in schema._subnodes) {
                 _subnodes.Add(node);
             }
         }
 
-        public NBTCompoundNode MergeInto (NBTCompoundNode tree)
+        public SchemaNodeCompound MergeInto (SchemaNodeCompound tree)
         {
-            foreach (NBTSchemaNode node in _subnodes) {
-                NBTSchemaNode f = tree._subnodes.Find(n => n.Name == node.Name);
+            foreach (SchemaNode node in _subnodes) {
+                SchemaNode f = tree._subnodes.Find(n => n.Name == node.Name);
                 if (f != null) {
                     continue;
                 }
@@ -395,10 +395,10 @@ namespace Substrate.NBT
             return tree;
         }
 
-        public override TagValue BuildDefaultTree ()
+        public override TagNode BuildDefaultTree ()
         {
-            TagCompound list = new TagCompound();
-            foreach (NBTSchemaNode node in _subnodes) {
+            TagNodeCompound list = new TagNodeCompound();
+            foreach (SchemaNode node in _subnodes) {
                 list[node.Name] = node.BuildDefaultTree();
             }
 
