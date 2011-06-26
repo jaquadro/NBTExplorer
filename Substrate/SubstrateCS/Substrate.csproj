@@ -60,10 +60,6 @@
       <HintPath>Assemblies\Ionic.Zlib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Source\BlockFluid.cs" />
@@ -76,6 +72,14 @@
     <Compile Include="Source\BlockLight.cs" />
     <Compile Include="Source\BlockTileEntities.cs" />
     <Compile Include="Source\Level.cs" />
+    <Compile Include="Source\NBT\INBTObject.cs" />
+    <Compile Include="Source\NBT\SchemaNode.cs" />
+    <Compile Include="Source\NBT\SchemaNodeArray.cs" />
+    <Compile Include="Source\NBT\SchemaNodeCompound.cs" />
+    <Compile Include="Source\NBT\SchemaNodeList.cs" />
+    <Compile Include="Source\NBT\SchemaNodeScaler.cs" />
+    <Compile Include="Source\NBT\SchemaNodeString.cs" />
+    <Compile Include="Source\NBT\SchemaOptions.cs" />
     <Compile Include="Source\NBT\TagNode.cs" />
     <Compile Include="Source\NBT\TagNodeByteArray.cs" />
     <Compile Include="Source\NBT\TagNodeCompound.cs" />
@@ -89,6 +93,7 @@
     <Compile Include="Source\NBT\TagType.cs" />
     <Compile Include="Source\NBT\TagNodeByte.cs" />
     <Compile Include="Source\NBT\TagNodeNull.cs" />
+    <Compile Include="Source\NBT\VerifierLogger.cs" />
     <Compile Include="Source\PlayerManager.cs" />
     <Compile Include="Source\PlayerFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -138,7 +143,6 @@
     <Compile Include="Source\NBTFile.cs" />
     <Compile Include="Source\NBT\JSONSerializer.cs" />
     <Compile Include="Source\NBT\NBT.cs" />
-    <Compile Include="Source\NBT\NBTSchema.cs" />
     <Compile Include="Source\NBT\NBTVerifier.cs" />
     <Compile Include="Source\Player.cs" />
     <Compile Include="Source\Region.cs" />
@@ -156,6 +160,7 @@
     <Compile Include="Source\TileEntityFactory.cs" />
     <Compile Include="Source\Utility\Base.cs" />
     <Compile Include="Source\Utility\ByteArray.cs" />
+    <Compile Include="Source\Utility\Compat.cs" />
     <Compile Include="Source\Utility\IndexedLinkedList.cs" />
     <Compile Include="Source\Utility\Interface.cs" />
     <Compile Include="Source\Utility\LRUCache.cs" />

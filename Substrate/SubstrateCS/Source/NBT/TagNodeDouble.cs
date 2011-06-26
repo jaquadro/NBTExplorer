@@ -81,7 +81,7 @@ namespace Substrate.NBT
         /// <summary>
         /// Converts a system double to a double node representing the same value.
         /// </summary>
-        /// <param name="f">A double value.</param>
+        /// <param name="d">A double value.</param>
         /// <returns>A new double node containing the given value.</returns>
         public static implicit operator TagNodeDouble (double d)
         {

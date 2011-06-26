@@ -89,7 +89,7 @@ namespace Substrate.NBT
         /// <summary>
         /// Converts a string node to a system string representing the same data.
         /// </summary>
-        /// <param name="b">A string node.</param>
+        /// <param name="s">A string node.</param>
         /// <returns>A system string set to the node's data.</returns>
         public static implicit operator string (TagNodeString s)
         {
