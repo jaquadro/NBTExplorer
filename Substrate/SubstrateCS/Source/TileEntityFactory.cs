@@ -63,4 +63,14 @@ namespace Substrate
             _registry["Trap"] = typeof(TileEntityTrap);
         }
     }
+
+    /// <summary>
+    /// An exception that is thrown when unknown TileEntity types are queried.
+    /// </summary>
+    public class UnknownTileEntityException : Exception 
+    {
+        public UnknownTileEntityException (string message)
+            : base(message)
+        { }
+    }
 }

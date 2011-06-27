@@ -223,13 +223,7 @@ namespace Substrate
             _cx = level["xPos"].ToTagInt();
             _cz = level["zPos"].ToTagInt();
 
-            _blockManager = new AlphaBlockCollection(
-                new BlockData(_blocks),
-                new BlockDataData(_data),
-                new BlockLightData(_blockLight, _skyLight, _heightMap),
-                new BlockPropertyData(_tileEntities)
-                );
-
+            _blockManager = new AlphaBlockCollection(_blocks, _data, _blockLight, _skyLight, _heightMap, _tileEntities);
             _entityManager = new EntityCollection(_entities);
 
             return this;
@@ -322,13 +316,7 @@ namespace Substrate
             _tree = new NBT_Tree();
             _tree.Root.Add("Level", level);
 
-            _blockManager = new AlphaBlockCollection(
-                new BlockData(_blocks),
-                new BlockDataData(_data),
-                new BlockLightData(_blockLight, _skyLight, _heightMap),
-                new BlockPropertyData(_tileEntities)
-                );
-
+            _blockManager = new AlphaBlockCollection(_blocks, _data, _blockLight, _skyLight, _heightMap, _tileEntities);
             _entityManager = new EntityCollection(_entities);
         }
 

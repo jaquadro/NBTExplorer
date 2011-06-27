@@ -52,11 +52,11 @@ namespace Substrate
         {
             BlockInfoEx info = BlockInfo.BlockTable[_blocks[x, y, z]] as BlockInfoEx;
             if (info == null) {
-                return;
+                throw new InvalidOperationException("The given block is of a type that does not support TileEntities.");
             }
 
             if (te.GetType() != TileEntityFactory.Lookup(info.TileEntityName)) {
-                return;
+                throw new ArgumentException("The TileEntity type is not valid for this block.", "te");
             }
 
             BlockKey key = (TranslateCoordinates != null)
@@ -83,12 +83,12 @@ namespace Substrate
         {
             BlockInfoEx info = BlockInfo.BlockTable[_blocks[x, y, z]] as BlockInfoEx;
             if (info == null) {
-                return;
+                throw new InvalidOperationException("The given block is of a type that does not support TileEntities.");
             }
 
             TileEntity te = TileEntityFactory.Create(info.TileEntityName);
             if (te == null) {
-                return;
+                throw new UnknownTileEntityException("The TileEntity type '" + info.TileEntityName + "' has not been registered with the TileEntityFactory.");
             }
 
             BlockKey key = (TranslateCoordinates != null)
