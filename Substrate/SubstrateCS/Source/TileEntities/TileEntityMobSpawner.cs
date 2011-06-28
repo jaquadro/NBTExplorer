@@ -8,7 +8,7 @@ namespace Substrate.TileEntities
 
     public class TileEntityMobSpawner : TileEntity
     {
-        public static readonly SchemaNodeCompound MobSpawnerSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound MobSpawnerSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", "MobSpawner"),
             new SchemaNodeScaler("EntityId", TagType.TAG_STRING),

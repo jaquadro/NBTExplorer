@@ -1,15 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Substrate
 {
     using NBT;
     using Utility;
 
+    /// <summary>
+    /// Represents a Tile Entity record, which provides additional data to a block.
+    /// </summary>
+    /// <remarks>Generally, this class should be subtyped into new concrete Tile Entity types, as this generic type is unable to
+    /// capture any of the custom data fields that make Tile Entities useful in the first place.  It is however still possible to
+    /// create instances of <see cref="TileEntity"/> objects, which may allow for graceful handling of unknown Tile Entities.</remarks>
     public class TileEntity : INBTObject<TileEntity>, ICopyable<TileEntity>
     {
-        public static readonly SchemaNodeCompound BaseSchema = new SchemaNodeCompound("")
+        private static readonly SchemaNodeCompound _schema = new SchemaNodeCompound("")
         {
             new SchemaNodeScaler("id", TagType.TAG_STRING),
             new SchemaNodeScaler("x", TagType.TAG_INT),
@@ -22,34 +26,54 @@ namespace Substrate
         private int _y;
         private int _z;
 
+        /// <summary>
+        /// Gets the id (name) of the Tile Entity.
+        /// </summary>
         public string ID
         {
             get { return _id; }
         }
 
+        /// <summary>
+        /// Gets or sets the global X-coordinate of the block that this Tile Entity is associated with.
+        /// </summary>
         public int X
         {
             get { return _x; }
             set { _x = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the global Y-coordinate of the block that this Tile Entity is associated with.
+        /// </summary>
         public int Y
         {
             get { return _y; }
             set { _y = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the global Z-coordinate of the block that this Tile Entity is associated with.
+        /// </summary>
         public int Z
         {
             get { return _z; }
             set { _z = value; }
         }
 
+        /// <summary>
+        /// Constructs a nonspecific <see cref="TileEntity"/> with a given ID.
+        /// </summary>
+        /// <param name="id">The id (name) of the Tile Entity.</param>
         public TileEntity (string id)
         {
             _id = id;
         }
 
+        /// <summary>
+        /// Constructs a <see cref="TileEntity"/> by copying an existing one.
+        /// </summary>
+        /// <param name="te">The <see cref="TileEntity"/> to copy.</param>
         public TileEntity (TileEntity te)
         {
             _id = te._id;
@@ -58,6 +82,13 @@ namespace Substrate
             _z = te._z;
         }
 
+        /// <summary>
+        /// Checks whether the Tile Entity is located (associated with a block) at the specific global coordinates.
+        /// </summary>
+        /// <param name="x">The global X-coordinate to test.</param>
+        /// <param name="y">The global Y-coordinate to test.</param>
+        /// <param name="z">The global Z-coordinate to test.</param>
+        /// <returns>Status indicating whether the Tile Entity is located at the specified global coordinates.</returns>
         public bool LocatedAt (int x, int y, int z)
         {
             return _x == x && _y == y && _z == z;
@@ -66,6 +97,10 @@ namespace Substrate
 
         #region ICopyable<TileEntity> Members
 
+        /// <summary>
+        /// Creates a deep-copy of the <see cref="TileEntity"/> including any data defined in a subtype.
+        /// </summary>
+        /// <returns>A deep-copy of the <see cref="TileEntity"/>.</returns>
         public virtual TileEntity Copy ()
         {
             return new TileEntity(this);
@@ -76,6 +111,19 @@ namespace Substrate
 
         #region INBTObject<TileEntity> Members
 
+        /// <summary>
+        /// Gets a <see cref="SchemaNode"/> representing the basic schema of a Tile Entity.
+        /// </summary>
+        public static SchemaNodeCompound Schema
+        {
+            get { return _schema; }
+        }
+
+        /// <summary>
+        /// Attempt to load a Tile Entity subtree into the <see cref="TileEntity"/> without validation.
+        /// </summary>
+        /// <param name="tree">The root node of a Tile Entity subtree.</param>
+        /// <returns>The <see cref="TileEntity"/> returns itself on success, or null if the tree was unparsable.</returns>
         public virtual TileEntity LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
@@ -91,6 +139,11 @@ namespace Substrate
             return this;
         }
 
+        /// <summary>
+        /// Attempt to load a Tile Entity subtree into the <see cref="TileEntity"/> with validation.
+        /// </summary>
+        /// <param name="tree">The root node of a Tile Entity subtree.</param>
+        /// <returns>The <see cref="TileEntity"/> returns itself on success, or null if the tree failed validation.</returns>
         public virtual TileEntity LoadTreeSafe (TagNode tree)
         {
             if (!ValidateTree(tree)) {
@@ -100,6 +153,10 @@ namespace Substrate
             return LoadTree(tree);
         }
 
+        /// <summary>
+        /// Builds a Tile Entity subtree from the current data.
+        /// </summary>
+        /// <returns>The root node of a Tile Entity subtree representing the current data.</returns>
         public virtual TagNode BuildTree ()
         {
             TagNodeCompound tree = new TagNodeCompound();
@@ -111,9 +168,14 @@ namespace Substrate
             return tree;
         }
 
+        /// <summary>
+        /// Validate a Tile Entity subtree against a basic schema.
+        /// </summary>
+        /// <param name="tree">The root node of a Tile Entity subtree.</param>
+        /// <returns>Status indicating whether the tree was valid against the internal schema.</returns>
         public virtual bool ValidateTree (TagNode tree)
         {
-            return new NBTVerifier(tree, BaseSchema).Verify();
+            return new NBTVerifier(tree, _schema).Verify();
         }
 
         #endregion

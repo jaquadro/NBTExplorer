@@ -8,7 +8,7 @@ namespace Substrate.TileEntities
 
     public class TileEntityMusic : TileEntity
     {
-        public static readonly SchemaNodeCompound MusicSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound MusicSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", "Music"),
             new SchemaNodeScaler("note", TagType.TAG_BYTE),

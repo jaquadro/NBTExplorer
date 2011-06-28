@@ -8,7 +8,7 @@ namespace Substrate.TileEntities
 
     public class TileEntitySign : TileEntity
     {
-        public static readonly SchemaNodeCompound SignSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound SignSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", "Sign"),
             new SchemaNodeScaler("Text1", TagType.TAG_STRING),

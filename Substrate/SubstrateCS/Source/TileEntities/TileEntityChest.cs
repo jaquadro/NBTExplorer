@@ -8,7 +8,7 @@ namespace Substrate.TileEntities
 
     public class TileEntityChest : TileEntity, IItemContainer
     {
-        public static readonly SchemaNodeCompound ChestSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound ChestSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", "Chest"),
             new SchemaNodeList("Items", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),

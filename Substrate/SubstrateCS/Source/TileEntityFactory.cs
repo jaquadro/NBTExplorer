@@ -1,16 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Substrate
 {
     using NBT;
     using TileEntities;
 
+    /// <summary>
+    /// Creates new instances of concrete <see cref="TileEntity"/> types from a dynamic registry.
+    /// </summary>
+    /// <remarks>This factory allows specific <see cref="TileEntity"/> objects to be generated as an NBT tree is parsed.  New types can be
+    /// registered with the factory at any time, so that custom <see cref="TileEntity"/> types can be supported.  By default, the standard
+    /// Tile Entities of Minecraft are registered with the factory at startup and bound to their respective 'id' fields.</remarks>
     public class TileEntityFactory
     {
         private static Dictionary<string, Type> _registry;
 
+        /// <summary>
+        /// Create a new instance of a concrete <see cref="TileEntity"/> type by name.
+        /// </summary>
+        /// <param name="type">The name that a concrete <see cref="TileEntity"/> type was registered with.</param>
+        /// <returns>A new instance of a concrete <see cref="TileEntity"/> type, or null if no type was registered with the given name.</returns>
         public static TileEntity Create (string type)
         {
             Type t;
@@ -21,6 +31,11 @@ namespace Substrate
             return Activator.CreateInstance(t) as TileEntity;
         }
 
+        /// <summary>
+        /// Create a new instance of a concrete <see cref="TileEntity"/> type by NBT node.
+        /// </summary>
+        /// <param name="tree">A <see cref="TagNodeCompound"/> representing a single Tile Entity, containing an 'id' field of the Tile Entity's registered name.</param>
+        /// <returns>A new instance of a concrete <see cref="TileEntity"/> type, or null if no type was registered with the given name.</returns>
         public static TileEntity Create (TagNodeCompound tree)
         {
             string type = tree["id"].ToTagString();
@@ -35,6 +50,11 @@ namespace Substrate
             return te.LoadTreeSafe(tree);
         }
 
+        /// <summary>
+        /// Lookup a concrete <see cref="TileEntity"/> type by name.
+        /// </summary>
+        /// <param name="type">The name that a concrete <see cref="TileEntity"/> type was registered with.</param>
+        /// <returns>The <see cref="Type"/> of a concrete <see cref="TileEntity"/> type, or null if no type was registered with the given name.</returns>
         public static Type Lookup (string type)
         {
             Type t;
@@ -45,6 +65,11 @@ namespace Substrate
             return t;
         }
 
+        /// <summary>
+        /// Registers a new concrete <see cref="TileEntity"/> type with the <see cref="TileEntityFactory"/>, binding it to a given name.
+        /// </summary>
+        /// <param name="id">The name to bind to a concrete <see cref="TileEntity"/> type.</param>
+        /// <param name="subtype">The <see cref="Type"/> of a concrete <see cref="TileEntity"/> type.</param>
         public static void Register (string id, Type subtype)
         {
             _registry[id] = subtype;

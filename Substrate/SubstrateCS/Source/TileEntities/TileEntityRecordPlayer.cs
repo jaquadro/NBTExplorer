@@ -8,7 +8,7 @@ namespace Substrate.TileEntities
 
     public class TileEntityRecordPlayer : TileEntity
     {
-        public static readonly SchemaNodeCompound RecordPlayerSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound RecordPlayerSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", "RecordPlayer"),
             new SchemaNodeScaler("Record", TagType.TAG_INT, SchemaOptions.OPTIONAL),

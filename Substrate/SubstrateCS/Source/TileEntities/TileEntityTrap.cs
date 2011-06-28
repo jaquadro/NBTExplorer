@@ -8,7 +8,7 @@ namespace Substrate.TileEntities
 
     public class TileEntityTrap : TileEntity, IItemContainer
     {
-        public static readonly SchemaNodeCompound TrapSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound TrapSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", "Trap"),
             new SchemaNodeList("Items", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),
