@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 
-namespace Substrate
+namespace Substrate.Core
 {
 
     /*public interface IChunk : IBoundedBlockContainer, IAlphaBlockContainer, IEntityContainer

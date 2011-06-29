@@ -1,10 +1,9 @@
 ﻿using System;
+using Substrate.Core;
+using Substrate.NBT;
 
 namespace Substrate
 {
-    using NBT;
-    using Utility;
-
     /// <summary>
     /// Represents a Tile Entity record, which provides additional data to a block.
     /// </summary>

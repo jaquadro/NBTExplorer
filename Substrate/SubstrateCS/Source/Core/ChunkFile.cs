@@ -4,10 +4,8 @@ using System.Text;
 using System.IO;
 using Ionic.Zlib;
 
-namespace Substrate
+namespace Substrate.Core
 {
-    using Utility;
-
     public class ChunkFile : NBTFile
     {
         public ChunkFile (string path)

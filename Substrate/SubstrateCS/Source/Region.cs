@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
+using Substrate.NBT;
+using Substrate.Core;
 
 namespace Substrate
 {
-    using NBT;
-
     public class Region : IDisposable, IChunkContainer
     {
         private const int XDIM = 32;

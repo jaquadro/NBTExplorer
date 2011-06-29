@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+using Substrate.Core;
 
 namespace Substrate
 {
-
     public class ChunkManager : IChunkManager, IEnumerable<ChunkRef>
     {
         public const int REGION_XLEN = 32;

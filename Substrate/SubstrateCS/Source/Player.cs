@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Substrate.Core;
+using Substrate.NBT;
 
 namespace Substrate
 {
-    using NBT;
-    using Utility;
-
     public class Player : UntypedEntity, INBTObject<Player>, ICopyable<Player>, IItemContainer
     {
         public static readonly SchemaNodeCompound PlayerSchema = UTBaseSchema.MergeInto(new SchemaNodeCompound("")

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using Substrate.Utility;
 using Substrate.NBT;
 
-namespace Substrate
+namespace Substrate.Core
 {
     public delegate BlockKey BlockCoordinateHandler (int lx, int ly, int lz);
 

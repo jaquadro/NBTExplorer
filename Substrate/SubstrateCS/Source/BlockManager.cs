@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Substrate.Core;
 
 namespace Substrate
 {
-
     public class BlockManager : IBlockManager
     {
         public const int MIN_X = -32000000;

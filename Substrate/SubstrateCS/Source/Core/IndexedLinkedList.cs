@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Substrate.Utility
+namespace Substrate.Core
 {
-    public class IndexedLinkedList<T> : ICollection<T>, ICollection
+    internal class IndexedLinkedList<T> : ICollection<T>, ICollection
     {
         private LinkedList<T> _list;
         private Dictionary<T, LinkedListNode<T>> _index;

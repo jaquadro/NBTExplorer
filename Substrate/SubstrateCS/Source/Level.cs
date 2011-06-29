@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
+using Substrate.Core;
+using Substrate.NBT;
 
 namespace Substrate
 {
-    using NBT;
-    using Utility;
-    using System.IO;
-
     public class Level : INBTObject<Level>, ICopyable<Level>
     {
         public static SchemaNodeCompound LevelSchema = new SchemaNodeCompound()

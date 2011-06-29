@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Substrate
+namespace Substrate.Core
 {
     public struct RegionKey : IEquatable<RegionKey>
     {

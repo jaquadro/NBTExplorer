@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using Substrate.Core;
+using Substrate.NBT;
 
 namespace Substrate
 {
-    using NBT;
-
     public class PlayerManager
     {
         protected string _playerPath;

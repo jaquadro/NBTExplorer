@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Substrate.Utility
+namespace Substrate.Core
 {
 
     public class NibbleArray : ICopyable<NibbleArray>

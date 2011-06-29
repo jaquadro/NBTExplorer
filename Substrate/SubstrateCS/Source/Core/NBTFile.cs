@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using Ionic.Zlib;
+using Substrate.NBT;
 
-namespace Substrate
+namespace Substrate.Core
 {
-    using NBT;
-
     public class NBTFile
     {
         protected string _filename;

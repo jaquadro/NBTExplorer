@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Substrate
+namespace Substrate.Core
 {
-    using Utility;
-
     // Rules:
     // - Water must be calculated in steps breadth-first
     // - If there are any "holes" within 5 steps (manhattan distance) of a water tile, only the edges

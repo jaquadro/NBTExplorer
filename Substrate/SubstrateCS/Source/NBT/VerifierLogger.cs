@@ -1,9 +1,8 @@
 ﻿using System;
+using Substrate.Core;
 
 namespace Substrate.NBT
 {
-    using Substrate.Utility;
-
     /// <summary>
     /// A collection of static methods that can be hooked into <see cref="NBTVerifier"/> events for logging NBT errors to the console.
     /// </summary>

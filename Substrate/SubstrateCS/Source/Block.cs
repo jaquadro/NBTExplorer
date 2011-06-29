@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Substrate.Core;
+using Substrate.NBT;
 
 namespace Substrate
 {
-    using NBT;
-    using Utility;
-
     public class Block : IDataBlock, IPropertyBlock, ICopyable<Block>
     {
         private int _id;

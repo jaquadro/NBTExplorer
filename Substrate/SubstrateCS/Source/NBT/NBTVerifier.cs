@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Substrate.Core;
 
 namespace Substrate.NBT
 {
-    using Substrate.Utility;
-
     /// <summary>
     /// Indicates how an <see cref="NBTVerifier"/> event processor should respond to returning event handler.
     /// </summary>
@@ -105,6 +103,13 @@ namespace Substrate.NBT
     }
 
     /// <summary>
+    /// An event handler for intercepting and responding to verification failures of NBT trees.
+    /// </summary>
+    /// <param name="eventArgs">Information relating to a verification event.</param>
+    /// <returns>A <see cref="TagEventCode"/> determining how the event processor should respond.</returns>
+    public delegate TagEventCode VerifierEventHandler (TagEventArgs eventArgs);
+
+    /// <summary>
     /// Verifies the integrity of an NBT tree against a schema definition.
     /// </summary>
     public class NBTVerifier
@@ -115,17 +120,17 @@ namespace Substrate.NBT
         /// <summary>
         /// An event that gets fired whenever an expected <see cref="TagNode"/> is not found.
         /// </summary>
-        public static event Func<TagEventArgs, TagEventCode> MissingTag;
+        public static event VerifierEventHandler MissingTag;
 
         /// <summary>
         /// An event that gets fired whenever an expected <see cref="TagNode"/> is of the wrong type and cannot be cast.
         /// </summary>
-        public static event Func<TagEventArgs, TagEventCode> InvalidTagType;
+        public static event VerifierEventHandler InvalidTagType;
 
         /// <summary>
         /// An event that gets fired whenever an expected <see cref="TagNode"/> has a value that violates the schema.
         /// </summary>
-        public static event Func<TagEventArgs, TagEventCode> InvalidTagValue;
+        public static event VerifierEventHandler InvalidTagValue;
 
         private Dictionary<string, TagNode> _scratch = new Dictionary<string,TagNode>();
 
@@ -318,7 +323,7 @@ namespace Substrate.NBT
         protected virtual bool OnMissingTag (TagEventArgs e)
         {
             if (MissingTag != null) {
-                foreach (Func<TagEventArgs, TagEventCode> func in MissingTag.GetInvocationList()) {
+                foreach (VerifierEventHandler func in MissingTag.GetInvocationList()) {
                     TagEventCode code = func(e);
                     switch (code) {
                         case TagEventCode.FAIL:
@@ -340,7 +345,7 @@ namespace Substrate.NBT
         protected virtual bool OnInvalidTagType (TagEventArgs e)
         {
             if (InvalidTagType != null) {
-                foreach (Func<TagEventArgs, TagEventCode> func in InvalidTagType.GetInvocationList()) {
+                foreach (VerifierEventHandler func in InvalidTagType.GetInvocationList()) {
                     TagEventCode code = func(e);
                     switch (code) {
                         case TagEventCode.FAIL:
@@ -362,7 +367,7 @@ namespace Substrate.NBT
         protected virtual bool OnInvalidTagValue (TagEventArgs e)
         {
             if (InvalidTagValue != null) {
-                foreach (Func<TagEventArgs, TagEventCode> func in InvalidTagValue.GetInvocationList()) {
+                foreach (VerifierEventHandler func in InvalidTagValue.GetInvocationList()) {
                     TagEventCode code = func(e);
                     switch (code) {
                         case TagEventCode.FAIL:

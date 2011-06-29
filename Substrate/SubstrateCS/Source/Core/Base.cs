@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Substrate.Utility
+namespace Substrate.Core
 {
-    public static class Base36
+    internal static class Base36
     {
         private const string _alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
 
@@ -61,7 +61,7 @@ namespace Substrate.Utility
         }
     }
 
-    public static class Base16
+    internal static class Base16
     {
         private const string _alphabet = "0123456789abcdef";
 

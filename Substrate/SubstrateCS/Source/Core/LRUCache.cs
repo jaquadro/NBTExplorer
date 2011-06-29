@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Substrate.Utility
+namespace Substrate.Core
 {
 
-    public class LRUCache<TKey, TValue> : IDictionary<TKey, TValue>
+    internal class LRUCache<TKey, TValue> : IDictionary<TKey, TValue>
     {
         public class CacheValueArgs : EventArgs
         {

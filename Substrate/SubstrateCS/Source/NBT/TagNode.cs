@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Substrate.Core;
 
-namespace Substrate.NBT {
-
-    using Substrate.Utility;
-
+namespace Substrate.NBT 
+{
     /// <summary>
     /// An abstract base class representing a node in an NBT tree.
     /// </summary>

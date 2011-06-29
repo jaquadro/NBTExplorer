@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.IO.Compression;
+using Substrate.Core;
 
 namespace Substrate.NBT
 {
-    using Substrate.Utility;
-
     /// <summary>
     /// Contains the root node of an NBT tree and handles IO of tree nodes.
     /// </summary>

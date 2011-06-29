@@ -2,11 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-using Substrate.Utility;
-
-namespace Substrate
+namespace Substrate.Core
 {
-
     public class BlockLight
     {
         private struct LightRecord

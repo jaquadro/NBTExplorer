@@ -1,16 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Substrate
 {
     using NBT;
     using Entities;
 
+    /// <summary>
+    /// Creates new instances of concrete <see cref="Entity"/> types from a dynamic registry.
+    /// </summary>
+    /// <remarks>This factory allows specific <see cref="Entity"/> objects to be generated as an NBT tree is parsed.  New types can be
+    /// registered with the factory at any time, so that custom <see cref="Entity"/> types can be supported.  By default, the standard
+    /// Entities of Minecraft are registered with the factory at startup and bound to their respective 'id' fields.</remarks>
     public class EntityFactory
     {
         private static Dictionary<string, Type> _registry;
 
+        /// <summary>
+        /// Create a new instance of a concrete <see cref="Entity"/> type by name.
+        /// </summary>
+        /// <param name="type">The name that a concrete <see cref="Entity"/> type was registered with.</param>
+        /// <returns>A new instance of a concrete <see cref="Entity"/> type, or null if no type was registered with the given name.</returns>
         public static Entity Create (string type)
         {
             Type t;
@@ -21,6 +31,11 @@ namespace Substrate
             return Activator.CreateInstance(t) as Entity;
         }
 
+        /// <summary>
+        /// Create a new instance of a concrete <see cref="Entity"/> type by NBT node.
+        /// </summary>
+        /// <param name="tree">A <see cref="TagNodeCompound"/> representing a single Entity, containing an 'id' field of the Entity's registered name.</param>
+        /// <returns>A new instance of a concrete <see cref="Entity"/> type, or null if no type was registered with the given name.</returns>
         public static Entity Create (TagNodeCompound tree)
         {
             TagNode type;
@@ -38,6 +53,11 @@ namespace Substrate
             return te.LoadTreeSafe(tree);
         }
 
+        /// <summary>
+        /// Lookup a concrete <see cref="Entity"/> type by name.
+        /// </summary>
+        /// <param name="type">The name that a concrete <see cref="Entity"/> type was registered with.</param>
+        /// <returns>The <see cref="Type"/> of a concrete <see cref="Entity"/> type, or null if no type was registered with the given name.</returns>
         public static Type Lookup (string type)
         {
             Type t;
@@ -48,6 +68,11 @@ namespace Substrate
             return t;
         }
 
+        /// <summary>
+        /// Registers a new concrete <see cref="Entity"/> type with the <see cref="EntityFactory"/>, binding it to a given name.
+        /// </summary>
+        /// <param name="id">The name to bind to a concrete <see cref="Entity"/> type.</param>
+        /// <param name="subtype">The <see cref="Type"/> of a concrete <see cref="Entity"/> type.</param>
         public static void Register (string id, Type subtype)
         {
             _registry[id] = subtype;

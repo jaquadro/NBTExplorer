@@ -1,12 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using Substrate.Core;
+using Substrate.NBT;
 
 namespace Substrate
 {
-    using NBT;
-    using Utility;
-
     /// <summary>
     /// A Minecraft Alpha-compatible chunk data structure.
     /// </summary>

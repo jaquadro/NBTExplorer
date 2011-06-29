@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
 
-using Substrate.Utility;
-
-namespace Substrate
+namespace Substrate.Core
 {
     public class ChunkCache
     {

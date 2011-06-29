@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Substrate.Core;
 
 namespace Substrate.NBT
 {
-    using Substrate.Utility;
-
     public class JSONSerializer
     {
         public static string Serialize (TagNode tag)

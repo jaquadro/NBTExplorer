@@ -4,19 +4,17 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
+using Substrate.NBT;
 
-namespace Substrate
+namespace Substrate.Core
 {
-    using NBT;
-    using Utility;
-
     public class ChunkFileManager : IChunkManager
     {
-        protected string _mapPath;
+        private string _mapPath;
 
         //protected Dictionary<ChunkKey, WeakReference> _cache;
-        protected LRUCache<ChunkKey, ChunkRef> _cache;
-        protected Dictionary<ChunkKey, ChunkRef> _dirty;
+        private LRUCache<ChunkKey, ChunkRef> _cache;
+        private Dictionary<ChunkKey, ChunkRef> _dirty;
 
         public string ChunkPath
         {

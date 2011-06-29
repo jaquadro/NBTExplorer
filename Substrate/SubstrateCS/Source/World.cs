@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using Substrate.Core;
+using Substrate.NBT;
 
 namespace Substrate
 {
-    using NBT;
-
     public static class Dimension 
     {
         public const int NETHER = -1;
