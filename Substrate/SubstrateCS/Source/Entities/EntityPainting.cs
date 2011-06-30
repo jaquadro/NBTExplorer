@@ -6,7 +6,7 @@ namespace Substrate.Entities
 {
     using Substrate.NBT;
 
-    public class EntityPainting : Entity
+    public class EntityPainting : EntityTyped
     {
         public enum DirectionType
         {
@@ -16,7 +16,7 @@ namespace Substrate.Entities
             SOUTH = 3,
         }
 
-        public static readonly SchemaNodeCompound PaintingSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound PaintingSchema = EntityTyped.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", "Painting"),
             new SchemaNodeScaler("Dir", TagType.TAG_BYTE),
@@ -67,7 +67,7 @@ namespace Substrate.Entities
         {
         }
 
-        public EntityPainting (Entity e)
+        public EntityPainting (EntityTyped e)
             : base(e)
         {
             EntityPainting e2 = e as EntityPainting;
@@ -83,7 +83,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (TagNode tree)
+        public override EntityTyped LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
@@ -121,7 +121,7 @@ namespace Substrate.Entities
 
         #region ICopyable<Entity> Members
 
-        public override Entity Copy ()
+        public override EntityTyped Copy ()
         {
             return new EntityPainting(this);
         }

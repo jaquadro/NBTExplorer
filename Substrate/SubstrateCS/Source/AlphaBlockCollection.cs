@@ -128,42 +128,42 @@ namespace Substrate
         }
 
         /// <summary>
-        /// Returns a new <see cref="Block"/> object from local coordinates relative to this collection.
+        /// Returns a new <see cref="AlphaBlock"/> object from local coordinates relative to this collection.
         /// </summary>
         /// <param name="x">Local X-coordinate of block.</param>
         /// <param name="y">Local Y-coordinate of block.</param>
         /// <param name="z">Local Z-coordiante of block.</param>
-        /// <returns>A new <see cref="Block"/> object representing context-independent data of a single block.</returns>
-        /// <remarks>Context-independent data excludes data such as lighting.  <see cref="Block"/> object actually contain a copy
-        /// of the data they represent, so changes to the <see cref="Block"/> will not affect this container, and vice-versa.</remarks>
-        public Block GetBlock (int x, int y, int z)
+        /// <returns>A new <see cref="AlphaBlock"/> object representing context-independent data of a single block.</returns>
+        /// <remarks>Context-independent data excludes data such as lighting.  <see cref="AlphaBlock"/> object actually contain a copy
+        /// of the data they represent, so changes to the <see cref="AlphaBlock"/> will not affect this container, and vice-versa.</remarks>
+        public AlphaBlock GetBlock (int x, int y, int z)
         {
-            return new Block(this, x, y, z);
+            return new AlphaBlock(this, x, y, z);
         }
 
         /// <summary>
-        /// Returns a new <see cref="BlockRef"/> object from local coordaintes relative to this collection.
+        /// Returns a new <see cref="AlphaBlockRef"/> object from local coordaintes relative to this collection.
         /// </summary>
         /// <param name="x">Local X-coordinate of block.</param>
         /// <param name="y">Local Y-coordinate of block.</param>
         /// <param name="z">Local Z-coordinate of block.</param>
-        /// <returns>A new <see cref="BlockRef"/> object representing context-dependent data of a single block.</returns>
-        /// <remarks>Context-depdendent data includes all data associated with this block.  Since a <see cref="BlockRef"/> represents
-        /// a view of a block within this container, any updates to data in the container will be reflected in the <see cref="BlockRef"/>,
-        /// and vice-versa for updates to the <see cref="BlockRef"/>.</remarks>
-        public BlockRef GetBlockRef (int x, int y, int z)
+        /// <returns>A new <see cref="AlphaBlockRef"/> object representing context-dependent data of a single block.</returns>
+        /// <remarks>Context-depdendent data includes all data associated with this block.  Since a <see cref="AlphaBlockRef"/> represents
+        /// a view of a block within this container, any updates to data in the container will be reflected in the <see cref="AlphaBlockRef"/>,
+        /// and vice-versa for updates to the <see cref="AlphaBlockRef"/>.</remarks>
+        public AlphaBlockRef GetBlockRef (int x, int y, int z)
         {
-            return new BlockRef(this, x, y, z);
+            return new AlphaBlockRef(this, _blocks.GetIndex(x, y, z));
         }
 
         /// <summary>
-        /// Updates a block in this collection with values from a <see cref="Block"/> object.
+        /// Updates a block in this collection with values from a <see cref="AlphaBlock"/> object.
         /// </summary>
         /// <param name="x">Local X-coordinate of a block.</param>
         /// <param name="y">Local Y-coordinate of a block.</param>
         /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <param name="block">A <see cref="Block"/> object to copy block data from.</param>
-        public void SetBlock (int x, int y, int z, Block block)
+        /// <param name="block">A <see cref="AlphaBlock"/> object to copy block data from.</param>
+        public void SetBlock (int x, int y, int z, AlphaBlock block)
         {
             SetID(x, y, z, block.ID);
             SetData(x, y, z, block.Data);
@@ -204,7 +204,7 @@ namespace Substrate
         /// <param name="y">Local Y-coordinate of a block.</param>
         /// <param name="z">Local Z-coordinate of a block.</param>
         /// <returns>An <see cref="IBlock"/>-compatible object.</returns>
-        /// <seealso cref="Block"/>
+        /// <seealso cref="AlphaBlock"/>
         IBlock IBlockCollection.GetBlock (int x, int y, int z)
         {
             return GetBlock(x, y, z);
@@ -217,7 +217,7 @@ namespace Substrate
         /// <param name="y">Local Y-coordinate of a block.</param>
         /// <param name="z">Local Z-coordinate of a block.</param>
         /// <returns>An <see cref="IBlock"/>-compatible reference object.</returns>
-        /// <seealso cref="BlockRef"/>
+        /// <seealso cref="AlphaBlockRef"/>
         IBlock IBlockCollection.GetBlockRef (int x, int y, int z)
         {
             return GetBlockRef(x, y, z);
@@ -339,13 +339,8 @@ namespace Substrate
 
         internal void SetID (int index, int id)
         {
-            int yzdim = _ydim * _zdim;
-
-            int x = index / yzdim;
-            int zy = index - (x * yzdim);
-
-            int z = zy / _ydim;
-            int y = zy - (z * _ydim);
+            int x, y, z;
+            _blocks.GetMultiIndex(index, out x, out y, out z);
 
             SetID(x, y, z, id);
         }
@@ -379,7 +374,7 @@ namespace Substrate
         /// <param name="y">Local Y-coordinate of a block.</param>
         /// <param name="z">Local Z-coordinate of a block.</param>
         /// <returns>An <see cref="IDataBlock"/>-compatible object.</returns>
-        /// <seealso cref="Block"/>
+        /// <seealso cref="AlphaBlock"/>
         IDataBlock IDataBlockCollection.GetBlock (int x, int y, int z)
         {
             return GetBlock(x, y, z);
@@ -392,7 +387,7 @@ namespace Substrate
         /// <param name="y">Local Y-coordinate of a block.</param>
         /// <param name="z">Local Z-coordinate of a block.</param>
         /// <returns>An <see cref="IDataBlock"/>-compatible reference object.</returns>
-        /// <seealso cref="BlockRef"/>
+        /// <seealso cref="AlphaBlockRef"/>
         IDataBlock IDataBlockCollection.GetBlockRef (int x, int y, int z)
         {
             return GetBlockRef(x, y, z);
@@ -487,7 +482,7 @@ namespace Substrate
         /// <param name="y">Local Y-coordinate of a block.</param>
         /// <param name="z">Local Z-coordinate of a block.</param>
         /// <returns>An <see cref="ILitBlock"/>-compatible object.</returns>
-        /// <seealso cref="Block"/>
+        /// <seealso cref="AlphaBlock"/>
         ILitBlock ILitBlockCollection.GetBlock (int x, int y, int z)
         {
             throw new NotImplementedException();
@@ -500,7 +495,7 @@ namespace Substrate
         /// <param name="y">Local Y-coordinate of a block.</param>
         /// <param name="z">Local Z-coordinate of a block.</param>
         /// <returns>An <see cref="ILitBlock"/>-compatible reference object.</returns>
-        /// <seealso cref="BlockRef"/>
+        /// <seealso cref="AlphaBlockRef"/>
         ILitBlock ILitBlockCollection.GetBlockRef (int x, int y, int z)
         {
             return GetBlockRef(x, y, z);
@@ -785,7 +780,7 @@ namespace Substrate
         /// <param name="y">Local Y-coordinate of a block.</param>
         /// <param name="z">Local Z-coordinate of a block.</param>
         /// <returns>An <see cref="IPropertyBlock"/>-compatible object.</returns>
-        /// <seealso cref="Block"/>
+        /// <seealso cref="AlphaBlock"/>
         IPropertyBlock IPropertyBlockCollection.GetBlock (int x, int y, int z)
         {
             return GetBlock(x, y, z);
@@ -798,7 +793,7 @@ namespace Substrate
         /// <param name="y">Local Y-coordinate of a block.</param>
         /// <param name="z">Local Z-coordinate of a block.</param>
         /// <returns>An <see cref="IPropertyBlock"/>-compatible reference object.</returns>
-        /// <seealso cref="BlockRef"/>
+        /// <seealso cref="AlphaBlockRef"/>
         IPropertyBlock IPropertyBlockCollection.GetBlockRef (int x, int y, int z)
         {
             return GetBlockRef(x, y, z);
@@ -829,6 +824,14 @@ namespace Substrate
             return _tileEntityManager.GetTileEntity(x, y, z);
         }
 
+        internal TileEntity GetTileEntity (int index)
+        {
+            int x, y, z;
+            _blocks.GetMultiIndex(index, out x, out y, out z);
+
+            return _tileEntityManager.GetTileEntity(x, y, z);
+        }
+
         /// <summary>
         /// Sets a <see cref="TileEntity"/> record for a block at the given local coordinates.
         /// </summary>
@@ -840,6 +843,15 @@ namespace Substrate
         /// <exception cref="InvalidOperationException">Thrown when the given block is of a type that does not support a <see cref="TileEntity"/> record.</exception>
         public void SetTileEntity (int x, int y, int z, TileEntity te)
         {
+            _tileEntityManager.SetTileEntity(x, y, z, te);
+            _dirty = true;
+        }
+
+        internal void SetTileEntity (int index, TileEntity te)
+        {
+            int x, y, z;
+            _blocks.GetMultiIndex(index, out x, out y, out z);
+
             _tileEntityManager.SetTileEntity(x, y, z, te);
             _dirty = true;
         }
@@ -858,6 +870,15 @@ namespace Substrate
             _dirty = true;
         }
 
+        internal void CreateTileEntity (int index)
+        {
+            int x, y, z;
+            _blocks.GetMultiIndex(index, out x, out y, out z);
+
+            _tileEntityManager.CreateTileEntity(x, y, z);
+            _dirty = true;
+        }
+
         /// <summary>
         /// Clears any <see cref="TileEntity"/> record set for a block at the givne local coordinates, if one exists.
         /// </summary>
@@ -866,6 +887,15 @@ namespace Substrate
         /// <param name="z">Local Z-coordinate of a block.</param>
         public void ClearTileEntity (int x, int y, int z)
         {
+            _tileEntityManager.ClearTileEntity(x, y, z);
+            _dirty = true;
+        }
+
+        internal void ClearTileEntity (int index)
+        {
+            int x, y, z;
+            _blocks.GetMultiIndex(index, out x, out y, out z);
+
             _tileEntityManager.ClearTileEntity(x, y, z);
             _dirty = true;
         }

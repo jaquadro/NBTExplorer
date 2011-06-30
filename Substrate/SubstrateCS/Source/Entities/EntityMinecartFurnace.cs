@@ -42,7 +42,7 @@ namespace Substrate.Entities
         {
         }
 
-        public EntityMinecartFurnace (Entity e)
+        public EntityMinecartFurnace (EntityTyped e)
             : base(e)
         {
             EntityMinecartFurnace e2 = e as EntityMinecartFurnace;
@@ -56,7 +56,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (TagNode tree)
+        public override EntityTyped LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
@@ -90,7 +90,7 @@ namespace Substrate.Entities
 
         #region ICopyable<Entity> Members
 
-        public override Entity Copy ()
+        public override EntityTyped Copy ()
         {
             return new EntityMinecartFurnace(this);
         }

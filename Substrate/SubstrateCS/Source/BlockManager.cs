@@ -58,7 +58,7 @@ namespace Substrate
             _chunkZLog = Log2(_chunkZDim);
         }
 
-        public Block GetBlock (int x, int y, int z)
+        public AlphaBlock GetBlock (int x, int y, int z)
         {
             _cache = GetChunk(x, y, z);
             if (_cache == null || !Check(x, y, z)) {
@@ -68,17 +68,17 @@ namespace Substrate
             return _cache.Blocks.GetBlock(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
         }
 
-        public BlockRef GetBlockRef (int x, int y, int z)
+        public AlphaBlockRef GetBlockRef (int x, int y, int z)
         {
             _cache = GetChunk(x, y, z);
             if (_cache == null || !Check(x, y, z)) {
-                return null;
+                return new AlphaBlockRef();
             }
 
             return _cache.Blocks.GetBlockRef(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
         }
 
-        public void SetBlock (int x, int y, int z, Block block)
+        public void SetBlock (int x, int y, int z, AlphaBlock block)
         {
             _cache = GetChunk(x, y, z);
             if (_cache == null || !Check(x, y, z)) {

@@ -6,18 +6,10 @@ using Substrate.NBT;
 
 namespace Substrate
 {
-    public interface IEntityContainer
-    {
-        List<Entity> FindEntities (string id);
-        List<Entity> FindEntities (Predicate<Entity> match);
-
-        bool AddEntity (Entity ent);
-
-        int RemoveEntities (string id);
-        int RemoveEntities (Predicate<Entity> match);
-    }
-
-    public class UntypedEntity : INBTObject<UntypedEntity>, ICopyable<UntypedEntity>
+    /// <summary>
+    /// The base Entity type for Minecraft Entities, providing access to data common to all Minecraft Entities.
+    /// </summary>
+    public class Entity : INBTObject<Entity>, ICopyable<Entity>
     {
         public class Vector3
         {
@@ -32,7 +24,7 @@ namespace Substrate
             public double Yaw { get; set; }
         }
 
-        public static readonly SchemaNodeCompound UTBaseSchema = new SchemaNodeCompound("")
+        private static readonly SchemaNodeCompound _schema = new SchemaNodeCompound("")
         {
             new SchemaNodeList("Pos", TagType.TAG_DOUBLE, 3),
             new SchemaNodeList("Motion", TagType.TAG_DOUBLE, 3),
@@ -52,56 +44,84 @@ namespace Substrate
         private short _air;
         private byte _onGround;
 
+        /// <summary>
+        /// Gets or sets the global position of the entity in fractional block coordinates.
+        /// </summary>
         public Vector3 Position
         {
             get { return _pos; }
             set { _pos = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the velocity of the entity.
+        /// </summary>
         public Vector3 Motion
         {
             get { return _motion; }
             set { _motion = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the orientation of the entity.
+        /// </summary>
         public Orientation Rotation
         {
             get { return _rotation; }
             set { _rotation = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the distance that the entity has fallen, if it is falling.
+        /// </summary>
         public double FallDistance
         {
             get { return _fallDistance; }
             set { _fallDistance = (float)value; }
         }
 
+        /// <summary>
+        /// Gets or sets the fire counter of the entity.
+        /// </summary>
         public int Fire
         {
             get { return _fire; }
             set { _fire = (short)value; }
         }
 
+        /// <summary>
+        /// Gets or sets the reamining air availale to the entity.
+        /// </summary>
         public int Air
         {
             get { return _air; }
             set { _air = (short)value; }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the entity is currently touch the ground.
+        /// </summary>
         public bool IsOnGround
         {
             get { return _onGround == 1; }
             set { _onGround = (byte)(value ? 1 : 0); }
         }
 
-        public UntypedEntity ()
+        /// <summary>
+        /// Constructs a new generic <see cref="Entity"/> with default values.
+        /// </summary>
+        public Entity ()
         {
             _pos = new Vector3();
             _motion = new Vector3();
             _rotation = new Orientation();
         }
 
-        public UntypedEntity (UntypedEntity e)
+        /// <summary>
+        /// Constructs a new generic <see cref="Entity"/> by copying fields from another <see cref="Entity"/> object.
+        /// </summary>
+        /// <param name="e">An <see cref="Entity"/> to copy fields from.</param>
+        public Entity (Entity e)
         {
             _pos = new Vector3();
             _pos.X = e._pos.X;
@@ -126,7 +146,20 @@ namespace Substrate
 
         #region INBTObject<Entity> Members
 
-        public UntypedEntity LoadTree (TagNode tree)
+        /// <summary>
+        /// Gets a <see cref="SchemaNode"/> representing the basic schema of an Entity.
+        /// </summary>
+        public static SchemaNodeCompound Schema
+        {
+            get { return _schema; }
+        }
+
+        /// <summary>
+        /// Attempt to load an Entity subtree into the <see cref="Entity"/> without validation.
+        /// </summary>
+        /// <param name="tree">The root node of an Entity subtree.</param>
+        /// <returns>The <see cref="Entity"/> returns itself on success, or null if the tree was unparsable.</returns>
+        public Entity LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null) {
@@ -157,7 +190,12 @@ namespace Substrate
             return this;
         }
 
-        public UntypedEntity LoadTreeSafe (TagNode tree)
+        /// <summary>
+        /// Attempt to load an Entity subtree into the <see cref="Entity"/> with validation.
+        /// </summary>
+        /// <param name="tree">The root node of an Entity subtree.</param>
+        /// <returns>The <see cref="Entity"/> returns itself on success, or null if the tree failed validation.</returns>
+        public Entity LoadTreeSafe (TagNode tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -166,6 +204,10 @@ namespace Substrate
             return LoadTree(tree);
         }
 
+        /// <summary>
+        /// Builds an Entity subtree from the current data.
+        /// </summary>
+        /// <returns>The root node of an Entity subtree representing the current data.</returns>
         public TagNode BuildTree ()
         {
             TagNodeCompound tree = new TagNodeCompound();
@@ -195,9 +237,14 @@ namespace Substrate
             return tree;
         }
 
+        /// <summary>
+        /// Validate an Entity subtree against a basic schema.
+        /// </summary>
+        /// <param name="tree">The root node of an Entity subtree.</param>
+        /// <returns>Status indicating whether the tree was valid against the internal schema.</returns>
         public bool ValidateTree (TagNode tree)
         {
-            return new NBTVerifier(tree, UTBaseSchema).Verify();
+            return new NBTVerifier(tree, _schema).Verify();
         }
 
         #endregion
@@ -205,35 +252,56 @@ namespace Substrate
 
         #region ICopyable<Entity> Members
 
-        public UntypedEntity Copy ()
+        /// <summary>
+        /// Creates a deep-copy of the <see cref="Entity"/>.
+        /// </summary>
+        /// <returns>A deep-copy of the <see cref="Entity"/>.</returns>
+        public Entity Copy ()
         {
-            return new UntypedEntity(this);
+            return new Entity(this);
         }
 
         #endregion
     }
 
-    public class Entity : UntypedEntity, INBTObject<Entity>, ICopyable<Entity>
+    /// <summary>
+    /// A base entity type for all entities except <see cref="Player"/> entities.
+    /// </summary>
+    /// <remarks>Generally, this class should be subtyped into new concrete Entity types, as this generic type is unable to
+    /// capture any of the custom data fields.  It is however still possible to create instances of <see cref="Entity"/> objects, 
+    /// which may allow for graceful handling of unknown Entity types.</remarks>
+    public class EntityTyped : Entity, INBTObject<EntityTyped>, ICopyable<EntityTyped>
     {
-        public static readonly SchemaNodeCompound BaseSchema = UTBaseSchema.MergeInto(new SchemaNodeCompound("")
+        private static readonly SchemaNodeCompound _schema = Entity.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeScaler("id", TagType.TAG_STRING),
         });
 
         private string _id;
 
+        /// <summary>
+        /// Gets the id (type) of the entity.
+        /// </summary>
         public string ID
         {
             get { return _id; }
         }
 
-        public Entity (string id)
+        /// <summary>
+        /// Creates a new generic <see cref="EntityTyped"/> with the given id.
+        /// </summary>
+        /// <param name="id">The id (name) of the Entity.</param>
+        public EntityTyped (string id)
             : base()
         {
             _id = id;
         }
 
-        public Entity (Entity e)
+        /// <summary>
+        /// Constructs a new <see cref="EntityTyped"/> by copying an existing one.
+        /// </summary>
+        /// <param name="e">The <see cref="EntityTyped"/> to copy.</param>
+        public EntityTyped (EntityTyped e)
             : base(e)
         {
             _id = e._id;
@@ -242,7 +310,20 @@ namespace Substrate
 
         #region INBTObject<Entity> Members
 
-        public virtual new Entity LoadTree (TagNode tree)
+        /// <summary>
+        /// Gets a <see cref="SchemaNode"/> representing the basic schema of an Entity.
+        /// </summary>
+        public static SchemaNodeCompound Schema
+        {
+            get { return _schema; }
+        }
+
+        /// <summary>
+        /// Attempt to load an Entity subtree into the <see cref="EntityTyped"/> without validation.
+        /// </summary>
+        /// <param name="tree">The root node of an Entity subtree.</param>
+        /// <returns>The <see cref="EntityTyped"/> returns itself on success, or null if the tree was unparsable.</returns>
+        public virtual new EntityTyped LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
@@ -254,7 +335,12 @@ namespace Substrate
             return this;
         }
 
-        public virtual new Entity LoadTreeSafe (TagNode tree)
+        /// <summary>
+        /// Attempt to load an Entity subtree into the <see cref="EntityTyped"/> with validation.
+        /// </summary>
+        /// <param name="tree">The root node of an Entity subtree.</param>
+        /// <returns>The <see cref="EntityTyped"/> returns itself on success, or null if the tree failed validation.</returns>
+        public virtual new EntityTyped LoadTreeSafe (TagNode tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -263,6 +349,10 @@ namespace Substrate
             return LoadTree(tree);
         }
 
+        /// <summary>
+        /// Builds an Entity subtree from the current data.
+        /// </summary>
+        /// <returns>The root node of an Entity subtree representing the current data.</returns>
         public virtual new TagNode BuildTree ()
         {
             TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
@@ -271,9 +361,14 @@ namespace Substrate
             return tree;
         }
 
+        /// <summary>
+        /// Validate an Entity subtree against a basic schema.
+        /// </summary>
+        /// <param name="tree">The root node of an Entity subtree.</param>
+        /// <returns>Status indicating whether the tree was valid against the internal schema.</returns>
         public virtual new bool ValidateTree (TagNode tree)
         {
-            return new NBTVerifier(tree, BaseSchema).Verify();
+            return new NBTVerifier(tree, _schema).Verify();
         }
 
         #endregion
@@ -281,9 +376,13 @@ namespace Substrate
 
         #region ICopyable<Entity> Members
 
-        public virtual new Entity Copy ()
+        /// <summary>
+        /// Creates a deep-copy of the <see cref="EntityTyped"/>.
+        /// </summary>
+        /// <returns>A deep-copy of the <see cref="EntityTyped"/>.</returns>
+        public virtual new EntityTyped Copy ()
         {
-            return new Entity(this);
+            return new EntityTyped(this);
         }
 
         #endregion

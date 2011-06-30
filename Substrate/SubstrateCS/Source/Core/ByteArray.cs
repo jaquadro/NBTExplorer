@@ -94,6 +94,21 @@ namespace Substrate.Core
             get { return _zdim; }
         }
 
+        public int GetIndex (int x, int y, int z)
+        {
+            return _ydim * (x * _zdim + z) + y;
+        }
+
+        public void GetMultiIndex (int index, out int x, out int y, out int z)
+        {
+            int yzdim = _ydim * _zdim;
+            x = index / yzdim;
+
+            int zy = index - (x * yzdim);
+            z = zy / _ydim;
+            y = zy - (z * _ydim);
+        }
+
         #region ICopyable<XZYByteArray> Members
 
         public override ByteArray Copy ()

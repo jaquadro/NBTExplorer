@@ -18,7 +18,7 @@ namespace Substrate.Entities
         {
         }
 
-        public EntitySquid (Entity e)
+        public EntitySquid (EntityTyped e)
             : base(e)
         {
         }
@@ -36,7 +36,7 @@ namespace Substrate.Entities
 
         #region ICopyable<Entity> Members
 
-        public override Entity Copy ()
+        public override EntityTyped Copy ()
         {
             return new EntitySquid(this);
         }

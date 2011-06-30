@@ -27,7 +27,7 @@ namespace Substrate.Entities
         {
         }
 
-        public EntitySlime (Entity e)
+        public EntitySlime (EntityTyped e)
             : base(e)
         {
             EntitySlime e2 = e as EntitySlime;
@@ -39,7 +39,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (TagNode tree)
+        public override EntityTyped LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
@@ -69,7 +69,7 @@ namespace Substrate.Entities
 
         #region ICopyable<Entity> Members
 
-        public override Entity Copy ()
+        public override EntityTyped Copy ()
         {
             return new EntitySlime(this);
         }

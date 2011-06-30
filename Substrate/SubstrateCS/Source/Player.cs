@@ -6,9 +6,9 @@ using Substrate.NBT;
 
 namespace Substrate
 {
-    public class Player : UntypedEntity, INBTObject<Player>, ICopyable<Player>, IItemContainer
+    public class Player : Entity, INBTObject<Player>, ICopyable<Player>, IItemContainer
     {
-        public static readonly SchemaNodeCompound PlayerSchema = UTBaseSchema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound PlayerSchema = Entity.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeScaler("AttackTime", TagType.TAG_SHORT),
             new SchemaNodeScaler("DeathTime", TagType.TAG_SHORT),

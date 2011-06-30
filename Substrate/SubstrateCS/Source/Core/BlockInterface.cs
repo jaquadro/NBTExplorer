@@ -40,6 +40,7 @@ namespace Substrate.Core
 
     public interface IAlphaBlockRef : IDataBlock, ILitBlock, IPropertyBlock
     {
+        bool IsValid { get; }
     }
 
     public interface IBlockCollection
@@ -141,10 +142,10 @@ namespace Substrate.Core
 
     public interface IAlphaBlockCollection : IDataBlockCollection, ILitBlockCollection, IPropertyBlockCollection
     {
-        new Block GetBlock (int x, int y, int z);
-        new BlockRef GetBlockRef (int x, int y, int z);
+        new AlphaBlock GetBlock (int x, int y, int z);
+        new AlphaBlockRef GetBlockRef (int x, int y, int z);
 
-        void SetBlock (int x, int y, int z, Block block);
+        void SetBlock (int x, int y, int z, AlphaBlock block);
     }
 
     public interface IBoundedAlphaBlockCollection : IAlphaBlockCollection, IBoundedDataBlockCollection, IBoundedLitBlockCollection, IBoundedPropertyBlockCollection

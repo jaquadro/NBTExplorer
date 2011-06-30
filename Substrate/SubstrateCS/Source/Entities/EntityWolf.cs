@@ -43,7 +43,7 @@ namespace Substrate.Entities
         {
         }
 
-        public EntityWolf (Entity e)
+        public EntityWolf (EntityTyped e)
             : base(e)
         {
             EntityWolf e2 = e as EntityWolf;
@@ -57,7 +57,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (TagNode tree)
+        public override EntityTyped LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
@@ -91,7 +91,7 @@ namespace Substrate.Entities
 
         #region ICopyable<Entity> Members
 
-        public override Entity Copy ()
+        public override EntityTyped Copy ()
         {
             return new EntityPig(this);
         }

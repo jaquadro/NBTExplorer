@@ -6,9 +6,9 @@ namespace Substrate.Entities
 {
     using Substrate.NBT;
 
-    public class EntityItem : Entity
+    public class EntityItem : EntityTyped
     {
-        public static readonly SchemaNodeCompound ItemSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound ItemSchema = EntityTyped.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", "Item"),
             new SchemaNodeScaler("Health", TagType.TAG_SHORT),
@@ -44,7 +44,7 @@ namespace Substrate.Entities
         {
         }
 
-        public EntityItem (Entity e)
+        public EntityItem (EntityTyped e)
             : base(e)
         {
             EntityItem e2 = e as EntityItem;
@@ -58,7 +58,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override Entity LoadTree (TagNode tree)
+        public override EntityTyped LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
@@ -93,7 +93,7 @@ namespace Substrate.Entities
 
         #region ICopyable<Entity> Members
 
-        public override Entity Copy ()
+        public override EntityTyped Copy ()
         {
             return new EntityItem(this);
         }

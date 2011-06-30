@@ -6,9 +6,9 @@ namespace Substrate.Entities
 {
     using Substrate.NBT;
 
-    public class EntityBoat : Entity
+    public class EntityBoat : EntityTyped
     {
-        public static readonly SchemaNodeCompound BoatSchema = BaseSchema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound BoatSchema = EntityTyped.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", "Boat"),
         });
@@ -18,7 +18,7 @@ namespace Substrate.Entities
         {
         }
 
-        public EntityBoat (Entity e)
+        public EntityBoat (EntityTyped e)
             : base(e)
         {
         }
@@ -36,7 +36,7 @@ namespace Substrate.Entities
 
         #region ICopyable<Entity> Members
 
-        public override Entity Copy ()
+        public override EntityTyped Copy ()
         {
             return new EntityBoat(this);
         }

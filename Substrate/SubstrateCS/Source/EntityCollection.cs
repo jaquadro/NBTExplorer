@@ -6,7 +6,7 @@ namespace Substrate
 {
     using NBT;
 
-    public class EntityCollection : IEnumerable<Entity>
+    public class EntityCollection : IEnumerable<EntityTyped>
     {
         private TagNodeList _entities;
 
@@ -23,9 +23,9 @@ namespace Substrate
             _entities = entities;
         }
 
-        public List<Entity> FindAll (string id)
+        public List<EntityTyped> FindAll (string id)
         {
-            List<Entity> set = new List<Entity>();
+            List<EntityTyped> set = new List<EntityTyped>();
 
             foreach (TagNodeCompound ent in _entities) {
                 TagNode eid;
@@ -37,7 +37,7 @@ namespace Substrate
                     continue;
                 }
 
-                Entity obj = EntityFactory.Create(ent);
+                EntityTyped obj = EntityFactory.Create(ent);
                 if (obj != null) {
                     set.Add(obj);
                 }
@@ -46,12 +46,12 @@ namespace Substrate
             return set;
         }
 
-        public List<Entity> FindAll (Predicate<Entity> match)
+        public List<EntityTyped> FindAll (Predicate<EntityTyped> match)
         {
-            List<Entity> set = new List<Entity>();
+            List<EntityTyped> set = new List<EntityTyped>();
 
             foreach (TagNodeCompound ent in _entities) {
-                Entity obj = EntityFactory.Create(ent);
+                EntityTyped obj = EntityFactory.Create(ent);
                 if (obj == null) {
                     continue;
                 }
@@ -64,7 +64,7 @@ namespace Substrate
             return set;
         }
 
-        public bool Add (Entity ent)
+        public bool Add (EntityTyped ent)
         {
             /*double xlow = _cx * XDim;
             double xhigh = xlow + XDim;
@@ -106,7 +106,7 @@ namespace Substrate
             return rem;
         }
 
-        public int RemoveAll (Predicate<Entity> match)
+        public int RemoveAll (Predicate<EntityTyped> match)
         {
             int rem = _entities.RemoveAll(val =>
             {
@@ -115,7 +115,7 @@ namespace Substrate
                     return false;
                 }
 
-                Entity obj = EntityFactory.Create(cval);
+                EntityTyped obj = EntityFactory.Create(cval);
                 if (obj == null) {
                     return false;
                 }
@@ -132,7 +132,7 @@ namespace Substrate
 
         #region IEnumerable<Entity> Members
 
-        public IEnumerator<Entity> GetEnumerator ()
+        public IEnumerator<EntityTyped> GetEnumerator ()
         {
             return new EntityEnumerator(_entities);
         }
@@ -148,11 +148,11 @@ namespace Substrate
 
         #endregion
 
-        public class EntityEnumerator : IEnumerator<Entity>
+        public class EntityEnumerator : IEnumerator<EntityTyped>
         {
             private IEnumerator<TagNode> _enum;
 
-            private Entity _cur;
+            private EntityTyped _cur;
 
             public EntityEnumerator (TagNodeList entities)
             {
@@ -161,7 +161,7 @@ namespace Substrate
 
             #region IEnumerator<Entity> Members
 
-            public Entity Current
+            public EntityTyped Current
             {
                 get 
                 {

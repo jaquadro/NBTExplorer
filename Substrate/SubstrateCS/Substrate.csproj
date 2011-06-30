@@ -62,15 +62,17 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Source\BlockFluid.cs" />
+    <Compile Include="Source\AlphaBlock.cs" />
+    <Compile Include="Source\AlphaBlockRef.cs" />
+    <Compile Include="Source\Core\BlockFluid.cs" />
     <Compile Include="Source\Data.cs" />
     <Compile Include="Source\ItemInfo.cs" />
-    <Compile Include="Source\ChunkCache.cs" />
+    <Compile Include="Source\Core\ChunkCache.cs" />
     <Compile Include="Source\Entities\EntitySquid.cs" />
     <Compile Include="Source\EntityCollection.cs" />
     <Compile Include="Source\AlphaBlockCollection.cs" />
-    <Compile Include="Source\BlockLight.cs" />
-    <Compile Include="Source\BlockTileEntities.cs" />
+    <Compile Include="Source\Core\BlockLight.cs" />
+    <Compile Include="Source\Core\BlockTileEntities.cs" />
     <Compile Include="Source\Level.cs" />
     <Compile Include="Source\NBT\INBTObject.cs" />
     <Compile Include="Source\NBT\SchemaNode.cs" />
@@ -95,19 +97,17 @@
     <Compile Include="Source\NBT\TagNodeNull.cs" />
     <Compile Include="Source\NBT\VerifierLogger.cs" />
     <Compile Include="Source\PlayerManager.cs" />
-    <Compile Include="Source\PlayerFile.cs" />
+    <Compile Include="Source\Core\PlayerFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Source\Block.cs" />
     <Compile Include="Source\BlockInfo.cs" />
-    <Compile Include="Source\BlockInterface.cs" />
-    <Compile Include="Source\BlockKey.cs" />
+    <Compile Include="Source\Core\BlockInterface.cs" />
+    <Compile Include="Source\Core\BlockKey.cs" />
     <Compile Include="Source\BlockManager.cs" />
-    <Compile Include="Source\BlockRef.cs" />
     <Compile Include="Source\Chunk.cs" />
-    <Compile Include="Source\ChunkFile.cs" />
-    <Compile Include="Source\ChunkFileManager.cs" />
-    <Compile Include="Source\ChunkInterface.cs" />
-    <Compile Include="Source\ChunkKey.cs" />
+    <Compile Include="Source\Core\ChunkFile.cs" />
+    <Compile Include="Source\Core\ChunkFileManager.cs" />
+    <Compile Include="Source\Core\ChunkInterface.cs" />
+    <Compile Include="Source\Core\ChunkKey.cs" />
     <Compile Include="Source\ChunkManager.cs" />
     <Compile Include="Source\ChunkRef.cs" />
     <Compile Include="Source\Entities\EntityArrow.cs" />
@@ -140,14 +140,14 @@
     <Compile Include="Source\Entity.cs" />
     <Compile Include="Source\EntityFactory.cs" />
     <Compile Include="Source\Item.cs" />
-    <Compile Include="Source\NBTFile.cs" />
+    <Compile Include="Source\Core\NBTFile.cs" />
     <Compile Include="Source\NBT\JSONSerializer.cs" />
     <Compile Include="Source\NBT\NBT.cs" />
     <Compile Include="Source\NBT\NBTVerifier.cs" />
     <Compile Include="Source\Player.cs" />
     <Compile Include="Source\Region.cs" />
-    <Compile Include="Source\RegionFile.cs" />
-    <Compile Include="Source\RegionKey.cs" />
+    <Compile Include="Source\Core\RegionFile.cs" />
+    <Compile Include="Source\Core\RegionKey.cs" />
     <Compile Include="Source\RegionManager.cs" />
     <Compile Include="Source\TileEntities\TileEntityChest.cs" />
     <Compile Include="Source\TileEntities\TileEntityFurnace.cs" />
@@ -158,13 +158,12 @@
     <Compile Include="Source\TileEntities\TileEntityTrap.cs" />
     <Compile Include="Source\TileEntity.cs" />
     <Compile Include="Source\TileEntityFactory.cs" />
-    <Compile Include="Source\Utility\Base.cs" />
-    <Compile Include="Source\Utility\ByteArray.cs" />
-    <Compile Include="Source\Utility\Compat.cs" />
-    <Compile Include="Source\Utility\IndexedLinkedList.cs" />
-    <Compile Include="Source\Utility\Interface.cs" />
-    <Compile Include="Source\Utility\LRUCache.cs" />
-    <Compile Include="Source\Utility\NibbleArray.cs" />
+    <Compile Include="Source\Core\Base.cs" />
+    <Compile Include="Source\Core\ByteArray.cs" />
+    <Compile Include="Source\Core\IndexedLinkedList.cs" />
+    <Compile Include="Source\Core\Interface.cs" />
+    <Compile Include="Source\Core\LRUCache.cs" />
+    <Compile Include="Source\Core\NibbleArray.cs" />
     <Compile Include="Source\World.cs" />
   </ItemGroup>
   <ItemGroup>
