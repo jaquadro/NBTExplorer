@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using Substrate.Core;
-using Substrate.NBT;
+using Substrate.Nbt;
 
 namespace Substrate
 {
@@ -21,7 +21,7 @@ namespace Substrate
             return new PlayerFile(_playerPath, name);
         }
 
-        protected NBT_Tree GetPlayerTree (string name)
+        protected NbtTree GetPlayerTree (string name)
         {
             PlayerFile pf = GetPlayerFile(name);
             Stream nbtstr = pf.GetDataInputStream();
@@ -29,10 +29,10 @@ namespace Substrate
                 return null;
             }
 
-            return new NBT_Tree(nbtstr);
+            return new NbtTree(nbtstr);
         }
 
-        protected bool SavePlayerTree (string name, NBT_Tree tree)
+        protected bool SavePlayerTree (string name, NbtTree tree)
         {
             PlayerFile pf = GetPlayerFile(name);
             Stream zipstr = pf.GetDataOutputStream();
@@ -57,7 +57,7 @@ namespace Substrate
 
         public bool SetPlayer (string name, Player player)
         {
-            return SavePlayerTree(name, new NBT_Tree(player.BuildTree() as TagNodeCompound));
+            return SavePlayerTree(name, new NbtTree(player.BuildTree() as TagNodeCompound));
         }
 
         public bool PlayerExists (string name)

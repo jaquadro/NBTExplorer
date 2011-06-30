@@ -2,7 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using Substrate.Core;
-using Substrate.NBT;
+using Substrate.Nbt;
 
 namespace Substrate
 {
@@ -39,7 +39,7 @@ namespace Substrate
             },
         };
 
-        private NBT_Tree _tree;
+        private NbtTree _tree;
 
         private int _cx;
         private int _cz;
@@ -91,7 +91,7 @@ namespace Substrate
         /// <summary>
         /// Provides raw access to the underlying NBT_Tree.
         /// </summary>
-        public NBT_Tree Tree
+        public NbtTree Tree
         {
             get { return _tree; }
         }
@@ -133,7 +133,7 @@ namespace Substrate
         /// </summary>
         /// <param name="tree">An NBT_Tree conforming to the chunk schema definition.</param>
         /// <returns>A new Chunk object wrapping an existing NBT_Tree.</returns>
-        public static Chunk Create (NBT_Tree tree)
+        public static Chunk Create (NbtTree tree)
         {
             Chunk c = new Chunk();
 
@@ -145,7 +145,7 @@ namespace Substrate
         /// </summary>
         /// <param name="tree">An NBT_Tree conforming to the chunk schema definition.</param>
         /// <returns>A new Chunk object wrapping an existing NBT_Tree, or null on verification failure.</returns>
-        public static Chunk CreateVerified (NBT_Tree tree)
+        public static Chunk CreateVerified (NbtTree tree)
         {
             Chunk c = new Chunk();
 
@@ -195,7 +195,7 @@ namespace Substrate
                 return null;
             }
 
-            _tree = new NBT_Tree(ctree);
+            _tree = new NbtTree(ctree);
 
             TagNodeCompound level = _tree.Root["Level"] as TagNodeCompound;
 
@@ -312,7 +312,7 @@ namespace Substrate
             level.Add("zPos", new TagNodeInt(_cz));
             level.Add("TerrainPopulated", new TagNodeByte());
 
-            _tree = new NBT_Tree();
+            _tree = new NbtTree();
             _tree.Root.Add("Level", level);
 
             _blockManager = new AlphaBlockCollection(_blocks, _data, _blockLight, _skyLight, _heightMap, _tileEntities);

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Substrate.Core;
-using Substrate.NBT;
+using Substrate.Nbt;
 
 namespace Substrate
 {

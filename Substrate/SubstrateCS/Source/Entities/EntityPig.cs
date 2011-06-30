@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Substrate.Entities
 {
-    using Substrate.NBT;
+    using Substrate.Nbt;
 
     public class EntityPig : EntityMob
     {

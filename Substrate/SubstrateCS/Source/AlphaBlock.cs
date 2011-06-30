@@ -7,7 +7,7 @@ namespace Substrate
     /// A single Alpha-compatible block with context-independent data.
     /// </summary>
     /// <remarks><para>In general, you should prefer other types for accessing block data including <see cref="AlphaBlockRef"/>,
-    /// <see cref="BlockManager"/>, and the <see cref="AlphaBlockCollection"/> property of <see cref="Chunk"/> and<see cref="ChunkRef"/>.</para>
+    /// <see cref="BlockManager"/>, and the <see cref="AlphaBlockCollection"/> property of <see cref="Chunk"/> and <see cref="ChunkRef"/>.</para>
     /// <para>You should use the <see cref="AlphaBlock"/> type when you need to copy individual blocks into a custom collection or
     /// container, and context-depdendent data such as coordinates and lighting have no well-defined meaning.  <see cref="AlphaBlock"/>
     /// offers a relatively compact footprint for storing the unique identity of a block's manifestation in the world.</para>

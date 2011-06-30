@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
-using Substrate.NBT;
+using Substrate.Nbt;
 using Substrate.Core;
 
 namespace Substrate
@@ -156,7 +156,7 @@ namespace Substrate
             return rf;
         }
 
-        public NBT_Tree GetChunkTree (int lcx, int lcz)
+        public NbtTree GetChunkTree (int lcx, int lcz)
         {
             if (!LocalBoundsCheck(lcx, lcz)) {
                 Region alt = GetForeignRegion(lcx, lcz);
@@ -169,13 +169,13 @@ namespace Substrate
                 return null;
             }
 
-            NBT_Tree tree = new NBT_Tree(nbtstr);
+            NbtTree tree = new NbtTree(nbtstr);
 
             nbtstr.Close();
             return tree;
         }
 
-        public bool SaveChunkTree (int lcx, int lcz, NBT_Tree tree)
+        public bool SaveChunkTree (int lcx, int lcz, NbtTree tree)
         {
             if (!LocalBoundsCheck(lcx, lcz)) {
                 Region alt = GetForeignRegion(lcx, lcz);

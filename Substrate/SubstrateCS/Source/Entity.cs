@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Substrate.Core;
-using Substrate.NBT;
+using Substrate.Nbt;
 
 namespace Substrate
 {
@@ -11,19 +11,6 @@ namespace Substrate
     /// </summary>
     public class Entity : INBTObject<Entity>, ICopyable<Entity>
     {
-        public class Vector3
-        {
-            public double X { get; set; }
-            public double Y { get; set; }
-            public double Z { get; set; }
-        }
-
-        public class Orientation
-        {
-            public double Pitch { get; set; }
-            public double Yaw { get; set; }
-        }
-
         private static readonly SchemaNodeCompound _schema = new SchemaNodeCompound("")
         {
             new SchemaNodeList("Pos", TagType.TAG_DOUBLE, 3),

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Substrate
 {
-    using NBT;
+    using Nbt;
 
     public static class BlockType
     {

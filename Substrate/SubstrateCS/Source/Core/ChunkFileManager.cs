@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
-using Substrate.NBT;
+using Substrate.Nbt;
 
 namespace Substrate.Core
 {
@@ -33,7 +33,7 @@ namespace Substrate.Core
             return new ChunkFile(_mapPath, cx, cz);
         }
 
-        protected NBT_Tree GetChunkTree (int cx, int cz)
+        protected NbtTree GetChunkTree (int cx, int cz)
         {
             ChunkFile cf = GetChunkFile(cx, cz);
             Stream nbtstr = cf.GetDataInputStream();
@@ -41,10 +41,10 @@ namespace Substrate.Core
                 return null;
             }
 
-            return new NBT_Tree(nbtstr);
+            return new NbtTree(nbtstr);
         }
 
-        protected bool SaveChunkTree (int cx, int cz, NBT_Tree tree)
+        protected bool SaveChunkTree (int cx, int cz, NbtTree tree)
         {
             ChunkFile cf = GetChunkFile(cx, cz);
             Stream zipstr = cf.GetDataOutputStream();

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Substrate.TileEntities
 {
-    using Substrate.NBT;
+    using Substrate.Nbt;
 
     public class TileEntityFurnace : TileEntity, IItemContainer
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Substrate
 {
-    using NBT;
+    using Nbt;
     using TileEntities;
 
     /// <summary>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using Substrate.Core;
-using Substrate.NBT;
+using Substrate.Nbt;
 
 namespace Substrate
 {
@@ -176,7 +176,7 @@ namespace Substrate
                 return false;
             }
 
-            NBT_Tree tree = new NBT_Tree(nbtstr);
+            NbtTree tree = new NbtTree(nbtstr);
 
             _level = new Level(this);
             _level = _level.LoadTreeSafe(tree.Root);
@@ -397,7 +397,7 @@ namespace Substrate
                 return false;
             }
 
-            NBT_Tree tree = new NBT_Tree(nbtstr);
+            NbtTree tree = new NbtTree(nbtstr);
 
             _level = new Level(this);
             _level = _level.LoadTreeSafe(tree.Root);

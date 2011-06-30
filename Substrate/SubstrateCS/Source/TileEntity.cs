@@ -1,6 +1,6 @@
 ﻿using System;
 using Substrate.Core;
-using Substrate.NBT;
+using Substrate.Nbt;
 
 namespace Substrate
 {

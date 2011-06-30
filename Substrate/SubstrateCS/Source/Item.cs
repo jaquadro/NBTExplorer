@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Substrate.Core;
-using Substrate.NBT;
+using Substrate.Nbt;
 
 namespace Substrate
 {

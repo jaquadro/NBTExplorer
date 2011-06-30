@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using Substrate.Core;
-using Substrate.NBT;
+using Substrate.Nbt;
 
 namespace Substrate
 {
@@ -203,7 +203,7 @@ namespace Substrate
                 return false;
             }
 
-            new NBT_Tree(BuildTree() as TagNodeCompound).WriteTo(zipstr);
+            new NbtTree(BuildTree() as TagNodeCompound).WriteTo(zipstr);
             zipstr.Close();
 
             return true;

@@ -9,7 +9,7 @@ namespace Substrate
     /// A reference to a single Alpha-compatible block in an <see cref="AlphaBlockCollection"/>.
     /// </summary>
     /// <remarks><para>The <see cref="AlphaBlockRef"/> type provides a reasonably lightweight reference to an individual block in a
-    /// <see cref="AlphaBlockCollection"/>.  The <see cref="AlphaBLockRef"/> does not store any of the data itself.  If the referenced
+    /// <see cref="AlphaBlockCollection"/>.  The <see cref="AlphaBlockRef"/> does not store any of the data itself.  If the referenced
     /// block in the <see cref="AlphaBlockCollection"/> is updated externally, those changes will be automatically reflected in the
     /// <see cref="AlphaBlockRef"/>, and any changes made via the <see cref="AlphaBlockRef"/> will be applied directly to the corresponding
     /// block within the <see cref="AlphaBlockCollection"/>.  Such changes will also set the dirty status of the <see cref="AlphaBlockCollection"/>,
