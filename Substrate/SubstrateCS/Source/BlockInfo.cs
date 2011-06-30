@@ -37,9 +37,12 @@ namespace Substrate
         public const int BED = 26;
         public const int POWERED_RAIL = 27;
         public const int DETECTOR_RAIL = 28;
+        public const int STICKY_PISTON = 29;
         public const int COBWEB = 30;
         public const int TALL_GRASS = 31;
         public const int DEAD_SHRUB = 32;
+        public const int PISTON = 33;
+        public const int PISTON_HEAD = 34;
         public const int WOOL = 35;
         public const int YELLOW_FLOWER = 37;
         public const int RED_ROSE = 38;
@@ -336,9 +339,12 @@ namespace Substrate
         public static BlockInfo Bed;
         public static BlockInfo PoweredRail;
         public static BlockInfo DetectorRail;
+        public static BlockInfo StickyPiston;
         public static BlockInfo Cobweb;
         public static BlockInfo TallGrass;
         public static BlockInfo DeadShrub;
+        public static BlockInfo Piston;
+        public static BlockInfo PistonHead;
         public static BlockInfo Wool;
         public static BlockInfo YellowFlower;
         public static BlockInfo RedRose;
@@ -440,9 +446,12 @@ namespace Substrate
             Bed = new BlockInfo(26, "Bed").SetOpacity(0);
             PoweredRail = new BlockInfo(27, "Powered Rail").SetOpacity(0).SetState(BlockState.NONSOLID);
             DetectorRail = new BlockInfo(28, "Detector Rail").SetOpacity(0).SetState(BlockState.NONSOLID);
+            StickyPiston = new BlockInfo(29, "Sticky Piston").SetOpacity(0);
             Cobweb = new BlockInfo(30, "Cobweb").SetOpacity(0).SetState(BlockState.NONSOLID);
             TallGrass = new BlockInfo(31, "Tall Grass").SetOpacity(0).SetState(BlockState.NONSOLID);
             DeadShrub = new BlockInfo(32, "Dead Shrub").SetOpacity(0).SetState(BlockState.NONSOLID);
+            Piston = new BlockInfo(33, "Piston").SetOpacity(0);
+            PistonHead = new BlockInfo(34, "Piston Head").SetOpacity(0);
             Wool = new BlockInfo(35, "Wool");
             YellowFlower = new BlockInfo(37, "Yellow Flower").SetOpacity(0).SetState(BlockState.NONSOLID);
             RedRose = new BlockInfo(38, "Red Rose").SetOpacity(0).SetState(BlockState.NONSOLID);
@@ -551,6 +560,9 @@ namespace Substrate
             Crops.SetDataLimits(0, 7, 0);
             PoweredRail.SetDataLimits(0, 5, 0x8);
             DetectorRail.SetDataLimits(0, 5, 0x8);
+            StickyPiston.SetDataLimits(1, 5, 0x8);
+            Piston.SetDataLimits(1, 5, 0x8);
+            PistonHead.SetDataLimits(1, 5, 0x8);
             Wool.SetDataLimits(0, 15, 0);
             Torch.SetDataLimits(1, 5, 0);
             RedstoneTorch.SetDataLimits(0, 5, 0);

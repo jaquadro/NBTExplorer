@@ -48,7 +48,7 @@ namespace Substrate
         FLOW_3 = 6,
     }
 
-    [FlagsAttribute]
+    [Flags]
     public enum LiquidState
     {
         FALLING = 0x08,
@@ -63,7 +63,7 @@ namespace Substrate
         NORTHWEST = 3,
     }
 
-    [FlagsAttribute]
+    [Flags]
     public enum DoorState
     {
         SWUNG = 0x04,
@@ -123,7 +123,7 @@ namespace Substrate
         ASCEND_WEST = 5,
     }
 
-    [FlagsAttribute]
+    [Flags]
     public enum PoweredRailState
     {
         POWERED = 0x08,
@@ -155,7 +155,7 @@ namespace Substrate
         GROUND_NORTHSOUTH = 6,
     }
 
-    [FlagsAttribute]
+    [Flags]
     public enum LeverState
     {
         POWERED = 0x08,
@@ -169,7 +169,7 @@ namespace Substrate
         NORTH = 4,
     }
 
-    [FlagsAttribute]
+    [Flags]
     public enum ButtonState
     {
         PRESSED = 0x08,
@@ -219,7 +219,7 @@ namespace Substrate
         NORTH = 3,
     }
 
-    [FlagsAttribute]
+    [Flags]
     public enum PressurePlateState
     {
         PRESSED = 0x01,
@@ -251,7 +251,7 @@ namespace Substrate
         PIECES_1 = 5,
     }
 
-    [FlagsAttribute]
+    [Flags]
     public enum BedState
     {
         HEAD = 0x08,
@@ -286,6 +286,27 @@ namespace Substrate
         EAST = 1,
         SOUTH = 2,
         NORTH = 3,
+    }
+
+    public enum PistonOrientation
+    {
+        UP = 1,
+        EAST = 2,
+        WEST = 3,
+        NORTH = 4,
+        SOUTH = 5,
+    }
+
+    [Flags]
+    public enum PistonBodyState
+    {
+        EXTENDED = 0x08,
+    }
+
+    [Flags]
+    public enum PistonHeadState
+    {
+        STICKY = 0x08,
     }
 
     // Item Data

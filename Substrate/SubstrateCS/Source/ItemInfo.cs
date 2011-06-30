@@ -111,6 +111,7 @@ namespace Substrate
         public const int REDSTONE_REPEATER = 356;
         public const int COOKIE = 357;
         public const int MAP = 358;
+        public const int SHEARS = 359;
         public const int GOLD_MUSIC_DISC = 2256;
         public const int GREEN_MUSIC_DISC = 2257;
     }
@@ -292,6 +293,7 @@ namespace Substrate
         public static ItemInfo RedstoneRepeater;
         public static ItemInfo Cookie;
         public static ItemInfo Map;
+        public static ItemInfo Shears;
         public static ItemInfo GoldMusicDisc;
         public static ItemInfo GreenMusicDisc;
 
@@ -404,6 +406,7 @@ namespace Substrate
             RedstoneRepeater = new ItemInfo(356, "Redstone Repeater").SetStackSize(64);
             Cookie = new ItemInfo(357, "Cookie").SetStackSize(8);
             Map = new ItemInfo(358, "Map");
+            Shears = new ItemInfo(359, "Shears");
             GoldMusicDisc = new ItemInfo(2256, "Gold Music Disc");
             GreenMusicDisc = new ItemInfo(2257, "Green Music Disc");
         }
