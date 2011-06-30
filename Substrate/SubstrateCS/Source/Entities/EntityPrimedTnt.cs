@@ -61,7 +61,7 @@ namespace Substrate.Entities
 
         public override bool ValidateTree (TagNode tree)
         {
-            return new NBTVerifier(tree, PrimedTntSchema).Verify();
+            return new NbtVerifier(tree, PrimedTntSchema).Verify();
         }
 
         #endregion

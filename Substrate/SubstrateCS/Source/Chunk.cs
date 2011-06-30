@@ -12,7 +12,7 @@ namespace Substrate
     /// <remarks>
     /// A Chunk internally wraps an NBT_Tree of raw chunk data.  Modifying the chunk will update the tree, and vice-versa.
     /// </remarks>
-    public class Chunk : IChunk, INBTObject<Chunk>, ICopyable<Chunk>
+    public class Chunk : IChunk, INbtObject<Chunk>, ICopyable<Chunk>
     {
         private const int XDIM = 16;
         private const int YDIM = 128;
@@ -258,7 +258,7 @@ namespace Substrate
         /// <returns>Status indicating if the tree represents a valid chunk.</returns>
         public bool ValidateTree (TagNode tree)
         {
-            NBTVerifier v = new NBTVerifier(tree, LevelSchema);
+            NbtVerifier v = new NbtVerifier(tree, LevelSchema);
             return v.Verify();
         }
 

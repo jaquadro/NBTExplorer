@@ -9,7 +9,7 @@ namespace Substrate
     /// <summary>
     /// The base Entity type for Minecraft Entities, providing access to data common to all Minecraft Entities.
     /// </summary>
-    public class Entity : INBTObject<Entity>, ICopyable<Entity>
+    public class Entity : INbtObject<Entity>, ICopyable<Entity>
     {
         private static readonly SchemaNodeCompound _schema = new SchemaNodeCompound("")
         {
@@ -231,7 +231,7 @@ namespace Substrate
         /// <returns>Status indicating whether the tree was valid against the internal schema.</returns>
         public bool ValidateTree (TagNode tree)
         {
-            return new NBTVerifier(tree, _schema).Verify();
+            return new NbtVerifier(tree, _schema).Verify();
         }
 
         #endregion
@@ -257,7 +257,7 @@ namespace Substrate
     /// <remarks>Generally, this class should be subtyped into new concrete Entity types, as this generic type is unable to
     /// capture any of the custom data fields.  It is however still possible to create instances of <see cref="Entity"/> objects, 
     /// which may allow for graceful handling of unknown Entity types.</remarks>
-    public class EntityTyped : Entity, INBTObject<EntityTyped>, ICopyable<EntityTyped>
+    public class EntityTyped : Entity, INbtObject<EntityTyped>, ICopyable<EntityTyped>
     {
         private static readonly SchemaNodeCompound _schema = Entity.Schema.MergeInto(new SchemaNodeCompound("")
         {
@@ -355,7 +355,7 @@ namespace Substrate
         /// <returns>Status indicating whether the tree was valid against the internal schema.</returns>
         public virtual new bool ValidateTree (TagNode tree)
         {
-            return new NBTVerifier(tree, _schema).Verify();
+            return new NbtVerifier(tree, _schema).Verify();
         }
 
         #endregion

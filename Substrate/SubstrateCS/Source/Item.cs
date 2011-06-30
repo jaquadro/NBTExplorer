@@ -11,7 +11,7 @@ namespace Substrate
         ItemCollection Items { get; }
     }
 
-    public class Item : INBTObject<Item>, ICopyable<Item>
+    public class Item : INbtObject<Item>, ICopyable<Item>
     {
         public static readonly SchemaNodeCompound ItemSchema = new SchemaNodeCompound("")
         {
@@ -107,13 +107,13 @@ namespace Substrate
 
         public bool ValidateTree (TagNode tree)
         {
-            return new NBTVerifier(tree, ItemSchema).Verify();
+            return new NbtVerifier(tree, ItemSchema).Verify();
         }
 
         #endregion
     }
 
-    public class ItemCollection : INBTObject<ItemCollection>, ICopyable<ItemCollection>
+    public class ItemCollection : INbtObject<ItemCollection>, ICopyable<ItemCollection>
     {
         public static readonly SchemaNodeCompound InventorySchema = Item.ItemSchema.MergeInto(new SchemaNodeCompound("")
         {
@@ -228,7 +228,7 @@ namespace Substrate
 
         public bool ValidateTree (TagNode tree)
         {
-            return new NBTVerifier(tree, ListSchema).Verify();
+            return new NbtVerifier(tree, ListSchema).Verify();
         }
 
         #endregion

@@ -28,7 +28,7 @@ namespace Substrate.Entities
 
         public override bool ValidateTree (TagNode tree)
         {
-            return new NBTVerifier(tree, GiantSchema).Verify();
+            return new NbtVerifier(tree, GiantSchema).Verify();
         }
 
         #endregion

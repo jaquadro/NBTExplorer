@@ -6,7 +6,7 @@ using Substrate.Nbt;
 
 namespace Substrate
 {
-    public class Player : Entity, INBTObject<Player>, ICopyable<Player>, IItemContainer
+    public class Player : Entity, INbtObject<Player>, ICopyable<Player>, IItemContainer
     {
         public static readonly SchemaNodeCompound PlayerSchema = Entity.Schema.MergeInto(new SchemaNodeCompound("")
         {
@@ -217,7 +217,7 @@ namespace Substrate
 
         public virtual new bool ValidateTree (TagNode tree)
         {
-            return new NBTVerifier(tree, PlayerSchema).Verify();
+            return new NbtVerifier(tree, PlayerSchema).Verify();
         }
 
         #endregion

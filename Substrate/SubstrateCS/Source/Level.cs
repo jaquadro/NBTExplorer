@@ -5,7 +5,7 @@ using Substrate.Nbt;
 
 namespace Substrate
 {
-    public class Level : INBTObject<Level>, ICopyable<Level>
+    public class Level : INbtObject<Level>, ICopyable<Level>
     {
         public static SchemaNodeCompound LevelSchema = new SchemaNodeCompound()
         {
@@ -318,7 +318,7 @@ namespace Substrate
 
         public virtual bool ValidateTree (TagNode tree)
         {
-            return new NBTVerifier(tree, LevelSchema).Verify();
+            return new NbtVerifier(tree, LevelSchema).Verify();
         }
 
         #endregion

@@ -5,7 +5,7 @@ using Substrate.Core;
 namespace Substrate.Nbt
 {
     /// <summary>
-    /// Indicates how an <see cref="NBTVerifier"/> event processor should respond to returning event handler.
+    /// Indicates how an <see cref="NbtVerifier"/> event processor should respond to returning event handler.
     /// </summary>
     public enum TagEventCode
     {
@@ -26,7 +26,7 @@ namespace Substrate.Nbt
     }
 
     /// <summary>
-    /// Event arguments for <see cref="NBTVerifier"/> failure events.
+    /// Event arguments for <see cref="NbtVerifier"/> failure events.
     /// </summary>
     public class TagEventArgs : EventArgs
     {
@@ -112,7 +112,7 @@ namespace Substrate.Nbt
     /// <summary>
     /// Verifies the integrity of an NBT tree against a schema definition.
     /// </summary>
-    public class NBTVerifier
+    public class NbtVerifier
     {
         private TagNode _root;
         private SchemaNode _schema;
@@ -135,11 +135,11 @@ namespace Substrate.Nbt
         private Dictionary<string, TagNode> _scratch = new Dictionary<string,TagNode>();
 
         /// <summary>
-        /// Constructs a new <see cref="NBTVerifier"/> object for a given NBT tree and schema.
+        /// Constructs a new <see cref="NbtVerifier"/> object for a given NBT tree and schema.
         /// </summary>
         /// <param name="root">A <see cref="TagNode"/> representing the root of an NBT tree.</param>
         /// <param name="schema">A <see cref="SchemaNode"/> representing the root of a schema definition for the NBT tree.</param>
-        public NBTVerifier (TagNode root, SchemaNode schema)
+        public NbtVerifier (TagNode root, SchemaNode schema)
         {
             _root = root;
             _schema = schema;

@@ -10,7 +10,7 @@ namespace Substrate
     /// <remarks>Generally, this class should be subtyped into new concrete Tile Entity types, as this generic type is unable to
     /// capture any of the custom data fields that make Tile Entities useful in the first place.  It is however still possible to
     /// create instances of <see cref="TileEntity"/> objects, which may allow for graceful handling of unknown Tile Entities.</remarks>
-    public class TileEntity : INBTObject<TileEntity>, ICopyable<TileEntity>
+    public class TileEntity : INbtObject<TileEntity>, ICopyable<TileEntity>
     {
         private static readonly SchemaNodeCompound _schema = new SchemaNodeCompound("")
         {
@@ -174,7 +174,7 @@ namespace Substrate
         /// <returns>Status indicating whether the tree was valid against the internal schema.</returns>
         public virtual bool ValidateTree (TagNode tree)
         {
-            return new NBTVerifier(tree, _schema).Verify();
+            return new NbtVerifier(tree, _schema).Verify();
         }
 
         #endregion

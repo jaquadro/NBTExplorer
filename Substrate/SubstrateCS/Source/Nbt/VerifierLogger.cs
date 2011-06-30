@@ -4,7 +4,7 @@ using Substrate.Core;
 namespace Substrate.Nbt
 {
     /// <summary>
-    /// A collection of static methods that can be hooked into <see cref="NBTVerifier"/> events for logging NBT errors to the console.
+    /// A collection of static methods that can be hooked into <see cref="NbtVerifier"/> events for logging NBT errors to the console.
     /// </summary>
     public static class VerifierLogger
     {

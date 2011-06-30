@@ -61,7 +61,7 @@ namespace Substrate.Entities
 
         public override bool ValidateTree (TagNode tree)
         {
-            return new NBTVerifier(tree, SlimeSchema).Verify();
+            return new NbtVerifier(tree, SlimeSchema).Verify();
         }
 
         #endregion

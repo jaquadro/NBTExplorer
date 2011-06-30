@@ -113,7 +113,7 @@ namespace Substrate.Entities
 
         public override bool ValidateTree (TagNode tree)
         {
-            return new NBTVerifier(tree, PaintingSchema).Verify();
+            return new NbtVerifier(tree, PaintingSchema).Verify();
         }
 
         #endregion

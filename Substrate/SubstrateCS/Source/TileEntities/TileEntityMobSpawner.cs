@@ -82,7 +82,7 @@ namespace Substrate.TileEntities
 
         public override bool ValidateTree (TagNode tree)
         {
-            return new NBTVerifier(tree, MobSpawnerSchema).Verify();
+            return new NbtVerifier(tree, MobSpawnerSchema).Verify();
         }
 
         #endregion
