@@ -122,11 +122,11 @@ namespace Substrate
         public const int MAX_LUMINANCE = 15;
         public const int MIN_LUMINANCE = 0;
 
-        private static BlockInfo[] _blockTable;
-        private static int[] _opacityTable;
-        private static int[] _luminanceTable;
+        private static readonly BlockInfo[] _blockTable;
+        private static readonly int[] _opacityTable;
+        private static readonly int[] _luminanceTable;
 
-        public class ItemCache<T>
+        private class CacheTableArray<T> : ICacheTable<T>
         {
             private T[] _cache;
 
@@ -135,7 +135,7 @@ namespace Substrate
                 get { return _cache[index]; }
             }
 
-            public ItemCache (T[] cache)
+            public CacheTableArray (T[] cache)
             {
                 _cache = cache;
             }
@@ -182,18 +182,30 @@ namespace Substrate
         private int _luminance = MIN_LUMINANCE;
         private bool _transmitLight = false;
         private bool _blocksFluid = true;
+        private bool _registered = false;
 
         private BlockState _state = BlockState.SOLID;
 
         private DataLimits _dataLimits;
 
-        public static ItemCache<BlockInfo> BlockTable;
+        private static readonly CacheTableArray<BlockInfo> _blockTableCache;
+        private static readonly CacheTableArray<int> _opacityTableCache;
+        private static readonly CacheTableArray<int> _luminanceTableCache;
 
-        public static ItemCache<int> OpacityTable;
+        public static ICacheTable<BlockInfo> BlockTable
+        {
+            get { return _blockTableCache; }
+        }
 
-        public static ItemCache<int> LuminanceTable;
+        public static ICacheTable<int> OpacityTable
+        {
+            get { return _opacityTableCache; }
+        }
 
-        //public static ItemCache<NBTCompoundNode> SchemaTable;
+        public static ICacheTable<int> LuminanceTable
+        {
+            get { return _luminanceTableCache; }
+        }
 
         public int ID
         {
@@ -235,9 +247,15 @@ namespace Substrate
             get { return _state; }
         }
 
-        public BlockInfo (int id)
+        public bool Registered
+        {
+            get { return _registered; }
+        }
+
+        internal BlockInfo (int id)
         {
             _id = id;
+            _name = "Unknown Block";
             _blockTable[_id] = this;
         }
 
@@ -246,6 +264,7 @@ namespace Substrate
             _id = id;
             _name = name;
             _blockTable[_id] = this;
+            _registered = true;
         }
 
         public BlockInfo SetOpacity (int opacity)
@@ -413,9 +432,9 @@ namespace Substrate
             _opacityTable = new int[MAX_BLOCKS];
             _luminanceTable = new int[MAX_BLOCKS];
 
-            BlockTable = new ItemCache<BlockInfo>(_blockTable);
-            OpacityTable = new ItemCache<int>(_opacityTable);
-            LuminanceTable = new ItemCache<int>(_luminanceTable);
+            _blockTableCache = new CacheTableArray<BlockInfo>(_blockTable);
+            _opacityTableCache = new CacheTableArray<int>(_opacityTable);
+            _luminanceTableCache = new CacheTableArray<int>(_luminanceTable);
 
             Air = new BlockInfo(0, "Air").SetOpacity(0).SetState(BlockState.NONSOLID);
             Stone = new BlockInfo(1, "Stone");
@@ -516,7 +535,7 @@ namespace Substrate
 
             for (int i = 0; i < MAX_BLOCKS; i++) {
                 if (_blockTable[i] == null) {
-                    _blockTable[i] = new BlockInfo(i, "Uknown Block");
+                    _blockTable[i] = new BlockInfo(i);
                 }
             }
 

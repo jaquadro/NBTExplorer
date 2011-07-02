@@ -132,7 +132,7 @@ namespace Substrate
 
         public IEnumerator<Region> GetEnumerator ()
         {
-            return new RegionEnumerator(this);
+            return new Enumerator(this);
         }
 
         #endregion
@@ -141,26 +141,27 @@ namespace Substrate
 
         IEnumerator IEnumerable.GetEnumerator ()
         {
-            return new RegionEnumerator(this);
+            return new Enumerator(this);
         }
 
         #endregion
 
 
-        public class RegionEnumerator : IEnumerator<Region>
+        private struct Enumerator : IEnumerator<Region>
         {
-            protected List<Region> _regions;
+            private List<Region> _regions;
+            private int _pos;
 
-            protected int _pos = -1;
-
-            public RegionEnumerator (List<Region> regs)
+            public Enumerator (List<Region> regs)
             {
                 _regions = regs;
+                _pos = -1;
             }
 
-            public RegionEnumerator (RegionManager rm)
+            public Enumerator (RegionManager rm)
             {
                 _regions = new List<Region>();
+                _pos = -1;
 
                 if (!Directory.Exists(rm.GetRegionPath())) {
                     throw new DirectoryNotFoundException();

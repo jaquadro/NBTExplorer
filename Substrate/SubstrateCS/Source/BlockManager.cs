@@ -25,6 +25,7 @@ namespace Substrate
         protected IChunkManager _chunkMan;
 
         protected ChunkRef _cache;
+        protected AlphaBlockCollection _blocks;
 
         private bool _autoLight = true;
         private bool _autoFluid = false;

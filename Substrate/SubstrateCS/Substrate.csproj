@@ -64,7 +64,9 @@
   <ItemGroup>
     <Compile Include="Source\AlphaBlock.cs" />
     <Compile Include="Source\AlphaBlockRef.cs" />
+    <Compile Include="Source\CacheTable.cs" />
     <Compile Include="Source\Core\BlockFluid.cs" />
+    <Compile Include="Source\Core\PlayerManagerInterface.cs" />
     <Compile Include="Source\Data.cs" />
     <Compile Include="Source\ItemInfo.cs" />
     <Compile Include="Source\Core\ChunkCache.cs" />
@@ -74,7 +76,14 @@
     <Compile Include="Source\Core\BlockLight.cs" />
     <Compile Include="Source\Core\BlockTileEntities.cs" />
     <Compile Include="Source\Level.cs" />
-    <Compile Include="Source\NBT\INBTObject.cs" />
+    <Compile Include="Source\NBT\INBTObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\NBT\NbtIOException.cs" />
+    <Compile Include="Source\NBT\NbtTree.cs" />
+    <Compile Include="Source\NBT\NBTVerifier.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Source\NBT\SchemaNode.cs" />
     <Compile Include="Source\NBT\SchemaNodeArray.cs" />
     <Compile Include="Source\NBT\SchemaNodeCompound.cs" />
@@ -96,6 +105,8 @@
     <Compile Include="Source\NBT\TagNodeByte.cs" />
     <Compile Include="Source\NBT\TagNodeNull.cs" />
     <Compile Include="Source\NBT\VerifierLogger.cs" />
+    <Compile Include="Source\Orientation.cs" />
+    <Compile Include="Source\PlayerIOException.cs" />
     <Compile Include="Source\PlayerManager.cs" />
     <Compile Include="Source\Core\PlayerFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -142,13 +153,12 @@
     <Compile Include="Source\Item.cs" />
     <Compile Include="Source\Core\NBTFile.cs" />
     <Compile Include="Source\NBT\JSONSerializer.cs" />
-    <Compile Include="Source\NBT\NBT.cs" />
-    <Compile Include="Source\NBT\NBTVerifier.cs" />
     <Compile Include="Source\Player.cs" />
     <Compile Include="Source\Region.cs" />
     <Compile Include="Source\Core\RegionFile.cs" />
     <Compile Include="Source\Core\RegionKey.cs" />
     <Compile Include="Source\RegionManager.cs" />
+    <Compile Include="Source\SpawnPoint.cs" />
     <Compile Include="Source\TileEntities\TileEntityChest.cs" />
     <Compile Include="Source\TileEntities\TileEntityFurnace.cs" />
     <Compile Include="Source\TileEntities\TileEntityMobSpawner.cs" />
@@ -164,6 +174,7 @@
     <Compile Include="Source\Core\Interface.cs" />
     <Compile Include="Source\Core\LRUCache.cs" />
     <Compile Include="Source\Core\NibbleArray.cs" />
+    <Compile Include="Source\Vector.cs" />
     <Compile Include="Source\World.cs" />
   </ItemGroup>
   <ItemGroup>

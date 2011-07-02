@@ -118,10 +118,11 @@ namespace Substrate
 
     public class ItemInfo
     {
-        public class ItemCache<T>
+        private static Random _rand = new Random();
+
+        private class CacheTableDict<T> : ICacheTable<T>
         {
             private Dictionary<int, T> _cache;
-            private static Random _rand = new Random();
 
             public T this[int index]
             {
@@ -135,25 +136,24 @@ namespace Substrate
                 }
             }
 
-            public ItemCache (Dictionary<int, T> cache)
+            public CacheTableDict (Dictionary<int, T> cache)
             {
                 _cache = cache;
             }
-
-            public T Random ()
-            {
-                List<T> list = new List<T>(_cache.Values);
-                return list[_rand.Next(list.Count)];
-            }
         }
 
-        private static Dictionary<int, ItemInfo> _itemTable;
+        private static readonly Dictionary<int, ItemInfo> _itemTable;
 
         private int _id = 0;
         private string _name = "";
         private int _stack = 1;
 
-        public static ItemCache<ItemInfo> ItemTable;
+        private static readonly CacheTableDict<ItemInfo> _itemTableCache;
+
+        public static ICacheTable<ItemInfo> ItemTable
+        {
+            get { return _itemTableCache; }
+        }
 
         public int ID
         {
@@ -189,6 +189,11 @@ namespace Substrate
             return this;
         }
 
+        public static ItemInfo GetRandomItem ()
+        {
+            List<ItemInfo> list = new List<ItemInfo>(_itemTable.Values);
+            return list[_rand.Next(list.Count)];
+        }
 
         public static ItemInfo IronShovel;
         public static ItemInfo IronPickaxe;
@@ -300,8 +305,7 @@ namespace Substrate
         static ItemInfo ()
         {
             _itemTable = new Dictionary<int, ItemInfo>();
-
-            ItemTable = new ItemCache<ItemInfo>(_itemTable);
+            _itemTableCache = new CacheTableDict<ItemInfo>(_itemTable);
 
             IronShovel = new ItemInfo(256, "Iron Shovel");
             IronPickaxe = new ItemInfo(257, "Iron Pickaxe");

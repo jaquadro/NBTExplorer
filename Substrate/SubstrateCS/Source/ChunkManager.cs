@@ -262,7 +262,7 @@ namespace Substrate
 
         public IEnumerator<ChunkRef> GetEnumerator ()
         {
-            return new ChunkEnumerator(this);
+            return new Enumerator(this);
         }
 
         #endregion
@@ -272,13 +272,13 @@ namespace Substrate
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
         {
-            return new ChunkEnumerator(this);
+            return new Enumerator(this);
         }
 
         #endregion
 
 
-        public class ChunkEnumerator : IEnumerator<ChunkRef>
+        private class Enumerator : IEnumerator<ChunkRef>
         {
             private ChunkManager _cm;
 
@@ -289,7 +289,7 @@ namespace Substrate
             private int _x = 0;
             private int _z = -1;
 
-            public ChunkEnumerator (ChunkManager cm)
+            public Enumerator (ChunkManager cm)
             {
                 _cm = cm;
                 _enum = _cm.GetRegionManager().GetEnumerator();

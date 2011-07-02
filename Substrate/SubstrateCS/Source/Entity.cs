@@ -77,7 +77,7 @@ namespace Substrate
         }
 
         /// <summary>
-        /// Gets or sets the reamining air availale to the entity.
+        /// Gets or sets the remaining air availale to the entity.
         /// </summary>
         public int Air
         {
@@ -108,7 +108,7 @@ namespace Substrate
         /// Constructs a new generic <see cref="Entity"/> by copying fields from another <see cref="Entity"/> object.
         /// </summary>
         /// <param name="e">An <see cref="Entity"/> to copy fields from.</param>
-        public Entity (Entity e)
+        protected Entity (Entity e)
         {
             _pos = new Vector3();
             _pos.X = e._pos.X;
@@ -288,7 +288,7 @@ namespace Substrate
         /// Constructs a new <see cref="EntityTyped"/> by copying an existing one.
         /// </summary>
         /// <param name="e">The <see cref="EntityTyped"/> to copy.</param>
-        public EntityTyped (EntityTyped e)
+        protected EntityTyped (EntityTyped e)
             : base(e)
         {
             _id = e._id;

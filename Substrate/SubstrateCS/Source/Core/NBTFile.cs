@@ -21,30 +21,39 @@ namespace Substrate.Core
             return File.Exists(_filename);
         }
 
-        public bool Delete ()
+        public void Delete ()
         {
             File.Delete(_filename);
-            return true;
         }
 
         public virtual Stream GetDataInputStream ()
         {
-            FileStream fstr = new FileStream(_filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            try {
+                FileStream fstr = new FileStream(_filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-            long length = fstr.Seek(0, SeekOrigin.End);
-            fstr.Seek(0, SeekOrigin.Begin);
+                long length = fstr.Seek(0, SeekOrigin.End);
+                fstr.Seek(0, SeekOrigin.Begin);
 
-            byte[] data = new byte[length];
-            fstr.Read(data, 0, data.Length);
+                byte[] data = new byte[length];
+                fstr.Read(data, 0, data.Length);
 
-            fstr.Close();
+                fstr.Close();
 
-            return new GZipStream(new MemoryStream(data), CompressionMode.Decompress);
+                return new GZipStream(new MemoryStream(data), CompressionMode.Decompress);
+            }
+            catch (Exception ex) {
+                throw new NbtIOException("Failed to open compressed NBT data stream for input.", ex);
+            }
         }
 
         public virtual Stream GetDataOutputStream ()
         {
-            return new GZipStream(new NBTBuffer(this), CompressionMode.Compress);
+            try {
+                return new GZipStream(new NBTBuffer(this), CompressionMode.Compress);
+            }
+            catch (Exception ex) {
+                throw new NbtIOException("Failed to initialize compressed NBT data stream for output.", ex);
+            }
         }
 
         class NBTBuffer : MemoryStream
@@ -59,9 +68,21 @@ namespace Substrate.Core
 
             public override void Close ()
             {
-                FileStream fstr = new FileStream(file._filename, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
-                fstr.Write(this.GetBuffer(), 0, (int)this.Length);
-                fstr.Close();
+                FileStream fstr;
+                try {
+                    fstr = new FileStream(file._filename, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
+                }
+                catch (Exception ex) {
+                    throw new NbtIOException("Failed to open NBT data stream for output.", ex);
+                }
+
+                try {
+                    fstr.Write(this.GetBuffer(), 0, (int)this.Length);
+                    fstr.Close();
+                }
+                catch (Exception ex) {
+                    throw new NbtIOException("Failed to write out NBT data stream.", ex);
+                }
             }
         }
 
