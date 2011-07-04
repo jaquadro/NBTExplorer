@@ -300,7 +300,7 @@ namespace Substrate
         /// <summary>
         /// Gets a <see cref="SchemaNode"/> representing the basic schema of an Entity.
         /// </summary>
-        public static SchemaNodeCompound Schema
+        public static new SchemaNodeCompound Schema
         {
             get { return _schema; }
         }

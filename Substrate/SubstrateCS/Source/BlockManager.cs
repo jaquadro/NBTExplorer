@@ -12,20 +12,19 @@ namespace Substrate
         public const int MIN_Z = -32000000;
         public const int MAX_Z = 32000000;
 
-        protected int _chunkXDim;
-        protected int _chunkYDim;
-        protected int _chunkZDim;
-        protected int _chunkXMask;
-        protected int _chunkYMask;
-        protected int _chunkZMask;
-        protected int _chunkXLog;
-        protected int _chunkYLog;
-        protected int _chunkZLog;
+        protected int chunkXDim;
+        protected int chunkYDim;
+        protected int chunkZDim;
+        protected int chunkXMask;
+        protected int chunkYMask;
+        protected int chunkZMask;
+        protected int chunkXLog;
+        protected int chunkYLog;
+        protected int chunkZLog;
 
-        protected IChunkManager _chunkMan;
+        protected IChunkManager chunkMan;
 
-        protected ChunkRef _cache;
-        protected AlphaBlockCollection _blocks;
+        protected ChunkRef cache;
 
         private bool _autoLight = true;
         private bool _autoFluid = false;
@@ -44,56 +43,56 @@ namespace Substrate
 
         public BlockManager (IChunkManager cm)
         {
-            _chunkMan = cm;
+            chunkMan = cm;
 
             Chunk c = Chunk.Create(0, 0);
 
-            _chunkXDim = c.Blocks.XDim;
-            _chunkYDim = c.Blocks.YDim;
-            _chunkZDim = c.Blocks.ZDim;
-            _chunkXMask = _chunkXDim - 1;
-            _chunkYMask = _chunkYDim - 1;
-            _chunkZMask = _chunkZDim - 1;
-            _chunkXLog = Log2(_chunkXDim);
-            _chunkYLog = Log2(_chunkYDim);
-            _chunkZLog = Log2(_chunkZDim);
+            chunkXDim = c.Blocks.XDim;
+            chunkYDim = c.Blocks.YDim;
+            chunkZDim = c.Blocks.ZDim;
+            chunkXMask = chunkXDim - 1;
+            chunkYMask = chunkYDim - 1;
+            chunkZMask = chunkZDim - 1;
+            chunkXLog = Log2(chunkXDim);
+            chunkYLog = Log2(chunkYDim);
+            chunkZLog = Log2(chunkZDim);
         }
 
         public AlphaBlock GetBlock (int x, int y, int z)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
                 return null;
             }
 
-            return _cache.Blocks.GetBlock(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            return cache.Blocks.GetBlock(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
         public AlphaBlockRef GetBlockRef (int x, int y, int z)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
                 return new AlphaBlockRef();
             }
 
-            return _cache.Blocks.GetBlockRef(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            return cache.Blocks.GetBlockRef(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
         public void SetBlock (int x, int y, int z, AlphaBlock block)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
                 return;
             }
 
-            _cache.Blocks.SetBlock(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask, block);
+            cache.Blocks.SetBlock(x & chunkXMask, y & chunkYMask, z & chunkZMask, block);
         }
 
         protected ChunkRef GetChunk (int x, int y, int z)
         {
-            x >>= _chunkXLog;
-            z >>= _chunkZLog;
-            return _chunkMan.GetChunkRef(x, z);
+            x >>= chunkXLog;
+            z >>= chunkZLog;
+            return chunkMan.GetChunkRef(x, z);
         }
 
         private int Log2 (int x)
@@ -132,46 +131,46 @@ namespace Substrate
 
         public void SetBlock (int x, int y, int z, IBlock block)
         {
-            _cache.Blocks.SetBlock(x, y, z, block);
+            cache.Blocks.SetBlock(x, y, z, block);
         }
 
         public BlockInfo GetInfo (int x, int y, int z)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
                 return null;
             }
 
-            return _cache.Blocks.GetInfo(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            return cache.Blocks.GetInfo(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
         public int GetID (int x, int y, int z)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null) {
+            cache = GetChunk(x, y, z);
+            if (cache == null) {
                 return 0;
             }
 
-            return _cache.Blocks.GetID(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            return cache.Blocks.GetID(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
         public void SetID (int x, int y, int z, int id)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
                 return;
             }
 
-            bool autolight = _cache.Blocks.AutoLight;
-            bool autofluid = _cache.Blocks.AutoFluid;
+            bool autolight = cache.Blocks.AutoLight;
+            bool autofluid = cache.Blocks.AutoFluid;
 
-            _cache.Blocks.AutoLight = _autoLight;
-            _cache.Blocks.AutoFluid = _autoFluid;
+            cache.Blocks.AutoLight = _autoLight;
+            cache.Blocks.AutoFluid = _autoFluid;
 
-            _cache.Blocks.SetID(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask, id);
+            cache.Blocks.SetID(x & chunkXMask, y & chunkYMask, z & chunkZMask, id);
 
-            _cache.Blocks.AutoFluid = autofluid;
-            _cache.Blocks.AutoLight = autolight;
+            cache.Blocks.AutoFluid = autofluid;
+            cache.Blocks.AutoLight = autolight;
         }
 
         #endregion
@@ -191,27 +190,27 @@ namespace Substrate
 
         public void SetBlock (int x, int y, int z, IDataBlock block)
         {
-            _cache.Blocks.SetBlock(x, y, z, block);
+            cache.Blocks.SetBlock(x, y, z, block);
         }
 
         public int GetData (int x, int y, int z)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null) {
+            cache = GetChunk(x, y, z);
+            if (cache == null) {
                 return 0;
             }
 
-            return _cache.Blocks.GetData(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            return cache.Blocks.GetData(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
         public void SetData (int x, int y, int z, int data)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
                 return;
             }
 
-            _cache.Blocks.SetData(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask, data);
+            cache.Blocks.SetData(x & chunkXMask, y & chunkYMask, z & chunkZMask, data);
         }
 
         #endregion
@@ -231,87 +230,87 @@ namespace Substrate
 
         public void SetBlock (int x, int y, int z, ILitBlock block)
         {
-            _cache.Blocks.SetBlock(x, y, z, block);
+            cache.Blocks.SetBlock(x, y, z, block);
         }
 
         public int GetBlockLight (int x, int y, int z)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null) {
+            cache = GetChunk(x, y, z);
+            if (cache == null) {
                 return 0;
             }
 
-            return _cache.Blocks.GetBlockLight(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            return cache.Blocks.GetBlockLight(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
         public int GetSkyLight (int x, int y, int z)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null) {
+            cache = GetChunk(x, y, z);
+            if (cache == null) {
                 return 0;
             }
 
-            return _cache.Blocks.GetSkyLight(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            return cache.Blocks.GetSkyLight(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
         public void SetBlockLight (int x, int y, int z, int light)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
                 return;
             }
 
-            _cache.Blocks.SetBlockLight(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask, light);
+            cache.Blocks.SetBlockLight(x & chunkXMask, y & chunkYMask, z & chunkZMask, light);
         }
 
         public void SetSkyLight (int x, int y, int z, int light)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
                 return;
             }
 
-            _cache.Blocks.SetSkyLight(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask, light);
+            cache.Blocks.SetSkyLight(x & chunkXMask, y & chunkYMask, z & chunkZMask, light);
         }
 
         public int GetHeight (int x, int z)
         {
-            _cache = GetChunk(x, 0, z);
-            if (_cache == null || !Check(x, 0, z)) {
+            cache = GetChunk(x, 0, z);
+            if (cache == null || !Check(x, 0, z)) {
                 return 0;
             }
 
-            return _cache.Blocks.GetHeight(x & _chunkXMask, z & _chunkZMask);
+            return cache.Blocks.GetHeight(x & chunkXMask, z & chunkZMask);
         }
 
         public void SetHeight (int x, int z, int height)
         {
-            _cache = GetChunk(x, 0, z);
-            if (_cache == null || !Check(x, 0, z)) {
+            cache = GetChunk(x, 0, z);
+            if (cache == null || !Check(x, 0, z)) {
                 return;
             }
 
-            _cache.Blocks.SetHeight(x & _chunkXMask, z & _chunkZMask, height);
+            cache.Blocks.SetHeight(x & chunkXMask, z & chunkZMask, height);
         }
 
         public void UpdateBlockLight (int x, int y, int z)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
                 return;
             }
 
-            _cache.Blocks.UpdateBlockLight(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            cache.Blocks.UpdateBlockLight(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
         public void UpdateSkyLight (int x, int y, int z)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
                 return;
             }
 
-            _cache.Blocks.UpdateBlockLight(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            cache.Blocks.UpdateBlockLight(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
         #endregion
@@ -331,47 +330,47 @@ namespace Substrate
 
         public void SetBlock (int x, int y, int z, IPropertyBlock block)
         {
-            _cache.Blocks.SetBlock(x, y, z, block);
+            cache.Blocks.SetBlock(x, y, z, block);
         }
 
         public TileEntity GetTileEntity (int x, int y, int z)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
                 return null;
             }
 
-            return _cache.Blocks.GetTileEntity(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            return cache.Blocks.GetTileEntity(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
         public void SetTileEntity (int x, int y, int z, TileEntity te)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
                 return;
             }
 
-            _cache.Blocks.SetTileEntity(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask, te);
+            cache.Blocks.SetTileEntity(x & chunkXMask, y & chunkYMask, z & chunkZMask, te);
         }
 
         public void CreateTileEntity (int x, int y, int z)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
                 return;
             }
 
-            _cache.Blocks.CreateTileEntity(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            cache.Blocks.CreateTileEntity(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
         public void ClearTileEntity (int x, int y, int z)
         {
-            _cache = GetChunk(x, y, z);
-            if (_cache == null || !Check(x, y, z)) {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
                 return;
             }
 
-            _cache.Blocks.ClearTileEntity(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            cache.Blocks.ClearTileEntity(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
         #endregion

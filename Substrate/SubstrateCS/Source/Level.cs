@@ -5,9 +5,12 @@ using Substrate.Nbt;
 
 namespace Substrate
 {
+    /// <summary>
+    /// Represents general data and metadata of a single world.
+    /// </summary>
     public class Level : INbtObject<Level>, ICopyable<Level>
     {
-        public static SchemaNodeCompound LevelSchema = new SchemaNodeCompound()
+        private static SchemaNodeCompound _schema = new SchemaNodeCompound()
         {
             new SchemaNodeCompound("Data")
             {
@@ -28,7 +31,7 @@ namespace Substrate
             },
         };
 
-        private INBTWorld _world;
+        private NbtWorld _world;
 
         private long _time;
         private long _lastPlayed;
@@ -49,17 +52,27 @@ namespace Substrate
         private int? _rainTime;
         private int? _thunderTime;
 
+        /// <summary>
+        /// Gets or sets the creation time of the world as a long timestamp.
+        /// </summary>
         public long Time
         {
             get { return _time; }
             set { _time = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the time that the world was last played as a long timestamp.
+        /// </summary>
         public long LastPlayed
         {
             get { return _lastPlayed; }
+            set { _lastPlayed = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the player for single-player worlds.
+        /// </summary>
         public Player Player
         {
             get { return _player; }
@@ -70,41 +83,51 @@ namespace Substrate
             }
         }
 
-        public int SpawnX
+        /// <summary>
+        /// Gets or sets the world's spawn point.
+        /// </summary>
+        public SpawnPoint Spawn
         {
-            get { return _spawnX; }
-            set { _spawnX = value; }
+            get { return new SpawnPoint(_spawnX, _spawnY, _spawnZ); }
+            set
+            {
+                _spawnX = value.X;
+                _spawnY = value.Y;
+                _spawnZ = value.Z;
+            }
         }
 
-        public int SpawnY
-        {
-            get { return _spawnY; }
-            set { _spawnY = value; }
-        }
-
-        public int SpawnZ
-        {
-            get { return _spawnZ; }
-            set { _spawnZ = value; }
-        }
-
+        /// <summary>
+        /// Gets the estimated size of the world in bytes.
+        /// </summary>
         public long SizeOnDisk
         {
             get { return _sizeOnDisk; }
         }
 
+        /// <summary>
+        /// Gets or sets the world's random seed.
+        /// </summary>
         public long RandomSeed
         {
             get { return _randomSeed; }
             set { _randomSeed = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the world's version number.
+        /// </summary>
         public int Version
         {
             get { return _version ?? 0; }
             set { _version = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the name of the world.
+        /// </summary>
+        /// <remarks>If there is a <see cref="Player"/> object attached to this world, the player's world field 
+        /// will also be updated.</remarks>
         public string LevelName
         {
             get { return _name; }
@@ -117,31 +140,55 @@ namespace Substrate
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating that it is raining in the world.
+        /// </summary>
         public bool IsRaining
         {
             get { return (_raining ?? 0) == 1; }
             set { _raining = value ? (byte)1 : (byte)0; }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating that it is thunderstorming in the world.
+        /// </summary>
         public bool IsThundering
         {
             get { return (_thundering ?? 0) == 1; }
             set { _thundering = value ? (byte)1 : (byte)0; }
         }
 
+        /// <summary>
+        /// Gets or sets the timer value for controlling rain.
+        /// </summary>
         public int RainTime
         {
             get { return _rainTime ?? 0; }
             set { _rainTime = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the timer value for controlling thunderstorms.
+        /// </summary>
         public int ThunderTime
         {
             get { return _thunderTime ?? 0; }
             set { _thunderTime = value; }
         }
 
-        public Level (INBTWorld world)
+        /// <summary>
+        /// Gets a <see cref="SchemaNode"/> representing the schema of a level.
+        /// </summary>
+        public static SchemaNodeCompound Schema
+        {
+            get { return _schema; }
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="Level"/> object with reasonable defaults tied to the given world.
+        /// </summary>
+        /// <param name="world">The world that the <see cref="Level"/> should be tied to.</param>
+        public Level (NbtWorld world)
         {
             _world = world;
 
@@ -157,7 +204,11 @@ namespace Substrate
             _name = "Untitled";
         }
 
-        public Level (Level p)
+        /// <summary>
+        /// Creates a copy of an existing <see cref="Level"/> object.
+        /// </summary>
+        /// <param name="p">The <see cref="Level"/> object to copy.</param>
+        protected Level (Level p)
         {
             _world = p._world;
 
@@ -181,6 +232,9 @@ namespace Substrate
             }
         }
 
+        /// <summary>
+        /// Creates a default player entry for this world.
+        /// </summary>
         public void SetDefaultPlayer ()
         {
             _player = new Player();
@@ -191,27 +245,46 @@ namespace Substrate
             _player.Position.Z = _spawnZ;
         }
 
+        /// <summary>
+        /// Saves a <see cref="Level"/> object to disk as a standard compressed NBT stream.
+        /// </summary>
+        /// <returns>True if the level was saved; false otherwise.</returns>
+        /// <exception cref="LevelIOException">Thrown when an error is encountered writing out the level.</exception>
         public bool Save ()
         {
             if (_world == null) {
                 return false;
             }
 
-            NBTFile nf = new NBTFile(Path.Combine(_world.WorldPath, "level.dat"));
-            Stream zipstr = nf.GetDataOutputStream();
-            if (zipstr == null) {
-                return false;
+            try {
+                NBTFile nf = new NBTFile(Path.Combine(_world.Path, "level.dat"));
+                Stream zipstr = nf.GetDataOutputStream();
+                if (zipstr == null) {
+                    NbtIOException nex = new NbtIOException("Failed to initialize compressed NBT stream for output");
+                    nex.Data["Level"] = this;
+                    throw nex;
+                }
+
+                new NbtTree(BuildTree() as TagNodeCompound).WriteTo(zipstr);
+                zipstr.Close();
+
+                return true;
             }
-
-            new NbtTree(BuildTree() as TagNodeCompound).WriteTo(zipstr);
-            zipstr.Close();
-
-            return true;
+            catch (Exception ex) {
+                LevelIOException lex = new LevelIOException("Could not save level file.", ex);
+                lex.Data["Level"] = this;
+                throw lex;
+            }
         }
 
 
         #region INBTObject<Player> Members
 
+        /// <summary>
+        /// Attempt to load a Level subtree into the <see cref="Level"/> without validation.
+        /// </summary>
+        /// <param name="tree">The root node of a Level subtree.</param>
+        /// <returns>The <see cref="Level"/> returns itself on success, or null if the tree was unparsable.</returns>
         public virtual Level LoadTree (TagNode tree)
         {
             TagNodeCompound dtree = tree as TagNodeCompound;
@@ -264,6 +337,11 @@ namespace Substrate
             return this;
         }
 
+        /// <summary>
+        /// Attempt to load a Level subtree into the <see cref="Level"/> with validation.
+        /// </summary>
+        /// <param name="tree">The root node of a Level subtree.</param>
+        /// <returns>The <see cref="Level"/> returns itself on success, or null if the tree failed validation.</returns>
         public virtual Level LoadTreeSafe (TagNode tree)
         {
             if (!ValidateTree(tree)) {
@@ -273,6 +351,10 @@ namespace Substrate
             return LoadTree(tree);
         }
 
+        /// <summary>
+        /// Builds a Level subtree from the current data.
+        /// </summary>
+        /// <returns>The root node of a Level subtree representing the current data.</returns>
         public virtual TagNode BuildTree ()
         {
             TagNodeCompound data = new TagNodeCompound();
@@ -316,9 +398,14 @@ namespace Substrate
             return tree;
         }
 
+        /// <summary>
+        /// Validate a Level subtree against a schema defintion.
+        /// </summary>
+        /// <param name="tree">The root node of a Level subtree.</param>
+        /// <returns>Status indicating whether the tree was valid against the internal schema.</returns>
         public virtual bool ValidateTree (TagNode tree)
         {
-            return new NbtVerifier(tree, LevelSchema).Verify();
+            return new NbtVerifier(tree, _schema).Verify();
         }
 
         #endregion
@@ -326,6 +413,10 @@ namespace Substrate
 
         #region ICopyable<Entity> Members
 
+        /// <summary>
+        /// Creates a deep-copy of the <see cref="Level"/>.
+        /// </summary>
+        /// <returns>A deep-copy of the <see cref="Level"/>, including a copy of the <see cref="Player"/>, if one is attached.</returns>
         public virtual Level Copy ()
         {
             return new Level(this);

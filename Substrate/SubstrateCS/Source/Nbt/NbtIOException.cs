@@ -9,7 +9,7 @@ namespace Substrate.Nbt
     /// <remarks>In most cases, the <see cref="InnerException"/> property will contain more detailed information on the
     /// error that occurred.</remarks>
     [Serializable]
-    public class NbtIOException : Exception
+    public class NbtIOException : SubstrateException
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NbtIOException"/> class.

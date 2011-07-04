@@ -43,7 +43,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>Substrate.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\Substrate.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -52,7 +52,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>Substrate.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\Substrate.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zlib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -62,6 +62,10 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Source\AlphaWorld.cs" />
+    <Compile Include="Source\BetaWorld.cs" />
+    <Compile Include="Source\Core\OpenWorldEvent.cs" />
+    <Compile Include="Source\LevelIOException.cs" />
     <Compile Include="Source\AlphaBlock.cs" />
     <Compile Include="Source\AlphaBlockRef.cs" />
     <Compile Include="Source\CacheTable.cs" />
@@ -76,6 +80,7 @@
     <Compile Include="Source\Core\BlockLight.cs" />
     <Compile Include="Source\Core\BlockTileEntities.cs" />
     <Compile Include="Source\Level.cs" />
+    <Compile Include="Source\NbtWorld.cs" />
     <Compile Include="Source\NBT\INBTObject.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -159,6 +164,7 @@
     <Compile Include="Source\Core\RegionKey.cs" />
     <Compile Include="Source\RegionManager.cs" />
     <Compile Include="Source\SpawnPoint.cs" />
+    <Compile Include="Source\SubstrateException.cs" />
     <Compile Include="Source\TileEntities\TileEntityChest.cs" />
     <Compile Include="Source\TileEntities\TileEntityFurnace.cs" />
     <Compile Include="Source\TileEntities\TileEntityMobSpawner.cs" />

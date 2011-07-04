@@ -6,29 +6,29 @@ namespace Substrate.Core
 {
     public class ByteArray : ICopyable<ByteArray>
     {
-        protected readonly byte[] _data;
+        protected readonly byte[] dataArray;
 
         public ByteArray (byte[] data)
         {
-            _data = data;
+            dataArray = data;
         }
 
         public byte this[int i]
         {
-            get { return _data[i]; }
-            set { _data[i] = value; }
+            get { return dataArray[i]; }
+            set { dataArray[i] = value; }
         }
 
         public int Length
         {
-            get { return _data.Length; }
+            get { return dataArray.Length; }
         }
 
         public void Clear ()
         {
-            for (int i = 0; i < _data.Length; i++)
+            for (int i = 0; i < dataArray.Length; i++)
             {
-                _data[i] = 0;
+                dataArray[i] = 0;
             }
         }
 
@@ -36,8 +36,8 @@ namespace Substrate.Core
 
         public virtual ByteArray Copy ()
         {
-            byte[] data = new byte[_data.Length];
-            _data.CopyTo(data, 0);
+            byte[] data = new byte[dataArray.Length];
+            dataArray.CopyTo(data, 0);
 
             return new ByteArray(data);
         }
@@ -69,13 +69,13 @@ namespace Substrate.Core
             get
             {
                 int index = _ydim * (x * _zdim + z) + y;
-                return _data[index];
+                return dataArray[index];
             }
 
             set
             {
                 int index = _ydim * (x * _zdim + z) + y;
-                _data[index] = value;
+                dataArray[index] = value;
             }
         }
 
@@ -113,8 +113,8 @@ namespace Substrate.Core
 
         public override ByteArray Copy ()
         {
-            byte[] data = new byte[_data.Length];
-            _data.CopyTo(data, 0);
+            byte[] data = new byte[dataArray.Length];
+            dataArray.CopyTo(data, 0);
 
             return new XZYByteArray(_xdim, _ydim, _zdim, data);
         }
@@ -144,13 +144,13 @@ namespace Substrate.Core
             get
             {
                 int index = z * _xdim + x;
-                return _data[index];
+                return dataArray[index];
             }
 
             set
             {
                 int index = z * _xdim + x;
-                _data[index] = value;
+                dataArray[index] = value;
             }
         }
 
@@ -168,8 +168,8 @@ namespace Substrate.Core
 
         public override ByteArray Copy ()
         {
-            byte[] data = new byte[_data.Length];
-            _data.CopyTo(data, 0);
+            byte[] data = new byte[dataArray.Length];
+            dataArray.CopyTo(data, 0);
 
             return new ZXByteArray(_xdim, _zdim, data);
         }

@@ -224,7 +224,7 @@ namespace Substrate.Core
 
         public IEnumerator<ChunkRef> GetEnumerator ()
         {
-            return new ChunkEnumerator(this);
+            return new Enumerator(this);
         }
 
         #endregion
@@ -233,13 +233,13 @@ namespace Substrate.Core
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
         {
-            return new ChunkEnumerator(this);
+            return new Enumerator(this);
         }
 
         #endregion
 
 
-        public class ChunkEnumerator : IEnumerator<ChunkRef>
+        private class Enumerator : IEnumerator<ChunkRef>
         {
             protected ChunkFileManager _cm;
             protected Queue<string> _tld;
@@ -250,7 +250,7 @@ namespace Substrate.Core
             private string _cursld;
             private ChunkRef _curchunk;
 
-            public ChunkEnumerator (ChunkFileManager cfm)
+            public Enumerator (ChunkFileManager cfm)
             {
                 _cm = cfm;
 

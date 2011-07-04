@@ -124,7 +124,6 @@ namespace Substrate
             c._cz = z;
 
             c.BuildNBTTree();
-
             return c;
         }
 

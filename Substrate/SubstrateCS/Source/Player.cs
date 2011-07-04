@@ -197,7 +197,7 @@ namespace Substrate
         /// <summary>
         /// Gets a <see cref="SchemaNode"/> representing the schema of a Player.
         /// </summary>
-        public static SchemaNodeCompound Schema
+        public static new SchemaNodeCompound Schema
         {
             get { return _schema; }
         }
