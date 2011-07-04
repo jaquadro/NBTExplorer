@@ -6,20 +6,7 @@ using Substrate.Core;
 
 namespace Substrate
 {
-    public interface IRegionContainer
-    {
-        bool RegionExists (int rx, int rz);
-
-        Region GetRegion (int rx, int rz);
-        Region CreateRegion (int rx, int rz);
-
-        bool DeleteRegion (int rx, int rz);
-    }
-
-    public interface IRegionManager : IRegionContainer, IEnumerable<Region>
-    {
-    }
-
+    
     public class RegionManager : IRegionManager
     {
         protected string _regionPath;
@@ -152,11 +139,11 @@ namespace Substrate
             private List<Region> _regions;
             private int _pos;
 
-            public Enumerator (List<Region> regs)
+            /*public Enumerator (List<Region> regs)
             {
                 _regions = regs;
                 _pos = -1;
-            }
+            }*/
 
             public Enumerator (RegionManager rm)
             {

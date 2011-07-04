@@ -13,7 +13,7 @@ namespace Substrate
     /// Entities of Minecraft are registered with the factory at startup and bound to their respective 'id' fields.</remarks>
     public class EntityFactory
     {
-        private static Dictionary<string, Type> _registry;
+        private static Dictionary<string, Type> _registry = new Dictionary<string, Type>();
 
         /// <summary>
         /// Create a new instance of a concrete <see cref="EntityTyped"/> type by name.
@@ -79,8 +79,6 @@ namespace Substrate
 
         static EntityFactory ()
         {
-            _registry = new Dictionary<string, Type>();
-
             _registry["Arrow"] = typeof(EntityArrow);
             _registry["Boat"] = typeof(EntityBoat);
             _registry["Chicken"] = typeof(EntityChicken);

@@ -30,7 +30,7 @@ namespace Substrate
                 new SchemaNodeArray("SkyLight", 16384),
                 new SchemaNodeArray("BlockLight", 16384),
                 new SchemaNodeArray("HeightMap", 256),
-                new SchemaNodeList("Entities", TagType.TAG_COMPOUND, 0, SchemaOptions.CREATE_ON_MISSING),
+                new SchemaNodeList("Entities", TagType.TAG_COMPOUND, SchemaOptions.CREATE_ON_MISSING),
                 new SchemaNodeList("TileEntities", TagType.TAG_COMPOUND, TileEntity.Schema, SchemaOptions.CREATE_ON_MISSING),
                 new SchemaNodeScaler("LastUpdate", TagType.TAG_LONG, SchemaOptions.CREATE_ON_MISSING),
                 new SchemaNodeScaler("xPos", TagType.TAG_INT),

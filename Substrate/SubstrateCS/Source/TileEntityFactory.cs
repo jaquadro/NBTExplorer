@@ -14,7 +14,7 @@ namespace Substrate
     /// Tile Entities of Minecraft are registered with the factory at startup and bound to their respective 'id' fields.</remarks>
     public class TileEntityFactory
     {
-        private static Dictionary<string, Type> _registry;
+        private static Dictionary<string, Type> _registry = new Dictionary<string, Type>();
 
         /// <summary>
         /// Create a new instance of a concrete <see cref="TileEntity"/> type by name.
@@ -77,8 +77,6 @@ namespace Substrate
 
         static TileEntityFactory ()
         {
-            _registry = new Dictionary<string, Type>();
-
             _registry["Chest"] = typeof(TileEntityChest);
             _registry["Furnace"] = typeof(TileEntityFurnace);
             _registry["MobSpawner"] = typeof(TileEntityMobSpawner);

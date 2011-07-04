@@ -9,6 +9,11 @@ namespace Substrate.Core
     {
         protected readonly byte[] _data = null;
 
+        public NibbleArray (int length)
+        {
+            _data = new byte[length / 2];
+        }
+
         public NibbleArray (byte[] data)
         {
             _data = data;
@@ -77,6 +82,14 @@ namespace Substrate.Core
         private readonly int _xdim;
         private readonly int _ydim;
         private readonly int _zdim;
+
+        public XZYNibbleArray (int xdim, int ydim, int zdim)
+            : base(xdim * ydim * zdim)
+        {
+            _xdim = xdim;
+            _ydim = ydim;
+            _zdim = zdim;
+        }
 
         public XZYNibbleArray (int xdim, int ydim, int zdim, byte[] data)
             : base(data)

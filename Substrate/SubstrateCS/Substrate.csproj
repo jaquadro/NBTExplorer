@@ -65,6 +65,8 @@
     <Compile Include="Source\AlphaWorld.cs" />
     <Compile Include="Source\BetaWorld.cs" />
     <Compile Include="Source\Core\OpenWorldEvent.cs" />
+    <Compile Include="Source\Core\RegionInterface.cs" />
+    <Compile Include="Source\IO\Schematic.cs" />
     <Compile Include="Source\LevelIOException.cs" />
     <Compile Include="Source\AlphaBlock.cs" />
     <Compile Include="Source\AlphaBlockRef.cs" />
