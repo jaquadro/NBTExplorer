@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Source\AlphaWorld.cs" />
+    <Compile Include="Source\BetaChunkManager.cs" />
     <Compile Include="Source\BetaWorld.cs" />
     <Compile Include="Source\Core\OpenWorldEvent.cs" />
     <Compile Include="Source\Core\RegionInterface.cs" />
@@ -123,10 +124,9 @@
     <Compile Include="Source\BlockManager.cs" />
     <Compile Include="Source\Chunk.cs" />
     <Compile Include="Source\Core\ChunkFile.cs" />
-    <Compile Include="Source\Core\ChunkFileManager.cs" />
+    <Compile Include="Source\AlphaChunkManager.cs" />
     <Compile Include="Source\Core\ChunkInterface.cs" />
     <Compile Include="Source\Core\ChunkKey.cs" />
-    <Compile Include="Source\ChunkManager.cs" />
     <Compile Include="Source\ChunkRef.cs" />
     <Compile Include="Source\Entities\EntityArrow.cs" />
     <Compile Include="Source\Entities\EntityBoat.cs" />
@@ -170,6 +170,7 @@
     <Compile Include="Source\TileEntities\TileEntityChest.cs" />
     <Compile Include="Source\TileEntities\TileEntityFurnace.cs" />
     <Compile Include="Source\TileEntities\TileEntityMobSpawner.cs" />
+    <Compile Include="Source\TileEntities\TileEntityPiston.cs" />
     <Compile Include="Source\TileEntities\TileEntityMusic.cs" />
     <Compile Include="Source\TileEntities\TileEntityRecordPlayer.cs" />
     <Compile Include="Source\TileEntities\TileEntitySign.cs" />

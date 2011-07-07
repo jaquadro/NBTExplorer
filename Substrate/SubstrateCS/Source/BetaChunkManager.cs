@@ -5,60 +5,80 @@ using Substrate.Core;
 
 namespace Substrate
 {
-    public class ChunkManager : IChunkManager, IEnumerable<ChunkRef>
+    /// <summary>
+    /// Represents a Beta-compatible interface for globally managing chunks.
+    /// </summary>
+    public class BetaChunkManager : IChunkManager, IEnumerable<ChunkRef>
     {
-        public const int REGION_XLEN = 32;
-        public const int REGION_ZLEN = 32;
+        private const int REGION_XLEN = 32;
+        private const int REGION_ZLEN = 32;
 
-        public const int REGION_XLOG = 5;
-        public const int REGION_ZLOG = 5;
+        private const int REGION_XLOG = 5;
+        private const int REGION_ZLOG = 5;
 
-        public const int REGION_XMASK = 0x1F;
-        public const int REGION_ZMASK = 0x1F;
+        private const int REGION_XMASK = 0x1F;
+        private const int REGION_ZMASK = 0x1F;
 
-        protected RegionManager _regionMan;
+        private RegionManager _regionMan;
 
-        //protected Dictionary<RegionKey, Region> _cache;
-        //protected Dictionary<RegionKey, Region> _dirty;
+        private ChunkCache _cache;
 
-        protected ChunkCache _cache;
-
-        public ChunkManager (RegionManager rm, ChunkCache cache)
+        /// <summary>
+        /// Creates a new <see cref="BetaChunkManager"/> instance given a backing <see cref="RegionManager"/> and <see cref="ChunkCache"/>.
+        /// </summary>
+        /// <param name="rm">A <see cref="RegionManager"/> exposing access to regions.</param>
+        /// <param name="cache">A shared cache for storing chunks read in.</param>
+        public BetaChunkManager (RegionManager rm, ChunkCache cache)
         {
             _regionMan = rm;
             _cache = cache;
-            //_cache = new Dictionary<RegionKey, Region>();
-            //_dirty = new Dictionary<RegionKey, Region>();
         }
 
-        public ChunkManager (ChunkManager cm)
+        /// <summary>
+        /// Creates a new <see cref="BetaChunkManager"/> instance from another.
+        /// </summary>
+        /// <param name="cm">A <see cref="BetaChunkManager"/> to get a <see cref="RegionManager"/> and <see cref="ChunkCache"/> from.</param>
+        public BetaChunkManager (BetaChunkManager cm)
         {
             _regionMan = cm._regionMan;
             _cache = cm._cache;
-            //_cache = new Dictionary<RegionKey, Region>();
-            //_dirty = new Dictionary<RegionKey, Region>();
         }
 
+        /// <summary>
+        /// Gets the <see cref="RegionManager"/> backing this manager.
+        /// </summary>
+        public RegionManager RegionManager
+        {
+            get { return _regionMan; }
+        }
+
+        #region IChunkContainer
+
+        /// <inheritdoc/>
         public int ChunkGlobalX (int cx)
         {
             return cx;
         }
 
+        /// <inheritdoc/>
         public int ChunkGlobalZ (int cz)
         {
             return cz;
         }
 
+        /// <inheritdoc/>
         public int ChunkLocalX (int cx)
         {
             return cx & REGION_XMASK;
         }
 
+        /// <inheritdoc/>
         public int ChunkLocalZ (int cz)
         {
             return cz & REGION_ZMASK;
         }
 
+        /// <inheritdoc/>
         public Chunk GetChunk (int cx, int cz)
         {
             Region r = GetRegion(cx, cz);
@@ -69,6 +89,7 @@ namespace Substrate
             return r.GetChunk(cx & REGION_XMASK, cz & REGION_ZMASK);
         }
 
+        /// <inheritdoc/>
         public ChunkRef GetChunkRef (int cx, int cz)
         {
             Region r = GetRegion(cx, cz);
@@ -79,6 +100,7 @@ namespace Substrate
             return r.GetChunkRef(cx & REGION_XMASK, cz & REGION_ZMASK);
         }
 
+        /// <inheritdoc/>
         public bool ChunkExists (int cx, int cz)
         {
             Region r = GetRegion(cx, cz);
@@ -89,6 +111,7 @@ namespace Substrate
             return r.ChunkExists(cx & REGION_XMASK, cz & REGION_ZMASK);
         }
 
+        /// <inheritdoc/>
         public ChunkRef CreateChunk (int cx, int cz)
         {
             Region r = GetRegion(cx, cz);
@@ -101,28 +124,7 @@ namespace Substrate
             return r.CreateChunk(cx & REGION_XMASK, cz & REGION_ZMASK);
         }
 
-        public ChunkRef CopyChunk (int src_cx, int src_cz, int dst_cx, int dst_cz)
-        {
-            Region src_r = GetRegion(src_cx, src_cz);
-            if (src_r == null) {
-                return null;
-            }
-
-            Region dst_r = GetRegion(dst_cx, dst_cz);
-            if (dst_r == null) {
-                int rx = dst_cx >> REGION_XLOG;
-                int rz = dst_cz >> REGION_ZLOG;
-                dst_r = _regionMan.CreateRegion(rx, rz);
-            }
-
-            Chunk c = src_r.GetChunk(src_cx & REGION_XMASK, src_cz & REGION_ZMASK).Copy();
-            c.SetLocation(dst_cx, dst_cz);
-
-            dst_r.SaveChunk(c);
-
-            return dst_r.GetChunkRef(dst_cx & REGION_XMASK, dst_cz & REGION_ZMASK);
-        }
-
+        /// <inheritdoc/>
         public ChunkRef SetChunk (int cx, int cz, Chunk chunk)
         {
             Region r = GetRegion(cx, cz);
@@ -138,6 +140,7 @@ namespace Substrate
             return r.GetChunkRef(cx & REGION_XMASK, cz & REGION_ZMASK);
         }
 
+        /// <inheritdoc/>
         public int Save ()
         {
             _cache.SyncDirty();
@@ -160,6 +163,7 @@ namespace Substrate
             return saved;
         }
 
+        /// <inheritdoc/>
         public bool SaveChunk (Chunk chunk)
         {
             Region r = GetRegion(chunk.X, chunk.Z);
@@ -170,6 +174,7 @@ namespace Substrate
             return r.SaveChunk(chunk);
         }
 
+        /// <inheritdoc/>
         public bool DeleteChunk (int cx, int cz)
         {
             Region r = GetRegion(cx, cz);
@@ -188,6 +193,47 @@ namespace Substrate
             return true;
         }
 
+        /// <inheritdoc/>
+        public bool CanDelegateCoordinates
+        {
+            get { return true; }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Copies a chunk from one location to another.
+        /// </summary>
+        /// <param name="src_cx">The global X-coordinate of the source chunk.</param>
+        /// <param name="src_cz">The global Z-coordinate of the source chunk.</param>
+        /// <param name="dst_cx">The global X-coordinate of the destination chunk.</param>
+        /// <param name="dst_cz">The global Z-coordinate of the destination chunk.</param>
+        /// <returns>A <see cref="ChunkRef"/> for the destination chunk.</returns>
+        public ChunkRef CopyChunk (int src_cx, int src_cz, int dst_cx, int dst_cz)
+        {
+            Region src_r = GetRegion(src_cx, src_cz);
+            if (src_r == null) {
+                return null;
+            }
+
+            Region dst_r = GetRegion(dst_cx, dst_cz);
+            if (dst_r == null) {
+                int rx = dst_cx >> REGION_XLOG;
+                int rz = dst_cz >> REGION_ZLOG;
+                dst_r = _regionMan.CreateRegion(rx, rz);
+            }
+
+            Chunk c = src_r.GetChunk(src_cx & REGION_XMASK, src_cz & REGION_ZMASK).Copy();
+            c.SetLocation(dst_cx, dst_cz);
+
+            dst_r.SaveChunk(c);
+
+            return dst_r.GetChunkRef(dst_cx & REGION_XMASK, dst_cz & REGION_ZMASK);
+        }
+
+        /// <summary>
+        /// Performs a full chunk relight sequence on all modified chunks.
+        /// </summary>
         public void RelightDirtyChunks ()
         {
             //List<ChunkRef> dirty = new List<ChunkRef>();
@@ -238,19 +284,14 @@ namespace Substrate
             }
         }
 
-        public RegionManager GetRegionManager ()
-        {
-            return _regionMan;
-        }
-
-        public ChunkRef GetChunkRefInRegion (Region r, int lcx, int lcz)
+        private ChunkRef GetChunkRefInRegion (Region r, int lcx, int lcz)
         {
             int cx = r.X * REGION_XLEN + lcx;
             int cz = r.Z * REGION_ZLEN + lcz;
             return GetChunkRef(cx, cz);
         }
 
-        protected Region GetRegion (int cx, int cz)
+        private Region GetRegion (int cx, int cz)
         {
             cx >>= REGION_XLOG;
             cz >>= REGION_ZLOG;
@@ -260,6 +301,10 @@ namespace Substrate
 
         #region IEnumerable<ChunkRef> Members
 
+        /// <summary>
+        /// Returns an enumerator that iterates through all chunks in all regions of the world.
+        /// </summary>
+        /// <returns>An enumerator for this manager.</returns>
         public IEnumerator<ChunkRef> GetEnumerator ()
         {
             return new Enumerator(this);
@@ -270,6 +315,7 @@ namespace Substrate
 
         #region IEnumerable Members
 
+        /// <inheritdoc/>
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
         {
             return new Enumerator(this);
@@ -280,7 +326,7 @@ namespace Substrate
 
         private class Enumerator : IEnumerator<ChunkRef>
         {
-            private ChunkManager _cm;
+            private BetaChunkManager _cm;
 
             private IEnumerator<Region> _enum;
             private Region _region;
@@ -289,10 +335,10 @@ namespace Substrate
             private int _x = 0;
             private int _z = -1;
 
-            public Enumerator (ChunkManager cm)
+            public Enumerator (BetaChunkManager cm)
             {
                 _cm = cm;
-                _enum = _cm.GetRegionManager().GetEnumerator();
+                _enum = _cm.RegionManager.GetEnumerator();
                 _enum.MoveNext();
                 _region = _enum.Current;
             }
@@ -304,7 +350,7 @@ namespace Substrate
                 }
                 else {
                     while (true) {
-                        if (_x >= ChunkManager.REGION_XLEN) {
+                        if (_x >= BetaChunkManager.REGION_XLEN) {
                             if (!_enum.MoveNext()) {
                                 return false;
                             }
@@ -322,8 +368,8 @@ namespace Substrate
 
             protected bool MoveNextInRegion ()
             {
-                for (; _x < ChunkManager.REGION_XLEN; _x++) {
-                    for (_z++; _z < ChunkManager.REGION_ZLEN; _z++) {
+                for (; _x < BetaChunkManager.REGION_XLEN; _x++) {
+                    for (_z++; _z < BetaChunkManager.REGION_ZLEN; _z++) {
                         if (_region.ChunkExists(_x, _z)) {
                             goto FoundNext;
                         }
@@ -333,7 +379,7 @@ namespace Substrate
 
             FoundNext:
 
-                return (_x < ChunkManager.REGION_XLEN);
+                return (_x < BetaChunkManager.REGION_XLEN);
             }
 
             public void Reset ()
@@ -369,7 +415,7 @@ namespace Substrate
             {
                 get
                 {
-                    if (_x >= ChunkManager.REGION_XLEN) {
+                    if (_x >= BetaChunkManager.REGION_XLEN) {
                         throw new InvalidOperationException();
                     }
                     return _chunk;

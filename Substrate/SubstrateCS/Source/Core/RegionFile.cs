@@ -26,7 +26,7 @@ namespace Substrate.Core
         private int sizeDelta;
         private long lastModified = 0;
 
-        protected bool _disposed = false;
+        private bool _disposed = false;
 
         public RegionFile(string path) {
             offsets = new int[SECTOR_INTS];

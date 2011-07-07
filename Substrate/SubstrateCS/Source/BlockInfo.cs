@@ -44,6 +44,7 @@ namespace Substrate
         public const int PISTON = 33;
         public const int PISTON_HEAD = 34;
         public const int WOOL = 35;
+        public const int PISTON_MOVING = 36;
         public const int YELLOW_FLOWER = 37;
         public const int RED_ROSE = 38;
         public const int BROWN_MUSHROOM = 39;
@@ -365,6 +366,7 @@ namespace Substrate
         public static BlockInfo Piston;
         public static BlockInfo PistonHead;
         public static BlockInfo Wool;
+        public static BlockInfoEx PistonMoving;
         public static BlockInfo YellowFlower;
         public static BlockInfo RedRose;
         public static BlockInfo BrownMushroom;
@@ -472,6 +474,7 @@ namespace Substrate
             Piston = new BlockInfo(33, "Piston").SetOpacity(0);
             PistonHead = new BlockInfo(34, "Piston Head").SetOpacity(0);
             Wool = new BlockInfo(35, "Wool");
+            PistonMoving = (BlockInfoEx)new BlockInfoEx(36, "Piston Moving").SetOpacity(0);
             YellowFlower = new BlockInfo(37, "Yellow Flower").SetOpacity(0).SetState(BlockState.NONSOLID);
             RedRose = new BlockInfo(38, "Red Rose").SetOpacity(0).SetState(BlockState.NONSOLID);
             BrownMushroom = new BlockInfo(39, "Brown Mushroom").SetOpacity(0).SetLuminance(1).SetState(BlockState.NONSOLID);
@@ -558,6 +561,7 @@ namespace Substrate
 
             Dispenser.SetTileEntity("Trap");
             NoteBlock.SetTileEntity("Music");
+            PistonMoving.SetTileEntity("Piston");
             MonsterSpawner.SetTileEntity("MobSpawner");
             Chest.SetTileEntity("Chest");
             Furnace.SetTileEntity("Furnace");

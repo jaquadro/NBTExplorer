@@ -299,8 +299,8 @@ namespace Substrate
             RegionFile rf = GetRegionFile();
 
             int count = 0;
-            for (int x = 0; x < ChunkManager.REGION_XLEN; x++) {
-                for (int z = 0; z < ChunkManager.REGION_ZLEN; z++) {
+            for (int x = 0; x < XDIM; x++) {
+                for (int z = 0; z < ZDIM; z++) {
                     if (rf.HasChunk(x, z)) {
                         count++;
                     }
@@ -319,7 +319,7 @@ namespace Substrate
         /// <returns>A <see cref="ChunkRef"/> at the given local coordinates, or null if no chunk exists.</returns>
         /// <remarks>The local coordinates do not strictly need to be within the bounds of the region.  If coordinates are detected
         /// as being out of bounds, the lookup will be delegated to the correct region and the lookup will be performed there
-        /// instead.  This allows any <see cref="Region"/> to perform a similar task to <see cref="ChunkManager"/>, but with a
+        /// instead.  This allows any <see cref="Region"/> to perform a similar task to <see cref="BetaChunkManager"/>, but with a
         /// region-local frame of reference instead of a global frame of reference.</remarks>
         public ChunkRef GetChunkRef (int lcx, int lcz)
         {
@@ -328,8 +328,8 @@ namespace Substrate
                 return (alt == null) ? null : alt.GetChunkRef(ForeignX(lcx), ForeignZ(lcz));
             }
 
-            int cx = lcx + _rx * ChunkManager.REGION_XLEN;
-            int cz = lcz + _rz * ChunkManager.REGION_ZLEN;
+            int cx = lcx + _rx * XDIM;
+            int cz = lcz + _rz * ZDIM;
 
             ChunkKey k = new ChunkKey(cx, cz);
             ChunkRef c = _cache.Fetch(k);
@@ -362,8 +362,8 @@ namespace Substrate
 
             DeleteChunk(lcx, lcz);
 
-            int cx = lcx + _rx * ChunkManager.REGION_XLEN;
-            int cz = lcz + _rz * ChunkManager.REGION_ZLEN;
+            int cx = lcx + _rx * XDIM;
+            int cz = lcz + _rz * ZDIM;
 
             Chunk c = Chunk.Create(cx, cz);
             c.Save(GetChunkOutStream(lcx, lcz));
@@ -385,17 +385,17 @@ namespace Substrate
         /// <returns>The global X-coordinate of the corresponding chunk.</returns>
         public int ChunkGlobalX (int cx)
         {
-            return _rx * ChunkManager.REGION_XLEN + cx;
+            return _rx * XDIM + cx;
         }
 
         /// <summary>
         /// Gets the global Z-coordinate of a chunk given an internal coordinate handed out by a <see cref="Region"/> container.
         /// </summary>
-        /// <param name="cx">An internal Z-coordinate given to a <see cref="ChunkRef"/> by any instance of a <see cref="Region"/> container.</param>
+        /// <param name="cz">An internal Z-coordinate given to a <see cref="ChunkRef"/> by any instance of a <see cref="Region"/> container.</param>
         /// <returns>The global Z-coordinate of the corresponding chunk.</returns>
         public int ChunkGlobalZ (int cz)
         {
-            return _rz * ChunkManager.REGION_ZLEN + cz;
+            return _rz * ZDIM + cz;
         }
 
         /// <summary>
@@ -411,7 +411,7 @@ namespace Substrate
         /// <summary>
         /// Gets the region-local Z-coordinate of a chunk given an internal coordinate handed out by a <see cref="Region"/> container.
         /// </summary>
-        /// <param name="cx">An internal Z-coordinate given to a <see cref="ChunkRef"/> by any instance of a <see cref="Region"/> container.</param>
+        /// <param name="cz">An internal Z-coordinate given to a <see cref="ChunkRef"/> by any instance of a <see cref="Region"/> container.</param>
         /// <returns>The region-local Z-coordinate of the corresponding chunk.</returns>
         public int ChunkLocalZ (int cz)
         {
@@ -509,8 +509,8 @@ namespace Substrate
 
             DeleteChunk(lcx, lcz);
 
-            int cx = lcx + _rx * ChunkManager.REGION_XLEN;
-            int cz = lcz + _rz * ChunkManager.REGION_ZLEN;
+            int cx = lcx + _rx * XDIM;
+            int cz = lcz + _rz * ZDIM;
 
             chunk.SetLocation(cx, cz);
             chunk.Save(GetChunkOutStream(lcx, lcz));
@@ -553,6 +553,11 @@ namespace Substrate
         {
             //Console.WriteLine("Region[{0}, {1}].Save({2}, {3})", _rx, _rz, ForeignX(chunk.X),ForeignZ(chunk.Z));
             return chunk.Save(GetChunkOutStream(ForeignX(chunk.X), ForeignZ(chunk.Z)));
+        }
+
+        public bool CanDelegateCoordinates
+        {
+            get { return true; }
         }
 
         #endregion

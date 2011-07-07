@@ -20,17 +20,17 @@ namespace Substrate.Entities
         {
             new SchemaNodeString("id", "Painting"),
             new SchemaNodeScaler("Dir", TagType.TAG_BYTE),
-            new SchemaNodeScaler("TileX", TagType.TAG_SHORT),
-            new SchemaNodeScaler("TileY", TagType.TAG_SHORT),
-            new SchemaNodeScaler("TileZ", TagType.TAG_SHORT),
+            new SchemaNodeScaler("TileX", TagType.TAG_INT),
+            new SchemaNodeScaler("TileY", TagType.TAG_INT),
+            new SchemaNodeScaler("TileZ", TagType.TAG_INT),
             new SchemaNodeScaler("Motive", TagType.TAG_STRING),
         });
 
         private DirectionType _dir;
         private string _motive;
-        private short _xTile;
-        private short _yTile;
-        private short _zTile;
+        private int _xTile;
+        private int _yTile;
+        private int _zTile;
 
         public DirectionType Direction
         {
@@ -47,19 +47,19 @@ namespace Substrate.Entities
         public int TileX
         {
             get { return _xTile; }
-            set { _xTile = (short)value; }
+            set { _xTile = value; }
         }
 
         public int TileY
         {
             get { return _yTile; }
-            set { _yTile = (short)value; }
+            set { _yTile = value; }
         }
 
         public int TileZ
         {
             get { return _zTile; }
-            set { _zTile = (short)value; }
+            set { _zTile = value; }
         }
 
         public EntityPainting ()
@@ -92,9 +92,9 @@ namespace Substrate.Entities
 
             _dir = (DirectionType) ctree["Dir"].ToTagByte().Data;
             _motive = ctree["Motive"].ToTagString();
-            _xTile = ctree["TileX"].ToTagShort();
-            _yTile = ctree["TileY"].ToTagShort();
-            _zTile = ctree["TileZ"].ToTagShort();
+            _xTile = ctree["TileX"].ToTagInt();
+            _yTile = ctree["TileY"].ToTagInt();
+            _zTile = ctree["TileZ"].ToTagInt();
 
             return this;
         }
@@ -104,9 +104,9 @@ namespace Substrate.Entities
             TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
             tree["Dir"] = new TagNodeByte((byte)_dir);
             tree["Motive"] = new TagNodeString(_motive);
-            tree["TileX"] = new TagNodeShort(_xTile);
-            tree["TileY"] = new TagNodeShort(_yTile);
-            tree["TileZ"] = new TagNodeShort(_zTile);
+            tree["TileX"] = new TagNodeInt(_xTile);
+            tree["TileY"] = new TagNodeInt(_yTile);
+            tree["TileZ"] = new TagNodeInt(_zTile);
 
             return tree;
         }

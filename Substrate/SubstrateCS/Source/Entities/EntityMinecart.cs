@@ -18,7 +18,7 @@ namespace Substrate.Entities
         public static readonly SchemaNodeCompound MinecartSchema = EntityTyped.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", "Minecart"),
-            new SchemaNodeScaler("Type", TagType.TAG_BYTE),
+            new SchemaNodeScaler("Type", TagType.TAG_INT),
         });
 
         private CartType _type;
@@ -52,7 +52,7 @@ namespace Substrate.Entities
                 return null;
             }
 
-            _type = (CartType)ctree["Type"].ToTagByte().Data;
+            _type = (CartType)ctree["Type"].ToTagInt().Data;
 
             switch (_type) {
                 case CartType.EMPTY:
@@ -69,7 +69,7 @@ namespace Substrate.Entities
         public override TagNode BuildTree ()
         {
             TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
-            tree["Type"] = new TagNodeByte((byte)_type);
+            tree["Type"] = new TagNodeInt((int)_type);
 
             return tree;
         }

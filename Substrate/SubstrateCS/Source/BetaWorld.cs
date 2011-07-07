@@ -22,7 +22,7 @@ namespace Substrate
         private Level _level;
 
         private Dictionary<int, RegionManager> _regionMgrs;
-        private Dictionary<int, ChunkManager> _chunkMgrs;
+        private Dictionary<int, BetaChunkManager> _chunkMgrs;
         private Dictionary<int, BlockManager> _blockMgrs;
 
         private PlayerManager _playerMan;
@@ -30,7 +30,7 @@ namespace Substrate
         private BetaWorld ()
         {
             _regionMgrs = new Dictionary<int, RegionManager>();
-            _chunkMgrs = new Dictionary<int, ChunkManager>();
+            _chunkMgrs = new Dictionary<int, BetaChunkManager>();
             _blockMgrs = new Dictionary<int, BlockManager>();
         }
 
@@ -48,7 +48,7 @@ namespace Substrate
         /// <returns>A <see cref="BlockManager"/> tied to the default dimension in this world.</returns>
         /// <remarks>Get a <see cref="BlockManager"/> if you need to manage blocks as a global, unbounded matrix.  This abstracts away
         /// any higher-level organizational divisions.  If your task is going to be heavily performance-bound, consider getting a
-        /// <see cref="ChunkManager"/> instead and working with blocks on a chunk-local level.</remarks>
+        /// <see cref="BetaChunkManager"/> instead and working with blocks on a chunk-local level.</remarks>
         public new BlockManager GetBlockManager ()
         {
             return GetBlockManagerVirt(Dimension.DEFAULT) as BlockManager;
@@ -61,31 +61,31 @@ namespace Substrate
         /// <returns>A <see cref="BlockManager"/> tied to the given dimension in this world.</returns>
         /// <remarks>Get a <see cref="BlockManager"/> if you need to manage blocks as a global, unbounded matrix.  This abstracts away
         /// any higher-level organizational divisions.  If your task is going to be heavily performance-bound, consider getting a
-        /// <see cref="ChunkManager"/> instead and working with blocks on a chunk-local level.</remarks>
+        /// <see cref="BetaChunkManager"/> instead and working with blocks on a chunk-local level.</remarks>
         public new BlockManager GetBlockManager (int dim)
         {
             return GetBlockManagerVirt(dim) as BlockManager;
         }
 
         /// <summary>
-        /// Gets a <see cref="ChunkManager"/> for the default dimension.
+        /// Gets a <see cref="BetaChunkManager"/> for the default dimension.
         /// </summary>
-        /// <returns>A <see cref="ChunkManager"/> tied to the default dimension in this world.</returns>
-        /// <remarks>Get a <see cref="ChunkManager"/> if you you need to work with easily-digestible, bounded chunks of blocks.</remarks>
-        public new ChunkManager GetChunkManager ()
+        /// <returns>A <see cref="BetaChunkManager"/> tied to the default dimension in this world.</returns>
+        /// <remarks>Get a <see cref="BetaChunkManager"/> if you you need to work with easily-digestible, bounded chunks of blocks.</remarks>
+        public new BetaChunkManager GetChunkManager ()
         {
-            return GetChunkManagerVirt(Dimension.DEFAULT) as ChunkManager;
+            return GetChunkManagerVirt(Dimension.DEFAULT) as BetaChunkManager;
         }
 
         /// <summary>
-        /// Gets a <see cref="ChunkManager"/> for the given dimension.
+        /// Gets a <see cref="BetaChunkManager"/> for the given dimension.
         /// </summary>
         /// <param name="dim">The id of the dimension to look up.</param>
-        /// <returns>A <see cref="ChunkManager"/> tied to the given dimension in this world.</returns>
-        /// <remarks>Get a <see cref="ChunkManager"/> if you you need to work with easily-digestible, bounded chunks of blocks.</remarks>
-        public new ChunkManager GetChunkManager (int dim)
+        /// <returns>A <see cref="BetaChunkManager"/> tied to the given dimension in this world.</returns>
+        /// <remarks>Get a <see cref="BetaChunkManager"/> if you you need to work with easily-digestible, bounded chunks of blocks.</remarks>
+        public new BetaChunkManager GetChunkManager (int dim)
         {
-            return GetChunkManagerVirt(dim) as ChunkManager;
+            return GetChunkManagerVirt(dim) as BetaChunkManager;
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Substrate
         /// </summary>
         /// <returns>A <see cref="RegionManager"/> tied to the defaul dimension in this world.</returns>
         /// <remarks>Regions are a higher-level unit of organization for blocks unique to worlds created in Beta 1.3 and beyond.
-        /// Consider using the <see cref="ChunkManager"/> if you are interested in working with blocks.</remarks>
+        /// Consider using the <see cref="BetaChunkManager"/> if you are interested in working with blocks.</remarks>
         public RegionManager GetRegionManager ()
         {
             return GetRegionManager(Dimension.DEFAULT);
@@ -105,7 +105,7 @@ namespace Substrate
         /// <param name="dim">The id of the dimension to look up.</param>
         /// <returns>A <see cref="RegionManager"/> tied to the given dimension in this world.</returns>
         /// <remarks>Regions are a higher-level unit of organization for blocks unique to worlds created in Beta 1.3 and beyond.
-        /// Consider using the <see cref="ChunkManager"/> if you are interested in working with blocks.</remarks>
+        /// Consider using the <see cref="BetaChunkManager"/> if you are interested in working with blocks.</remarks>
         public RegionManager GetRegionManager (int dim)
         {
             RegionManager rm;
@@ -134,7 +134,7 @@ namespace Substrate
         {
             _level.Save();
 
-            foreach (KeyValuePair<int, ChunkManager> cm in _chunkMgrs) {
+            foreach (KeyValuePair<int, BetaChunkManager> cm in _chunkMgrs) {
                 cm.Value.Save();
             }
         }
@@ -144,7 +144,7 @@ namespace Substrate
         /// </summary>
         /// <param name="path">The path to the directory containing the world's level.dat, or the path to level.dat itself.</param>
         /// <returns>A new <see cref="BetaWorld"/> object representing an existing world on disk.</returns>
-        public static BetaWorld Open (string path)
+        public static new BetaWorld Open (string path)
         {
             return new BetaWorld().OpenWorld(path) as BetaWorld;
         }
@@ -176,7 +176,7 @@ namespace Substrate
         /// <exclude/>
         protected override IChunkManager GetChunkManagerVirt (int dim)
         {
-            ChunkManager rm;
+            BetaChunkManager rm;
             if (_chunkMgrs.TryGetValue(dim, out rm)) {
                 return rm;
             }
@@ -216,7 +216,7 @@ namespace Substrate
             ChunkCache cc = new ChunkCache();
 
             RegionManager rm = new RegionManager(path, cc);
-            ChunkManager cm = new ChunkManager(rm, cc);
+            BetaChunkManager cm = new BetaChunkManager(rm, cc);
             BlockManager bm = new BlockManager(cm);
 
             _regionMgrs[dim] = rm;

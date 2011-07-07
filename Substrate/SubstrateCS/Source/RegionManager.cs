@@ -6,15 +6,22 @@ using Substrate.Core;
 
 namespace Substrate
 {
-    
+    /// <summary>
+    /// Manages the regions of a Beta-compatible world.
+    /// </summary>
     public class RegionManager : IRegionManager
     {
-        protected string _regionPath;
+        private string _regionPath;
 
-        protected Dictionary<RegionKey, Region> _cache;
+        private Dictionary<RegionKey, Region> _cache;
 
-        protected ChunkCache _chunkCache;
+        private ChunkCache _chunkCache;
 
+        /// <summary>
+        /// Creates a new instance of a <see cref="RegionManager"/> for the given region directory and chunk cache.
+        /// </summary>
+        /// <param name="regionDir">The path to a directory containing region files.</param>
+        /// <param name="cache">The shared chunk cache to hold chunk data in.</param>
         public RegionManager (string regionDir, ChunkCache cache)
         {
             _regionPath = regionDir;
@@ -22,6 +29,12 @@ namespace Substrate
             _cache = new Dictionary<RegionKey, Region>();
         }
 
+        /// <summary>
+        /// Gets a <see cref="Region"/> at the given coordinates.
+        /// </summary>
+        /// <param name="rx">The global X-coordinate of a region.</param>
+        /// <param name="rz">The global Z-coordinate of a region.</param>
+        /// <returns>A <see cref="Region"/> representing a region at the given coordinates, or null if the region does not exist.</returns>
         public Region GetRegion (int rx, int rz)
         {
             RegionKey k = new RegionKey(rx, rz);
@@ -40,12 +53,24 @@ namespace Substrate
             }
         }
 
+        /// <summary>
+        /// Determines if a region exists at the given coordinates.
+        /// </summary>
+        /// <param name="rx">The global X-coordinate of a region.</param>
+        /// <param name="rz">The global Z-coordinate of a region.</param>
+        /// <returns>True if a region exists at the given global region coordinates; false otherwise.</returns>
         public bool RegionExists (int rx, int rz)
         {
             Region r = GetRegion(rx, rz);
             return r != null;
         }
 
+        /// <summary>
+        /// Creates a new empty region at the given coordinates, if no region exists.
+        /// </summary>
+        /// <param name="rx">The global X-coordinate of a region.</param>
+        /// <param name="rz">The global Z-coordinate of a region.</param>
+        /// <returns>A new empty <see cref="Region"/> object for the given coordinates, or an existing <see cref="Region"/> if one exists.</returns>
         public Region CreateRegion (int rx, int rz)
         {
             Region r = GetRegion(rx, rz);
@@ -64,7 +89,11 @@ namespace Substrate
             return r;
         }
 
-
+        /// <summary>
+        /// Gets a <see cref="Region"/> for the given region filename.
+        /// </summary>
+        /// <param name="filename">The filename of the region to get.</param>
+        /// <returns>A <see cref="Region"/> corresponding to the coordinates encoded in the filename.</returns>
         public Region GetRegion (string filename)
         {
             int rx, rz;
@@ -75,12 +104,22 @@ namespace Substrate
             return GetRegion(rx, rz);
         }
 
-
+        /// <summary>
+        /// Get the current region directory path.
+        /// </summary>
+        /// <returns>The path to the region directory.</returns>
         public string GetRegionPath ()
         {
             return _regionPath;
         }
 
+        // XXX: Exceptions
+        /// <summary>
+        /// Deletes a region at the given coordinates.
+        /// </summary>
+        /// <param name="rx">The global X-coordinate of a region.</param>
+        /// <param name="rz">The global Z-coordinate of a region.</param>
+        /// <returns>True if a region was deleted; false otherwise.</returns>
         public bool DeleteRegion (int rx, int rz)
         {
             Region r = GetRegion(rx, rz);
@@ -104,19 +143,12 @@ namespace Substrate
             return true;
         }
 
-        /*public int Save ()
-        {
-            int saved = 0;
-            foreach (Region r in _cache.Values) {
-                saved += r.Save();
-            }
-
-            return saved;
-        }*/
-
-
         #region IEnumerable<Region> Members
 
+        /// <summary>
+        /// Returns an enumerator that iterates over all of the regions in the underlying dimension.
+        /// </summary>
+        /// <returns>An enumerator instance.</returns>
         public IEnumerator<Region> GetEnumerator ()
         {
             return new Enumerator(this);
@@ -126,6 +158,10 @@ namespace Substrate
 
         #region IEnumerable Members
 
+        /// <summary>
+        /// Returns an enumerator that iterates over all of the regions in the underlying dimension.
+        /// </summary>
+        /// <returns>An enumerator instance.</returns>
         IEnumerator IEnumerable.GetEnumerator ()
         {
             return new Enumerator(this);
@@ -138,12 +174,6 @@ namespace Substrate
         {
             private List<Region> _regions;
             private int _pos;
-
-            /*public Enumerator (List<Region> regs)
-            {
-                _regions = regs;
-                _pos = -1;
-            }*/
 
             public Enumerator (RegionManager rm)
             {
