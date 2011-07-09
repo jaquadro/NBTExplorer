@@ -171,77 +171,43 @@ namespace Substrate
             SetTileEntity(x, y, z, block.GetTileEntity().Copy());
         }
 
-        #region IBlockCollection Members
+        #region IBoundedBlockCollection Members
 
-        /// <summary>
-        /// Gets the length of this collection's X-dimension.
-        /// </summary>
+        /// <inheritdoc/>
         public int XDim
         {
             get { return _xdim; }
         }
 
-        /// <summary>
-        /// Gets the length of this collection's Y-dimension.
-        /// </summary>
+        /// <inheritdoc/>
         public int YDim
         {
             get { return _ydim; }
         }
 
-        /// <summary>
-        /// Gets the length of this collection's Z-dimension.
-        /// </summary>
+        /// <inheritdoc/>
         public int ZDim
         {
             get { return _zdim; }
         }
 
-        /// <summary>
-        /// Returns an object compatible with the <see cref="IBlock"/> interface from local coordinates relative to this collection.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <returns>An <see cref="IBlock"/>-compatible object.</returns>
-        /// <seealso cref="AlphaBlock"/>
-        IBlock IBlockCollection.GetBlock (int x, int y, int z)
+        IBlock IBoundedBlockCollection.GetBlock (int x, int y, int z)
         {
             return GetBlock(x, y, z);
         }
 
-        /// <summary>
-        /// Returns a reference object compatible with the <see cref="IBlock"/> interface from local coordinates relative to this collection.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <returns>An <see cref="IBlock"/>-compatible reference object.</returns>
-        /// <seealso cref="AlphaBlockRef"/>
-        IBlock IBlockCollection.GetBlockRef (int x, int y, int z)
+        IBlock IBoundedBlockCollection.GetBlockRef (int x, int y, int z)
         {
             return GetBlockRef(x, y, z);
         }
 
-        /// <summary>
-        /// Updates a block in this collection with values from an <see cref="IBlock"/> object.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <param name="block">An <see cref="IBlock"/> object to copy block data from.</param>
+        /// <inheritdoc/>
         public void SetBlock (int x, int y, int z, IBlock block)
         {
             SetID(x, y, z, block.ID);
         }
 
-        /// <summary>
-        /// Gets information on the type of a block at the given local coordinates.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <returns>A <see cref="BlockInfo"/> object containing information of a block's type.</returns>
+        /// <inheritdoc/>
         public BlockInfo GetInfo (int x, int y, int z)
         {
             return BlockInfo.BlockTable[_blocks[x, y, z]];
@@ -252,13 +218,7 @@ namespace Substrate
             return BlockInfo.BlockTable[_blocks[index]];
         }
 
-        /// <summary>
-        /// Gets the ID (type) of a block at the given local coordinates.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <returns>The ID (type) of the specified block.</returns>
+        /// <inheritdoc/>
         public int GetID (int x, int y, int z)
         {
             return _blocks[x, y, z];
@@ -269,13 +229,7 @@ namespace Substrate
             return _blocks[index];
         }
 
-        /// <summary>
-        /// Sets the ID (type) of a block at the given local coordinates, maintaining consistency of data.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <param name="id">The new ID of the block.</param>
+        /// <inheritdoc/>
         /// <remarks>Depending on the options set for this <see cref="AlphaBlockCollection"/>, this method can be very
         /// heavy-handed in the amount of work it does to maintain consistency of tile entities, lighting, fluid, etc.
         /// for the affected block and possibly many other indirectly-affected blocks in the collection or neighboring
@@ -345,11 +299,7 @@ namespace Substrate
             SetID(x, y, z, id);
         }
 
-        /// <summary>
-        /// Returns a count of all blocks in this <see cref="AlphaBlockCollection"/> with the given ID (type).
-        /// </summary>
-        /// <param name="id">The ID of blocks to count.</param>
-        /// <returns>A count of all matching blocks.</returns>
+        /// <inheritdoc/>
         public int CountByID (int id)
         {
             int c = 0;
@@ -365,54 +315,26 @@ namespace Substrate
         #endregion
 
 
-        #region IDataBlockContainer Members
+        #region IBoundedDataBlockContainer Members
 
-        /// <summary>
-        /// Returns an object compatible with the <see cref="IDataBlock"/> interface from local coordinates relative to this collection.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <returns>An <see cref="IDataBlock"/>-compatible object.</returns>
-        /// <seealso cref="AlphaBlock"/>
-        IDataBlock IDataBlockCollection.GetBlock (int x, int y, int z)
+        IDataBlock IBoundedDataBlockCollection.GetBlock (int x, int y, int z)
         {
             return GetBlock(x, y, z);
         }
 
-        /// <summary>
-        /// Returns a reference object compatible with the <see cref="IDataBlock"/> interface from local coordinates relative to this collection.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <returns>An <see cref="IDataBlock"/>-compatible reference object.</returns>
-        /// <seealso cref="AlphaBlockRef"/>
-        IDataBlock IDataBlockCollection.GetBlockRef (int x, int y, int z)
+        IDataBlock IBoundedDataBlockCollection.GetBlockRef (int x, int y, int z)
         {
             return GetBlockRef(x, y, z);
         }
 
-        /// <summary>
-        /// Updates a block in this collection with values from an <see cref="IDataBlock"/> object.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <param name="block">An <see cref="IDataBlock"/> object to copy block data from.</param>
+        /// <inheritdoc/>
         public void SetBlock (int x, int y, int z, IDataBlock block)
         {
             SetID(x, y, z, block.ID);
             SetData(x, y, z, block.Data);
         }
 
-        /// <summary>
-        /// Gets the data value of a block at the given local coordinates.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <returns>The data value of the specified block.</returns>
+        /// <inheritdoc/>
         public int GetData (int x, int y, int z)
         {
             return _data[x, y, z];
@@ -423,13 +345,7 @@ namespace Substrate
             return _data[index];
         }
 
-        /// <summary>
-        /// Sets the data value of a block at the given local coordinates.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <param name="data">The new data value of the block.</param>
+        /// <inheritdoc/>
         public void SetData (int x, int y, int z, int data)
         {
             if (_data[x, y, z] != data) {
@@ -452,12 +368,7 @@ namespace Substrate
             }
         }
 
-        /// <summary>
-        /// Returns a count of all blocks in this <see cref="AlphaBlockCollection"/> matching the given ID (type) and data value.
-        /// </summary>
-        /// <param name="id">The ID of blocks to count.</param>
-        /// <param name="data">The data value of blocks to count.</param>
-        /// <returns>A count of all matching blocks.</returns>
+        /// <inheritdoc/>
         public int CountByData (int id, int data)
         {
             int c = 0;
@@ -473,41 +384,19 @@ namespace Substrate
         #endregion
 
 
-        #region ILitBlockCollection Members
+        #region IBoundedLitBlockCollection Members
 
-        /// <summary>
-        /// Not Implemented.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <returns>An <see cref="ILitBlock"/>-compatible object.</returns>
-        /// <seealso cref="AlphaBlock"/>
-        ILitBlock ILitBlockCollection.GetBlock (int x, int y, int z)
+        ILitBlock IBoundedLitBlockCollection.GetBlock (int x, int y, int z)
         {
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Returns a reference object compatible with the <see cref="ILitBlock"/> interface from local coordinates relative to this collection.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <returns>An <see cref="ILitBlock"/>-compatible reference object.</returns>
-        /// <seealso cref="AlphaBlockRef"/>
-        ILitBlock ILitBlockCollection.GetBlockRef (int x, int y, int z)
+        ILitBlock IBoundedLitBlockCollection.GetBlockRef (int x, int y, int z)
         {
             return GetBlockRef(x, y, z);
         }
 
-        /// <summary>
-        /// Updates a block in this collection with values from an <see cref="ILitBlock"/> object.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <param name="block">An <see cref="ILitBlock"/> object to copy block data from.</param>
+        /// <inheritdoc/>
         public void SetBlock (int x, int y, int z, ILitBlock block)
         {
             SetID(x, y, z, block.ID);
@@ -515,13 +404,7 @@ namespace Substrate
             SetSkyLight(x, y, z, block.SkyLight);
         }
 
-        /// <summary>
-        /// Gets the block-source light value of a block at the given local coordinates.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <returns>The block-source light value of the specified block.</returns>
+        /// <inheritdoc/>
         public int GetBlockLight (int x, int y, int z)
         {
             return _blockLight[x, y, z];
@@ -532,13 +415,7 @@ namespace Substrate
             return _blockLight[index];
         }
 
-        /// <summary>
-        /// Gets the sky-source light value of a block at the given local coordinates.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <returns>The sky-source light value of the specified block.</returns>
+        /// <inheritdoc/>
         public int GetSkyLight (int x, int y, int z)
         {
             return _skyLight[x, y, z];
@@ -549,13 +426,7 @@ namespace Substrate
             return _skyLight[index];
         }
 
-        /// <summary>
-        /// Sets the blocks-source light value of a block at the given local coordinates.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <param name="light">The new block-source light value of the block.</param>
+        /// <inheritdoc/>
         public void SetBlockLight (int x, int y, int z, int light)
         {
             if (_blockLight[x, y, z] != light) {
@@ -572,13 +443,7 @@ namespace Substrate
             }
         }
 
-        /// <summary>
-        /// Sets the sky-source light value of a block at the given local coordinates.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <param name="light">The new sky-source light value of the block.</param>
+        /// <inheritdoc/>
         public void SetSkyLight (int x, int y, int z, int light)
         {
             if (_skyLight[x, y, z] != light) {
@@ -595,34 +460,19 @@ namespace Substrate
             }
         }
 
-        /// <summary>
-        /// Gets the lowest Y-coordinate of a block at which sky-source light remains unfiltered.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a map location.</param>
-        /// <param name="z">Local Z-coordinate of a map location.</param>
-        /// <returns>The height-map value of a map location for calculating sky-source lighting.</returns>
+        /// <inheritdoc/>
         public int GetHeight (int x, int z)
         {
             return _heightMap[x, z];
         }
 
-        /// <summary>
-        /// Sets the lowest Y-coordinate of a block at which sky-source light remains unfiltered.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a map location.</param>
-        /// <param name="z">Local Z-coordinate of a map location.</param>
-        /// <param name="height">The new height-map value of the given map location.</param>
+        /// <inheritdoc/>
         public void SetHeight (int x, int z, int height)
         {
             _heightMap[x, z] = (byte)height;
         }
 
-        /// <summary>
-        /// Updates the block-source lighting of a block at the given local coordinates to maintain light consistency.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
+        /// <inheritdoc/>
         /// <remarks><para>The lighting of the block will be updated to be consistent with the lighting in neighboring blocks.
         /// If the block is itself a light source, many nearby blocks may be updated to maintain consistent lighting.  These
         /// updates may also touch neighboring <see cref="AlphaBlockCollection"/> objects, if they can be resolved.</para>
@@ -635,12 +485,7 @@ namespace Substrate
             _dirty = true;
         }
 
-        /// <summary>
-        /// Updates the sky-source lighting of a block at the given local coordinates to maintain light consistency.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
+        /// <inheritdoc/>
         /// <remarks><para>The lighting of the block will be updated to be consistent with the lighting in neighboring blocks.
         /// If the block is itself a light source, many nearby blocks may be updated to maintain consistent lighting.  These
         /// updates may also touch neighboring <see cref="AlphaBlockCollection"/> objects, if they can be resolved.</para>
@@ -771,54 +616,26 @@ namespace Substrate
         #endregion
 
 
-        #region IPropertyBlockCollection Members
+        #region IBoundedPropertyBlockCollection Members
 
-        /// <summary>
-        /// Returns an object compatible with the <see cref="IPropertyBlock"/> interface from local coordinates relative to this collection.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <returns>An <see cref="IPropertyBlock"/>-compatible object.</returns>
-        /// <seealso cref="AlphaBlock"/>
-        IPropertyBlock IPropertyBlockCollection.GetBlock (int x, int y, int z)
+        IPropertyBlock IBoundedPropertyBlockCollection.GetBlock (int x, int y, int z)
         {
             return GetBlock(x, y, z);
         }
 
-        /// <summary>
-        /// Returns a reference object compatible with the <see cref="IPropertyBlock"/> interface from local coordinates relative to this collection.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <returns>An <see cref="IPropertyBlock"/>-compatible reference object.</returns>
-        /// <seealso cref="AlphaBlockRef"/>
-        IPropertyBlock IPropertyBlockCollection.GetBlockRef (int x, int y, int z)
+        IPropertyBlock IBoundedPropertyBlockCollection.GetBlockRef (int x, int y, int z)
         {
             return GetBlockRef(x, y, z);
         }
 
-        /// <summary>
-        /// Updates a block in this collection with values from an <see cref="IPropertyBlock"/> object.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <param name="block">An <see cref="IPropertyBlock"/> object to copy block data from.</param>
+        /// <inheritdoc/>
         public void SetBlock (int x, int y, int z, IPropertyBlock block)
         {
             SetID(x, y, z, block.ID);
             SetTileEntity(x, y, z, block.GetTileEntity().Copy());
         }
 
-        /// <summary>
-        /// Gets a <see cref="TileEntity"/> record for a block at the given local coordinates, if one exists.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <returns>A <see cref="TileEntity"/> for the given block, or null if the <see cref="TileEntity"/> is missing or the block type does not use a <see cref="TileEntity"/>.</returns>
+        /// <inheritdoc/>
         public TileEntity GetTileEntity (int x, int y, int z)
         {
             return _tileEntityManager.GetTileEntity(x, y, z);
@@ -832,15 +649,7 @@ namespace Substrate
             return _tileEntityManager.GetTileEntity(x, y, z);
         }
 
-        /// <summary>
-        /// Sets a <see cref="TileEntity"/> record for a block at the given local coordinates.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <param name="te">The <see cref="TileEntity"/> to add to the given block.</param>
-        /// <exception cref="ArgumentException">Thrown when the <see cref="TileEntity"/> being passed is of the wrong type for the given block.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when the given block is of a type that does not support a <see cref="TileEntity"/> record.</exception>
+        /// <inheritdoc/>
         public void SetTileEntity (int x, int y, int z, TileEntity te)
         {
             _tileEntityManager.SetTileEntity(x, y, z, te);
@@ -856,14 +665,7 @@ namespace Substrate
             _dirty = true;
         }
 
-        /// <summary>
-        /// Creates a default <see cref="TileEntity"/> record suitable for the block at the given local coordinates.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
-        /// <exception cref="InvalidOperationException">Thrown when the given block is of a type that does not support a <see cref="TileEntity"/> record.</exception>
-        /// <exception cref="UnknownTileEntityException">Thrown when the block type requests a <see cref="TileEntity"/> that has not been registered with the <see cref="TileEntityFactory"/>.</exception>
+        /// <inheritdoc/>
         public void CreateTileEntity (int x, int y, int z)
         {
             _tileEntityManager.CreateTileEntity(x, y, z);
@@ -879,12 +681,7 @@ namespace Substrate
             _dirty = true;
         }
 
-        /// <summary>
-        /// Clears any <see cref="TileEntity"/> record set for a block at the givne local coordinates, if one exists.
-        /// </summary>
-        /// <param name="x">Local X-coordinate of a block.</param>
-        /// <param name="y">Local Y-coordinate of a block.</param>
-        /// <param name="z">Local Z-coordinate of a block.</param>
+        /// <inheritdoc/>
         public void ClearTileEntity (int x, int y, int z)
         {
             _tileEntityManager.ClearTileEntity(x, y, z);
@@ -935,6 +732,263 @@ namespace Substrate
             _autoFluid = autofluid;
         }
 
+
+        #region Unbounded Container Implementations
+
+        IBlock IBlockCollection.GetBlock (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                return GetBlock(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        IBlock IBlockCollection.GetBlockRef (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                return GetBlockRef(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        void IBlockCollection.SetBlock (int x, int y, int z, IBlock block)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                SetBlock(x, y, z, block);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        BlockInfo IBlockCollection.GetInfo (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                return GetInfo(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        int IBlockCollection.GetID (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                return GetID(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        void IBlockCollection.SetID (int x, int y, int z, int id)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                SetID(x, y, z, id);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        IDataBlock IDataBlockCollection.GetBlock (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                return GetBlock(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        IDataBlock IDataBlockCollection.GetBlockRef (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                return GetBlockRef(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        void IDataBlockCollection.SetBlock (int x, int y, int z, IDataBlock block)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                SetBlock(x, y, z, block);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        int IDataBlockCollection.GetData (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                return GetData(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        void IDataBlockCollection.SetData (int x, int y, int z, int data)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                SetData(x, y, z, data);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        ILitBlock ILitBlockCollection.GetBlock (int x, int y, int z)
+        {
+            throw new NotImplementedException();
+        }
+
+        ILitBlock ILitBlockCollection.GetBlockRef (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                return GetBlockRef(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        void ILitBlockCollection.SetBlock (int x, int y, int z, ILitBlock block)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                SetBlock(x, y, z, block);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        int ILitBlockCollection.GetBlockLight (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                return GetBlockLight(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        void ILitBlockCollection.SetBlockLight (int x, int y, int z, int light)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                SetBlockLight(x, y, z, light);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        int ILitBlockCollection.GetSkyLight (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                return GetSkyLight(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        void ILitBlockCollection.SetSkyLight (int x, int y, int z, int light)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                SetSkyLight(x, y, z, light);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        int ILitBlockCollection.GetHeight (int x, int z)
+        {
+            if (x >= 0 && x < _xdim && z >= 0 && z < ZDim) {
+                return GetHeight(x, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : "z");
+        }
+
+        void ILitBlockCollection.SetHeight (int x, int z, int height)
+        {
+            if (x >= 0 && x < _xdim && z >= 0 && z < ZDim) {
+                SetHeight(x, z, height);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : "z");
+        }
+
+        void ILitBlockCollection.UpdateBlockLight (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                UpdateBlockLight(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        void ILitBlockCollection.UpdateSkyLight (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                UpdateSkyLight(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        IPropertyBlock IPropertyBlockCollection.GetBlock (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                return GetBlock(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        IPropertyBlock IPropertyBlockCollection.GetBlockRef (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                return GetBlockRef(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        void IPropertyBlockCollection.SetBlock (int x, int y, int z, IPropertyBlock block)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                SetBlock(x, y, z, block);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        TileEntity IPropertyBlockCollection.GetTileEntity (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                return GetTileEntity(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        void IPropertyBlockCollection.SetTileEntity (int x, int y, int z, TileEntity te)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                SetTileEntity(x, y, z, te);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        void IPropertyBlockCollection.CreateTileEntity (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                CreateTileEntity(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        void IPropertyBlockCollection.ClearTileEntity (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                ClearTileEntity(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        AlphaBlock IAlphaBlockCollection.GetBlock (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                return GetBlock(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        AlphaBlockRef IAlphaBlockCollection.GetBlockRef (int x, int y, int z)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                return GetBlockRef(x, y, z);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        void IAlphaBlockCollection.SetBlock (int x, int y, int z, AlphaBlock block)
+        {
+            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
+                SetBlock(x, y, z, block);
+            }
+            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
+        }
+
+        #endregion
 
         /*#region IEnumerable<AlphaBlockRef> Members
 

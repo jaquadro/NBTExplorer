@@ -142,6 +142,21 @@ namespace Substrate
             _tileEntity = te;
         }
 
+        public void CreateTileEntity ()
+        {
+            BlockInfoEx info = BlockInfo.BlockTable[_id] as BlockInfoEx;
+            if (info == null) {
+                throw new InvalidOperationException("The given block is of a type that does not support TileEntities.");
+            }
+
+            TileEntity te = TileEntityFactory.Create(info.TileEntityName);
+            if (te == null) {
+                throw new UnknownTileEntityException("The TileEntity type '" + info.TileEntityName + "' has not been registered with the TileEntityFactory.");
+            }
+
+            _tileEntity = te;
+        }
+
         /// <summary>
         /// Removes any Tile Entity currently attached to the block.
         /// </summary>

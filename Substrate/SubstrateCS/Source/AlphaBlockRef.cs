@@ -140,6 +140,11 @@ namespace Substrate
             _collection.SetTileEntity(_index, te);
         }
 
+        public void CreateTileEntity ()
+        {
+            _collection.CreateTileEntity(_index);
+        }
+
         /// <summary>
         /// Removes any Tile Entity currently attached to the block.
         /// </summary>
