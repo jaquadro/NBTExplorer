@@ -31,7 +31,7 @@ namespace GoodyChest
 
             // Open our world
             BetaWorld world = BetaWorld.Open(dest);
-            ChunkManager cm = world.GetChunkManager();
+            BetaChunkManager cm = world.GetChunkManager();
 
             int added = 0;
 
@@ -51,7 +51,7 @@ namespace GoodyChest
                     }
 
                     // Get a block object, then assign it to the chunk
-                    Block block = BuildChest();
+                    AlphaBlock block = BuildChest();
                     chunk.Blocks.SetBlock(x, y + 1, z, block);
 
                     // Save the chunk
@@ -67,10 +67,10 @@ namespace GoodyChest
 
         // This function will create a new Block object of type 'Chest', fills it
         // with random items, and returns it
-        static Block BuildChest ()
+        static AlphaBlock BuildChest ()
         {
             // A default, appropriate TileEntity entry is created
-            Block block = new Block(BlockType.CHEST);
+            AlphaBlock block = new AlphaBlock(BlockType.CHEST);
             TileEntityChest ent = block.GetTileEntity() as TileEntityChest;
 
             // Unless Substrate has a bug, the TileEntity was definitely a TileEntityChest
@@ -84,7 +84,7 @@ namespace GoodyChest
             for (int i = 0; i < ent.Items.Capacity; i++) {
                 if (rand.NextDouble() < 0.3) {
                     // Ask the ItemTable for a random Item type registered with Substrate
-                    ItemInfo itype = ItemInfo.ItemTable.Random();
+                    ItemInfo itype = ItemInfo.GetRandomItem();
 
                     // Create the item object, give it an appropriate, random count (items in stack)
                     Item item = new Item(itype.ID);

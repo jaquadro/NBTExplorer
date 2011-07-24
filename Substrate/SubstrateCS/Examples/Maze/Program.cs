@@ -48,7 +48,7 @@ namespace Maze
 
             Console.WriteLine("Relight Chunks");
 
-            ChunkManager cm = world.GetChunkManager();
+            BetaChunkManager cm = world.GetChunkManager();
             cm.RelightDirtyChunks();
 
             world.Save();

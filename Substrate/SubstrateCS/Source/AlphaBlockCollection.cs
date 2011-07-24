@@ -291,7 +291,7 @@ namespace Substrate
             BlockInfoEx einfo2 = info2 as BlockInfoEx;
 
             if (einfo1 != einfo2) {
-                if (einfo1 != null) {
+                if (einfo1 != null || !info1.Registered) {
                     ClearTileEntity(x, y, z);
                 }
 

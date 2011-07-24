@@ -20,13 +20,11 @@ namespace FlatMap
 
             // This will instantly create any necessary directory structure
             BetaWorld world = BetaWorld.Create(dest);
-            ChunkManager cm = world.GetChunkManager();
+            BetaChunkManager cm = world.GetChunkManager();
 
             // We can set different world parameters
             world.Level.LevelName = "Flatlands";
-            world.Level.SpawnX = 20;
-            world.Level.SpawnZ = 20;
-            world.Level.SpawnY = 70;
+            world.Level.Spawn = new SpawnPoint(20, 20, 70);
 
             // world.Level.SetDefaultPlayer();
             // We'll let MC create the player for us, but you could use the above

@@ -27,9 +27,7 @@ namespace MoveSpawn
             // Note: Players do not have separate spawns by default
             // If you wanted to change a player's spawn, you must set all
             // 3 coordinates for it to stick.  It will not take the level's defaults.
-            world.Level.SpawnX = x;
-            world.Level.SpawnY = y;
-            world.Level.SpawnZ = z;
+            world.Level.Spawn = new SpawnPoint(x, y, z);
 
             // Save the changes
             world.Save();

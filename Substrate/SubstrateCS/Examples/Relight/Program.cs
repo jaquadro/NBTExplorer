@@ -24,15 +24,7 @@ namespace Relight
             }
             string dest = args[0];
 
-            // Load the world, supporting either alpha or beta format
-            /*INBTWorld world;
-            if (args.Length >= 2 && args[1] == "alpha") {
-                world = AlphaWorld.Open(dest);
-            }
-            else {
-                world = BetaWorld.Open(dest);
-            }*/
-
+            // Opening an NbtWorld will try to autodetect if a world is Alpha-style or Beta-style
             NbtWorld world = NbtWorld.Open(dest);
 
             // Grab a generic chunk manager reference

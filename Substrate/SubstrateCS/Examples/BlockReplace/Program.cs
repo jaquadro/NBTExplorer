@@ -28,7 +28,7 @@ namespace BlockReplace
 
             // The chunk manager is more efficient than the block manager for
             // this purpose, since we'll inspect every block
-            ChunkManager cm = world.GetChunkManager();
+            BetaChunkManager cm = world.GetChunkManager();
 
             foreach (ChunkRef chunk in cm) {
                 // You could hardcode your dimensions, but maybe some day they

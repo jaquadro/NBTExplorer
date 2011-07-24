@@ -36,7 +36,7 @@ namespace PurgeEntities
 
             // Load world
             BetaWorld world = BetaWorld.Open(dest);
-            ChunkManager cm = world.GetChunkManager();
+            BetaChunkManager cm = world.GetChunkManager();
 
             // Remove entities
             foreach (ChunkRef chunk in cm) {

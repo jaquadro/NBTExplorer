@@ -1,6 +1,7 @@
 ﻿using System;
 using Substrate;
-using Substrate.NBT;
+using Substrate.Core;
+using Substrate.Nbt;
 
 // This example will convert worlds between alpha and beta format.
 // This will convert chunks to and from region format, and copy level.dat
@@ -22,8 +23,8 @@ namespace Convert
             string srctype = args[2];
 
             // Open source and destrination worlds depending on conversion type
-            INBTWorld srcWorld;
-            INBTWorld dstWorld;
+            NbtWorld srcWorld;
+            NbtWorld dstWorld;
             if (srctype == "a") {
                 srcWorld = AlphaWorld.Open(src);
                 dstWorld = BetaWorld.Create(dst);
