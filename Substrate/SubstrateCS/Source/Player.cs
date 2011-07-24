@@ -20,7 +20,7 @@ namespace Substrate
             new SchemaNodeScaler("Health", TagType.TAG_SHORT),
             new SchemaNodeScaler("HurtTime", TagType.TAG_SHORT),
             new SchemaNodeScaler("Dimension", TagType.TAG_INT),
-            new SchemaNodeList("Inventory", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),
+            new SchemaNodeList("Inventory", TagType.TAG_COMPOUND, ItemCollection.Schema),
             new SchemaNodeScaler("World", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
             new SchemaNodeScaler("Sleeping", TagType.TAG_BYTE, SchemaOptions.CREATE_ON_MISSING),
             new SchemaNodeScaler("SleepTimer", TagType.TAG_SHORT, SchemaOptions.CREATE_ON_MISSING),

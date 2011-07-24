@@ -19,6 +19,7 @@ namespace Substrate.Nbt
     {
         private Stream _stream = null;
         private TagNodeCompound _root = null;
+        private string _rootName = "";
 
         private static TagNodeNull _nulltag = new TagNodeNull();
 
@@ -28,6 +29,15 @@ namespace Substrate.Nbt
         public TagNodeCompound Root
         {
             get { return _root; }
+        }
+
+        /// <summary>
+        /// Gets or sets the name of the tree's root node.
+        /// </summary>
+        public string Name
+        {
+            get { return _rootName; }
+            set { _rootName = value; }
         }
 
         /// <summary>
@@ -45,6 +55,17 @@ namespace Substrate.Nbt
         public NbtTree (TagNodeCompound tree)
         {
             _root = tree;
+        }
+
+        /// <summary>
+        /// Constructs a wrapper around another NBT tree and gives it a name.
+        /// </summary>
+        /// <param name="tree">The root node of an NBT tree.</param>
+        /// <param name="name">The name for the root node.</param>
+        public NbtTree (TagNodeCompound tree, string name)
+        {
+            _root = tree;
+            _rootName = name;
         }
 
         /// <summary>
@@ -79,7 +100,7 @@ namespace Substrate.Nbt
                 _stream = s;
 
                 if (_root != null) {
-                    WriteTag("", _root);
+                    WriteTag(_rootName, _root);
                 }
 
                 _stream = null;

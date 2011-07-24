@@ -66,7 +66,7 @@ namespace Substrate.TileEntities
             }
 
             _delay = ctree["Delay"].ToTagShort();
-            _entityID = ctree["EntityID"].ToTagString();
+            _entityID = ctree["EntityId"].ToTagString();
 
             return this;
         }
@@ -74,7 +74,7 @@ namespace Substrate.TileEntities
         public override TagNode BuildTree ()
         {
             TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
-            tree["EntityID"] = new TagNodeString(_entityID);
+            tree["EntityId"] = new TagNodeString(_entityID);
             tree["Delay"] = new TagNodeShort(_delay);
 
             return tree;

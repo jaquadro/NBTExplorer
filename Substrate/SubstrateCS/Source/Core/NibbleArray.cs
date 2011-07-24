@@ -11,7 +11,7 @@ namespace Substrate.Core
 
         public NibbleArray (int length)
         {
-            _data = new byte[length / 2];
+            _data = new byte[(int)Math.Ceiling(length / 2.0)];
         }
 
         public NibbleArray (byte[] data)

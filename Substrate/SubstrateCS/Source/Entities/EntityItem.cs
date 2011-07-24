@@ -13,7 +13,7 @@ namespace Substrate.Entities
             new SchemaNodeString("id", "Item"),
             new SchemaNodeScaler("Health", TagType.TAG_SHORT),
             new SchemaNodeScaler("Age", TagType.TAG_SHORT),
-            new SchemaNodeCompound("Item", Item.ItemSchema),
+            new SchemaNodeCompound("Item", Item.Schema),
         });
 
         private short _health;

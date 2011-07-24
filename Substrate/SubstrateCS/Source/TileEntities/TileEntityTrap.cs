@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Substrate.Core;
+using Substrate.Nbt;
 
 namespace Substrate.TileEntities
 {
-    using Substrate.Nbt;
-
     public class TileEntityTrap : TileEntity, IItemContainer
     {
         public static readonly SchemaNodeCompound TrapSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", "Trap"),
-            new SchemaNodeList("Items", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),
+            new SchemaNodeList("Items", TagType.TAG_COMPOUND, ItemCollection.Schema),
         });
 
         private const int _CAPACITY = 8;

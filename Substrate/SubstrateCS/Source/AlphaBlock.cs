@@ -53,11 +53,15 @@ namespace Substrate
         /// <param name="lx">The local X-coordinate of a block within the collection.</param>
         /// <param name="ly">The local Y-coordinate of a block within the collection.</param>
         /// <param name="lz">The local Z-coordinate of a block within the collection.</param>
-        public AlphaBlock (IAlphaBlockCollection chunk, int lx, int ly, int lz)
+        public AlphaBlock (AlphaBlockCollection chunk, int lx, int ly, int lz)
         {
             _id = chunk.GetID(lx, ly, lz);
             _data = chunk.GetData(lx, ly, lz);
-            _tileEntity = chunk.GetTileEntity(lx, ly, lz).Copy();
+
+            TileEntity te = chunk.GetTileEntity(lx, ly, lz);
+            if (te != null) {
+                _tileEntity = te.Copy();
+            }
         }
 
 

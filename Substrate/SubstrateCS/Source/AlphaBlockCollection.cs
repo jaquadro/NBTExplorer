@@ -35,6 +35,71 @@ namespace Substrate
 
         public delegate AlphaBlockCollection NeighborLookupHandler (int relx, int rely, int relz);
 
+        /// <summary>
+        /// Creates a new <see cref="AlphaBlockCollection"/> of a given dimension.
+        /// </summary>
+        /// <param name="xdim">The length of the X-dimension of the collection.</param>
+        /// <param name="ydim">The length of the Y-dimension of the collection.</param>
+        /// <param name="zdim">The length of the Z-dimension of the collection.</param>
+        public AlphaBlockCollection (int xdim, int ydim, int zdim)
+        {
+            _blocks = new XZYByteArray(xdim, ydim, zdim);
+            _data = new XZYNibbleArray(xdim, ydim, zdim);
+            _blockLight = new XZYNibbleArray(xdim, ydim, zdim);
+            _skyLight = new XZYNibbleArray(xdim, ydim, zdim);
+            _heightMap = new ZXByteArray(xdim, zdim);
+            _tileEntities = new TagNodeList(TagType.TAG_COMPOUND);
+
+            _xdim = xdim;
+            _ydim = ydim;
+            _zdim = zdim;
+
+            Refresh();
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="AlphaBlockCollection"/> overlay on top of Alpha-specific units of data.
+        /// </summary>
+        /// <param name="blocks">An array of Block IDs.</param>
+        /// <param name="data">An array of data nibbles.</param>
+        /// <param name="blockLight">An array of block light nibbles.</param>
+        /// <param name="skyLight">An array of sky light nibbles.</param>
+        /// <param name="heightMap">An array of height map values.</param>
+        /// <param name="tileEntities">A list of tile entities corresponding to blocks in this collection.</param>
+        public AlphaBlockCollection (
+            XZYByteArray blocks,
+            XZYNibbleArray data,
+            XZYNibbleArray blockLight,
+            XZYNibbleArray skyLight,
+            ZXByteArray heightMap,
+            TagNodeList tileEntities)
+        {
+            _blocks = blocks;
+            _data = data;
+            _blockLight = blockLight;
+            _skyLight = skyLight;
+            _heightMap = heightMap;
+            _tileEntities = tileEntities;
+
+            _xdim = _blocks.XDim;
+            _ydim = _blocks.YDim;
+            _zdim = _blocks.ZDim;
+
+            Refresh();
+        }
+
+        /// <summary>
+        /// Updates internal managers if underlying data, such as TileEntities, have been modified outside of the container.
+        /// </summary>
+        public void Refresh ()
+        {
+            _lightManager = new BlockLight(this);
+            _fluidManager = new BlockFluid(this);
+            _tileEntityManager = new BlockTileEntities(_blocks, _tileEntities);
+        }
+
+        #region Events
+
         public event NeighborLookupHandler ResolveNeighbor
         {
             add 
@@ -60,6 +125,8 @@ namespace Substrate
             add { _tileEntityManager.TranslateCoordinates += value; }
             remove { _tileEntityManager.TranslateCoordinates -= value; }
         }
+
+        #endregion
 
         /// <summary>
         /// Gets or sets a value indicating whether changes to blocks will trigger automatic lighting updates.
@@ -94,38 +161,7 @@ namespace Substrate
             set { _dirty = value; }
         }
 
-        /// <summary>
-        /// Creates a new <see cref="AlphaBlockCollection"/> overlay on top of Alpha-specific units of data.
-        /// </summary>
-        /// <param name="blocks">An array of Block IDs.</param>
-        /// <param name="data">An array of data nibbles.</param>
-        /// <param name="blockLight">An array of block light nibbles.</param>
-        /// <param name="skyLight">An array of sky light nibbles.</param>
-        /// <param name="heightMap">An array of height map values.</param>
-        /// <param name="tileEntities">A list of tile entities corresponding to blocks in this collection.</param>
-        public AlphaBlockCollection (
-            XZYByteArray blocks, 
-            XZYNibbleArray data, 
-            XZYNibbleArray blockLight, 
-            XZYNibbleArray skyLight, 
-            ZXByteArray heightMap, 
-            TagNodeList tileEntities)
-        {
-            _blocks = blocks;
-            _data = data;
-            _blockLight = blockLight;
-            _skyLight = skyLight;
-            _heightMap = heightMap;
-            _tileEntities = tileEntities;
-
-            _xdim = _blocks.XDim;
-            _ydim = _blocks.YDim;
-            _zdim = _blocks.ZDim;
-
-            _lightManager = new BlockLight(this);
-            _fluidManager = new BlockFluid(this);
-            _tileEntityManager = new BlockTileEntities(_blocks, _tileEntities);
-        }
+        
 
         /// <summary>
         /// Returns a new <see cref="AlphaBlock"/> object from local coordinates relative to this collection.
@@ -473,12 +509,6 @@ namespace Substrate
         }
 
         /// <inheritdoc/>
-        /// <remarks><para>The lighting of the block will be updated to be consistent with the lighting in neighboring blocks.
-        /// If the block is itself a light source, many nearby blocks may be updated to maintain consistent lighting.  These
-        /// updates may also touch neighboring <see cref="AlphaBlockCollection"/> objects, if they can be resolved.</para>
-        /// <para>This function assumes that the entire <see cref="AlphaBlockCollection"/> and neighboring <see cref="AlphaBlockCollection"/>s
-        /// already have consistent lighting, with the exception of the block being updated.  If this assumption is violated,
-        /// lighting may fail to converge correctly.</para></remarks>
         public void UpdateBlockLight (int x, int y, int z)
         {
             _lightManager.UpdateBlockLight(x, y, z);
@@ -486,127 +516,69 @@ namespace Substrate
         }
 
         /// <inheritdoc/>
-        /// <remarks><para>The lighting of the block will be updated to be consistent with the lighting in neighboring blocks.
-        /// If the block is itself a light source, many nearby blocks may be updated to maintain consistent lighting.  These
-        /// updates may also touch neighboring <see cref="AlphaBlockCollection"/> objects, if they can be resolved.</para>
-        /// <para>This function assumes that the entire <see cref="AlphaBlockCollection"/> and neighboring <see cref="AlphaBlockCollection"/>s
-        /// already have consistent lighting, with the exception of the block being updated.  If this assumption is violated,
-        /// lighting may fail to converge correctly.</para></remarks>
         public void UpdateSkyLight (int x, int y, int z)
         {
             _lightManager.UpdateBlockSkyLight(x, y, z);
             _dirty = true;
         }
 
-        /// <summary>
-        /// Resets the block-source light value to 0 for all blocks in this <see cref="AlphaBlockCollection"/>.
-        /// </summary>
+        /// <inheritdoc/>
         public void ResetBlockLight ()
         {
             _blockLight.Clear();
             _dirty = true;
         }
 
-        /// <summary>
-        /// Resets the sky-source light value to 0 for all blocks in this <see cref="AlphaBlockCollection"/>.
-        /// </summary>
+        /// <inheritdoc/>
         public void ResetSkyLight ()
         {
             _skyLight.Clear();
             _dirty = true;
         }
 
-        /// <summary>
-        /// Reconstructs the block-source lighting for all blocks in this <see cref="AlphaBlockCollection"/>.
-        /// </summary>
-        /// <remarks><para>This function should only be called after the lighting has been reset in this <see cref="AlphaBlockCollection"/>
-        /// and all neighboring <see cref="AlphaBlockCollection"/>s, or lighting may fail to converge correctly.  
-        /// This function cannot reset the lighting on its own, due to interactions between <see cref="AlphaBlockCollection"/>s.</para>
-        /// <para>If many light source or block opacity values will be modified in this <see cref="AlphaBlockCollection"/>, it may
-        /// be preferable to avoid explicit or implicit calls to <see cref="UpdateBlockLight"/> and call this function once when
-        /// modifications are complete.</para></remarks>
-        /// /<seealso cref="ResetBlockLight"/>
+        /// <inheritdoc/>
         public void RebuildBlockLight ()
         {
             _lightManager.RebuildBlockLight();
             _dirty = true;
         }
 
-        /// <summary>
-        /// Reconstructs the sky-source lighting for all blocks in this <see cref="AlphaBlockCollection"/>.
-        /// </summary>
-        /// <remarks><para>This function should only be called after the lighting has been reset in this <see cref="AlphaBlockCollection"/>
-        /// and all neighboring <see cref="AlphaBlockCollection"/>s, or lighting may fail to converge correctly.  
-        /// This function cannot reset the lighting on its own, due to interactions between <see cref="AlphaBlockCollection"/>s.</para>
-        /// <para>If many light source or block opacity values will be modified in this <see cref="AlphaBlockCollection"/>, it may
-        /// be preferable to avoid explicit or implicit calls to <see cref="UpdateSkyLight"/> and call this function once when
-        /// modifications are complete.</para></remarks>
-        /// <seealso cref="ResetSkyLight"/>
+        /// <inheritdoc/>
         public void RebuildSkyLight ()
         {
             _lightManager.RebuildBlockSkyLight();
             _dirty = true;
         }
 
-        /// <summary>
-        /// Reconstructs the height-map for this <see cref="AlphaBlockCollection"/>.
-        /// </summary>
+        /// <inheritdoc/>
         public void RebuildHeightMap ()
         {
             _lightManager.RebuildHeightMap();
             _dirty = true;
         }
 
-        /// <summary>
-        /// Reconciles any block-source lighting inconsistencies between this <see cref="AlphaBlockCollection"/> and any of its neighbors.
-        /// </summary>
-        /// <remarks>It will be necessary to call this function if an <see cref="AlphaBlockCollection"/> is reset and rebuilt, but
-        /// some of its neighbors are not.  A rebuilt <see cref="AlphaBlockCollection"/> will spill lighting updates into its neighbors,
-        /// but will not see lighting that should be propagated back from its neighbors.</remarks>
-        /// <seealso cref="RebuildBlockLight"/>
+        /// <inheritdoc/>
         public void StitchBlockLight ()
         {
             _lightManager.StitchBlockLight();
             _dirty = true;
         }
 
-        /// <summary>
-        /// Reconciles any sky-source lighting inconsistencies between this <see cref="AlphaBlockCollection"/> and any of its neighbors.
-        /// </summary>
-        /// <remarks>It will be necessary to call this function if an <see cref="AlphaBlockCollection"/> is reset and rebuilt, but
-        /// some of its neighbors are not.  A rebuilt <see cref="AlphaBlockCollection"/> will spill lighting updates into its neighbors,
-        /// but will not see lighting that should be propagated back from its neighbors.</remarks>
-        /// <seealso cref="RebuildSkyLight"/>
+        /// <inheritdoc/>
         public void StitchSkyLight ()
         {
             _lightManager.StitchBlockSkyLight();
             _dirty = true;
         }
 
-        /// <summary>
-        /// Reconciles any block-source lighting inconsistencies between this <see cref="AlphaBlockCollection"/> and another <see cref="IBoundedLitBlockCollection"/> on a given edge.
-        /// </summary>
-        /// <param name="blockset">An <see cref="IBoundedLitBlockCollection"/>-compatible object with the same dimensions as this <see cref="AlphaBlockCollection"/>.</param>
-        /// <param name="edge">The edge that <paramref name="blockset"/> is a neighbor on.</param>
-        /// <remarks>It will be necessary to call this function if an <see cref="AlphaBlockCollection"/> is reset and rebuilt, but
-        /// some of its neighbors are not.  A rebuilt <see cref="AlphaBlockCollection"/> will spill lighting updates into its neighbors,
-        /// but will not see lighting that should be propagated back from its neighbors.</remarks>
-        /// <seealso cref="RebuildBlockLight"/>
+        /// <inheritdoc/>
         public void StitchBlockLight (IBoundedLitBlockCollection blockset, BlockCollectionEdge edge)
         {
             _lightManager.StitchBlockLight(blockset, edge);
             _dirty = true;
         }
 
-        /// <summary>
-        /// Reconciles any sky-source lighting inconsistencies between this <see cref="AlphaBlockCollection"/> and another <see cref="IBoundedLitBlockCollection"/> on a given edge.
-        /// </summary>
-        /// <param name="blockset">An <see cref="IBoundedLitBlockCollection"/>-compatible object with the same dimensions as this <see cref="AlphaBlockCollection"/>.</param>
-        /// <param name="edge">The edge that <paramref name="blockset"/> is a neighbor on.</param>
-        /// <remarks>It will be necessary to call this function if an <see cref="AlphaBlockCollection"/> is reset and rebuilt, but
-        /// some of its neighbors are not.  A rebuilt <see cref="AlphaBlockCollection"/> will spill lighting updates into its neighbors,
-        /// but will not see lighting that should be propagated back from its neighbors.</remarks>
-        /// <seealso cref="RebuildSkyLight"/>
+        /// <inheritdoc/>
         public void StitchSkyLight (IBoundedLitBlockCollection blockset, BlockCollectionEdge edge)
         {
             _lightManager.StitchBlockSkyLight(blockset, edge);
@@ -735,7 +707,7 @@ namespace Substrate
 
         #region Unbounded Container Implementations
 
-        IBlock IBlockCollection.GetBlock (int x, int y, int z)
+        /*IBlock IBlockCollection.GetBlock (int x, int y, int z)
         {
             if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
                 return GetBlock(x, y, z);
@@ -986,7 +958,7 @@ namespace Substrate
                 SetBlock(x, y, z, block);
             }
             throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
+        }*/
 
         #endregion
 

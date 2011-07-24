@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Substrate.Core;
+using Substrate.Nbt;
 
 namespace Substrate.Entities
 {
-    using Substrate.Nbt;
-
     public class EntityMinecartChest : EntityMinecart, IItemContainer
     {
         public static readonly SchemaNodeCompound MinecartChestSchema = MinecartSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeList("Items", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),
+            new SchemaNodeList("Items", TagType.TAG_COMPOUND, ItemCollection.Schema),
         });
 
         private static int _CAPACITY = 27;

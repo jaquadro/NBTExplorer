@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Substrate.Core;
+using Substrate.Nbt;
 
 namespace Substrate.TileEntities
 {
-    using Substrate.Nbt;
-
     public class TileEntityFurnace : TileEntity, IItemContainer
     {
         public static readonly SchemaNodeCompound FurnaceSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
@@ -13,7 +12,7 @@ namespace Substrate.TileEntities
             new SchemaNodeString("id", "Furnace"),
             new SchemaNodeScaler("BurnTime", TagType.TAG_SHORT),
             new SchemaNodeScaler("CookTime", TagType.TAG_SHORT),
-            new SchemaNodeList("Items", TagType.TAG_COMPOUND, ItemCollection.InventorySchema),
+            new SchemaNodeList("Items", TagType.TAG_COMPOUND, ItemCollection.Schema),
         });
 
         private const int _CAPACITY = 3;
