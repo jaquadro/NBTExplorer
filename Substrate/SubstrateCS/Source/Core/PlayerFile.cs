@@ -21,7 +21,7 @@ namespace Substrate.Core
             }
 
             string file = name + ".dat";
-            _filename = Path.Combine(path, file);
+            FileName = Path.Combine(path, file);
         }
     }
 }

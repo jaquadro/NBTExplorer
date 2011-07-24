@@ -3,6 +3,9 @@ using Substrate.Core;
 
 namespace Substrate
 {
+    /// <summary>
+    /// Represents an Alpha-compatible interface for globally managing blocks.
+    /// </summary>
     public class BlockManager : IBlockManager
     {
         public const int MIN_X = -32000000;
@@ -29,18 +32,28 @@ namespace Substrate
         private bool _autoLight = true;
         private bool _autoFluid = false;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether changes to blocks will trigger automatic lighting updates.
+        /// </summary>
         public bool AutoLight
         {
             get { return _autoLight; }
             set { _autoLight = value; }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether changes to blocks will trigger automatic fluid updates.
+        /// </summary>
         public bool AutoFluid
         {
             get { return _autoFluid; }
             set { _autoFluid = value; }
         }
 
+        /// <summary>
+        /// Constructs a new <see cref="BlockManager"/> instance on top of the given <see cref="IChunkManager"/>.
+        /// </summary>
+        /// <param name="cm">An <see cref="IChunkManager"/> instance.</param>
         public BlockManager (IChunkManager cm)
         {
             chunkMan = cm;
@@ -58,6 +71,15 @@ namespace Substrate
             chunkZLog = Log2(chunkZDim);
         }
 
+        /// <summary>
+        /// Returns a new <see cref="AlphaBlock"/> object from global coordinates.
+        /// </summary>
+        /// <param name="x">Global X-coordinate of block.</param>
+        /// <param name="y">Global Y-coordinate of block.</param>
+        /// <param name="z">Global Z-coordiante of block.</param>
+        /// <returns>A new <see cref="AlphaBlock"/> object representing context-independent data of a single block.</returns>
+        /// <remarks>Context-independent data excludes data such as lighting.  <see cref="AlphaBlock"/> object actually contain a copy
+        /// of the data they represent, so changes to the <see cref="AlphaBlock"/> will not affect this container, and vice-versa.</remarks>
         public AlphaBlock GetBlock (int x, int y, int z)
         {
             cache = GetChunk(x, y, z);
@@ -68,6 +90,16 @@ namespace Substrate
             return cache.Blocks.GetBlock(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
+        /// <summary>
+        /// Returns a new <see cref="AlphaBlockRef"/> object from global coordaintes.
+        /// </summary>
+        /// <param name="x">Global X-coordinate of block.</param>
+        /// <param name="y">Global Y-coordinate of block.</param>
+        /// <param name="z">Global Z-coordinate of block.</param>
+        /// <returns>A new <see cref="AlphaBlockRef"/> object representing context-dependent data of a single block.</returns>
+        /// <remarks>Context-depdendent data includes all data associated with this block.  Since a <see cref="AlphaBlockRef"/> represents
+        /// a view of a block within this container, any updates to data in the container will be reflected in the <see cref="AlphaBlockRef"/>,
+        /// and vice-versa for updates to the <see cref="AlphaBlockRef"/>.</remarks>
         public AlphaBlockRef GetBlockRef (int x, int y, int z)
         {
             cache = GetChunk(x, y, z);
@@ -78,6 +110,13 @@ namespace Substrate
             return cache.Blocks.GetBlockRef(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
+        /// <summary>
+        /// Updates a block with values from a <see cref="AlphaBlock"/> object.
+        /// </summary>
+        /// <param name="x">Global X-coordinate of a block.</param>
+        /// <param name="y">Global Y-coordinate of a block.</param>
+        /// <param name="z">Global Z-coordinate of a block.</param>
+        /// <param name="block">A <see cref="AlphaBlock"/> object to copy block data from.</param>
         public void SetBlock (int x, int y, int z, AlphaBlock block)
         {
             cache = GetChunk(x, y, z);
@@ -88,6 +127,13 @@ namespace Substrate
             cache.Blocks.SetBlock(x & chunkXMask, y & chunkYMask, z & chunkZMask, block);
         }
 
+        /// <summary>
+        /// Gets a reference object to a single chunk given global coordinates to a block within that chunk.
+        /// </summary>
+        /// <param name="x">Global X-coordinate of a block.</param>
+        /// <param name="y">Global Y-coordinate of a block.</param>
+        /// <param name="z">Global Z-coordinate of a block.</param>
+        /// <returns>A <see cref="ChunkRef"/> to a single chunk containing the given block.</returns>
         protected ChunkRef GetChunk (int x, int y, int z)
         {
             x >>= chunkXLog;
@@ -129,11 +175,13 @@ namespace Substrate
             return GetBlockRef(x, y, z);
         }
 
+        /// <inheritdoc/>
         public void SetBlock (int x, int y, int z, IBlock block)
         {
             cache.Blocks.SetBlock(x, y, z, block);
         }
 
+        /// <inheritdoc/>
         public BlockInfo GetInfo (int x, int y, int z)
         {
             cache = GetChunk(x, y, z);
@@ -144,6 +192,7 @@ namespace Substrate
             return cache.Blocks.GetInfo(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
+        /// <inheritdoc/>
         public int GetID (int x, int y, int z)
         {
             cache = GetChunk(x, y, z);
@@ -154,6 +203,7 @@ namespace Substrate
             return cache.Blocks.GetID(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
+        /// <inheritdoc/>
         public void SetID (int x, int y, int z, int id)
         {
             cache = GetChunk(x, y, z);
@@ -188,11 +238,13 @@ namespace Substrate
             return GetBlockRef(x, y, z);
         }
 
+        /// <inheritdoc/>
         public void SetBlock (int x, int y, int z, IDataBlock block)
         {
             cache.Blocks.SetBlock(x, y, z, block);
         }
 
+        /// <inheritdoc/>
         public int GetData (int x, int y, int z)
         {
             cache = GetChunk(x, y, z);
@@ -203,6 +255,7 @@ namespace Substrate
             return cache.Blocks.GetData(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
+        /// <inheritdoc/>
         public void SetData (int x, int y, int z, int data)
         {
             cache = GetChunk(x, y, z);
@@ -228,11 +281,13 @@ namespace Substrate
             return GetBlockRef(x, y, z);
         }
 
+        /// <inheritdoc/>
         public void SetBlock (int x, int y, int z, ILitBlock block)
         {
             cache.Blocks.SetBlock(x, y, z, block);
         }
 
+        /// <inheritdoc/>
         public int GetBlockLight (int x, int y, int z)
         {
             cache = GetChunk(x, y, z);
@@ -243,6 +298,7 @@ namespace Substrate
             return cache.Blocks.GetBlockLight(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
+        /// <inheritdoc/>
         public int GetSkyLight (int x, int y, int z)
         {
             cache = GetChunk(x, y, z);
@@ -253,6 +309,7 @@ namespace Substrate
             return cache.Blocks.GetSkyLight(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
+        /// <inheritdoc/>
         public void SetBlockLight (int x, int y, int z, int light)
         {
             cache = GetChunk(x, y, z);
@@ -263,6 +320,7 @@ namespace Substrate
             cache.Blocks.SetBlockLight(x & chunkXMask, y & chunkYMask, z & chunkZMask, light);
         }
 
+        /// <inheritdoc/>
         public void SetSkyLight (int x, int y, int z, int light)
         {
             cache = GetChunk(x, y, z);
@@ -273,6 +331,7 @@ namespace Substrate
             cache.Blocks.SetSkyLight(x & chunkXMask, y & chunkYMask, z & chunkZMask, light);
         }
 
+        /// <inheritdoc/>
         public int GetHeight (int x, int z)
         {
             cache = GetChunk(x, 0, z);
@@ -283,6 +342,7 @@ namespace Substrate
             return cache.Blocks.GetHeight(x & chunkXMask, z & chunkZMask);
         }
 
+        /// <inheritdoc/>
         public void SetHeight (int x, int z, int height)
         {
             cache = GetChunk(x, 0, z);
@@ -293,6 +353,7 @@ namespace Substrate
             cache.Blocks.SetHeight(x & chunkXMask, z & chunkZMask, height);
         }
 
+        /// <inheritdoc/>
         public void UpdateBlockLight (int x, int y, int z)
         {
             cache = GetChunk(x, y, z);
@@ -303,6 +364,7 @@ namespace Substrate
             cache.Blocks.UpdateBlockLight(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
+        /// <inheritdoc/>
         public void UpdateSkyLight (int x, int y, int z)
         {
             cache = GetChunk(x, y, z);
@@ -328,11 +390,13 @@ namespace Substrate
             return GetBlockRef(x, y, z);
         }
 
+        /// <inheritdoc/>
         public void SetBlock (int x, int y, int z, IPropertyBlock block)
         {
             cache.Blocks.SetBlock(x, y, z, block);
         }
 
+        /// <inheritdoc/>
         public TileEntity GetTileEntity (int x, int y, int z)
         {
             cache = GetChunk(x, y, z);
@@ -343,6 +407,7 @@ namespace Substrate
             return cache.Blocks.GetTileEntity(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
+        /// <inheritdoc/>
         public void SetTileEntity (int x, int y, int z, TileEntity te)
         {
             cache = GetChunk(x, y, z);
@@ -353,6 +418,7 @@ namespace Substrate
             cache.Blocks.SetTileEntity(x & chunkXMask, y & chunkYMask, z & chunkZMask, te);
         }
 
+        /// <inheritdoc/>
         public void CreateTileEntity (int x, int y, int z)
         {
             cache = GetChunk(x, y, z);
@@ -363,6 +429,7 @@ namespace Substrate
             cache.Blocks.CreateTileEntity(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
+        /// <inheritdoc/>
         public void ClearTileEntity (int x, int y, int z)
         {
             cache = GetChunk(x, y, z);

@@ -6,7 +6,7 @@ namespace Substrate.Nbt
     /// <summary>
     /// The exception that is thrown when errors occur during Nbt IO operations.
     /// </summary>
-    /// <remarks>In most cases, the <see cref="InnerException"/> property will contain more detailed information on the
+    /// <remarks>In most cases, the <see cref="NbtIOException.InnerException"/> property will contain more detailed information on the
     /// error that occurred.</remarks>
     [Serializable]
     public class NbtIOException : SubstrateException

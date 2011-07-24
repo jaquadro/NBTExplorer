@@ -7,7 +7,7 @@ namespace Substrate.Core
 
     public class NibbleArray : ICopyable<NibbleArray>
     {
-        protected readonly byte[] _data = null;
+        private readonly byte[] _data = null;
 
         public NibbleArray (int length)
         {
@@ -54,6 +54,11 @@ namespace Substrate.Core
             {
                 return _data.Length << 1;
             }
+        }
+
+        protected byte[] Data
+        {
+            get { return _data; }
         }
 
         public void Clear ()
@@ -138,8 +143,8 @@ namespace Substrate.Core
 
         public override NibbleArray Copy ()
         {
-            byte[] data = new byte[_data.Length];
-            _data.CopyTo(data, 0);
+            byte[] data = new byte[Data.Length];
+            Data.CopyTo(data, 0);
 
             return new XZYNibbleArray(_xdim, _ydim, _zdim, data);
         }

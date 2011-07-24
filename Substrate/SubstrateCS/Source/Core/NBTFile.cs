@@ -9,11 +9,17 @@ namespace Substrate.Core
 {
     public class NBTFile
     {
-        protected string _filename;
+        private string _filename;
 
         public NBTFile (string path)
         {
             _filename = path;
+        }
+
+        public string FileName
+        {
+            get { return _filename; }
+            protected set { _filename = value; }
         }
 
         public bool Exists ()

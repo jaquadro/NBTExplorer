@@ -555,6 +555,9 @@ namespace Substrate
             return chunk.Save(GetChunkOutStream(ForeignX(chunk.X), ForeignZ(chunk.Z)));
         }
 
+        /// <summary>
+        /// Checks if this container supports delegating an action on out-of-bounds coordinates to another container. 
+        /// </summary>
         public bool CanDelegateCoordinates
         {
             get { return true; }

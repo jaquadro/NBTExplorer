@@ -146,6 +146,9 @@ namespace Substrate
             _tileEntity = te;
         }
 
+        /// <summary>
+        /// Creates a default Tile Entity record appropriate for the block.
+        /// </summary>
         public void CreateTileEntity ()
         {
             BlockInfoEx info = BlockInfo.BlockTable[_id] as BlockInfoEx;

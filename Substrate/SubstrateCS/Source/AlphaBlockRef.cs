@@ -35,6 +35,9 @@ namespace Substrate
             _index = index;
         }
 
+        /// <summary>
+        /// Checks if this object is currently a valid ref into another <see cref="AlphaBlockCollection"/>.
+        /// </summary>
         public bool IsValid
         {
             get { return _collection != null; }
@@ -140,6 +143,9 @@ namespace Substrate
             _collection.SetTileEntity(_index, te);
         }
 
+        /// <summary>
+        /// Creates a default Tile Entity record appropriate for the block.
+        /// </summary>
         public void CreateTileEntity ()
         {
             _collection.CreateTileEntity(_index);

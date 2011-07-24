@@ -6,6 +6,9 @@ using Substrate.Nbt;
 
 namespace Substrate.ImportExport
 {
+    /// <summary>
+    /// Provides import and export support for the 3rd party schematic file format.
+    /// </summary>
     public class Schematic
     {
         private static SchemaNodeCompound _schema = new SchemaNodeCompound()
@@ -36,12 +39,23 @@ namespace Substrate.ImportExport
         {
         }
 
+        /// <summary>
+        /// Create an exportable schematic wrapper around existing blocks and entities.
+        /// </summary>
+        /// <param name="blocks">An existing <see cref="AlphaBlockCollection"/>.</param>
+        /// <param name="entities">An existing <see cref="EntityCollection"/>.</param>
         public Schematic (AlphaBlockCollection blocks, EntityCollection entities)
         {
             _blockset = blocks;
             _entityset = entities;
         }
 
+        /// <summary>
+        /// Create an empty, exportable schematic of given dimensions.
+        /// </summary>
+        /// <param name="xdim">The length of the X-dimension in blocks.</param>
+        /// <param name="ydim">The length of the Y-dimension in blocks.</param>
+        /// <param name="zdim">The length of the Z-dimension in blocks.</param>
         public Schematic (int xdim, int ydim, int zdim)
         {
             _blocks = new XZYByteArray(xdim, ydim, zdim);
@@ -59,12 +73,18 @@ namespace Substrate.ImportExport
 
         #region Properties
 
+        /// <summary>
+        /// Gets or sets the underlying block collection.
+        /// </summary>
         public AlphaBlockCollection Blocks
         {
             get { return _blockset; }
             set { _blockset = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the underlying entity collection.
+        /// </summary>
         public EntityCollection Entities
         {
             get { return _entityset; }
@@ -73,6 +93,11 @@ namespace Substrate.ImportExport
 
         #endregion
 
+        /// <summary>
+        /// Imports a schematic file at the given path and returns in as a <see cref="Schematic"/> object.
+        /// </summary>
+        /// <param name="path">The path to the schematic file.</param>
+        /// <returns>A <see cref="Schematic"/> object containing the decoded schematic file data.</returns>
         public static Schematic Import (string path)
         {
             NBTFile schematicFile = new NBTFile(path);
@@ -128,6 +153,10 @@ namespace Substrate.ImportExport
             return self;
         }
 
+        /// <summary>
+        /// Exports the <see cref="Schematic"/> object to a schematic file.
+        /// </summary>
+        /// <param name="path">The path to write out the schematic file to.</param>
         public void Export (string path)
         {
             int xdim = _blockset.XDim;
