@@ -4,6 +4,7 @@ using System.Text;
 using System.Globalization;
 using NDesk.Options;
 using Substrate;
+using Substrate.Core;
 
 namespace NBToolkit
 {
@@ -134,6 +135,23 @@ namespace NBToolkit
 
                 throw new TKOptionException();
             }
+
+            if (_blockFilter.XAboveEq != null) {
+                int cx = (int)_blockFilter.XAboveEq >> 5;
+                _chunkFilter.XAboveEq = Math.Max(_chunkFilter.XAboveEq ?? cx, cx);
+            }
+            if (_blockFilter.XBelowEq != null) {
+                int cx = (int)_blockFilter.XBelowEq >> 5;
+                _chunkFilter.XBelowEq = Math.Min(_chunkFilter.XBelowEq ?? cx, cx);
+            }
+            if (_blockFilter.ZAboveEq != null) {
+                int cx = (int)_blockFilter.ZAboveEq >> 5;
+                _chunkFilter.ZAboveEq = Math.Max(_chunkFilter.ZAboveEq ?? cx, cx);
+            }
+            if (_blockFilter.ZBelowEq != null) {
+                int cx = (int)_blockFilter.ZBelowEq >> 5;
+                _chunkFilter.ZBelowEq = Math.Min(_chunkFilter.ZBelowEq ?? cx, cx);
+            }
         }
 
         public IChunkFilter GetChunkFilter ()
@@ -153,30 +171,38 @@ namespace NBToolkit
 
         private static Random rand = new Random();
 
+        private List<BlockKey>[] _sort = new List<BlockKey>[256];
+
         public Replace (ReplaceOptions o)
         {
             opt = o;
+
+            for (int i = 0; i < 256; i++) {
+                _sort[i] = new List<BlockKey>();
+            }
         }
 
         public override void Run ()
         {
-            INBTWorld world = GetWorld(opt);
+            NbtWorld world = GetWorld(opt);
             IChunkManager cm = world.GetChunkManager(opt.OPT_DIM);
             FilteredChunkManager fcm = new FilteredChunkManager(cm, opt.GetChunkFilter());
 
             int affectedChunks = 0;
             foreach (ChunkRef chunk in fcm) {
-                affectedChunks++;
+                if (opt.OPT_V) {
+                    Console.WriteLine("Processing chunk {0},{1}...", chunk.X, chunk.Z);
+                }
 
                 ApplyChunk(world, chunk);
 
-                fcm.Save();
+                affectedChunks += fcm.Save() > 0 ? 1 : 0;
             }
 
             Console.WriteLine("Affected Chunks: " + affectedChunks);
         }
 
-        public void ApplyChunk (INBTWorld world, ChunkRef chunk)
+        public void ApplyChunk (NbtWorld world, ChunkRef chunk)
         {
             IBlockFilter opt_b = opt.GetBlockFilter();
 
@@ -195,7 +221,7 @@ namespace NBToolkit
             }
 
             xmin = (xmin < 0) ? 0 : xmin;
-            xmax = (xmin > 15) ? 15 : xmax;
+            xmax = (xmax > 15) ? 15 : xmax;
 
             if (xmin > 15 || xmax < 0 || xmin > xmax) {
                 return;
@@ -228,7 +254,7 @@ namespace NBToolkit
             }
 
             zmin = (zmin < 0) ? 0 : zmin;
-            zmax = (zmin > 15) ? 15 : zmax;
+            zmax = (zmax > 15) ? 15 : zmax;
 
             if (zmin > 15 || zmax < 0 || zmin > zmax) {
                 return;
@@ -238,8 +264,52 @@ namespace NBToolkit
             int ydim = chunk.Blocks.YDim;
             int zdim = chunk.Blocks.ZDim;
 
-            // Process Chunk
+            // Bin blocks
             for (int y = ymin; y <= ymax; y++) {
+                for (int x = xmin; x <= xmax; x++) {
+                    for (int z = zmin; z <= zmax; z++) {
+                        int id = chunk.Blocks.GetID(x, y, z);
+                        _sort[id].Add(new BlockKey(x, y, z));
+                    }
+                }
+            }
+
+            // Process bins
+            for (int i = 0; i < 256; i++) {
+                if (_sort[i].Count == 0) {
+                    continue;
+                }
+
+                if (opt_b.IncludedBlockCount > 0 & !opt_b.IncludedBlocksContains(i)) {
+                    continue;
+                }
+
+                if (opt_b.ExcludedBlockCount > 0 & opt_b.ExcludedBlocksContains(i)) {
+                    continue;
+                }
+
+                foreach (BlockKey key in _sort[i]) {
+                    chunk.Blocks.SetID(key.x, key.y, key.z, (int)opt.OPT_AFTER);
+
+                    if (opt.OPT_VV) {
+                        int gx = chunk.X * xdim + key.x;
+                        int gz = chunk.Z * zdim + key.z;
+                        Console.WriteLine("Replaced block {0} at {1},{2},{3}", i, gx, key.y, gz);
+                    }
+
+                    if (opt.OPT_DATA != null) {
+                        chunk.Blocks.SetData(key.x, key.y, key.z, (int)opt.OPT_DATA);
+                    }
+                }
+            }
+
+            // Reset bins
+            for (int i = 0; i < 256; i++) {
+                _sort[i].Clear();
+            }
+
+            // Process Chunk
+            /*for (int y = ymin; y <= ymax; y++) {
                 for (int x = xmin; x <= xmax; x++) {
                     for (int z = zmin; z <= zmax; z++) {
                         // Probability test
@@ -301,7 +371,7 @@ namespace NBToolkit
                         }
                     }
                 }
-            }
+            }*/
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Substrate;
+using Substrate.Core;
 
 namespace NBToolkit
 {
@@ -227,6 +228,16 @@ namespace NBToolkit
         public ChunkRef SetChunk (int cx, int cz, Chunk chunk)
         {
             return _cm.SetChunk(cx, cz, chunk);
+        }
+
+        #endregion
+
+        #region IChunkContainer Members
+
+
+        public bool CanDelegateCoordinates
+        {
+            get { return false; }
         }
 
         #endregion

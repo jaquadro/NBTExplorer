@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NDesk.Options;
 using Substrate;
+using Substrate.Core;
 
 namespace NBToolkit
 {
@@ -69,7 +70,7 @@ namespace NBToolkit
 
         public override void Run ()
         {
-            INBTWorld world = GetWorld(opt);
+            NbtWorld world = GetWorld(opt);
             IChunkManager cm = world.GetChunkManager(opt.OPT_DIM);
             FilteredChunkManager fcm = new FilteredChunkManager(cm, opt.GetChunkFilter());
 

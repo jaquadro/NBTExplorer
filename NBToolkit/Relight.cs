@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NDesk.Options;
 using Substrate;
+using Substrate.Core;
 
 namespace NBToolkit
 {
@@ -11,9 +12,9 @@ namespace NBToolkit
         private OptionSet _filterOpt = null;
         private ChunkFilter _chunkFilter = null;
 
-        public bool BlockLight;
-        public bool SkyLight;
-        public bool HeightMap;
+        public bool BlockLight = false;
+        public bool SkyLight = false;
+        public bool HeightMap = false;
 
         public RelightOptions ()
             : base()
@@ -82,7 +83,7 @@ namespace NBToolkit
 
         public override void Run ()
         {
-            INBTWorld world = GetWorld(opt);
+            NbtWorld world = GetWorld(opt);
             IChunkManager cm = world.GetChunkManager(opt.OPT_DIM);
             FilteredChunkManager fcm = new FilteredChunkManager(cm, opt.GetChunkFilter());
 

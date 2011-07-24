@@ -11,9 +11,9 @@ namespace NBToolkit
 
         public abstract void Run ();
 
-        public INBTWorld GetWorld (TKOptions opt)
+        public NbtWorld GetWorld (TKOptions opt)
         {
-            INBTWorld world = null;
+            NbtWorld world = null;
             try {
                 if (opt.OPT_ALPHA) {
                     world = AlphaWorld.Open(opt.OPT_WORLD);

@@ -31,6 +31,9 @@ namespace NBToolkit
         bool ExcludeMatchAll { get; }
 
         double? ProbMatch { get; }
+
+        bool IncludedBlocksContains (int id);
+        bool ExcludedBlocksContains (int id);
     }
 
     public class ChunkFilter : IOptions, IChunkFilter
@@ -55,21 +58,25 @@ namespace NBToolkit
         public int? XAboveEq
         {
             get { return _xAboveEq; }
+            set { _xAboveEq = value; }
         }
 
         public int? XBelowEq
         {
             get { return _xBelowEq; }
+            set { _xBelowEq = value; }
         }
 
         public int? ZAboveEq
         {
             get { return _zAboveEq; }
+            set { _zAboveEq = value; }
         }
 
         public int? ZBelowEq
         {
             get { return _zBelowEq; }
+            set { _zBelowEq = value; }
         }
 
         public bool InvertXZ
@@ -166,6 +173,16 @@ namespace NBToolkit
         public void PrintUsage () {
             Console.WriteLine("Chunk Filtering Options:");
             _options.WriteOptionDescriptions(Console.Out);
+        }
+
+        public bool IncludedBlocksContains (int id)
+        {
+            return _includedBlocks.Contains(id);
+        }
+
+        public bool ExcludedBlocksContains (int id)
+        {
+            return _excludedBlocks.Contains(id);
         }
     }
 }

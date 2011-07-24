@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Substrate;
+using Substrate.Core;
 
 namespace NBToolkit
 {
@@ -100,8 +101,8 @@ namespace NBToolkit
                                 for (int iz = zStart; iz <= zEnd; iz++) {
                                     double zThresh = (iz + 0.5D - zPos) / (fuzzXZ / 2.0D);
                                     if (xThresh * xThresh + yThresh * yThresh + zThresh * zThresh < 1.0D) {
-                                        BlockRef block = blockMan.GetBlockRef(ix, iy, iz);
-                                        if (block != null) {
+                                        AlphaBlockRef block = blockMan.GetBlockRef(ix, iy, iz);
+                                        if (block.IsValid) {
                                             block.ID = _blockId;
                                             block.Data = _blockData;
                                         }

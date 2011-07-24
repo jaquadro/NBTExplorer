@@ -28,6 +28,9 @@ namespace NBToolkit
         int ExcludedBlockCount { get; }
 
         double? ProbMatch { get; }
+
+        bool IncludedBlocksContains (int id);
+        bool ExcludedBlocksContains (int id);
     }
 
     public class BlockFilter : IOptions, IBlockFilter
@@ -51,11 +54,13 @@ namespace NBToolkit
         public int? XAboveEq
         {
             get { return _xAboveEq; }
+            set { _xAboveEq = value; }
         }
 
         public int? XBelowEq
         {
             get { return _xBelowEq; }
+            set { _xBelowEq = value; }
         }
 
         public int? YAboveEq
@@ -130,8 +135,24 @@ namespace NBToolkit
                     v => _invertXYZ = true },
                 { "bi|BlockInclude=", "Match blocks of type {ID}.  This option is repeatable.",
                     v => _includedBlocks.Add(Convert.ToInt32(v) % 256) },
+                { "bir|BlockIncludeRange=", "Match blocks of type between {0:V1} and {1:V2}, inclusive.  This option is repeatable.",
+                    (v1, v2) => {
+                        int i1 = Math.Max(0, Math.Min(255, Convert.ToInt32(v1)));
+                        int i2 = Math.Max(0, Math.Min(255, Convert.ToInt32(v2)));
+                        for (int i = i1; i <= i2; i++) {
+                            _includedBlocks.Add(i);
+                        }
+                    } },
                 { "bx|BlockExclude=", "Match all blocks except blocks of type {ID}.  This option is repeatable.",
                     v => _excludedBlocks.Add(Convert.ToInt32(v) % 256) },
+                { "ber|BlockExcludeRange=", "Match all blocks except blocks of type between {0:V1} and {1:V2}, inclusive.  This option is repeatable.",
+                    (v1, v2) => {
+                        int i1 = Math.Max(0, Math.Min(255, Convert.ToInt32(v1)));
+                        int i2 = Math.Max(0, Math.Min(255, Convert.ToInt32(v2)));
+                        for (int i = i1; i <= i2; i++) {
+                            _excludedBlocks.Add(i);
+                        }
+                    } },
                 { "bp|BlockProbability=", "Selects a matching block with probability {VAL} (0.0-1.0)",
                     v => _prob = Convert.ToDouble(v) },
             };
@@ -152,6 +173,16 @@ namespace NBToolkit
         {
             Console.WriteLine("Block Filtering Options:");
             _options.WriteOptionDescriptions(Console.Out);
+        }
+
+        public bool IncludedBlocksContains (int id)
+        {
+            return _includedBlocks.Contains(id);
+        }
+
+        public bool ExcludedBlocksContains (int id)
+        {
+            return _excludedBlocks.Contains(id);
         }
     }
 }

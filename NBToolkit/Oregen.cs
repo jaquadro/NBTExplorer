@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NDesk.Options;
 using Substrate;
+using Substrate.Core;
 
 namespace NBToolkit
 {
@@ -181,7 +182,7 @@ namespace NBToolkit
 
         public override void Run ()
         {
-            INBTWorld world = GetWorld(opt);
+            NbtWorld world = GetWorld(opt);
             IChunkManager cm = world.GetChunkManager(opt.OPT_DIM);
             FilteredChunkManager fcm = new FilteredChunkManager(cm, opt.GetChunkFilter());
 
@@ -205,7 +206,7 @@ namespace NBToolkit
             Console.WriteLine("Affected Chunks: " + affectedChunks);
         }
 
-        public void ApplyChunk (INBTWorld world, ChunkRef chunk)
+        public void ApplyChunk (NbtWorld world, ChunkRef chunk)
         {
             if (opt.OPT_V) {
                 Console.WriteLine("Generating {0} size {1} deposits of {2} between {3} and {4}",
@@ -265,7 +266,7 @@ namespace NBToolkit
                 return false;
             }
 
-            int blockID = _cache.Blocks.GetID(x & _chunkXMask, y & _chunkYMask, z & _chunkZMask);
+            int blockID = cache.Blocks.GetID(x & chunkXMask, y & chunkYMask, z & chunkZMask);
 
             if (
                 ((opt.OPT_OA) && (blockID != opt.OPT_ID)) ||
