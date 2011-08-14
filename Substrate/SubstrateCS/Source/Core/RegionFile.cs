@@ -274,6 +274,13 @@ namespace Substrate.Core
             return new ZlibStream(new ChunkBuffer(this, x, z), CompressionMode.Compress);
         }
 
+        public Stream GetChunkDataOutputStream (int x, int z, int timestamp)
+        {
+            if (OutOfBounds(x, z)) return null;
+
+            return new ZlibStream(new ChunkBuffer(this, x, z, timestamp), CompressionMode.Compress);
+        }
+
         /*
          * lets chunk writing be multithreaded by not locking the whole file as a
          * chunk is serializing -- only writes when serialization is over
@@ -282,20 +289,39 @@ namespace Substrate.Core
             private int x, z;
             private RegionFile region;
 
-            public ChunkBuffer(RegionFile r, int x, int z) : base(8096) {
-                // super(8096); // initialize to 8KB
+            private int? _timestamp;
+
+            public ChunkBuffer(RegionFile r, int x, int z) 
+                : base(8096) 
+            {
                 this.region = r;
                 this.x = x;
                 this.z = z;
             }
 
+            public ChunkBuffer (RegionFile r, int x, int z, int timestamp)
+                : this(r, x, z)
+            {
+                _timestamp = timestamp;
+            }
+
             public override void Close() {
-                region.Write(x, z, this.GetBuffer(), (int)this.Length);
+                if (_timestamp == null) {
+                    region.Write(x, z, this.GetBuffer(), (int)this.Length);
+                }
+                else {
+                    region.Write(x, z, this.GetBuffer(), (int)this.Length, (int)_timestamp);
+                }
             }
         }
 
+        protected void Write (int x, int z, byte[] data, int length)
+        {
+            Write(x, z, data, length, Timestamp());
+        }
+
         /* write a chunk at (x,z) with length bytes of data to disk */
-        protected void Write(int x, int z, byte[] data, int length) {
+        protected void Write(int x, int z, byte[] data, int length, int timestamp) {
             try {
                 int offset = GetOffset(x, z);
                 int sectorNumber = offset >> 8;
@@ -364,7 +390,7 @@ namespace Substrate.Core
                         SetOffset(x, z, (sectorNumber << 8) | sectorsNeeded);
                     }
                 }
-                SetTimestamp(x, z, Timestamp());
+                SetTimestamp(x, z, timestamp);
             } catch (IOException e) {
                 Console.WriteLine(e.StackTrace);
             }
@@ -436,7 +462,12 @@ namespace Substrate.Core
             return (int)((time - epoch).Ticks / (10000L * 1000L));
         }
 
-        private void SetTimestamp(int x, int z, int value) {
+        public int GetTimestamp (int x, int z)
+        {
+            return chunkTimestamps[x + z * 32];
+        }
+
+        public void SetTimestamp(int x, int z, int value) {
             chunkTimestamps[x + z * 32] = value;
             file.Seek(SECTOR_BYTES + (x + z * 32) * 4, SeekOrigin.Begin);
 

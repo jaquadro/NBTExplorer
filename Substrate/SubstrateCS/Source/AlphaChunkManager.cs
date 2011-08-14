@@ -218,6 +218,22 @@ namespace Substrate
 
         #endregion
 
+        /// <summary>
+        /// Gets the (last modified) timestamp of the underlying chunk file.
+        /// </summary>
+        /// <param name="cx">The global X-coordinate of a chunk.</param>
+        /// <param name="cz">The global Z-coordinate of a chunk.</param>
+        /// <returns>The last modified timestamp of the underlying chunk file.</returns>
+        public int GetChunkTimestamp (int cx, int cz)
+        {
+            ChunkFile cf = GetChunkFile(cx, cz);
+            if (cf == null) {
+                return 0;
+            }
+
+            return cf.GetModifiedTime();
+        }
+
         #region IEnumerable<ChunkRef> Members
 
         /// <summary>

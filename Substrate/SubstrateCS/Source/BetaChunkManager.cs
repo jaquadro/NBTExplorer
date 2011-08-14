@@ -284,6 +284,41 @@ namespace Substrate
             }
         }
 
+        /// <summary>
+        /// Gets the timestamp of the chunk from its underlying region file.
+        /// </summary>
+        /// <param name="cx">The global X-coordinate of a chunk.</param>
+        /// <param name="cz">The global Z-coordinate of a chunk.</param>
+        /// <returns>The timestamp of the chunk from its underlying region file.</returns>
+        /// <remarks>The value returned may differ from any timestamp stored in the chunk data itself.</remarks>
+        public int GetChunkTimestamp (int cx, int cz)
+        {
+            Region r = GetRegion(cx, cz);
+            if (r == null) {
+                return 0;
+            }
+
+            return r.GetChunkTimestamp(cx & REGION_XMASK, cz & REGION_ZMASK);
+        }
+
+        /// <summary>
+        /// Sets the timestamp of the chunk in its underlying region file.
+        /// </summary>
+        /// <param name="cx">The global X-coordinate of a chunk.</param>
+        /// <param name="cz">The global Z-coordinate of a chunk.</param>
+        /// <param name="timestamp">The new timestamp value.</param>
+        /// <remarks>This function will only update the timestamp of the chunk slot in the underlying region file.  It will not update
+        /// any timestamp information in the chunk data itself.</remarks>
+        public void SetChunkTimestamp (int cx, int cz, int timestamp)
+        {
+            Region r = GetRegion(cx, cz);
+            if (r == null) {
+                return;
+            }
+
+            r.SetChunkTimestamp(cx & REGION_XMASK, cz & REGION_ZMASK, timestamp);
+        }
+
         private ChunkRef GetChunkRefInRegion (Region r, int lcx, int lcz)
         {
             int cx = r.X * REGION_XLEN + lcx;

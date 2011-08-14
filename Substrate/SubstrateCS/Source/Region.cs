@@ -255,13 +255,36 @@ namespace Substrate
         /// are consistent with the local coordinates of the region being written into.</remarks>
         public bool SaveChunkTree (int lcx, int lcz, NbtTree tree)
         {
+            return SaveChunkTree(lcx, lcz, tree, null);
+        }
+
+        /// <summary>
+        /// Saves an <see cref="NbtTree"/> for a chunk back to the region's data store at the given local coordinates and with the given timestamp.
+        /// </summary>
+        /// <param name="lcx">The local X-coordinate of the chunk within the region.</param>
+        /// <param name="lcz">The local Z-coordinate of the chunk within the region.</param>
+        /// <param name="tree">The <see cref="NbtTree"/> of a chunk to write back to the region.</param>
+        /// <param name="timestamp">The timestamp to write to the underlying region file for this chunk.</param>
+        /// <returns>True if the save succeeded.</returns>
+        /// <remarks>It is up to the programmer to ensure that the global coordinates defined within the chunk's tree
+        /// are consistent with the local coordinates of the region being written into.</remarks>
+        public bool SaveChunkTree (int lcx, int lcz, NbtTree tree, int timestamp)
+        {
+            return SaveChunkTree(lcx, lcz, tree, timestamp);
+        }
+
+        private bool SaveChunkTree (int lcx, int lcz, NbtTree tree, int? timestamp)
+        {
             if (!LocalBoundsCheck(lcx, lcz)) {
                 Region alt = GetForeignRegion(lcx, lcz);
                 return (alt == null) ? false : alt.SaveChunkTree(ForeignX(lcx), ForeignZ(lcz), tree);
             }
 
             RegionFile rf = GetRegionFile();
-            Stream zipstr = rf.GetChunkDataOutputStream(lcx, lcz);
+            Stream zipstr = (timestamp == null)
+                ? rf.GetChunkDataOutputStream(lcx, lcz)
+                : rf.GetChunkDataOutputStream(lcx, lcz, (int)timestamp);
+
             if (zipstr == null) {
                 return false;
             }
@@ -561,6 +584,44 @@ namespace Substrate
         public bool CanDelegateCoordinates
         {
             get { return true; }
+        }
+
+        /// <summary>
+        /// Gets the timestamp of a chunk from the underlying region file.
+        /// </summary>
+        /// <param name="lcx">The local X-coordinate of a chunk relative to this region.</param>
+        /// <param name="lcz">The local Z-coordinate of a chunk relative to this region.</param>
+        /// <returns>The timestamp of the chunk slot in the region.</returns>
+        /// <remarks>The value returned may differ from any timestamp stored in the chunk data itself.</remarks>
+        public int GetChunkTimestamp (int lcx, int lcz)
+        {
+            if (!LocalBoundsCheck(lcx, lcz)) {
+                Region alt = GetForeignRegion(lcx, lcz);
+                return (alt == null) ? 0 : alt.GetChunkTimestamp(ForeignX(lcx), ForeignZ(lcz));
+            }
+
+            RegionFile rf = GetRegionFile();
+            return rf.GetTimestamp(lcx, lcz);
+        }
+
+        /// <summary>
+        /// Sets the timestamp of a chunk in the underlying region file.
+        /// </summary>
+        /// <param name="lcx">The local X-coordinate of a chunk relative to this region.</param>
+        /// <param name="lcz">The local Z-coordinate of a chunk relative to this region.</param>
+        /// <param name="timestamp">The new timestamp value.</param>
+        /// <remarks>This function will only update the timestamp of the chunk slot in the underlying region file.  It will not update
+        /// any timestamp information in the chunk data itself.</remarks>
+        public void SetChunkTimestamp (int lcx, int lcz, int timestamp)
+        {
+            if (!LocalBoundsCheck(lcx, lcz)) {
+                Region alt = GetForeignRegion(lcx, lcz);
+                if (alt != null) 
+                    alt.SetChunkTimestamp(ForeignX(lcx), ForeignZ(lcz), timestamp);
+            }
+
+            RegionFile rf = GetRegionFile();
+            rf.SetTimestamp(lcx, lcz, timestamp);
         }
 
         #endregion

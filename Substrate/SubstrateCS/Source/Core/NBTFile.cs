@@ -32,6 +32,11 @@ namespace Substrate.Core
             File.Delete(_filename);
         }
 
+        public int GetModifiedTime ()
+        {
+            return Timestamp(File.GetLastWriteTime(_filename));
+        }
+
         public virtual Stream GetDataInputStream ()
         {
             try {
@@ -92,5 +97,10 @@ namespace Substrate.Core
             }
         }
 
+        private int Timestamp (DateTime time)
+        {
+            DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            return (int)((time - epoch).Ticks / (10000L * 1000L));
+        }
     }
 }
