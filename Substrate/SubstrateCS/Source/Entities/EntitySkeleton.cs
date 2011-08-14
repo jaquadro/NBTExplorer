@@ -18,7 +18,7 @@ namespace Substrate.Entities
         {
         }
 
-        public EntitySkeleton (EntityTyped e)
+        public EntitySkeleton (TypedEntity e)
             : base(e)
         {
         }
@@ -36,7 +36,7 @@ namespace Substrate.Entities
 
         #region ICopyable<Entity> Members
 
-        public override EntityTyped Copy ()
+        public override TypedEntity Copy ()
         {
             return new EntitySkeleton(this);
         }

@@ -191,7 +191,7 @@ namespace Substrate.ImportExport
                 }
             }
 
-            foreach (EntityTyped e in _entityset) {
+            foreach (TypedEntity e in _entityset) {
                 entities.Add(e.BuildTree());
             }
 

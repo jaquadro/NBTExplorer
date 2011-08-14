@@ -6,9 +6,9 @@ namespace Substrate.Entities
 {
     using Substrate.Nbt;
 
-    public class EntityThrowable : EntityTyped
+    public class EntityThrowable : TypedEntity
     {
-        public static readonly SchemaNodeCompound ThrowableSchema = EntityTyped.Schema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound ThrowableSchema = TypedEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeScaler("xTile", TagType.TAG_SHORT),
             new SchemaNodeScaler("yTile", TagType.TAG_SHORT),
@@ -66,7 +66,7 @@ namespace Substrate.Entities
         {
         }
 
-        public EntityThrowable (EntityTyped e)
+        public EntityThrowable (TypedEntity e)
             : base(e)
         {
             EntityThrowable e2 = e as EntityThrowable;
@@ -83,7 +83,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override EntityTyped LoadTree (TagNode tree)
+        public override TypedEntity LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
@@ -123,7 +123,7 @@ namespace Substrate.Entities
 
         #region ICopyable<Entity> Members
 
-        public override EntityTyped Copy ()
+        public override TypedEntity Copy ()
         {
             return new EntityThrowable(this);
         }

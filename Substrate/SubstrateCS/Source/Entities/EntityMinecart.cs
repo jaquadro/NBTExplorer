@@ -6,7 +6,7 @@ namespace Substrate.Entities
 {
     using Substrate.Nbt;
 
-    public class EntityMinecart : EntityTyped
+    public class EntityMinecart : TypedEntity
     {
         public enum CartType
         {
@@ -15,7 +15,7 @@ namespace Substrate.Entities
             FURNACE = 2,
         }
 
-        public static readonly SchemaNodeCompound MinecartSchema = EntityTyped.Schema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound MinecartSchema = TypedEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", "Minecart"),
             new SchemaNodeScaler("Type", TagType.TAG_INT),
@@ -33,7 +33,7 @@ namespace Substrate.Entities
         {
         }
 
-        public EntityMinecart (EntityTyped e)
+        public EntityMinecart (TypedEntity e)
             : base(e)
         {
             EntityMinecart e2 = e as EntityMinecart;
@@ -45,7 +45,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override EntityTyped LoadTree (TagNode tree)
+        public override TypedEntity LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
@@ -84,7 +84,7 @@ namespace Substrate.Entities
 
         #region ICopyable<Entity> Members
 
-        public override EntityTyped Copy ()
+        public override TypedEntity Copy ()
         {
             return new EntityMinecart(this);
         }

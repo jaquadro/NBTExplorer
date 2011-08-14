@@ -18,7 +18,7 @@ namespace Substrate.Entities
         {
         }
 
-        public EntitySnowball (EntityTyped e)
+        public EntitySnowball (TypedEntity e)
             : base(e)
         {
         }
@@ -36,7 +36,7 @@ namespace Substrate.Entities
 
         #region ICopyable<Entity> Members
 
-        public override EntityTyped Copy ()
+        public override TypedEntity Copy ()
         {
             return new EntitySnowball(this);
         }

@@ -6,9 +6,9 @@ namespace Substrate.Entities
 {
     using Substrate.Nbt;
 
-    public class EntityFallingSand : EntityTyped
+    public class EntityFallingSand : TypedEntity
     {
-        public static readonly SchemaNodeCompound FallingSandSchema = EntityTyped.Schema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound FallingSandSchema = TypedEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", "FallingSand"),
             new SchemaNodeScaler("Tile", TagType.TAG_BYTE),
@@ -27,7 +27,7 @@ namespace Substrate.Entities
         {
         }
 
-        public EntityFallingSand (EntityTyped e)
+        public EntityFallingSand (TypedEntity e)
             : base(e)
         {
             EntityFallingSand e2 = e as EntityFallingSand;
@@ -39,7 +39,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override EntityTyped LoadTree (TagNode tree)
+        public override TypedEntity LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
@@ -69,7 +69,7 @@ namespace Substrate.Entities
 
         #region ICopyable<Entity> Members
 
-        public override EntityTyped Copy ()
+        public override TypedEntity Copy ()
         {
             return new EntityFallingSand(this);
         }

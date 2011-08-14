@@ -257,7 +257,7 @@ namespace Substrate
     /// <remarks>Generally, this class should be subtyped into new concrete Entity types, as this generic type is unable to
     /// capture any of the custom data fields.  It is however still possible to create instances of <see cref="Entity"/> objects, 
     /// which may allow for graceful handling of unknown Entity types.</remarks>
-    public class EntityTyped : Entity, INbtObject<EntityTyped>, ICopyable<EntityTyped>
+    public class TypedEntity : Entity, INbtObject<TypedEntity>, ICopyable<TypedEntity>
     {
         private static readonly SchemaNodeCompound _schema = Entity.Schema.MergeInto(new SchemaNodeCompound("")
         {
@@ -275,20 +275,20 @@ namespace Substrate
         }
 
         /// <summary>
-        /// Creates a new generic <see cref="EntityTyped"/> with the given id.
+        /// Creates a new generic <see cref="TypedEntity"/> with the given id.
         /// </summary>
         /// <param name="id">The id (name) of the Entity.</param>
-        public EntityTyped (string id)
+        public TypedEntity (string id)
             : base()
         {
             _id = id;
         }
 
         /// <summary>
-        /// Constructs a new <see cref="EntityTyped"/> by copying an existing one.
+        /// Constructs a new <see cref="TypedEntity"/> by copying an existing one.
         /// </summary>
-        /// <param name="e">The <see cref="EntityTyped"/> to copy.</param>
-        protected EntityTyped (EntityTyped e)
+        /// <param name="e">The <see cref="TypedEntity"/> to copy.</param>
+        protected TypedEntity (TypedEntity e)
             : base(e)
         {
             _id = e._id;
@@ -306,11 +306,11 @@ namespace Substrate
         }
 
         /// <summary>
-        /// Attempt to load an Entity subtree into the <see cref="EntityTyped"/> without validation.
+        /// Attempt to load an Entity subtree into the <see cref="TypedEntity"/> without validation.
         /// </summary>
         /// <param name="tree">The root node of an Entity subtree.</param>
-        /// <returns>The <see cref="EntityTyped"/> returns itself on success, or null if the tree was unparsable.</returns>
-        public virtual new EntityTyped LoadTree (TagNode tree)
+        /// <returns>The <see cref="TypedEntity"/> returns itself on success, or null if the tree was unparsable.</returns>
+        public virtual new TypedEntity LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
@@ -323,11 +323,11 @@ namespace Substrate
         }
 
         /// <summary>
-        /// Attempt to load an Entity subtree into the <see cref="EntityTyped"/> with validation.
+        /// Attempt to load an Entity subtree into the <see cref="TypedEntity"/> with validation.
         /// </summary>
         /// <param name="tree">The root node of an Entity subtree.</param>
-        /// <returns>The <see cref="EntityTyped"/> returns itself on success, or null if the tree failed validation.</returns>
-        public virtual new EntityTyped LoadTreeSafe (TagNode tree)
+        /// <returns>The <see cref="TypedEntity"/> returns itself on success, or null if the tree failed validation.</returns>
+        public virtual new TypedEntity LoadTreeSafe (TagNode tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -364,12 +364,12 @@ namespace Substrate
         #region ICopyable<Entity> Members
 
         /// <summary>
-        /// Creates a deep-copy of the <see cref="EntityTyped"/>.
+        /// Creates a deep-copy of the <see cref="TypedEntity"/>.
         /// </summary>
-        /// <returns>A deep-copy of the <see cref="EntityTyped"/>.</returns>
-        public virtual new EntityTyped Copy ()
+        /// <returns>A deep-copy of the <see cref="TypedEntity"/>.</returns>
+        public virtual new TypedEntity Copy ()
         {
-            return new EntityTyped(this);
+            return new TypedEntity(this);
         }
 
         #endregion

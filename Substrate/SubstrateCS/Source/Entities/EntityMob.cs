@@ -6,9 +6,9 @@ namespace Substrate.Entities
 {
     using Substrate.Nbt;
 
-    public class EntityMob : EntityTyped
+    public class EntityMob : TypedEntity
     {
-        public static readonly SchemaNodeCompound MobSchema = EntityTyped.Schema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound MobSchema = TypedEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", "Mob"),
             new SchemaNodeScaler("AttackTime", TagType.TAG_SHORT),
@@ -56,7 +56,7 @@ namespace Substrate.Entities
         {
         }
 
-        public EntityMob (EntityTyped e)
+        public EntityMob (TypedEntity e)
             : base(e)
         {
             EntityMob e2 = e as EntityMob;
@@ -71,7 +71,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override EntityTyped LoadTree (TagNode tree)
+        public override TypedEntity LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
@@ -107,7 +107,7 @@ namespace Substrate.Entities
 
         #region ICopyable<Entity> Members
 
-        public override EntityTyped Copy ()
+        public override TypedEntity Copy ()
         {
             return new EntityMob(this);
         }

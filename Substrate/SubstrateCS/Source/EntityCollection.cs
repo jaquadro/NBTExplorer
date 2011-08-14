@@ -8,7 +8,7 @@ namespace Substrate
     /// <summary>
     /// Functions to query and manage a collection of entities.
     /// </summary>
-    public class EntityCollection : IEnumerable<EntityTyped>
+    public class EntityCollection : IEnumerable<TypedEntity>
     {
         private TagNodeList _entities;
 
@@ -36,10 +36,10 @@ namespace Substrate
         /// Gets a list of all entities in the collection that match a given id (type).
         /// </summary>
         /// <param name="id">The id (type) of entities that should be returned.</param>
-        /// <returns>A list of <see cref="EntityTyped"/> objects matching the given id (type).</returns>
-        public List<EntityTyped> FindAll (string id)
+        /// <returns>A list of <see cref="TypedEntity"/> objects matching the given id (type).</returns>
+        public List<TypedEntity> FindAll (string id)
         {
-            List<EntityTyped> set = new List<EntityTyped>();
+            List<TypedEntity> set = new List<TypedEntity>();
 
             foreach (TagNodeCompound ent in _entities) {
                 TagNode eid;
@@ -51,7 +51,7 @@ namespace Substrate
                     continue;
                 }
 
-                EntityTyped obj = EntityFactory.Create(ent);
+                TypedEntity obj = EntityFactory.Create(ent);
                 if (obj != null) {
                     set.Add(obj);
                 }
@@ -64,13 +64,13 @@ namespace Substrate
         /// Gets a list of all entities in the collection that match a given condition.
         /// </summary>
         /// <param name="match">A <see cref="Predicate{T}"/> defining the matching condition.</param>
-        /// <returns>A list of <see cref="EntityTyped"/> objects matching the given condition.</returns>
-        public List<EntityTyped> FindAll (Predicate<EntityTyped> match)
+        /// <returns>A list of <see cref="TypedEntity"/> objects matching the given condition.</returns>
+        public List<TypedEntity> FindAll (Predicate<TypedEntity> match)
         {
-            List<EntityTyped> set = new List<EntityTyped>();
+            List<TypedEntity> set = new List<TypedEntity>();
 
             foreach (TagNodeCompound ent in _entities) {
-                EntityTyped obj = EntityFactory.Create(ent);
+                TypedEntity obj = EntityFactory.Create(ent);
                 if (obj == null) {
                     continue;
                 }
@@ -84,14 +84,14 @@ namespace Substrate
         }
 
         /// <summary>
-        /// Adds a <see cref="EntityTyped"/> to the collection.
+        /// Adds a <see cref="TypedEntity"/> to the collection.
         /// </summary>
-        /// <param name="ent">The <see cref="EntityTyped"/> object to add.</param>
-        /// <remarks>It is up to the developer to ensure that the <see cref="EntityTyped"/> being added to the collection has a position that
+        /// <param name="ent">The <see cref="TypedEntity"/> object to add.</param>
+        /// <remarks>It is up to the developer to ensure that the <see cref="TypedEntity"/> being added to the collection has a position that
         /// is within acceptable range of the collection.  <see cref="EntityCollection"/> transparently back other objects such as 
         /// <see cref="Chunk"/> objects, which have a well-defined position in global space.  The <see cref="EntityCollection"/> itself has
-        /// no concept of position and will not enforce constraints on the positions of <see cref="EntityTyped"/> objects being added.</remarks>
-        public void Add (EntityTyped ent)
+        /// no concept of position and will not enforce constraints on the positions of <see cref="TypedEntity"/> objects being added.</remarks>
+        public void Add (TypedEntity ent)
         {
             _entities.Add(ent.BuildTree());
             _dirty = true;
@@ -131,7 +131,7 @@ namespace Substrate
         /// </summary>
         /// <param name="match">A <see cref="Predicate{T}"/> defining the matching condition.</param>
         /// <returns>A count of the number of entities that were removed.</returns>
-        public int RemoveAll (Predicate<EntityTyped> match)
+        public int RemoveAll (Predicate<TypedEntity> match)
         {
             int rem = _entities.RemoveAll(val =>
             {
@@ -140,7 +140,7 @@ namespace Substrate
                     return false;
                 }
 
-                EntityTyped obj = EntityFactory.Create(cval);
+                TypedEntity obj = EntityFactory.Create(cval);
                 if (obj == null) {
                     return false;
                 }
@@ -161,7 +161,7 @@ namespace Substrate
         /// Returns an enumerator that iterates through all entities.
         /// </summary>
         /// <returns>An <see cref="Enumerator"/> for this object.</returns>
-        public IEnumerator<EntityTyped> GetEnumerator ()
+        public IEnumerator<TypedEntity> GetEnumerator ()
         {
             return new Enumerator(_entities);
         }
@@ -184,11 +184,11 @@ namespace Substrate
         /// <summary>
         /// Enumerates the entities within an <see cref="EntityCollection"/>.
         /// </summary>
-        private struct Enumerator : IEnumerator<EntityTyped>
+        private struct Enumerator : IEnumerator<TypedEntity>
         {
             private IEnumerator<TagNode> _enum;
 
-            private EntityTyped _cur;
+            private TypedEntity _cur;
 
             internal Enumerator (TagNodeList entities)
             {
@@ -199,9 +199,9 @@ namespace Substrate
             #region IEnumerator<Entity> Members
 
             /// <summary>
-            /// Gets the <see cref="EntityTyped"/> at the current position of the enumerator.
+            /// Gets the <see cref="TypedEntity"/> at the current position of the enumerator.
             /// </summary>
-            public EntityTyped Current
+            public TypedEntity Current
             {
                 get 
                 {
@@ -226,7 +226,7 @@ namespace Substrate
             #region IEnumerator Members
 
             /// <summary>
-            /// Gets the <see cref="EntityTyped"/> at the current position of the enumerator.
+            /// Gets the <see cref="TypedEntity"/> at the current position of the enumerator.
             /// </summary>
             object System.Collections.IEnumerator.Current
             {
@@ -234,7 +234,7 @@ namespace Substrate
             }
 
             /// <summary>
-            /// Advances the enumerator to the next <see cref="EntityTyped"/> in the <see cref="EntityCollection"/>.
+            /// Advances the enumerator to the next <see cref="TypedEntity"/> in the <see cref="EntityCollection"/>.
             /// </summary>
             /// <returns>True if the enumerator was successfully advanced to the next position; false if the enumerator advanced past the end of the collection.</returns>
             public bool MoveNext ()
@@ -248,7 +248,7 @@ namespace Substrate
             }
 
             /// <summary>
-            /// Sets the enumerator to its initial position, which is before the first <see cref="EntityTyped"/> in the collection.
+            /// Sets the enumerator to its initial position, which is before the first <see cref="TypedEntity"/> in the collection.
             /// </summary>
             void System.Collections.IEnumerator.Reset ()
             {

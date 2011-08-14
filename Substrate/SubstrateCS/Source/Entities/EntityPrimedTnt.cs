@@ -6,9 +6,9 @@ namespace Substrate.Entities
 {
     using Substrate.Nbt;
 
-    public class EntityPrimedTnt : EntityTyped
+    public class EntityPrimedTnt : TypedEntity
     {
-        public static readonly SchemaNodeCompound PrimedTntSchema = EntityTyped.Schema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound PrimedTntSchema = TypedEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", "PrimedTnt"),
             new SchemaNodeScaler("Fuse", TagType.TAG_BYTE),
@@ -27,7 +27,7 @@ namespace Substrate.Entities
         {
         }
 
-        public EntityPrimedTnt (EntityTyped e)
+        public EntityPrimedTnt (TypedEntity e)
             : base(e)
         {
             EntityPrimedTnt e2 = e as EntityPrimedTnt;
@@ -39,7 +39,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override EntityTyped LoadTree (TagNode tree)
+        public override TypedEntity LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
@@ -69,7 +69,7 @@ namespace Substrate.Entities
 
         #region ICopyable<Entity> Members
 
-        public override EntityTyped Copy ()
+        public override TypedEntity Copy ()
         {
             return new EntityPrimedTnt(this);
         }

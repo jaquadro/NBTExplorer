@@ -22,7 +22,7 @@ namespace Substrate.Entities
             _items = new ItemCollection(_CAPACITY);
         }
 
-        public EntityMinecartChest (EntityTyped e)
+        public EntityMinecartChest (TypedEntity e)
             : base(e)
         {
             EntityMinecartChest e2 = e as EntityMinecartChest;
@@ -43,7 +43,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override EntityTyped LoadTree (TagNode tree)
+        public override TypedEntity LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
@@ -74,7 +74,7 @@ namespace Substrate.Entities
 
         #region ICopyable<Entity> Members
 
-        public override EntityTyped Copy ()
+        public override TypedEntity Copy ()
         {
             return new EntityMinecartChest(this);
         }

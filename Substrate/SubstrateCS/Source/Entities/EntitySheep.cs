@@ -35,7 +35,7 @@ namespace Substrate.Entities
         {
         }
 
-        public EntitySheep (EntityTyped e)
+        public EntitySheep (TypedEntity e)
             : base(e)
         {
             EntitySheep e2 = e as EntitySheep;
@@ -48,7 +48,7 @@ namespace Substrate.Entities
 
         #region INBTObject<Entity> Members
 
-        public override EntityTyped LoadTree (TagNode tree)
+        public override TypedEntity LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null || base.LoadTree(tree) == null) {
@@ -80,7 +80,7 @@ namespace Substrate.Entities
 
         #region ICopyable<Entity> Members
 
-        public override EntityTyped Copy ()
+        public override TypedEntity Copy ()
         {
             return new EntitySheep(this);
         }

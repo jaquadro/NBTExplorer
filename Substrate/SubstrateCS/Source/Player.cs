@@ -9,7 +9,7 @@ namespace Substrate
     /// <summary>
     /// Represents a Player from either single- or multi-player Minecraft.
     /// </summary>
-    /// <remarks>Unlike <see cref="EntityTyped"/> objects, <see cref="Player"/> objects do not need to be added to chunks.  They
+    /// <remarks>Unlike <see cref="TypedEntity"/> objects, <see cref="Player"/> objects do not need to be added to chunks.  They
     /// are stored individually or within level data.</remarks>
     public class Player : Entity, INbtObject<Player>, ICopyable<Player>, IItemContainer
     {
