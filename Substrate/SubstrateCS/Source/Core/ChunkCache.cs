@@ -22,6 +22,8 @@ namespace Substrate.Core
         {
             ChunkKey key = new ChunkKey(chunk.X, chunk.Z);
 
+            _dirty.Remove(key);
+
             ChunkRef c;
             if (!_cache.TryGetValue(key, out c)) {
                 _cache[key] = chunk;
@@ -40,11 +42,15 @@ namespace Substrate.Core
         public ChunkRef Fetch (ChunkKey key)
         {
             ChunkRef c;
-            if (!_cache.TryGetValue(key, out c)) {
-                return null;
+            if (_dirty.TryGetValue(key, out c)) {
+                return c;
             }
 
-            return c;
+            if (_cache.TryGetValue(key, out c)) {
+                return c;
+            }
+
+            return null;
         }
 
         public IEnumerator<ChunkRef> GetDirtyEnumerator ()
@@ -74,32 +80,6 @@ namespace Substrate.Core
             }
         }
 
-        /*public bool MarkChunkDirty (ChunkRef chunk)
-        {
-            int cx = chunk.X;
-            int cz = chunk.Z;
-
-            ChunkKey k = new ChunkKey(cx, cz);
-            if (!_dirty.ContainsKey(k)) {
-                _dirty.Add(k, chunk);
-                return true;
-            }
-            return false;
-        }
-
-        public bool MarkChunkClean (ChunkRef chunk)
-        {
-            int cx = chunk.X;
-            int cz = chunk.Z;
-
-            ChunkKey k = new ChunkKey(cx, cz);
-            if (_dirty.ContainsKey(k)) {
-                _dirty.Remove(k);
-                return true;
-            }
-            return false;
-        }*/
-        
         #endregion
     }
 }
