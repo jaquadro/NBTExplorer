@@ -184,7 +184,9 @@ namespace Substrate
         public AlphaBlock Copy ()
         {
             AlphaBlock block = new AlphaBlock(_id, _data);
-            block._tileEntity = _tileEntity.Copy();
+            if (_tileEntity != null) {
+                block._tileEntity = _tileEntity.Copy();
+            }
 
             return block;
         }

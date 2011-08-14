@@ -204,7 +204,10 @@ namespace Substrate
             SetID(x, y, z, block.ID);
             SetData(x, y, z, block.Data);
 
-            SetTileEntity(x, y, z, block.GetTileEntity().Copy());
+            TileEntity te = block.GetTileEntity();
+            if (te != null) {
+                SetTileEntity(x, y, z, te.Copy());
+            }
         }
 
         #region IBoundedBlockCollection Members
