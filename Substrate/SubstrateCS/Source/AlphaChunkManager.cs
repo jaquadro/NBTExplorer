@@ -12,7 +12,7 @@ namespace Substrate
     /// <summary>
     /// Represents an Alpha-compatible interface for globally managing chunks.
     /// </summary>
-    public class AlphaChunkManager : IChunkManager
+    public class AlphaChunkManager : IChunkManager, IEnumerable<ChunkRef>
     {
         private string _mapPath;
 

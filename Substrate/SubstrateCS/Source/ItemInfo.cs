@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Substrate.Nbt;
 
 namespace Substrate
 {
-    using Nbt;
-
+    /// <summary>
+    /// Provides named id values for known item types.
+    /// </summary>
     public static class ItemType
     {
         public const int IRON_SHOVEL = 256;
@@ -116,6 +117,13 @@ namespace Substrate
         public const int GREEN_MUSIC_DISC = 2257;
     }
 
+    /// <summary>
+    /// Provides information on a specific type of item.
+    /// </summary>
+    /// <remarks>By default, all known MC item types are already defined and registered, assuming Substrate
+    /// is up to date with the current MC version.
+    /// New item types may be created and used at runtime, and will automatically populate various static lookup tables
+    /// in the <see cref="ItemInfo"/> class.</remarks>
     public class ItemInfo
     {
         private static Random _rand = new Random();
@@ -150,32 +158,53 @@ namespace Substrate
 
         private static readonly CacheTableDict<ItemInfo> _itemTableCache;
 
+        /// <summary>
+        /// Gets the lookup table for id-to-info values.
+        /// </summary>
         public static ICacheTable<ItemInfo> ItemTable
         {
             get { return _itemTableCache; }
         }
 
+        /// <summary>
+        /// Gets the id of the item type.
+        /// </summary>
         public int ID
         {
             get { return _id; }
         }
 
+        /// <summary>
+        /// Gets the name of the item type.
+        /// </summary>
         public string Name
         {
             get { return _name; }
         }
 
+        /// <summary>
+        /// Gets the maximum stack size allowed for this item type.
+        /// </summary>
         public int StackSize
         {
             get { return _stack; }
         }
 
+        /// <summary>
+        /// Constructs a new <see cref="ItemInfo"/> record for the given item id.
+        /// </summary>
+        /// <param name="id">The id of an item type.</param>
         public ItemInfo (int id)
         {
             _id = id;
             _itemTable[_id] = this;
         }
 
+        /// <summary>
+        /// Constructs a new <see cref="ItemInfo"/> record for the given item id and name.
+        /// </summary>
+        /// <param name="id">The id of an item type.</param>
+        /// <param name="name">The name of an item type.</param>
         public ItemInfo (int id, string name)
         {
             _id = id;
@@ -183,12 +212,21 @@ namespace Substrate
             _itemTable[_id] = this;
         }
 
+        /// <summary>
+        /// Sets the maximum stack size for this item type.
+        /// </summary>
+        /// <param name="stack">A stack size between 1 and 64, inclusive.</param>
+        /// <returns>The object instance used to invoke this method.</returns>
         public ItemInfo SetStackSize (int stack)
         {
             _stack = stack;
             return this;
         }
 
+        /// <summary>
+        /// Chooses a registered item type at random and returns it.
+        /// </summary>
+        /// <returns></returns>
         public static ItemInfo GetRandomItem ()
         {
             List<ItemInfo> list = new List<ItemInfo>(_itemTable.Values);

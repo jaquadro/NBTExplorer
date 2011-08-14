@@ -4,6 +4,8 @@ using System.Text;
 using System.IO;
 using Substrate.Core;
 using Substrate.Nbt;
+using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace Substrate
 {
@@ -11,7 +13,7 @@ namespace Substrate
     /// Functions to manage multiple <see cref="Player"/> entities and files in multiplayer settings.
     /// </summary>
     /// <remarks>This manager is intended for player files stored in standard compressed NBT format.</remarks>
-    public class PlayerManager : IPlayerManager
+    public class PlayerManager : IPlayerManager, IEnumerable<Player>
     {
         private string _playerPath;
 
@@ -82,7 +84,9 @@ namespace Substrate
             }
 
             try {
-                return new Player().LoadTreeSafe(GetPlayerTree(name).Root);
+                Player p = new Player().LoadTreeSafe(GetPlayerTree(name).Root);
+                p.Name = name;
+                return p;
             }
             catch (Exception ex) {
                 PlayerIOException pex = new PlayerIOException("Could not load player", ex);
@@ -110,6 +114,16 @@ namespace Substrate
         }
 
         /// <summary>
+        /// Saves a <see cref="Player"/> object's data back to file given the name set in the <see cref="Player"/> object.
+        /// </summary>
+        /// <param name="player">The <see cref="Player"/> object containing the data to write back.</param>
+        /// <exception cref="PlayerIOException">Thrown when the manager cannot write out the player.</exception>
+        public void SetPlayer (Player player)
+        {
+            SetPlayer(player.Name, player);
+        }
+
+        /// <summary>
         /// Checks if data for a player with the given name exists.
         /// </summary>
         /// <param name="name">The name of the player to look up.</param>
@@ -134,6 +148,119 @@ namespace Substrate
                 pex.Data["PlayerName"] = name;
                 throw pex;
             }
+        }
+
+        #region IEnumerable<Player> Members
+
+        /// <summary>
+        /// Gets an enumerator that iterates through all the chunks in the world.
+        /// </summary>
+        /// <returns>An enumerator for this manager.</returns>
+        public IEnumerator<Player> GetEnumerator ()
+        {
+            return new Enumerator(this);
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
+        {
+            return new Enumerator(this);
+        }
+
+        #endregion
+
+        private class Enumerator : IEnumerator<Player>
+        {
+            protected PlayerManager _pm;
+            protected Queue<string> _names;
+
+            protected Player _curPlayer;
+
+            public Enumerator (PlayerManager cfm)
+            {
+                _pm = cfm;
+                _names = new Queue<string>();
+
+                if (!Directory.Exists(_pm._playerPath)) {
+                    throw new DirectoryNotFoundException();
+                }
+
+                Reset();
+            }
+
+            public bool MoveNext ()
+            {
+                if (_names.Count == 0) {
+                    return false;
+                }
+
+                string name = _names.Dequeue();
+                _curPlayer = _pm.GetPlayer(name);
+                _curPlayer.Name = name;
+
+                return true;
+            }
+
+            public void Reset ()
+            {
+                _names.Clear();
+                _curPlayer = null;
+
+                string[] files = Directory.GetFiles(_pm._playerPath);
+                foreach (string file in files) {
+                    string basename = Path.GetFileName(file);
+
+                    if (!ParseFileName(basename)) {
+                        continue;
+                    }
+
+                    _names.Enqueue(PlayerFile.NameFromFilename(basename));
+                }
+            }
+
+            void IDisposable.Dispose () { }
+
+            object IEnumerator.Current
+            {
+                get
+                {
+                    return Current;
+                }
+            }
+
+            Player IEnumerator<Player>.Current
+            {
+                get
+                {
+                    return Current;
+                }
+            }
+
+            public Player Current
+            {
+                get
+                {
+                    if (_curPlayer == null) {
+                        throw new InvalidOperationException();
+                    }
+                    return _curPlayer;
+                }
+            }
+
+            private bool ParseFileName (string filename)
+            {
+                Match match = _namePattern.Match(filename);
+                if (!match.Success) {
+                    return false;
+                }
+
+                return true;
+            }
+
+            protected static Regex _namePattern = new Regex(".+\\.dat$");
         }
     }
 }

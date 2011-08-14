@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Substrate.Nbt;
 
 namespace Substrate
 {
-    using Nbt;
-
+    /// <summary>
+    /// Provides named id values for known block types.
+    /// </summary>
     public static class BlockType
     {
         public const int AIR = 0;
@@ -107,20 +108,59 @@ namespace Substrate
         public const int TRAPDOOR = 96;
     }
 
+    /// <summary>
+    /// Represents the physical state of a block, such as solid or fluid.
+    /// </summary>
     public enum BlockState
     {
+        /// <summary>
+        /// A solid state that stops movement.
+        /// </summary>
         SOLID,
+
+        /// <summary>
+        /// A nonsolid state that can be passed through.
+        /// </summary>
         NONSOLID,
+
+        /// <summary>
+        /// A fluid state that flows and impedes movement.
+        /// </summary>
         FLUID
     }
 
+    /// <summary>
+    /// Provides information on a specific type of block.
+    /// </summary>
+    /// <remarks>By default, all known MC block types are already defined and registered, assuming Substrate
+    /// is up to date with the current MC version.  All unknown blocks are given a default type and unregistered status.
+    /// New block types may be created and used at runtime, and will automatically populate various static lookup tables
+    /// in the <see cref="BlockInfo"/> class.</remarks>
     public class BlockInfo
     {
+        /// <summary>
+        /// The maximum number of sequential blocks starting at 0 that can be registered.
+        /// </summary>
         public const int MAX_BLOCKS = 256;
 
+        /// <summary>
+        /// The maximum opacity value that can be assigned to a block (fully opaque).
+        /// </summary>
         public const int MAX_OPACITY = 15;
+
+        /// <summary>
+        /// The minimum opacity value that can be assigned to a block (fully transparent).
+        /// </summary>
         public const int MIN_OPACITY = 0;
+
+        /// <summary>
+        /// The maximum luminance value that can be assigned to a block.
+        /// </summary>
         public const int MAX_LUMINANCE = 15;
+
+        /// <summary>
+        /// The minimum luminance value that can be assigned to a block.
+        /// </summary>
         public const int MIN_LUMINANCE = 0;
 
         private static readonly BlockInfo[] _blockTable;
@@ -193,61 +233,100 @@ namespace Substrate
         private static readonly CacheTableArray<int> _opacityTableCache;
         private static readonly CacheTableArray<int> _luminanceTableCache;
 
+        /// <summary>
+        /// Gets the lookup table for id-to-info values.
+        /// </summary>
         public static ICacheTable<BlockInfo> BlockTable
         {
             get { return _blockTableCache; }
         }
 
+        /// <summary>
+        /// Gets the lookup table for id-to-opacity values.
+        /// </summary>
         public static ICacheTable<int> OpacityTable
         {
             get { return _opacityTableCache; }
         }
 
+        /// <summary>
+        /// Gets the lookup table for id-to-luminance values.
+        /// </summary>
         public static ICacheTable<int> LuminanceTable
         {
             get { return _luminanceTableCache; }
         }
 
+        /// <summary>
+        /// Get's the block's Id.
+        /// </summary>
         public int ID
         {
             get { return _id; }
         }
 
+        /// <summary>
+        /// Get's the name of the block type.
+        /// </summary>
         public string Name
         {
             get { return _name; }
         }
 
+        /// <summary>
+        /// Gets the block's opacity value.  An opacity of 0 is fully transparent to light.
+        /// </summary>
         public int Opacity 
         {
             get { return _opacity; }
         }
         
+        /// <summary>
+        /// Gets the block's luminance value.
+        /// </summary>
+        /// <remarks>Blocks with luminance act as light sources and transmit light to other blocks.</remarks>
         public int Luminance 
         {
             get { return _luminance; }
         }
 
+        /// <summary>
+        /// Checks whether the block transmits light to neighboring blocks.
+        /// </summary>
+        /// <remarks>A block may stop the transmission of light, but still be illuminated.</remarks>
         public bool TransmitsLight
         {
             get { return _transmitLight; }
         }
 
+        /// <summary>
+        /// Checks whether the block partially or fully blocks the transmission of light.
+        /// </summary>
         public bool ObscuresLight
         {
             get { return _opacity > MIN_OPACITY || !_transmitLight; }
         }
 
+        /// <summary>
+        /// Checks whether the block stops fluid from passing through it.
+        /// </summary>
+        /// <remarks>A block that does not block fluids will be destroyed by fluid.</remarks>
         public bool BlocksFluid
         {
             get { return _blocksFluid; }
         }
 
+        /// <summary>
+        /// Gets the block's physical state type.
+        /// </summary>
         public BlockState State
         {
             get { return _state; }
         }
 
+        /// <summary>
+        /// Checks whether this block type has been registered as a known type.
+        /// </summary>
         public bool Registered
         {
             get { return _registered; }
@@ -260,6 +339,12 @@ namespace Substrate
             _blockTable[_id] = this;
         }
 
+        /// <summary>
+        /// Constructs a new <see cref="BlockInfo"/> record for a given block id and name.
+        /// </summary>
+        /// <param name="id">The id of the block.</param>
+        /// <param name="name">The name of the block.</param>
+        /// <remarks>All user-constructed <see cref="BlockInfo"/> objects are registered automatically.</remarks>
         public BlockInfo (int id, string name)
         {
             _id = id;
@@ -268,6 +353,11 @@ namespace Substrate
             _registered = true;
         }
 
+        /// <summary>
+        /// Sets a new opacity value for this block type.
+        /// </summary>
+        /// <param name="opacity">A new opacity value.</param>
+        /// <returns>The object instance used to invoke this method.</returns>
         public BlockInfo SetOpacity (int opacity)
         {
             _opacity = MIN_OPACITY + opacity;
@@ -283,6 +373,11 @@ namespace Substrate
             return this;
         }
 
+        /// <summary>
+        /// Sets a new luminance value for this block type.
+        /// </summary>
+        /// <param name="luminance">A new luminance value.</param>
+        /// <returns>The object instance used to invoke this method.</returns>
         public BlockInfo SetLuminance (int luminance)
         {
             _luminance = luminance;
@@ -290,18 +385,35 @@ namespace Substrate
             return this;
         }
 
+        /// <summary>
+        /// Sets whether or not this block type will transmit light to neigboring blocks.
+        /// </summary>
+        /// <param name="transmit">True if this block type can transmit light to neighbors, false otherwise.</param>
+        /// <returns>The object instance used to invoke this method.</returns>
         public BlockInfo SetLightTransmission (bool transmit)
         {
             _transmitLight = transmit;
             return this;
         }
 
+        /// <summary>
+        /// Sets limitations on what data values are considered valid for this block type.
+        /// </summary>
+        /// <param name="low">The lowest valid integer value.</param>
+        /// <param name="high">The highest valid integer value.</param>
+        /// <param name="bitmask">A mask representing which bits are interpreted as a bitmask in the data value.</param>
+        /// <returns>The object instance used to invoke this method.</returns>
         public BlockInfo SetDataLimits (int low, int high, int bitmask)
         {
             _dataLimits = new DataLimits(low, high, bitmask);
             return this;
         }
 
+        /// <summary>
+        /// Sets the physical state of the block type.
+        /// </summary>
+        /// <param name="state">A physical state.</param>
+        /// <returns>The object instance used to invoke this method.</returns>
         public BlockInfo SetState (BlockState state)
         {
             _state = state;
@@ -316,12 +428,23 @@ namespace Substrate
             return this;
         }
 
+        /// <summary>
+        /// Sets whether or not this block type blocks fluids.
+        /// </summary>
+        /// <param name="blocks">True if this block type blocks fluids, false otherwise.</param>
+        /// <returns>The object instance used to invoke this method.</returns>
         public BlockInfo SetBlocksFluid (bool blocks)
         {
             _blocksFluid = blocks;
             return this;
         }
 
+        /// <summary>
+        /// Tests if the given data value is valid for this block type.
+        /// </summary>
+        /// <param name="data">A data value to test.</param>
+        /// <returns>True if the data value is valid, false otherwise.</returns>
+        /// <remarks>This method uses internal information set by <see cref="SetDataLimits"/>.</remarks>
         public bool TestData (int data)
         {
             if (_dataLimits == null) {
@@ -617,19 +740,36 @@ namespace Substrate
         }
     }
 
+    /// <summary>
+    /// An extended <see cref="BlockInfo"/> that includes <see cref="TileEntity"/> information.
+    /// </summary>
     public class BlockInfoEx : BlockInfo
     {
         private string _tileEntityName;
 
+        /// <summary>
+        /// Gets the name of the <see cref="TileEntity"/> type associated with this block type.
+        /// </summary>
         public string TileEntityName
         {
             get { return _tileEntityName; }
         }
 
-        public BlockInfoEx (int id) : base(id) { }
+        internal BlockInfoEx (int id) : base(id) { }
 
+        /// <summary>
+        /// Constructs a new <see cref="BlockInfoEx"/> with a given block id and name.
+        /// </summary>
+        /// <param name="id">The id of the block type.</param>
+        /// <param name="name">The name of the block type.</param>
         public BlockInfoEx (int id, string name) : base(id, name) { }
 
+        /// <summary>
+        /// Sets the name of the <see cref="TileEntity"/> type associated with this block type.
+        /// </summary>
+        /// <param name="name">The name of a registered <see cref="TileEntity"/> type.</param>
+        /// <returns>The object instance used to invoke this method.</returns>
+        /// <seealso cref="TileEntityFactory"/>
         public BlockInfo SetTileEntity (string name) {
             _tileEntityName = name;
             return this;

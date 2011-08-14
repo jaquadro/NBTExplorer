@@ -44,6 +44,7 @@ namespace Substrate
         private int? _spawnZ;
 
         private string _world;
+        private string _name;
 
         private ItemCollection _inventory;
 
@@ -139,6 +140,15 @@ namespace Substrate
         {
             get { return _world; }
             set { _world = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the name that is used when the player is read or written from a <see cref="PlayerManager"/>.
+        /// </summary>
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
         }
 
         /// <summary>
