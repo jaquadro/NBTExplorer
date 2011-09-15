@@ -113,6 +113,15 @@ namespace Substrate
         public const int COOKIE = 357;
         public const int MAP = 358;
         public const int SHEARS = 359;
+        public const int MELON_SLICE = 360;
+        public const int PUMPKIN_SEEDS = 361;
+        public const int MELON_SEEDS = 262;
+        public const int RAW_BEEF = 363;
+        public const int STEAK = 364;
+        public const int RAW_CHICKEN = 365;
+        public const int COOKED_CHICKEN = 366;
+        public const int ROTTEN_FLESH = 367;
+        public const int ENDER_PEARL = 368;
         public const int GOLD_MUSIC_DISC = 2256;
         public const int GREEN_MUSIC_DISC = 2257;
     }
@@ -337,6 +346,15 @@ namespace Substrate
         public static ItemInfo Cookie;
         public static ItemInfo Map;
         public static ItemInfo Shears;
+        public static ItemInfo MelonSlice;
+        public static ItemInfo PumpkinSeeds;
+        public static ItemInfo MelonSeeds;
+        public static ItemInfo RawBeef;
+        public static ItemInfo Steak;
+        public static ItemInfo RawChicken;
+        public static ItemInfo CookedChicken;
+        public static ItemInfo RottenFlesh;
+        public static ItemInfo EnderPearl;
         public static ItemInfo GoldMusicDisc;
         public static ItemInfo GreenMusicDisc;
 
@@ -386,7 +404,7 @@ namespace Substrate
             GoldHoe = new ItemInfo(294, "Gold Hoe");
             Seeds = new ItemInfo(295, "Seeds").SetStackSize(64);
             Wheat = new ItemInfo(296, "Wheat").SetStackSize(64);
-            Bread = new ItemInfo(297, "Bread");
+            Bread = new ItemInfo(297, "Bread").SetStackSize(64);
             LeatherCap = new ItemInfo(298, "Leather Cap");
             LeatherTunic = new ItemInfo(299, "Leather Tunic");
             LeatherPants = new ItemInfo(300, "Leather Pants");
@@ -408,10 +426,10 @@ namespace Substrate
             GoldLeggings = new ItemInfo(316, "Gold Leggings");
             GoldBoots = new ItemInfo(317, "Gold Boots");
             Flint = new ItemInfo(318, "Flint").SetStackSize(64);
-            RawPorkchop = new ItemInfo(319, "Raw Porkchop");
-            CookedPorkchop = new ItemInfo(320, "Cooked Porkchop");
+            RawPorkchop = new ItemInfo(319, "Raw Porkchop").SetStackSize(64);
+            CookedPorkchop = new ItemInfo(320, "Cooked Porkchop").SetStackSize(64);
             Painting = new ItemInfo(321, "Painting").SetStackSize(64);
-            GoldenApple = new ItemInfo(322, "Golden Apple");
+            GoldenApple = new ItemInfo(322, "Golden Apple").SetStackSize(64);
             Sign = new ItemInfo(323, "Sign");
             WoodenDoor = new ItemInfo(324, "Door");
             Bucket = new ItemInfo(325, "Bucket");
@@ -438,8 +456,8 @@ namespace Substrate
             FishingRod = new ItemInfo(346, "Fishing Rod");
             Clock = new ItemInfo(347, "Clock");
             GlowstoneDust = new ItemInfo(348, "Glowstone Dust").SetStackSize(64);
-            RawFish = new ItemInfo(349, "Raw Fish");
-            CookedFish = new ItemInfo(350, "Cooked Fish");
+            RawFish = new ItemInfo(349, "Raw Fish").SetStackSize(64);
+            CookedFish = new ItemInfo(350, "Cooked Fish").SetStackSize(64);
             Dye = new ItemInfo(351, "Dye").SetStackSize(64);
             Bone = new ItemInfo(352, "Bone").SetStackSize(64);
             Sugar = new ItemInfo(353, "Sugar").SetStackSize(64);
@@ -449,6 +467,15 @@ namespace Substrate
             Cookie = new ItemInfo(357, "Cookie").SetStackSize(8);
             Map = new ItemInfo(358, "Map");
             Shears = new ItemInfo(359, "Shears");
+            MelonSlice = new ItemInfo(360, "Melon Slice").SetStackSize(64);
+            PumpkinSeeds = new ItemInfo(361, "Pumpkin Seeds").SetStackSize(64);
+            MelonSeeds = new ItemInfo(362, "Melon Seeds").SetStackSize(64);
+            RawBeef = new ItemInfo(363, "Raw Beef").SetStackSize(64);
+            Steak = new ItemInfo(364, "Steak").SetStackSize(64);
+            RawChicken = new ItemInfo(365, "Raw Chicken").SetStackSize(64);
+            CookedChicken = new ItemInfo(366, "Cooked Chicken").SetStackSize(64);
+            RottenFlesh = new ItemInfo(367, "Rotten Flesh").SetStackSize(64);
+            EnderPearl = new ItemInfo(368, "Ender Pearl").SetStackSize(64);
             GoldMusicDisc = new ItemInfo(2256, "Gold Music Disc");
             GreenMusicDisc = new ItemInfo(2257, "Green Music Disc");
         }

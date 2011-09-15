@@ -6,6 +6,22 @@ using Substrate.Nbt;
 namespace Substrate
 {
     /// <summary>
+    /// Specifies the type of gameplay associated with a world.
+    /// </summary>
+    public enum GameType
+    {
+        /// <summary>
+        /// The world will be played in Survival mode.
+        /// </summary>
+        SURVIVAL = 0,
+
+        /// <summary>
+        /// The world will be played in Creative mode.
+        /// </summary>
+        CREATIVE = 1,
+    }
+
+    /// <summary>
     /// Represents general data and metadata of a single world.
     /// </summary>
     public class Level : INbtObject<Level>, ICopyable<Level>
@@ -28,6 +44,8 @@ namespace Substrate
                 new SchemaNodeScaler("thundering", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
                 new SchemaNodeScaler("rainTime", TagType.TAG_INT, SchemaOptions.OPTIONAL),
                 new SchemaNodeScaler("thunderTime", TagType.TAG_INT, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("GameType", TagType.TAG_INT, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("MapFeatures", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
             },
         };
 
@@ -51,6 +69,9 @@ namespace Substrate
         private byte? _thundering;
         private int? _rainTime;
         private int? _thunderTime;
+
+        private int? _gameType;
+        private byte? _mapFeatures;
 
         /// <summary>
         /// Gets or sets the creation time of the world as a long timestamp.
@@ -177,6 +198,24 @@ namespace Substrate
         }
 
         /// <summary>
+        /// Gets or sets the game type associated with this world.
+        /// </summary>
+        public GameType GameType
+        {
+            get { return (GameType)(_gameType ?? 0); }
+            set { _gameType = (int)value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating that structures (dungeons, villages, ...) will be generated.
+        /// </summary>
+        public bool UseMapFeatures
+        {
+            get { return (_mapFeatures ?? 0) == 1; }
+            set { _mapFeatures = value ? (byte)1 : (byte)0; }
+        }
+
+        /// <summary>
         /// Gets a <see cref="SchemaNode"/> representing the schema of a level.
         /// </summary>
         public static SchemaNodeCompound Schema
@@ -202,6 +241,9 @@ namespace Substrate
             _randomSeed = new Random().Next();
             _version = 19132;
             _name = "Untitled";
+
+            GameType = GameType.SURVIVAL;
+            UseMapFeatures = true;
         }
 
         /// <summary>
@@ -226,6 +268,9 @@ namespace Substrate
             _thundering = p._thundering;
             _rainTime = p._rainTime;
             _thunderTime = p._thunderTime;
+
+            _gameType = p._gameType;
+            _mapFeatures = p._mapFeatures;
 
             if (p._player != null) {
                 _player = p._player.Copy();
@@ -297,6 +342,8 @@ namespace Substrate
             _rainTime = null;
             _thundering = null;
             _thunderTime = null;
+            _gameType = null;
+            _mapFeatures = null;
 
             TagNodeCompound ctree = dtree["Data"].ToTagCompound();
 
@@ -332,6 +379,13 @@ namespace Substrate
             }
             if (ctree.ContainsKey("thunderTime")) {
                 _thunderTime = ctree["thunderTime"].ToTagInt();
+            }
+
+            if (ctree.ContainsKey("GameType")) {
+                _gameType = ctree["GameType"].ToTagInt();
+            }
+            if (ctree.ContainsKey("MapFeatures")) {
+                _mapFeatures = ctree["MapFeatures"].ToTagByte();
             }
 
             return this;
@@ -390,6 +444,13 @@ namespace Substrate
             }
             if (_thunderTime != null) {
                 data["thunderTime"] = new TagNodeInt(_thunderTime ?? 0);
+            }
+
+            if (_gameType != null) {
+                data["GameType"] = new TagNodeInt(_gameType ?? 0);
+            }
+            if (_mapFeatures != null) {
+                data["MapFeatures"] = new TagNodeByte(_mapFeatures ?? 0);
             }
 
             TagNodeCompound tree = new TagNodeCompound();

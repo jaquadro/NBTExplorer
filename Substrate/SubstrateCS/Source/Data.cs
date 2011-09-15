@@ -309,6 +309,52 @@ namespace Substrate
         STICKY = 0x08,
     }
 
+    public enum StoneBrickType
+    {
+        NORMAL = 0,
+        MOSSY = 1,
+        CRACKED = 2,
+    }
+
+    public enum HugeMushroomType
+    {
+        FLESHY = 0,
+        CAP_CORNER_NORTHEAST = 1,
+        CAP_SIDE_EAST = 2,
+        CAP_CORNER_SOUTHEAST = 3,
+        CAP_SIDE_NORTH = 4,
+        CAP_TOP = 5,
+        CAP_SIDE_SOUTH = 6,
+        CAP_CORNER_NORTHWEST = 7,
+        CAP_SIDE_WEST = 8,
+        CAP_CORNER_SOUTHWEST = 9,
+        STEM = 10,
+    }
+
+    [Flags]
+    public enum VineCoverageState
+    {
+        TOP = 0x0,
+        WEST = 0x1,
+        NORTH = 0x2,
+        EAST = 0x4,
+        SOUTH = 0x8,
+    }
+
+    public enum FenceGateOrientation
+    {
+        WEST = 0,
+        NORTH = 1,
+        EAST = 2,
+        SOUTH = 3,
+    }
+
+    [Flags]
+    public enum FenceGateState
+    {
+        OPEN = 0x4,
+    }
+
     // Item Data
 
     public enum CoalType

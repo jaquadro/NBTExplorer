@@ -106,6 +106,19 @@ namespace Substrate
         public const int REDSTONE_REPEATER_OFF = 94;
         public const int LOCKED_CHEST = 95;
         public const int TRAPDOOR = 96;
+        public const int SILVERFISH_STONE = 97;
+        public const int STONE_BRICK = 98;
+        public const int HUGE_RED_MUSHROOM = 99;
+        public const int HUGE_BROWN_MUSHROOM = 100;
+        public const int IRON_BARS = 101;
+        public const int GLASS_PANE = 102;
+        public const int MELON = 103;
+        public const int PUMPKIN_STEM = 104;
+        public const int MELON_STEP = 105;
+        public const int VINES = 106;
+        public const int FENCE_GATE = 107;
+        public const int BRICK_STAIRS = 108;
+        public const int STONE_BRICK_STAIRS = 109;
     }
 
     /// <summary>
@@ -550,6 +563,19 @@ namespace Substrate
         public static BlockInfo RedstoneRepeaterOn;
         public static BlockInfoEx LockedChest;
         public static BlockInfo Trapdoor;
+        public static BlockInfo SilverfishStone;
+        public static BlockInfo StoneBrick;
+        public static BlockInfo HugeRedMushroom;
+        public static BlockInfo HugeBrownMushroom;
+        public static BlockInfo IronBars;
+        public static BlockInfo GlassPane;
+        public static BlockInfo Melon;
+        public static BlockInfo PumpkinStem;
+        public static BlockInfo MelonStem;
+        public static BlockInfo Vines;
+        public static BlockInfo FenceGate;
+        public static BlockInfo BrickStairs;
+        public static BlockInfo StoneBrickStairs;
 
         static BlockInfo ()
         {
@@ -658,6 +684,19 @@ namespace Substrate
             RedstoneRepeaterOn = new BlockInfo(94, "Redstone Repeater (On)").SetOpacity(0).SetLuminance(7);
             LockedChest = (BlockInfoEx)new BlockInfoEx(95, "Locked Chest").SetLuminance(MAX_LUMINANCE);
             Trapdoor = new BlockInfo(96, "Trapdoor").SetOpacity(0);
+            SilverfishStone = new BlockInfo(97, "Stone with Silverfish");
+            StoneBrick = new BlockInfo(98, "Stone Brick");
+            HugeRedMushroom = new BlockInfo(99, "Huge Red Mushroom");
+            HugeBrownMushroom = new BlockInfo(100, "Huge Brown Mushroom");
+            IronBars = new BlockInfo(101, "Iron Bars").SetOpacity(0);
+            GlassPane = new BlockInfo(102, "Glass Pane").SetOpacity(0);
+            Melon = new BlockInfo(103, "Melon");
+            PumpkinStem = new BlockInfo(104, "Pumpkin Stem").SetOpacity(0).SetState(BlockState.NONSOLID);
+            MelonStem = new BlockInfo(105, "Melon Stem").SetOpacity(0).SetState(BlockState.NONSOLID);
+            Vines = new BlockInfo(106, "Vines").SetOpacity(0).SetState(BlockState.NONSOLID);
+            FenceGate = new BlockInfo(107, "Fence Gate").SetOpacity(0);
+            BrickStairs = new BlockInfo(108, "Brick Stairs").SetOpacity(0);
+            StoneBrickStairs = new BlockInfo(109, "Stone Brick Stairs").SetOpacity(0);
 
             for (int i = 0; i < MAX_BLOCKS; i++) {
                 if (_blockTable[i] == null) {
@@ -673,6 +712,8 @@ namespace Substrate
             WoodStairs.SetLightTransmission(false);
             Farmland.SetLightTransmission(false);
             CobbleStairs.SetLightTransmission(false);
+            BrickStairs.SetLightTransmission(false);
+            StoneBrickStairs.SetLightTransmission(false);
 
             // Override default fluid blocking rules
 
@@ -737,6 +778,11 @@ namespace Substrate
             RedstoneRepeater.SetDataLimits(0, 0, 0xF);
             RedstoneRepeaterOn.SetDataLimits(0, 0, 0xF);
             Trapdoor.SetDataLimits(0, 3, 0x4);
+            StoneBrick.SetDataLimits(0, 2, 0);
+            HugeRedMushroom.SetDataLimits(0, 10, 0);
+            HugeBrownMushroom.SetDataLimits(0, 10, 0);
+            Vines.SetDataLimits(0, 0, 0xF);
+            FenceGate.SetDataLimits(0, 3, 0x4);
         }
     }
 

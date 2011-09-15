@@ -134,7 +134,7 @@ namespace Substrate
         /// <param name="y">Global Y-coordinate of a block.</param>
         /// <param name="z">Global Z-coordinate of a block.</param>
         /// <returns>A <see cref="ChunkRef"/> to a single chunk containing the given block.</returns>
-        protected ChunkRef GetChunk (int x, int y, int z)
+        public ChunkRef GetChunk (int x, int y, int z)
         {
             x >>= chunkXLog;
             z >>= chunkZLog;
