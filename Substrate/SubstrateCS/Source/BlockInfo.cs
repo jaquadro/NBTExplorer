@@ -114,7 +114,7 @@ namespace Substrate
         public const int GLASS_PANE = 102;
         public const int MELON = 103;
         public const int PUMPKIN_STEM = 104;
-        public const int MELON_STEP = 105;
+        public const int MELON_STEM = 105;
         public const int VINES = 106;
         public const int FENCE_GATE = 107;
         public const int BRICK_STAIRS = 108;
