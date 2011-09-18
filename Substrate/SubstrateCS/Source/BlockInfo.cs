@@ -641,7 +641,7 @@ namespace Substrate
             Fire = new BlockInfo(51, "Fire").SetOpacity(0).SetLuminance(MAX_LUMINANCE).SetState(BlockState.NONSOLID);
             MonsterSpawner = (BlockInfoEx)new BlockInfoEx(52, "Monster Spawner").SetOpacity(0);
             WoodStairs = new BlockInfo(53, "Wooden Stairs").SetOpacity(0);
-            Chest = new BlockInfoEx(54, "Chest");
+            Chest = (BlockInfoEx)new BlockInfoEx(54, "Chest").SetOpacity(0);
             RedstoneWire = new BlockInfo(55, "Redstone Wire").SetOpacity(0).SetState(BlockState.NONSOLID);
             DiamondOre = new BlockInfo(56, "Diamond Ore");
             DiamondBlock = new BlockInfo(57, "Diamond Block");
