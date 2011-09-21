@@ -81,10 +81,12 @@ namespace Substrate
         {
             _registry["Arrow"] = typeof(EntityArrow);
             _registry["Boat"] = typeof(EntityBoat);
+            _registry["CaveSpider"] = typeof(EntityCaveSpider);
             _registry["Chicken"] = typeof(EntityChicken);
             _registry["Cow"] = typeof(EntityCow);
             _registry["Creeper"] = typeof(EntityCreeper);
             _registry["Egg"] = typeof(EntityEgg);
+            _registry["Enderman"] = typeof(EntityEnderman);
             _registry["FallingSand"] = typeof(EntityFallingSand);
             _registry["Ghast"] = typeof(EntityGhast);
             _registry["Giant"] = typeof(EntityGiant);
@@ -97,12 +99,14 @@ namespace Substrate
             _registry["PigZombie"] = typeof(EntityPigZombie);
             _registry["PrimedTnt"] = typeof(EntityPrimedTnt);
             _registry["Sheep"] = typeof(EntitySheep);
+            _registry["Silverfish"] = typeof(EntitySilverfish);
             _registry["Skeleton"] = typeof(EntitySkeleton);
             _registry["Slime"] = typeof(EntitySlime);
             _registry["Snowball"] = typeof(EntitySnowball);
             _registry["Spider"] = typeof(EntitySpider);
             _registry["Squid"] = typeof(EntitySquid);
             _registry["Wolf"] = typeof(EntityWolf);
+            _registry["XPOrb"] = typeof(EntityXPOrb);
             _registry["Zombie"] = typeof(EntityZombie);
         }
     }

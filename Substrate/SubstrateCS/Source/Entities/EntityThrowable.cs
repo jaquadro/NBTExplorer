@@ -43,10 +43,10 @@ namespace Substrate.Entities
             set { _zTile = (short)value; }
         }
 
-        public bool IsInTile
+        public int InTile
         {
-            get { return _inTile == 1; }
-            set { _inTile = (byte)(value ? 1 : 0); }
+            get { return _inTile; }
+            set { _inTile = (byte)value; }
         }
 
         public int Shake

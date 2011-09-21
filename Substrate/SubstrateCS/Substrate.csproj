@@ -70,6 +70,10 @@
     <Compile Include="Source\Core\OpenWorldEvent.cs" />
     <Compile Include="Source\Core\RegionInterface.cs" />
     <Compile Include="Source\Core\UnboundedBlockInterface.cs" />
+    <Compile Include="Source\Entities\EntityCaveSpider.cs" />
+    <Compile Include="Source\Entities\EntityEnderman.cs" />
+    <Compile Include="Source\Entities\EntitySilverfish.cs" />
+    <Compile Include="Source\Entities\EntityXPOrb.cs" />
     <Compile Include="Source\ImportExport\Schematic.cs" />
     <Compile Include="Source\LevelIOException.cs" />
     <Compile Include="Source\AlphaBlock.cs" />

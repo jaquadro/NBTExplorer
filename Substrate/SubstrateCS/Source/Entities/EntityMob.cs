@@ -6,6 +6,34 @@ namespace Substrate.Entities
 {
     using Substrate.Nbt;
 
+    /// <summary>
+    /// Encompasses data in the "ActiveEffects" compound attribute of mob entity types
+    /// </summary>
+    public class ActiveEffects
+    {
+        private byte _id;
+        private byte _amplifier;
+        private int _duration;
+
+        public int Id
+        {
+            get { return _id; }
+            set { _id = (byte)value; }
+        }
+
+        public int Amplifier
+        {
+            get { return _amplifier; }
+            set { _amplifier = (byte)value; }
+        }
+
+        public int Duration
+        {
+            get { return _duration; }
+            set { _duration = value; }
+        }
+    }
+
     public class EntityMob : TypedEntity
     {
         public static readonly SchemaNodeCompound MobSchema = TypedEntity.Schema.MergeInto(new SchemaNodeCompound("")
@@ -15,12 +43,20 @@ namespace Substrate.Entities
             new SchemaNodeScaler("DeathTime", TagType.TAG_SHORT),
             new SchemaNodeScaler("Health", TagType.TAG_SHORT),
             new SchemaNodeScaler("HurtTime", TagType.TAG_SHORT),
+            new SchemaNodeCompound("ActiveEffects", SchemaOptions.OPTIONAL)
+            {
+                new SchemaNodeScaler("Id", TagType.TAG_BYTE),
+                new SchemaNodeScaler("Amplifier", TagType.TAG_BYTE),
+                new SchemaNodeScaler("Duration", TagType.TAG_INT),
+            },
         });
 
         private short _attackTime;
         private short _deathTime;
         private short _health;
         private short _hurtTime;
+
+        private ActiveEffects _activeEffects;
 
         public int AttackTime
         {
@@ -46,6 +82,12 @@ namespace Substrate.Entities
             set { _hurtTime = (short)value; }
         }
 
+        public ActiveEffects ActiveEffects
+        {
+            get { return _activeEffects; }
+            set { _activeEffects = value; }
+        }
+
         public EntityMob ()
             : base("Mob")
         {
@@ -65,6 +107,7 @@ namespace Substrate.Entities
                 _deathTime = e2._deathTime;
                 _health = e2._health;
                 _hurtTime = e2._hurtTime;
+                _activeEffects = e2._activeEffects;
             }
         }
 
@@ -83,6 +126,15 @@ namespace Substrate.Entities
             _health = ctree["Health"].ToTagShort();
             _hurtTime = ctree["HurtTime"].ToTagShort();
 
+            if (ctree.ContainsKey("ActiveEffects")) {
+                TagNodeCompound ae = ctree["ActiveEffects"].ToTagCompound();
+
+                _activeEffects = new ActiveEffects();
+                _activeEffects.Id = ae["Id"].ToTagByte();
+                _activeEffects.Amplifier = ae["Amplifier"].ToTagByte();
+                _activeEffects.Duration = ae["Duration"].ToTagInt();
+            }
+
             return this;
         }
 
@@ -93,6 +145,15 @@ namespace Substrate.Entities
             tree["DeathTime"] = new TagNodeShort(_deathTime);
             tree["Health"] = new TagNodeShort(_health);
             tree["HurtTime"] = new TagNodeShort(_hurtTime);
+
+            if (_activeEffects != null) {
+                TagNodeCompound ae = new TagNodeCompound();
+                ae["Id"] = new TagNodeByte((byte)_activeEffects.Id);
+                ae["Amplifier"] = new TagNodeByte((byte)_activeEffects.Amplifier);
+                ae["Duration"] = new TagNodeInt(_activeEffects.Duration);
+
+                tree["ActiveEffects"] = ae;
+            }
 
             return tree;
         }
