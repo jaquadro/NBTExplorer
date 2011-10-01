@@ -37,8 +37,8 @@ namespace Substrate.Entities
             set { _value = (short)value; }
         }
 
-        public EntityXPOrb (string id)
-            : base(id)
+        public EntityXPOrb ()
+            : base("XPOrb")
         {
         }
 
