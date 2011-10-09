@@ -85,6 +85,16 @@ namespace Substrate.Nbt
         }
 
         /// <summary>
+        /// Finds the first subnode that matches the conditions defined by the specified predicate.
+        /// </summary>
+        /// <param name="match">The <see cref="Predicate{TagNode}"/> delegate that defines the conditions of the subnode to search for.</param>
+        /// <returns>The first subnode matching the predicate.</returns>
+        public TagNode Find (Predicate<TagNode> match)
+        {
+            return _items.Find(match);
+        }
+
+        /// <summary>
         /// Retrieves all the subnodes that match the conditions defined by the specified predicate.
         /// </summary>
         /// <param name="match">The <see cref="Predicate{TagNode}"/> delegate that defines the conditions of the subnode to search for.</param>
@@ -102,6 +112,32 @@ namespace Substrate.Nbt
         public int RemoveAll (Predicate<TagNode> match)
         {
             return _items.RemoveAll(match);
+        }
+
+        /// <summary>
+        /// Reverses the order of all the subnodes in the list.
+        /// </summary>
+        public void Reverse ()
+        {
+            _items.Reverse();
+        }
+
+        /// <summary>
+        /// Reverse the order of subnodes in the specified range.
+        /// </summary>
+        /// <param name="index">The zero-based starting index of the subnodes to reverse</param>
+        /// <param name="count">The number of subnodes in the range to reverse.</param>
+        public void Reverse (int index, int count)
+        {
+            _items.Reverse(index, count);
+        }
+
+        /// <summary>
+        /// Sorts all the subnodes in the list using the default comparator
+        /// </summary>
+        public void Sort ()
+        {
+            _items.Sort();
         }
 
         /// <summary>
