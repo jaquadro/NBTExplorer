@@ -27,6 +27,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntitySlime (string id)
+            : base(id)
+        {
+        }
+
         public EntitySlime (TypedEntity e)
             : base(e)
         {

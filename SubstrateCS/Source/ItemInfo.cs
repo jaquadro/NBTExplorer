@@ -125,6 +125,20 @@ namespace Substrate
         public const int COOKED_CHICKEN = 366;
         public const int ROTTEN_FLESH = 367;
         public const int ENDER_PEARL = 368;
+        public const int BLAZE_ROD = 369;
+        public const int GHAST_TEAR = 370;
+        public const int GOLD_NUGGET = 371;
+        public const int NETHER_WART = 372;
+        public const int POTION = 373;
+        public const int GLASS_BOTTLE = 374;
+        public const int SPIDER_EYE = 375;
+        public const int FERMENTED_SPIDER_EYE = 376;
+        public const int BLAZE_POWDER = 377;
+        public const int MAGMA_CREAM = 378;
+        public const int BREWING_STAND = 379;
+        public const int CAULDRON = 380;
+        public const int EYE_OF_ENDER = 381;
+        public const int GLISTERING_MELON = 382;
         public const int GOLD_MUSIC_DISC = 2256;
         public const int GREEN_MUSIC_DISC = 2257;
     }
@@ -358,6 +372,20 @@ namespace Substrate
         public static ItemInfo CookedChicken;
         public static ItemInfo RottenFlesh;
         public static ItemInfo EnderPearl;
+        public static ItemInfo BlazeRod;
+        public static ItemInfo GhastTear;
+        public static ItemInfo GoldNugget;
+        public static ItemInfo NetherWart;
+        public static ItemInfo Potion;
+        public static ItemInfo GlassBottle;
+        public static ItemInfo SpiderEye;
+        public static ItemInfo FermentedSpiderEye;
+        public static ItemInfo BlazePowder;
+        public static ItemInfo MagmaCream;
+        public static ItemInfo BrewingStand;
+        public static ItemInfo Cauldron;
+        public static ItemInfo EyeOfEnder;
+        public static ItemInfo GlisteringMelon;
         public static ItemInfo GoldMusicDisc;
         public static ItemInfo GreenMusicDisc;
 
@@ -479,6 +507,20 @@ namespace Substrate
             CookedChicken = new ItemInfo(366, "Cooked Chicken").SetStackSize(64);
             RottenFlesh = new ItemInfo(367, "Rotten Flesh").SetStackSize(64);
             EnderPearl = new ItemInfo(368, "Ender Pearl").SetStackSize(64);
+            BlazeRod = new ItemInfo(369, "Blaze Rod").SetStackSize(64);
+            GhastTear = new ItemInfo(370, "Ghast Tear").SetStackSize(64);
+            GoldNugget = new ItemInfo(371, "Gold Nugget").SetStackSize(64);
+            NetherWart = new ItemInfo(372, "Nether Wart").SetStackSize(64);
+            Potion = new ItemInfo(373, "Potion");
+            GlassBottle = new ItemInfo(374, "Glass Bottle").SetStackSize(64);
+            SpiderEye = new ItemInfo(375, "Spider Eye").SetStackSize(64);
+            FermentedSpiderEye = new ItemInfo(376, "Fermented Spider Eye").SetStackSize(64);
+            BlazePowder = new ItemInfo(377, "Blaze Powder").SetStackSize(64);
+            MagmaCream = new ItemInfo(378, "Magma Cream").SetStackSize(64);
+            BrewingStand = new ItemInfo(379, "Brewing Stand").SetStackSize(64);
+            Cauldron = new ItemInfo(380, "Cauldron");
+            EyeOfEnder = new ItemInfo(381, "Eye of Ender").SetStackSize(64);
+            GlisteringMelon = new ItemInfo(382, "Glistering Melon").SetStackSize(64);
             GoldMusicDisc = new ItemInfo(2256, "Gold Music Disc");
             GreenMusicDisc = new ItemInfo(2257, "Green Music Disc");
         }

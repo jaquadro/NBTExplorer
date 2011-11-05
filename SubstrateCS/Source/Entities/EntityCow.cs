@@ -18,6 +18,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityCow (string id)
+            : base(id)
+        {
+        }
+
         public EntityCow (TypedEntity e)
             : base(e)
         {

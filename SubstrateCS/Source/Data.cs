@@ -19,6 +19,14 @@ namespace Substrate
         OAK = 0,
         SPRUCE = 1,
         BIRCH = 2,
+        DARK_OAK = 3,
+    }
+
+    [Flags]
+    public enum LeafState
+    {
+        PERMANENT = 0x4,
+        DECAY_CHECK = 0x8,
     }
 
     public enum SaplingType

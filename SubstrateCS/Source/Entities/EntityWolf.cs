@@ -93,7 +93,7 @@ namespace Substrate.Entities
 
         public override TypedEntity Copy ()
         {
-            return new EntityPig(this);
+            return new EntityWolf(this);
         }
 
         #endregion

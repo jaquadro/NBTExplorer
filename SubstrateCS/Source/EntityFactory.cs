@@ -80,20 +80,26 @@ namespace Substrate
         static EntityFactory ()
         {
             _registry["Arrow"] = typeof(EntityArrow);
+            _registry["Blaze"] = typeof(EntityBlaze);
             _registry["Boat"] = typeof(EntityBoat);
             _registry["CaveSpider"] = typeof(EntityCaveSpider);
             _registry["Chicken"] = typeof(EntityChicken);
             _registry["Cow"] = typeof(EntityCow);
             _registry["Creeper"] = typeof(EntityCreeper);
             _registry["Egg"] = typeof(EntityEgg);
+            _registry["EnderDragon"] = typeof(EntityEnderDragon);
             _registry["Enderman"] = typeof(EntityEnderman);
+            _registry["EyeOfEnderSignal"] = typeof(EntityEnderEye);
             _registry["FallingSand"] = typeof(EntityFallingSand);
+            _registry["Fireball"] = typeof(EntityFireball);
             _registry["Ghast"] = typeof(EntityGhast);
             _registry["Giant"] = typeof(EntityGiant);
             _registry["Item"] = typeof(EntityItem);
+            _registry["LavaSlime"] = typeof(EntityMagmaCube);
             _registry["Minecart"] = typeof(EntityMinecart);
             _registry["Mob"] = typeof(EntityMob);
             _registry["Monster"] = typeof(EntityMonster);
+            _registry["MushroomCow"] = typeof(EntityMooshroom);
             _registry["Painting"] = typeof(EntityPainting);
             _registry["Pig"] = typeof(EntityPig);
             _registry["PigZombie"] = typeof(EntityPigZombie);
@@ -102,9 +108,13 @@ namespace Substrate
             _registry["Silverfish"] = typeof(EntitySilverfish);
             _registry["Skeleton"] = typeof(EntitySkeleton);
             _registry["Slime"] = typeof(EntitySlime);
+            _registry["SmallFireball"] = typeof(EntitySmallFireball);
             _registry["Snowball"] = typeof(EntitySnowball);
+            _registry["SnowMan"] = typeof(EntitySnowman);
             _registry["Spider"] = typeof(EntitySpider);
             _registry["Squid"] = typeof(EntitySquid);
+            _registry["ThrownEnderpearl"] = typeof(EntityEnderPearl);
+            _registry["Villager"] = typeof(EntityVillager);
             _registry["Wolf"] = typeof(EntityWolf);
             _registry["XPOrb"] = typeof(EntityXPOrb);
             _registry["Zombie"] = typeof(EntityZombie);
