@@ -18,6 +18,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityGiant (string id)
+            : base(id)
+        {
+        }
+
         public EntityGiant (TypedEntity e)
             : base(e)
         {

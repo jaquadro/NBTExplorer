@@ -93,7 +93,7 @@ namespace Substrate.Entities
         {
         }
 
-        public EntityMob (string id)
+        protected EntityMob (string id)
             : base(id)
         {
         }

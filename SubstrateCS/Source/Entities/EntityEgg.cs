@@ -18,6 +18,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityEgg (string id)
+            : base(id)
+        {
+        }
+
         public EntityEgg (TypedEntity e)
             : base(e)
         {

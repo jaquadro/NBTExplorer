@@ -18,6 +18,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntitySnowman (string id)
+            : base(id)
+        {
+        }
+
         public EntitySnowman (TypedEntity e)
             : base(e)
         {

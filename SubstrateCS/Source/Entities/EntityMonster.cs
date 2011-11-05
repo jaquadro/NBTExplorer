@@ -18,6 +18,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityMonster (string id)
+            : base(id)
+        {
+        }
+
         public EntityMonster (TypedEntity e)
             : base(e)
         {

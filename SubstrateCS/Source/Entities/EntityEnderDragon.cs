@@ -18,6 +18,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityEnderDragon (string id)
+            : base(id)
+        {
+        }
+
         public EntityEnderDragon (TypedEntity e)
             : base(e)
         {

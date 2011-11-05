@@ -18,6 +18,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntitySilverfish (string id)
+            : base(id)
+        {
+        }
+
         public EntitySilverfish (TypedEntity e)
             : base(e)
         {

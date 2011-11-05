@@ -42,6 +42,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityXPOrb (string id)
+            : base(id)
+        {
+        }
+
         public EntityXPOrb (TypedEntity e)
             : base(e)
         {

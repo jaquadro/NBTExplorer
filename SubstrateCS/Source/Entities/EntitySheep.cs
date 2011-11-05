@@ -35,6 +35,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntitySheep (string id)
+            : base(id)
+        {
+        }
+
         public EntitySheep (TypedEntity e)
             : base(e)
         {

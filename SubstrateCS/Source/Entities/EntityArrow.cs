@@ -35,6 +35,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityArrow (string id)
+            : base(id)
+        {
+        }
+
         public EntityArrow (TypedEntity e)
             : base(e)
         {

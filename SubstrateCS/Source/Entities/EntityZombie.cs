@@ -18,6 +18,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityZombie (string id)
+            : base(id)
+        {
+        }
+
         public EntityZombie (TypedEntity e)
             : base(e)
         {

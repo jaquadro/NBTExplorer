@@ -27,6 +27,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityPrimedTnt (string id)
+            : base(id)
+        {
+        }
+
         public EntityPrimedTnt (TypedEntity e)
             : base(e)
         {

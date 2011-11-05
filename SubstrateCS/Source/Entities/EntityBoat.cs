@@ -18,6 +18,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityBoat (string id)
+            : base(id)
+        {
+        }
+
         public EntityBoat (TypedEntity e)
             : base(e)
         {

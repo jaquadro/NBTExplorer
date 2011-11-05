@@ -18,6 +18,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntitySmallFireball (string id)
+            : base(id)
+        {
+        }
+
         public EntitySmallFireball (TypedEntity e)
             : base(e)
         {

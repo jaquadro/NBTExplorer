@@ -18,6 +18,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityBlaze (string id)
+            : base(id)
+        {
+        }
+
         public EntityBlaze (TypedEntity e)
             : base(e)
         {

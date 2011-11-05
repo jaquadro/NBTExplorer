@@ -23,7 +23,12 @@ namespace Substrate.Entities
         }
 
         public EntityFallingSand ()
-            : base("PrimedTnt")
+            : base("FallingSand")
+        {
+        }
+
+        protected EntityFallingSand (string id)
+            : base(id)
         {
         }
 

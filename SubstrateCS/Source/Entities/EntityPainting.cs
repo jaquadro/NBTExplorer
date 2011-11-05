@@ -67,6 +67,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityPainting (string id)
+            : base(id)
+        {
+        }
+
         public EntityPainting (TypedEntity e)
             : base(e)
         {

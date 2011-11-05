@@ -18,6 +18,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityMooshroom (string id)
+            : base(id)
+        {
+        }
+
         public EntityMooshroom (TypedEntity e)
             : base(e)
         {

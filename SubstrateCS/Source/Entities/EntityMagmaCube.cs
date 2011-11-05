@@ -18,6 +18,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityMagmaCube (string id)
+            : base(id)
+        {
+        }
+
         public EntityMagmaCube (TypedEntity e)
             : base(e)
         {

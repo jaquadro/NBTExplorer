@@ -66,6 +66,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityThrowable (string id)
+            : base(id)
+        {
+        }
+
         public EntityThrowable (TypedEntity e)
             : base(e)
         {

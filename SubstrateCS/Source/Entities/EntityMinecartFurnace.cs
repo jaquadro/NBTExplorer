@@ -42,6 +42,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityMinecartFurnace (string id)
+            : base(id)
+        {
+        }
+
         public EntityMinecartFurnace (TypedEntity e)
             : base(e)
         {

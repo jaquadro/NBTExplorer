@@ -27,6 +27,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityCreeper (string id)
+            : base(id)
+        {
+        }
+
         public EntityCreeper (TypedEntity e)
             : base(e)
         {

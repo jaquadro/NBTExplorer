@@ -39,6 +39,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityEnderman (string id)
+            : base(id)
+        {
+        }
+
         public EntityEnderman (TypedEntity e)
             : base(e)
         {

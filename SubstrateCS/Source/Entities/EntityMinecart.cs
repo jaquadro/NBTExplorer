@@ -33,6 +33,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityMinecart (string id)
+            : base(id)
+        {
+        }
+
         public EntityMinecart (TypedEntity e)
             : base(e)
         {

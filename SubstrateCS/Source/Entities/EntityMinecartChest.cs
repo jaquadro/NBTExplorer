@@ -22,6 +22,11 @@ namespace Substrate.Entities
             _items = new ItemCollection(_CAPACITY);
         }
 
+        protected EntityMinecartChest (string id)
+            : base(id)
+        {
+        }
+
         public EntityMinecartChest (TypedEntity e)
             : base(e)
         {

@@ -18,6 +18,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityEnderEye (string id)
+            : base(id)
+        {
+        }
+
         public EntityEnderEye (TypedEntity e)
             : base(e)
         {

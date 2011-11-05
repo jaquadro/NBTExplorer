@@ -27,6 +27,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityPig (string id)
+            : base(id)
+        {
+        }
+
         public EntityPig (TypedEntity e)
             : base(e)
         {

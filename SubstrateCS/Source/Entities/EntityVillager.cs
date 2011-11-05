@@ -36,6 +36,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityVillager (string id)
+            : base(id)
+        {
+        }
+
         public EntityVillager (TypedEntity e)
             : base(e)
         {

@@ -18,6 +18,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntitySquid (string id)
+            : base(id)
+        {
+        }
+
         public EntitySquid (TypedEntity e)
             : base(e)
         {

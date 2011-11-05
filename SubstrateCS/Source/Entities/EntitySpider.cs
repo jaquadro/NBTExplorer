@@ -18,6 +18,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntitySpider (string id)
+            : base(id)
+        {
+        }
+
         public EntitySpider (TypedEntity e)
             : base(e)
         {

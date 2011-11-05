@@ -6,15 +6,20 @@ namespace Substrate.Entities
 {
     using Substrate.Nbt;
 
-    public class EntityCaveSpider : EntityMob
+    public class EntityCaveSpider : EntitySpider
     {
-        public static readonly SchemaNodeCompound CaveSpiderSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound CaveSpiderSchema = SpiderSchema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", "CaveSpider"),
         });
 
         public EntityCaveSpider ()
             : base("CaveSpider")
+        {
+        }
+
+        protected EntityCaveSpider (string id)
+            : base(id)
         {
         }
 

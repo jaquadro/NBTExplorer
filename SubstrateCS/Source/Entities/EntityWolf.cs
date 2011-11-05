@@ -43,6 +43,11 @@ namespace Substrate.Entities
         {
         }
 
+        protected EntityWolf (string id)
+            : base(id)
+        {
+        }
+
         public EntityWolf (TypedEntity e)
             : base(e)
         {
