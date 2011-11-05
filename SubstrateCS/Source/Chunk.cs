@@ -160,6 +160,9 @@ namespace Substrate
         {
             _cx = x;
             _cz = z;
+
+            _tree.Root["Level"].ToTagCompound()["xPos"].ToTagInt().Data = x;
+            _tree.Root["Level"].ToTagCompound()["zPos"].ToTagInt().Data = z;
         }
 
         /// <summary>
