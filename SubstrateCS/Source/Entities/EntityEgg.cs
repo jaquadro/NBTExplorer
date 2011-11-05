@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound EggSchema = ThrowableSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Egg"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntityEgg ()
-            : base("Egg")
+        public static string TypeId
         {
+            get { return "Egg"; }
         }
 
         protected EntityEgg (string id)
             : base(id)
+        {
+        }
+
+        public EntityEgg ()
+            : this(TypeId)
         {
         }
 

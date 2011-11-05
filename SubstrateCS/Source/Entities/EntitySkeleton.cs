@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound SkeletonSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Skeleton"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntitySkeleton ()
-            : base("Skeleton")
+        public static string TypeId
         {
+            get { return "Skeleton"; }
         }
 
         protected EntitySkeleton (string id)
             : base(id)
+        {
+        }
+
+        public EntitySkeleton ()
+            : this(TypeId)
         {
         }
 

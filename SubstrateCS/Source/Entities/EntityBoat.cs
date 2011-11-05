@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound BoatSchema = TypedEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Boat"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntityBoat ()
-            : base("Boat")
+        public static string TypeId
         {
+            get { return "Boat"; }
         }
 
         protected EntityBoat (string id)
             : base(id)
+        {
+        }
+
+        public EntityBoat ()
+            : this(TypeId)
         {
         }
 

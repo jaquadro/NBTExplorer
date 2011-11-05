@@ -17,9 +17,14 @@ namespace Substrate.Entities
 
         public static readonly SchemaNodeCompound MinecartSchema = TypedEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Minecart"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("Type", TagType.TAG_INT),
         });
+
+        public static string TypeId
+        {
+            get { return "Minecart"; }
+        }
 
         private CartType _type;
 
@@ -28,13 +33,13 @@ namespace Substrate.Entities
             get { return _type; }
         }
 
-        public EntityMinecart ()
-            : base("Minecart")
+        protected EntityMinecart (string id)
+            : base(id)
         {
         }
 
-        protected EntityMinecart (string id)
-            : base(id)
+        public EntityMinecart ()
+            : this(TypeId)
         {
         }
 

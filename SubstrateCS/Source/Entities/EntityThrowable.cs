@@ -61,11 +61,6 @@ namespace Substrate.Entities
             set { _inGround = (byte)(value ? 1 : 0); }
         }
 
-        public EntityThrowable (string id)
-            : base(id)
-        {
-        }
-
         protected EntityThrowable (string id)
             : base(id)
         {

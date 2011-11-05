@@ -10,11 +10,16 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound ItemSchema = TypedEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Item"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("Health", TagType.TAG_SHORT),
             new SchemaNodeScaler("Age", TagType.TAG_SHORT),
             new SchemaNodeCompound("Item", Item.Schema),
         });
+
+        public static string TypeId
+        {
+            get { return "Item"; }
+        }
 
         private short _health;
         private short _age;
@@ -39,13 +44,13 @@ namespace Substrate.Entities
             set { _item = value; }
         }
 
-        public EntityItem ()
-            : base("Item")
+        protected EntityItem (string id)
+            : base(id)
         {
         }
 
-        protected EntityItem (string id)
-            : base(id)
+        public EntityItem ()
+            : this(TypeId)
         {
         }
 

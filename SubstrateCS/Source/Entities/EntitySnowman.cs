@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound SnowmanSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "SnowMan"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntitySnowman ()
-            : base("SnowMan")
+        public static string TypeId
         {
+            get { return "SnowMan"; }
         }
 
         protected EntitySnowman (string id)
             : base(id)
+        {
+        }
+
+        public EntitySnowman ()
+            : this(TypeId)
         {
         }
 

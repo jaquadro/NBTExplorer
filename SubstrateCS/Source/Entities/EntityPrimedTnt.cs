@@ -10,9 +10,14 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound PrimedTntSchema = TypedEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "PrimedTnt"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("Fuse", TagType.TAG_BYTE),
         });
+
+        public static string TypeId
+        {
+            get { return "PrimedTnt"; }
+        }
 
         private byte _fuse;
 
@@ -22,13 +27,13 @@ namespace Substrate.Entities
             set { _fuse = (byte)value; }
         }
 
-        public EntityPrimedTnt ()
-            : base("PrimedTnt")
+        protected EntityPrimedTnt (string id)
+            : base(id)
         {
         }
 
-        protected EntityPrimedTnt (string id)
-            : base(id)
+        public EntityPrimedTnt ()
+            : this(TypeId)
         {
         }
 

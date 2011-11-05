@@ -10,9 +10,14 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound PigSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Pig"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("Saddle", TagType.TAG_BYTE),
         });
+
+        public static string TypeId
+        {
+            get { return "Pig"; }
+        }
 
         private bool _saddle;
 
@@ -22,13 +27,13 @@ namespace Substrate.Entities
             set { _saddle = value; }
         }
 
-        public EntityPig ()
-            : base("Pig")
+        protected EntityPig (string id)
+            : base(id)
         {
         }
 
-        protected EntityPig (string id)
-            : base(id)
+        public EntityPig ()
+            : this(TypeId)
         {
         }
 

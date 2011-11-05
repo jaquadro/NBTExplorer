@@ -38,7 +38,7 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound MobSchema = TypedEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Mob"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("AttackTime", TagType.TAG_SHORT),
             new SchemaNodeScaler("DeathTime", TagType.TAG_SHORT),
             new SchemaNodeScaler("Health", TagType.TAG_SHORT),
@@ -50,6 +50,11 @@ namespace Substrate.Entities
                 new SchemaNodeScaler("Duration", TagType.TAG_INT),
             },
         });
+
+        public static string TypeId
+        {
+            get { return "Mob"; }
+        }
 
         private short _attackTime;
         private short _deathTime;
@@ -88,13 +93,13 @@ namespace Substrate.Entities
             set { _activeEffects = value; }
         }
 
-        public EntityMob ()
-            : base("Mob")
+        protected EntityMob (string id)
+            : base(id)
         {
         }
 
-        protected EntityMob (string id)
-            : base(id)
+        public EntityMob ()
+            : this(TypeId)
         {
         }
 

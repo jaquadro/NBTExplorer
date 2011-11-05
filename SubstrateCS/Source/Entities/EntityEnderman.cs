@@ -14,10 +14,15 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound EndermanSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Enderman"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("carried", TagType.TAG_SHORT, SchemaOptions.CREATE_ON_MISSING),
             new SchemaNodeScaler("carriedData", TagType.TAG_SHORT, SchemaOptions.CREATE_ON_MISSING),
         });
+
+        public static string TypeId
+        {
+            get { return "Enderman"; }
+        }
 
         private short _carried;
         private short _carryingData;
@@ -34,13 +39,13 @@ namespace Substrate.Entities
             set { _carryingData = (short)value; }
         }
 
-        public EntityEnderman ()
-            : base("Enderman")
+        protected EntityEnderman (string id)
+            : base(id)
         {
         }
 
-        protected EntityEnderman (string id)
-            : base(id)
+        public EntityEnderman ()
+            : this(TypeId)
         {
         }
 

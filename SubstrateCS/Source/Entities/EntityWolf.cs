@@ -10,11 +10,16 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound WolfSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Wolf"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("Owner", TagType.TAG_STRING),
             new SchemaNodeScaler("Sitting", TagType.TAG_BYTE),
             new SchemaNodeScaler("Angry", TagType.TAG_BYTE),
         });
+
+        public static string TypeId
+        {
+            get { return "Wolf"; }
+        }
 
         private string _owner;
         private bool _sitting;
@@ -38,13 +43,13 @@ namespace Substrate.Entities
             set { _angry = value; }
         }
 
-        public EntityWolf ()
-            : base("Wolf")
+        protected EntityWolf (string id)
+            : base(id)
         {
         }
 
-        protected EntityWolf (string id)
-            : base(id)
+        public EntityWolf ()
+            : this(TypeId)
         {
         }
 

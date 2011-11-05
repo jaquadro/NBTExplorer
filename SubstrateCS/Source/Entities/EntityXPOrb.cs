@@ -10,10 +10,16 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound XPOrbSchema = TypedEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("Health", TagType.TAG_SHORT),
             new SchemaNodeScaler("Age", TagType.TAG_SHORT),
             new SchemaNodeScaler("Value", TagType.TAG_SHORT),
         });
+
+        public static string TypeId
+        {
+            get { return "XPOrb"; }
+        }
 
         private short _health;
         private short _age;
@@ -37,13 +43,13 @@ namespace Substrate.Entities
             set { _value = (short)value; }
         }
 
-        public EntityXPOrb ()
-            : base("XPOrb")
+        protected EntityXPOrb (string id)
+            : base(id)
         {
         }
 
-        protected EntityXPOrb (string id)
-            : base(id)
+        public EntityXPOrb ()
+            : this(TypeId)
         {
         }
 

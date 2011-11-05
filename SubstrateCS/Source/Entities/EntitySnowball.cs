@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound SnowballSchema = ThrowableSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Snowball"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntitySnowball ()
-            : base("Snowball")
+        public static string TypeId
         {
+            get { return "Snowball"; }
         }
 
         protected EntitySnowball (string id)
             : base(id)
+        {
+        }
+
+        public EntitySnowball ()
+            : this(TypeId)
         {
         }
 

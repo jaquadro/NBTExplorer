@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound EnderPearlSchema = ThrowableSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "ThrownEnderpearl"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntityEnderPearl ()
-            : base("ThrownEnderpearl")
+        public static string TypeId
         {
+            get { return "ThrownEnderpearl"; }
         }
 
         protected EntityEnderPearl (string id)
             : base(id)
+        {
+        }
+
+        public EntityEnderPearl ()
+            : this(TypeId)
         {
         }
 

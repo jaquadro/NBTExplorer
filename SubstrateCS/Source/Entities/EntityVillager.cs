@@ -19,9 +19,14 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound VillagerSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Villager"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("Profession", TagType.TAG_INT),
         });
+
+        public static string TypeId
+        {
+            get { return "Villager"; }
+        }
 
         private int _profession;
 
@@ -31,13 +36,13 @@ namespace Substrate.Entities
             set { _profession = (int)value; }
         }
 
-        public EntityVillager ()
-            : base("Villager")
+        protected EntityVillager (string id)
+            : base(id)
         {
         }
 
-        protected EntityVillager (string id)
-            : base(id)
+        public EntityVillager ()
+            : this(TypeId)
         {
         }
 

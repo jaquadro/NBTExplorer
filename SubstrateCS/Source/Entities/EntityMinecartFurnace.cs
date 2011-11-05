@@ -15,6 +15,11 @@ namespace Substrate.Entities
             new SchemaNodeScaler("Fuel", TagType.TAG_SHORT),
         });
 
+        public static string TypeId
+        {
+            get { return EntityMinecart.TypeId; }
+        }
+
         private double _pushX;
         private double _pushZ;
         private short _fuel;
@@ -37,13 +42,13 @@ namespace Substrate.Entities
             set { _fuel = (short)value; }
         }
 
-        public EntityMinecartFurnace ()
-            : base()
+        protected EntityMinecartFurnace (string id)
+            : base(id)
         {
         }
 
-        protected EntityMinecartFurnace (string id)
-            : base(id)
+        public EntityMinecartFurnace ()
+            : base()
         {
         }
 

@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound CowSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Cow"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntityCow ()
-            : base("Cow")
+        public static string TypeId
         {
+            get { return "Cow"; }
         }
 
         protected EntityCow (string id)
             : base(id)
+        {
+        }
+
+        public EntityCow ()
+            : this(TypeId)
         {
         }
 

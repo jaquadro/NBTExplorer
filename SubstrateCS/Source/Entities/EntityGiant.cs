@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound GiantSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Giant"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntityGiant ()
-            : base("Giant")
+        public static string TypeId
         {
+            get { return "Giant"; }
         }
 
         protected EntityGiant (string id)
             : base(id)
+        {
+        }
+
+        public EntityGiant ()
+            : this(TypeId)
         {
         }
 

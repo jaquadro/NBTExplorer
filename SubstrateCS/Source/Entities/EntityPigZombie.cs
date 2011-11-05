@@ -10,9 +10,14 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound PigZombieSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "PigZombie"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("Anger", TagType.TAG_SHORT),
         });
+
+        public static string TypeId
+        {
+            get { return "PigZombie"; }
+        }
 
         private short _anger;
 
@@ -22,13 +27,13 @@ namespace Substrate.Entities
             set { _anger = (short)value; }
         }
 
-        public EntityPigZombie ()
-            : base("PigZombie")
+        protected EntityPigZombie (string id)
+            : base(id)
         {
         }
 
-        protected EntityPigZombie (string id)
-            : base(id)
+        public EntityPigZombie ()
+            : this(TypeId)
         {
         }
 

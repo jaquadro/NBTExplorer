@@ -10,9 +10,14 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound SlimeSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Slime"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("Size", TagType.TAG_INT),
         });
+
+        public static string TypeId
+        {
+            get { return "Slime"; }
+        }
 
         private int _size;
 
@@ -22,13 +27,13 @@ namespace Substrate.Entities
             set { _size = value; }
         }
 
-        public EntitySlime ()
-            : base("Slime")
+        protected EntitySlime (string id)
+            : base(id)
         {
         }
 
-        protected EntitySlime (string id)
-            : base(id)
+        public EntitySlime ()
+            : this(TypeId)
         {
         }
 

@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound MagmaCubeSchema = SlimeSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "LavaSlime"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntityMagmaCube ()
-            : base("LavaSlime")
+        public static string TypeId
         {
+            get { return "LavaSlime"; }
         }
 
         protected EntityMagmaCube (string id)
             : base(id)
+        {
+        }
+
+        public EntityMagmaCube ()
+            : this(TypeId)
         {
         }
 

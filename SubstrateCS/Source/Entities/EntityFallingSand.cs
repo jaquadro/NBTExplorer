@@ -10,9 +10,14 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound FallingSandSchema = TypedEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "FallingSand"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("Tile", TagType.TAG_BYTE),
         });
+
+        public static string TypeId
+        {
+            get { return "FallingSand"; }
+        }
 
         private byte _tile;
 
@@ -22,13 +27,13 @@ namespace Substrate.Entities
             set { _tile = (byte)value; }
         }
 
-        public EntityFallingSand ()
-            : base("FallingSand")
+        protected EntityFallingSand (string id)
+            : base(id)
         {
         }
 
-        protected EntityFallingSand (string id)
-            : base(id)
+        public EntityFallingSand ()
+            : this(TypeId)
         {
         }
 

@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound GhastSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Ghast"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntityGhast ()
-            : base("Ghast")
+        public static string TypeId
         {
+            get { return "Ghast"; }
         }
 
         protected EntityGhast (string id)
             : base(id)
+        {
+        }
+
+        public EntityGhast ()
+            : this(TypeId)
         {
         }
 

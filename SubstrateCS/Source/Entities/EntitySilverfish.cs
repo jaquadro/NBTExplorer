@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound SilverfishSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Silverfish"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntitySilverfish ()
-            : base("Silverfish")
+        public static string TypeId
         {
+            get { return "Silverfish"; }
         }
 
         protected EntitySilverfish (string id)
             : base(id)
+        {
+        }
+
+        public EntitySilverfish ()
+            : this(TypeId)
         {
         }
 

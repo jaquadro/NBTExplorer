@@ -12,19 +12,25 @@ namespace Substrate.Entities
             new SchemaNodeList("Items", TagType.TAG_COMPOUND, ItemCollection.Schema),
         });
 
+        public static string TypeId
+        {
+            get { return EntityMinecart.TypeId; }
+        }
+
         private static int _CAPACITY = 27;
 
         private ItemCollection _items;
+
+        protected EntityMinecartChest (string id)
+            : base(id)
+        {
+            _items = new ItemCollection(_CAPACITY);
+        }
 
         public EntityMinecartChest ()
             : base()
         {
             _items = new ItemCollection(_CAPACITY);
-        }
-
-        protected EntityMinecartChest (string id)
-            : base(id)
-        {
         }
 
         public EntityMinecartChest (TypedEntity e)

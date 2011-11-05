@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound SquidSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Squid"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntitySquid ()
-            : base("Squid")
+        public static string TypeId
         {
+            get { return "Squid"; }
         }
 
         protected EntitySquid (string id)
             : base(id)
+        {
+        }
+
+        public EntitySquid ()
+            : this(TypeId)
         {
         }
 

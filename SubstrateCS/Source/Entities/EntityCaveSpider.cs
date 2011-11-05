@@ -10,12 +10,12 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound CaveSpiderSchema = SpiderSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "CaveSpider"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntityCaveSpider ()
-            : base("CaveSpider")
+        public static string TypeId
         {
+            get { return "CaveSpider"; }
         }
 
         protected EntityCaveSpider (string id)
@@ -23,11 +23,15 @@ namespace Substrate.Entities
         {
         }
 
+        public EntityCaveSpider ()
+            : this(TypeId)
+        {
+        }
+
         public EntityCaveSpider (TypedEntity e)
             : base(e)
         {
         }
-
 
         #region INBTObject<Entity> Members
 

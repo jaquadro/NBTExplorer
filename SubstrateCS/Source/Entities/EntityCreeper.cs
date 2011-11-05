@@ -10,9 +10,14 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound CreeperSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Creeper"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("powered", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
         });
+
+        public static string TypeId
+        {
+            get { return "Creeper"; }
+        }
 
         private bool? _powered;
 
@@ -22,13 +27,13 @@ namespace Substrate.Entities
             set { _powered = value; }
         }
 
-        public EntityCreeper ()
-            : base("Creeper")
+        protected EntityCreeper (string id)
+            : base(id)
         {
         }
 
-        protected EntityCreeper (string id)
-            : base(id)
+        public EntityCreeper ()
+            : this(TypeId)
         {
         }
 

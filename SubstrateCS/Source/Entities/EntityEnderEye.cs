@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound EnderEyeSchema = TypedEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "EyeOfEnderSignal"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntityEnderEye ()
-            : base("EyeOfEnderSignal")
+        public static string TypeId
         {
+            get { return "EyeOfEnderSignal"; }
         }
 
         protected EntityEnderEye (string id)
             : base(id)
+        {
+        }
+
+        public EntityEnderEye ()
+            : this(TypeId)
         {
         }
 

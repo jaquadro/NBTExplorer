@@ -10,10 +10,15 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound ArrowSchema = ThrowableSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Arrow"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("inData", TagType.TAG_BYTE, SchemaOptions.CREATE_ON_MISSING),
             new SchemaNodeScaler("player", TagType.TAG_BYTE, SchemaOptions.CREATE_ON_MISSING),
         });
+
+        public static string TypeId
+        {
+            get { return "Arrow"; }
+        }
 
         private byte _inData;
         private byte _player;
@@ -30,13 +35,13 @@ namespace Substrate.Entities
             set { _player = (byte)(value ? 1 : 0); }
         }
 
-        public EntityArrow ()
-            : base("Arrow")
+        protected EntityArrow (string id)
+            : base(id)
         {
         }
 
-        protected EntityArrow (string id)
-            : base(id)
+        public EntityArrow ()
+            : this(TypeId)
         {
         }
 

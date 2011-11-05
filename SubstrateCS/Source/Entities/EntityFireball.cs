@@ -10,13 +10,18 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound FireballSchema = TypedEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Fireball"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("xTile", TagType.TAG_SHORT),
             new SchemaNodeScaler("yTile", TagType.TAG_SHORT),
             new SchemaNodeScaler("zTile", TagType.TAG_SHORT),
             new SchemaNodeScaler("inTile", TagType.TAG_BYTE),
             new SchemaNodeScaler("inGround", TagType.TAG_BYTE),
         });
+
+        public static string TypeId
+        {
+            get { return "Fireball"; }
+        }
 
         private short _xTile;
         private short _yTile;
@@ -54,13 +59,13 @@ namespace Substrate.Entities
             set { _inGround = (byte)(value ? 1 : 0); }
         }
 
-        public EntityFireball ()
-            : base("Fireball")
+        protected EntityFireball (string id)
+            : base(id)
         {
         }
 
-        protected EntityFireball (string id)
-            : base(id)
+        public EntityFireball ()
+            : this(TypeId)
         {
         }
 

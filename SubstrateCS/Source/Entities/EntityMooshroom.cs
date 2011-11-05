@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound MooshroomSchema = CowSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "MushroomCow"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntityMooshroom ()
-            : base("MushroomCow")
+        public static string TypeId
         {
+            get { return "MushroomCow"; }
         }
 
         protected EntityMooshroom (string id)
             : base(id)
+        {
+        }
+
+        public EntityMooshroom ()
+            : this(TypeId)
         {
         }
 

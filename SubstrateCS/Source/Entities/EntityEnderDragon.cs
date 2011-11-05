@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound EnderDragonSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "EnderDragon"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntityEnderDragon ()
-            : base("EnderDragon")
+        public static string TypeId
         {
+            get { return "EnderDragon"; }
         }
 
         protected EntityEnderDragon (string id)
             : base(id)
+        {
+        }
+
+        public EntityEnderDragon ()
+            : this(TypeId)
         {
         }
 

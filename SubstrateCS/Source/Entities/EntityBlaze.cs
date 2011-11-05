@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound BlazeSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Blaze"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntityBlaze ()
-            : base("Blaze")
+        public static string TypeId
         {
+            get { return "Blaze"; }
         }
 
         protected EntityBlaze (string id)
             : base(id)
+        {
+        }
+
+        public EntityBlaze ()
+            : this(TypeId)
         {
         }
 

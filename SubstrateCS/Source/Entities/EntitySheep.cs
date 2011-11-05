@@ -10,10 +10,15 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound SheepSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Sheep"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("Sheared", TagType.TAG_BYTE),
             new SchemaNodeScaler("Color", TagType.TAG_BYTE, SchemaOptions.CREATE_ON_MISSING),
         });
+
+        public static string TypeId
+        {
+            get { return "Sheep"; }
+        }
 
         private bool _sheared;
         private byte _color;
@@ -30,13 +35,13 @@ namespace Substrate.Entities
             set { _color = (byte)value; }
         }
 
-        public EntitySheep ()
-            : base("Sheep")
+        protected EntitySheep (string id)
+            : base(id)
         {
         }
 
-        protected EntitySheep (string id)
-            : base(id)
+        public EntitySheep ()
+            : this(TypeId)
         {
         }
 

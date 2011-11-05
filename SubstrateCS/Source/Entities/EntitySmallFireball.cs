@@ -10,16 +10,21 @@ namespace Substrate.Entities
     {
         public static readonly SchemaNodeCompound SmallFireballSchema = FireballSchema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "SmallFireball"),
+            new SchemaNodeString("id", TypeId),
         });
 
-        public EntitySmallFireball ()
-            : base("SmallFireball")
+        public static string TypeId
         {
+            get { return "SmallFireball"; }
         }
 
         protected EntitySmallFireball (string id)
             : base(id)
+        {
+        }
+
+        public EntitySmallFireball ()
+            : this(TypeId)
         {
         }
 
