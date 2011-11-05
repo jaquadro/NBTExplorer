@@ -128,6 +128,18 @@ namespace Substrate
         public const int FENCE_GATE = 107;
         public const int BRICK_STAIRS = 108;
         public const int STONE_BRICK_STAIRS = 109;
+        public const int MYCELIUM = 110;
+        public const int LILLY_PAD = 111;
+        public const int NETHER_BRICK = 112;
+        public const int NETHER_BRICK_FENCE = 113;
+        public const int NETHER_BRICK_STAIRS = 114;
+        public const int NETHER_WART = 115;
+        public const int ENCHANTMENT_TABLE = 116;
+        public const int BREWING_STAND = 117;
+        public const int CAULDRON = 118;
+        public const int END_PORTAL = 119;
+        public const int END_PORTAL_FRAME = 120;
+        public const int END_STONE = 121;
     }
 
     /// <summary>
@@ -585,6 +597,18 @@ namespace Substrate
         public static BlockInfo FenceGate;
         public static BlockInfo BrickStairs;
         public static BlockInfo StoneBrickStairs;
+        public static BlockInfo Mycelium;
+        public static BlockInfo LillyPad;
+        public static BlockInfo NetherBrick;
+        public static BlockInfo NetherBrickFence;
+        public static BlockInfo NetherBrickStairs;
+        public static BlockInfo NetherWart;
+        public static BlockInfoEx EnchantmentTable;
+        public static BlockInfoEx BrewingStand;
+        public static BlockInfo Cauldron;
+        public static BlockInfoEx EndPortal;
+        public static BlockInfo EndPortalFrame;
+        public static BlockInfo EndStone;
 
         static BlockInfo ()
         {
@@ -706,6 +730,18 @@ namespace Substrate
             FenceGate = new BlockInfo(107, "Fence Gate").SetOpacity(0);
             BrickStairs = new BlockInfo(108, "Brick Stairs").SetOpacity(0);
             StoneBrickStairs = new BlockInfo(109, "Stone Brick Stairs").SetOpacity(0);
+            Mycelium = new BlockInfo(110, "Mycelium");
+            LillyPad = new BlockInfo(111, "Lilly Pad").SetOpacity(0).SetState(BlockState.NONSOLID);
+            NetherBrick = new BlockInfo(112, "Nether Brick");
+            NetherBrickFence = new BlockInfo(113, "Nether Brick Fence").SetOpacity(0);
+            NetherBrickStairs = new BlockInfo(114, "Nether Brick Stairs").SetOpacity(0);
+            NetherWart = new BlockInfo(115, "Nether Wart").SetOpacity(0).SetState(BlockState.NONSOLID);
+            EnchantmentTable = (BlockInfoEx)new BlockInfoEx(116, "Enchantment Table").SetOpacity(0);
+            BrewingStand = (BlockInfoEx)new BlockInfoEx(117, "Brewing Stand").SetOpacity(0);
+            Cauldron = new BlockInfo(118, "Cauldron").SetOpacity(0);
+            EndPortal = (BlockInfoEx)new BlockInfoEx(119, "End Portal").SetOpacity(0).SetLuminance(MAX_LUMINANCE).SetState(BlockState.NONSOLID);
+            EndPortalFrame = new BlockInfo(120, "End Portal Frame").SetLuminance(MAX_LUMINANCE);
+            EndStone = new BlockInfo(121, "End Stone");
 
             for (int i = 0; i < MAX_BLOCKS; i++) {
                 if (_blockTable[i] == null) {
@@ -723,6 +759,7 @@ namespace Substrate
             CobbleStairs.SetLightTransmission(false);
             BrickStairs.SetLightTransmission(false);
             StoneBrickStairs.SetLightTransmission(false);
+            NetherBrickStairs.SetLightTransmission(false);
 
             // Override default fluid blocking rules
 
@@ -741,6 +778,9 @@ namespace Substrate
             BurningFurnace.SetTileEntity("Furnace");
             SignPost.SetTileEntity("Sign");
             WallSign.SetTileEntity("Sign");
+            EnchantmentTable.SetTileEntity("EnchantTable");
+            BrewingStand.SetTileEntity("Cauldron");
+            EndPortal.SetTileEntity("Airportal");
 
             // Set Data Limits
 
@@ -771,6 +811,7 @@ namespace Substrate
             WoodDoor.SetDataLimits(0, 3, 0xC);
             IronDoor.SetDataLimits(0, 3, 0xC);
             StoneButton.SetDataLimits(1, 4, 0x8);
+            Snow.SetDataLimits(0, 7, 0);
             SignPost.SetDataLimits(0, 15, 0);
             WallSign.SetDataLimits(2, 5, 0);
             Furnace.SetDataLimits(2, 5, 0);
@@ -780,7 +821,7 @@ namespace Substrate
             JackOLantern.SetDataLimits(0, 3, 0);
             StonePlate.SetDataLimits(0, 0, 0x1);
             WoodPlate.SetDataLimits(0, 0, 0x1);
-            Slab.SetDataLimits(0, 3, 0);
+            Slab.SetDataLimits(0, 6, 0);
             DoubleSlab.SetDataLimits(0, 3, 0);
             Cactus.SetDataLimits(0, 5, 0);
             Bed.SetDataLimits(0, 3, 0x8);
@@ -792,6 +833,10 @@ namespace Substrate
             HugeBrownMushroom.SetDataLimits(0, 10, 0);
             Vines.SetDataLimits(0, 0, 0xF);
             FenceGate.SetDataLimits(0, 3, 0x4);
+            SilverfishStone.SetDataLimits(0, 2, 0);
+            BrewingStand.SetDataLimits(0, 0, 0x7);
+            Cauldron.SetDataLimits(0, 3, 0);
+            EndPortalFrame.SetDataLimits(0, 0, 0x7);
         }
     }
 

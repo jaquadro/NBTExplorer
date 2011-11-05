@@ -174,7 +174,10 @@
     <Compile Include="Source\RegionManager.cs" />
     <Compile Include="Source\SpawnPoint.cs" />
     <Compile Include="Source\SubstrateException.cs" />
+    <Compile Include="Source\TileEntities\TileEntityBrewingStand.cs" />
     <Compile Include="Source\TileEntities\TileEntityChest.cs" />
+    <Compile Include="Source\TileEntities\TileEntityEnchantmentTable.cs" />
+    <Compile Include="Source\TileEntities\TileEntityEndPortal.cs" />
     <Compile Include="Source\TileEntities\TileEntityFurnace.cs" />
     <Compile Include="Source\TileEntities\TileEntityMobSpawner.cs" />
     <Compile Include="Source\TileEntities\TileEntityPiston.cs" />

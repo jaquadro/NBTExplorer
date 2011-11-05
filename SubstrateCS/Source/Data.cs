@@ -231,6 +231,8 @@ namespace Substrate
         SANDSTONE = 1,
         WOOD = 2,
         COBBLESTONE = 3,
+        BRICK = 4,
+        STONE_BRICK = 5,
     }
 
     public enum BedOrientation
@@ -353,6 +355,36 @@ namespace Substrate
     public enum FenceGateState
     {
         OPEN = 0x4,
+    }
+
+    public enum SilverfishBlockType
+    {
+        STONE = 0,
+        COBBLESTONE = 1,
+        STONE_BRICK = 2,
+    }
+
+    [Flags]
+    public enum BrewingStandState
+    {
+        NONE = 0x0,
+        SLOT_EAST = 0x1,
+        SLOT_SOUTHWEST = 0x2,
+        SLOT_NORTHWEST = 0x4,
+    }
+
+    public enum CauldronLevel
+    {
+        EMPTY = 0,
+        ONE_THIRD = 1,
+        TWO_THIRDS = 2,
+        FULL = 3,
+    }
+
+    [Flags]
+    public enum EndPortalState
+    {
+        EYE_OF_ENDER = 0x4,
     }
 
     // Item Data
