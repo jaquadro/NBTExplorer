@@ -9,8 +9,13 @@ namespace Substrate.Core
         private Dictionary<ChunkKey, ChunkRef> _dirty;
 
         public ChunkCache ()
+            : this(256)
         {
-            _cache = new LRUCache<ChunkKey, ChunkRef>(256);
+        }
+
+        public ChunkCache (int cacheSize)
+        {
+            _cache = new LRUCache<ChunkKey, ChunkRef>(cacheSize);
             _dirty = new Dictionary<ChunkKey, ChunkRef>();
 
             _cache.RemoveCacheValue += EvictionHandler;

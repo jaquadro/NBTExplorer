@@ -27,6 +27,8 @@ namespace Substrate
 
         private PlayerManager _playerMan;
 
+        private int _prefCacheSize = 256;
+
         private BetaWorld ()
         {
             _regionMgrs = new Dictionary<int, RegionManager>();
@@ -150,6 +152,20 @@ namespace Substrate
         }
 
         /// <summary>
+        /// Opens an existing Beta-compatible Minecraft world and returns a new <see cref="BetaWorld"/> to represent it.
+        /// </summary>
+        /// <param name="path">The path to the directory containing the world's level.dat, or the path to level.dat itself.</param>
+        /// <param name="cacheSize">The preferred cache size in chunks for each opened dimension in this world.</param>
+        /// <returns>A new <see cref="BetaWorld"/> object representing an existing world on disk.</returns>
+        public static new BetaWorld Open (string path, int cacheSize)
+        {
+            BetaWorld world = new BetaWorld().OpenWorld(path);
+            world._prefCacheSize = cacheSize;
+
+            return world;
+        }
+
+        /// <summary>
         /// Creates a new Beta-compatible Minecraft world and returns a new <see cref="BetaWorld"/> to represent it.
         /// </summary>
         /// <param name="path">The path to the directory where the new world should be stored.</param>
@@ -159,6 +175,22 @@ namespace Substrate
         public static BetaWorld Create (string path)
         {
             return new BetaWorld().CreateWorld(path) as BetaWorld;
+        }
+
+        /// <summary>
+        /// Creates a new Beta-compatible Minecraft world and returns a new <see cref="BetaWorld"/> to represent it.
+        /// </summary>
+        /// <param name="path">The path to the directory where the new world should be stored.</param>
+        /// <param name="cacheSize">The preferred cache size in chunks for each opened dimension in this world.</param>
+        /// <returns>A new <see cref="BetaWorld"/> object representing a new world.</returns>
+        /// <remarks>This method will attempt to create the specified directory immediately if it does not exist, but will not
+        /// write out any world data unless it is explicitly saved at a later time.</remarks>
+        public static BetaWorld Create (string path, int cacheSize)
+        {
+            BetaWorld world = new BetaWorld().CreateWorld(path);
+            world._prefCacheSize = cacheSize;
+
+            return world;
         }
 
         /// <exclude/>
@@ -213,7 +245,7 @@ namespace Substrate
                 Directory.CreateDirectory(path);
             }
 
-            ChunkCache cc = new ChunkCache();
+            ChunkCache cc = new ChunkCache(_prefCacheSize);
 
             RegionManager rm = new RegionManager(path, cc);
             BetaChunkManager cm = new BetaChunkManager(rm, cc);
