@@ -10,10 +10,15 @@ namespace Substrate.TileEntities
     {
         public static readonly SchemaNodeCompound MobSpawnerSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "MobSpawner"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("EntityId", TagType.TAG_STRING),
             new SchemaNodeScaler("Delay", TagType.TAG_SHORT),
         });
+
+        public static string TypeId
+        {
+            get { return "MobSpawner"; }
+        }
 
         private short _delay;
         private string _entityID;
@@ -30,8 +35,13 @@ namespace Substrate.TileEntities
             set { _entityID = value; }
         }
 
+        protected TileEntityMobSpawner (string id)
+            : base(id)
+        {
+        }
+
         public TileEntityMobSpawner ()
-            : base("MobSpawner")
+            : this(TypeId)
         {
         }
 

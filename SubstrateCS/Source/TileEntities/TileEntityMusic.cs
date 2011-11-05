@@ -10,9 +10,14 @@ namespace Substrate.TileEntities
     {
         public static readonly SchemaNodeCompound MusicSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Music"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("note", TagType.TAG_BYTE),
         });
+
+        public static string TypeId
+        {
+            get { return "Music"; }
+        }
 
         private byte _note;
 
@@ -22,8 +27,13 @@ namespace Substrate.TileEntities
             set { _note = (byte)value; }
         }
 
+        protected TileEntityMusic (string id)
+            : base(id)
+        {
+        }
+
         public TileEntityMusic ()
-            : base("Music")
+            : this(TypeId)
         {
         }
 

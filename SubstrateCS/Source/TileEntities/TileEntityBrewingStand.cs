@@ -9,20 +9,30 @@ namespace Substrate.TileEntities
     {
         public static readonly SchemaNodeCompound BrewingStandSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Cauldron"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeList("Items", TagType.TAG_COMPOUND, ItemCollection.Schema),
             new SchemaNodeScaler("BrewTime", TagType.TAG_SHORT),
         });
+
+        public static string TypeId
+        {
+            get { return "Cauldron"; }
+        }
 
         private const int _CAPACITY = 4;
 
         private ItemCollection _items;
         private short _brewTime;
 
-        public TileEntityBrewingStand ()
-            : base("Cauldron")
+        protected TileEntityBrewingStand (string id)
+            : base(id)
         {
             _items = new ItemCollection(_CAPACITY);
+        }
+
+        public TileEntityBrewingStand ()
+            : this(TypeId)
+        {
         }
 
         public TileEntityBrewingStand (TileEntity te)

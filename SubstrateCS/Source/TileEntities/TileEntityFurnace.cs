@@ -9,11 +9,16 @@ namespace Substrate.TileEntities
     {
         public static readonly SchemaNodeCompound FurnaceSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Furnace"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("BurnTime", TagType.TAG_SHORT),
             new SchemaNodeScaler("CookTime", TagType.TAG_SHORT),
             new SchemaNodeList("Items", TagType.TAG_COMPOUND, ItemCollection.Schema),
         });
+
+        public static string TypeId
+        {
+            get { return "Furnace"; }
+        }
 
         private const int _CAPACITY = 3;
 
@@ -34,10 +39,15 @@ namespace Substrate.TileEntities
             set { _cookTime = (short)value; }
         }
 
-        public TileEntityFurnace ()
-            : base("Furnace")
+        protected TileEntityFurnace (string id)
+            : base(id)
         {
             _items = new ItemCollection(_CAPACITY);
+        }
+
+        public TileEntityFurnace ()
+            : this(TypeId)
+        {
         }
 
         public TileEntityFurnace (TileEntity te)

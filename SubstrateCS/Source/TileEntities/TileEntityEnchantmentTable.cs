@@ -10,11 +10,21 @@ namespace Substrate.TileEntities
     {
         public static readonly SchemaNodeCompound EnchantTableSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "EnchantTable"),
+            new SchemaNodeString("id", TypeId),
         });
 
+        public static string TypeId
+        {
+            get { return "EnchantTable"; }
+        }
+
+        protected TileEntityEnchantmentTable (string id)
+            : base(id)
+        {
+        }
+
         public TileEntityEnchantmentTable ()
-            : base("EnchantTable")
+            : this(TypeId)
         {
         }
 

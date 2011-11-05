@@ -10,11 +10,21 @@ namespace Substrate.TileEntities
     {
         public static readonly SchemaNodeCompound EndPortalSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Airportal"),
+            new SchemaNodeString("id", TypeId),
         });
 
+        public static string TypeId
+        {
+            get { return "Airportal"; }
+        }
+
+        protected TileEntityEndPortal (string id)
+            : base(id)
+        {
+        }
+
         public TileEntityEndPortal ()
-            : base("Airportal")
+            : this(TypeId)
         {
         }
 

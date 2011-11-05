@@ -10,13 +10,18 @@ namespace Substrate.TileEntities
     {
         public static readonly SchemaNodeCompound PistonSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Piston"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("blockId", TagType.TAG_INT),
             new SchemaNodeScaler("blockData", TagType.TAG_INT),
             new SchemaNodeScaler("facing", TagType.TAG_INT),
             new SchemaNodeScaler("progress", TagType.TAG_FLOAT),
             new SchemaNodeScaler("extending", TagType.TAG_BYTE),
         });
+
+        public static string TypeId
+        {
+            get { return "Piston"; }
+        }
 
         private int? _record = null;
 
@@ -56,8 +61,13 @@ namespace Substrate.TileEntities
             set { _progress = value; }
         }
 
+        protected TileEntityPiston (string id)
+            : base(id)
+        {
+        }
+
         public TileEntityPiston ()
-            : base("Piston")
+            : this(TypeId)
         {
         }
 

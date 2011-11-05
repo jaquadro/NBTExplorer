@@ -9,18 +9,28 @@ namespace Substrate.TileEntities
     {
         public static readonly SchemaNodeCompound ChestSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Chest"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeList("Items", TagType.TAG_COMPOUND, ItemCollection.Schema),
         });
+
+        public static string TypeId 
+        {
+            get { return "Chest"; }
+        }
 
         private const int _CAPACITY = 27;
 
         private ItemCollection _items;
 
-        public TileEntityChest ()
-            : base("Chest")
+        protected TileEntityChest (string id)
+            : base(id)
         {
             _items = new ItemCollection(_CAPACITY);
+        }
+
+        public TileEntityChest ()
+            : this(TypeId)
+        {
         }
 
         public TileEntityChest (TileEntity te)

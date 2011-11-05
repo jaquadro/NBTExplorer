@@ -77,16 +77,17 @@ namespace Substrate
 
         static TileEntityFactory ()
         {
-            _registry["Airportal"] = typeof(TileEntityEndPortal);
-            _registry["Cauldron"] = typeof(TileEntityBrewingStand);
-            _registry["Chest"] = typeof(TileEntityChest);
-            _registry["EnchantTable"] = typeof(TileEntityEnchantmentTable);
-            _registry["Furnace"] = typeof(TileEntityFurnace);
-            _registry["MobSpawner"] = typeof(TileEntityMobSpawner);
-            _registry["Music"] = typeof(TileEntityMusic);
-            _registry["RecordPlayer"] = typeof(TileEntityRecordPlayer);
-            _registry["Sign"] = typeof(TileEntitySign);
-            _registry["Trap"] = typeof(TileEntityTrap);
+            _registry[TileEntityEndPortal.TypeId] = typeof(TileEntityEndPortal);
+            _registry[TileEntityBrewingStand.TypeId] = typeof(TileEntityBrewingStand);
+            _registry[TileEntityChest.TypeId] = typeof(TileEntityChest);
+            _registry[TileEntityEnchantmentTable.TypeId] = typeof(TileEntityEnchantmentTable);
+            _registry[TileEntityFurnace.TypeId] = typeof(TileEntityFurnace);
+            _registry[TileEntityMobSpawner.TypeId] = typeof(TileEntityMobSpawner);
+            _registry[TileEntityMusic.TypeId] = typeof(TileEntityMusic);
+            _registry[TileEntityPiston.TypeId] = typeof(TileEntityPiston);
+            _registry[TileEntityRecordPlayer.TypeId] = typeof(TileEntityRecordPlayer);
+            _registry[TileEntitySign.TypeId] = typeof(TileEntitySign);
+            _registry[TileEntityTrap.TypeId] = typeof(TileEntityTrap);
         }
     }
 

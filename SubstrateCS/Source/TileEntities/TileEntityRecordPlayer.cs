@@ -10,9 +10,14 @@ namespace Substrate.TileEntities
     {
         public static readonly SchemaNodeCompound RecordPlayerSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "RecordPlayer"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("Record", TagType.TAG_INT, SchemaOptions.OPTIONAL),
         });
+
+        public static string TypeId
+        {
+            get { return "RecordPlayer"; }
+        }
 
         private int? _record = null;
 
@@ -22,8 +27,13 @@ namespace Substrate.TileEntities
             set { _record = value; }
         }
 
+        protected TileEntityRecordPlayer (string id)
+            : base(id)
+        {
+        }
+
         public TileEntityRecordPlayer ()
-            : base("RecordPlayer")
+            : this(TypeId)
         {
         }
 

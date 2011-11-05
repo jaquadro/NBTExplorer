@@ -10,12 +10,17 @@ namespace Substrate.TileEntities
     {
         public static readonly SchemaNodeCompound SignSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Sign"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("Text1", TagType.TAG_STRING),
             new SchemaNodeScaler("Text2", TagType.TAG_STRING),
             new SchemaNodeScaler("Text3", TagType.TAG_STRING),
             new SchemaNodeScaler("Text4", TagType.TAG_STRING),
         });
+
+        public static string TypeId
+        {
+            get { return "Sign"; }
+        }
 
         private string _text1 = "";
         private string _text2 = "";
@@ -46,8 +51,13 @@ namespace Substrate.TileEntities
             set { _text4 = value.Substring(0, 14); }
         }
 
+        protected TileEntitySign (string id)
+            : base(id)
+        {
+        }
+
         public TileEntitySign ()
-            : base("Sign")
+            : this(TypeId)
         {
         }
 

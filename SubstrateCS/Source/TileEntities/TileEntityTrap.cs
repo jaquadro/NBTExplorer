@@ -9,18 +9,28 @@ namespace Substrate.TileEntities
     {
         public static readonly SchemaNodeCompound TrapSchema = TileEntity.Schema.MergeInto(new SchemaNodeCompound("")
         {
-            new SchemaNodeString("id", "Trap"),
+            new SchemaNodeString("id", TypeId),
             new SchemaNodeList("Items", TagType.TAG_COMPOUND, ItemCollection.Schema),
         });
+
+        public static string TypeId
+        {
+            get { return "Trap"; }
+        }
 
         private const int _CAPACITY = 8;
 
         private ItemCollection _items;
 
-        public TileEntityTrap ()
-            : base("Trap")
+        protected TileEntityTrap (string id)
+            : base(id)
         {
             _items = new ItemCollection(_CAPACITY);
+        }
+
+        public TileEntityTrap ()
+            : this(TypeId)
+        {
         }
 
         public TileEntityTrap (TileEntity te)
