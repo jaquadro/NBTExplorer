@@ -7,6 +7,15 @@ namespace Substrate
     /// <summary>
     /// Provides named id values for known block types.
     /// </summary>
+    /// <remarks><para>The BlockType constants are obsolete.  The preferred method to lookup
+    /// Minecraft block IDs is to access the ID field of the corresponding static BlockInfo
+    /// object in the BlockInfo class.</para>
+    /// <para>The static BlockInfo objects can be re-bound to new BlockInfo objects, allowing
+    /// the named object to be bound to a new block ID.  This gives the developer more flexibility
+    /// in supporting nonstandard worlds, and the ability to future-proof their application against
+    /// changes to Block IDs, by implementing functionality to import block/ID mappings from an
+    /// external source and rebinding the objects in BlockInfo.</para></remarks>
+    [Obsolete("Prefer using BlockInfo.Something.ID over BlockType.SOMETHING")]
     public static class BlockType
     {
         public const int AIR = 0;
