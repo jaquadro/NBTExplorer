@@ -158,11 +158,37 @@ namespace Substrate
         /// <param name="z">Global Z-coordinate.</param>
         public virtual void SetLocation (int x, int z)
         {
+            int diffx = (x - _cx) * XDIM;
+            int diffz = (z - _cz) * ZDIM;
+
+            // Update chunk position
+
             _cx = x;
             _cz = z;
 
             _tree.Root["Level"].ToTagCompound()["xPos"].ToTagInt().Data = x;
             _tree.Root["Level"].ToTagCompound()["zPos"].ToTagInt().Data = z;
+
+            // Update tile entity coordinates
+
+            foreach (TagNodeCompound te in _tileEntities) {
+                if (te != null && te.ContainsKey("x") && te.ContainsKey("z")) {
+                    te["x"].ToTagInt().Data += diffx;
+                    te["z"].ToTagInt().Data += diffz;
+                }
+            }
+
+            // Update entity coordinates
+
+            foreach (TagNodeCompound entity in _entities) {
+                if (entity != null && entity.ContainsKey("Pos")) {
+                    TagNodeList pos = entity["Pos"].ToTagList();
+                    if (pos != null && pos.ValueType == TagType.TAG_DOUBLE && pos.Count == 3) {
+                        pos[0].ToTagDouble().Data += diffx;
+                        pos[2].ToTagDouble().Data += diffz;
+                    }
+                }
+            }
         }
 
         /// <summary>
