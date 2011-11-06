@@ -20,6 +20,8 @@ namespace Substrate
             new SchemaNodeScaler("z", TagType.TAG_INT),
         };
 
+        private TagNodeCompound _source;
+
         private string _id;
         private int _x;
         private int _y;
@@ -61,6 +63,14 @@ namespace Substrate
         }
 
         /// <summary>
+        /// Gets the source <see cref="TagNodeCompound"/> used to create this <see cref="TileEntity"/> if it exists.
+        /// </summary>
+        protected TagNodeCompound Source
+        {
+            get { return _source; }
+        }
+
+        /// <summary>
         /// Constructs a blank <see cref="TileEntity"/>.
         /// </summary>
         protected TileEntity ()
@@ -86,6 +96,10 @@ namespace Substrate
             _x = te._x;
             _y = te._y;
             _z = te._z;
+
+            if (te._source != null) {
+                _source = te._source.Copy() as TagNodeCompound;
+            }
         }
 
         /// <summary>
@@ -176,6 +190,8 @@ namespace Substrate
             _y = ctree["y"].ToTagInt();
             _z = ctree["z"].ToTagInt();
 
+            _source = ctree.Copy() as TagNodeCompound;
+
             return this;
         }
 
@@ -205,6 +221,10 @@ namespace Substrate
             tree["y"] = new TagNodeInt(_y);
             tree["z"] = new TagNodeInt(_z);
 
+            if (_source != null) {
+                tree.MergeFrom(_source);
+            }
+
             return tree;
         }
 
@@ -217,6 +237,8 @@ namespace Substrate
         {
             return new NbtVerifier(tree, _schema).Verify();
         }
+
+
 
         #endregion
     }

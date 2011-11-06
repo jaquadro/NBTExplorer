@@ -49,6 +49,8 @@ namespace Substrate
             },
         };
 
+        private TagNodeCompound _source;
+
         private NbtWorld _world;
 
         private long _time;
@@ -275,6 +277,10 @@ namespace Substrate
             if (p._player != null) {
                 _player = p._player.Copy();
             }
+
+            if (p._source != null) {
+                _source = p._source.Copy() as TagNodeCompound;
+            }
         }
 
         /// <summary>
@@ -388,6 +394,8 @@ namespace Substrate
                 _mapFeatures = ctree["MapFeatures"].ToTagByte();
             }
 
+            _source = ctree.Copy() as TagNodeCompound;
+
             return this;
         }
 
@@ -451,6 +459,10 @@ namespace Substrate
             }
             if (_mapFeatures != null) {
                 data["MapFeatures"] = new TagNodeByte(_mapFeatures ?? 0);
+            }
+
+            if (_source != null) {
+                data.MergeFrom(_source);
             }
 
             TagNodeCompound tree = new TagNodeCompound();

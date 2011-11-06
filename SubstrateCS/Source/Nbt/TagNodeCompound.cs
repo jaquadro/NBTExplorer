@@ -46,6 +46,21 @@ namespace Substrate.Nbt
         }
 
         /// <summary>
+        /// Copies all the elements of <paramref name="tree"/> into this <see cref="TagNodeCompound"/> if they do not already exist.
+        /// </summary>
+        /// <param name="tree">The source <see cref="TagNodeCompound"/> to copy elements from.</param>
+        public void MergeFrom (TagNodeCompound tree)
+        {
+            foreach (KeyValuePair<string, TagNode> node in tree) {
+                if (_tags.ContainsKey(node.Key)) {
+                    continue;
+                }
+
+                _tags.Add(node.Key, node.Value);
+            }
+        }
+
+        /// <summary>
         /// Makes a deep copy of the node.
         /// </summary>
         /// <returns>A new compound node containing new subnodes representing the same data.</returns>

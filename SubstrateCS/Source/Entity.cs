@@ -22,6 +22,8 @@ namespace Substrate
             new SchemaNodeScaler("OnGround", TagType.TAG_BYTE),
         };
 
+        private TagNodeCompound _source;
+
         private Vector3 _pos;
         private Vector3 _motion;
         private Orientation _rotation;
@@ -128,6 +130,10 @@ namespace Substrate
             _fire = e._fire;
             _air = e._air;
             _onGround = e._onGround;
+
+            if (e._source != null) {
+                _source = e._source.Copy() as TagNodeCompound;
+            }
         }
 
         /// <summary>
@@ -187,6 +193,8 @@ namespace Substrate
             _air = ctree["Air"].ToTagShort();
             _onGround = ctree["OnGround"].ToTagByte();
 
+            _source = ctree.Copy() as TagNodeCompound;
+
             return this;
         }
 
@@ -233,6 +241,10 @@ namespace Substrate
             tree["Fire"] = new TagNodeShort(_fire);
             tree["Air"] = new TagNodeShort(_air);
             tree["OnGround"] = new TagNodeByte(_onGround);
+
+            if (_source != null) {
+                tree.MergeFrom(_source);
+            }
 
             return tree;
         }

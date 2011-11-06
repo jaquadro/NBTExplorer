@@ -18,6 +18,8 @@ namespace Substrate
             new SchemaNodeScaler("Count", TagType.TAG_BYTE),
         };
 
+        private TagNodeCompound _source;
+
         private short _id;
         private byte _count;
         private short _damage;
@@ -96,6 +98,10 @@ namespace Substrate
             item._count = _count;
             item._damage = _damage;
 
+            if (_source != null) {
+                item._source = _source.Copy() as TagNodeCompound;
+            }
+
             return item;
         }
 
@@ -114,6 +120,8 @@ namespace Substrate
             _id = ctree["id"].ToTagShort();
             _count = ctree["Count"].ToTagByte();
             _damage = ctree["Damage"].ToTagShort();
+
+            _source = ctree.Copy() as TagNodeCompound;
 
             return this;
         }
@@ -135,6 +143,10 @@ namespace Substrate
             tree["id"] = new TagNodeShort(_id);
             tree["Count"] = new TagNodeByte(_count);
             tree["Damage"] = new TagNodeShort(_damage);
+
+            if (_source != null) {
+                tree.MergeFrom(_source);
+            }
 
             return tree;
         }

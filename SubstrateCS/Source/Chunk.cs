@@ -173,7 +173,11 @@ namespace Substrate
 
             List<TileEntity> tileEntites = new List<TileEntity>();
             foreach (TagNodeCompound tag in _tileEntities) {
-                TileEntity te = TileEntity.FromTreeSafe(tag);
+                TileEntity te = TileEntityFactory.Create(tag);
+                if (te == null) {
+                    te = TileEntity.FromTreeSafe(tag);
+                }
+
                 if (te != null) {
                     te.MoveBy(diffx, 0, diffz);
                     tileEntites.Add(te);
