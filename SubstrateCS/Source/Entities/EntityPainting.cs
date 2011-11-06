@@ -32,7 +32,7 @@ namespace Substrate.Entities
         }
 
         private DirectionType _dir;
-        private string _motive;
+        private string _motive = "";
         private int _xTile;
         private int _yTile;
         private int _zTile;
@@ -90,6 +90,14 @@ namespace Substrate.Entities
             }
         }
 
+        public override void MoveBy (int diffX, int diffY, int diffZ)
+        {
+            base.MoveBy(diffX, diffY, diffZ);
+
+            _xTile += diffX;
+            _yTile += diffY;
+            _zTile += diffZ;
+        }
 
         #region INBTObject<Entity> Members
 

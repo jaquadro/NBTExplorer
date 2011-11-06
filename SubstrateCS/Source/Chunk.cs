@@ -171,23 +171,31 @@ namespace Substrate
 
             // Update tile entity coordinates
 
-            foreach (TagNodeCompound te in _tileEntities) {
-                if (te != null && te.ContainsKey("x") && te.ContainsKey("z")) {
-                    te["x"].ToTagInt().Data += diffx;
-                    te["z"].ToTagInt().Data += diffz;
+            List<TileEntity> tileEntites = new List<TileEntity>();
+            foreach (TagNodeCompound tag in _tileEntities) {
+                TileEntity te = TileEntity.FromTreeSafe(tag);
+                if (te != null) {
+                    te.MoveBy(diffx, 0, diffz);
+                    tileEntites.Add(te);
                 }
+            }
+
+            _tileEntities.Clear();
+            foreach (TileEntity te in tileEntites) {
+                _tileEntities.Add(te.BuildTree());
             }
 
             // Update entity coordinates
 
-            foreach (TagNodeCompound entity in _entities) {
-                if (entity != null && entity.ContainsKey("Pos")) {
-                    TagNodeList pos = entity["Pos"].ToTagList();
-                    if (pos != null && pos.ValueType == TagType.TAG_DOUBLE && pos.Count == 3) {
-                        pos[0].ToTagDouble().Data += diffx;
-                        pos[2].ToTagDouble().Data += diffz;
-                    }
-                }
+            List<TypedEntity> entities = new List<TypedEntity>();
+            foreach (TypedEntity entity in _entityManager) {
+                entity.MoveBy(diffx, 0, diffz);
+                entities.Add(entity);
+            }
+
+            _entities.Clear();
+            foreach (TypedEntity entity in entities) {
+                _entityManager.Add(entity);
             }
         }
 

@@ -130,6 +130,19 @@ namespace Substrate
             _onGround = e._onGround;
         }
 
+        /// <summary>
+        /// Moves the <see cref="Entity"/> by given block offsets.
+        /// </summary>
+        /// <param name="diffX">The X-offset to move by, in blocks.</param>
+        /// <param name="diffY">The Y-offset to move by, in blocks.</param>
+        /// <param name="diffZ">The Z-offset to move by, in blocks.</param>
+        public virtual void MoveBy (int diffX, int diffY, int diffZ)
+        {
+            _pos.X += diffX;
+            _pos.Y += diffY;
+            _pos.Z += diffZ;
+        }
+
 
         #region INBTObject<Entity> Members
 

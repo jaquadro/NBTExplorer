@@ -61,6 +61,13 @@ namespace Substrate
         }
 
         /// <summary>
+        /// Constructs a blank <see cref="TileEntity"/>.
+        /// </summary>
+        protected TileEntity ()
+        {
+        }
+
+        /// <summary>
         /// Constructs a nonspecific <see cref="TileEntity"/> with a given ID.
         /// </summary>
         /// <param name="id">The id (name) of the Tile Entity.</param>
@@ -93,6 +100,19 @@ namespace Substrate
             return _x == x && _y == y && _z == z;
         }
 
+        /// <summary>
+        /// Moves the <see cref="TileEntity"/> by given block offsets.
+        /// </summary>
+        /// <param name="diffX">The X-offset to move by, in blocks.</param>
+        /// <param name="diffY">The Y-offset to move by, in blocks.</param>
+        /// <param name="diffZ">The Z-offset to move by, in blocks.</param>
+        public virtual void MoveBy (int diffX, int diffY, int diffZ)
+        {
+            _x += diffX;
+            _y += diffY;
+            _z += diffZ;
+        }
+
 
         #region ICopyable<TileEntity> Members
 
@@ -106,6 +126,27 @@ namespace Substrate
         }
 
         #endregion
+
+
+        /// <summary>
+        /// Attempt to construct a new <see cref="TileEntity"/> from a Tile Entity subtree without validation.
+        /// </summary>
+        /// <param name="tree">The root node of a Tile Entity subtree.</param>
+        /// <returns>A new <see cref="TileEntity"/> on success, or null if the tree was unparsable.</returns>
+        public static TileEntity FromTree (TagNode tree)
+        {
+            return new TileEntity().LoadTree(tree);
+        }
+
+        /// <summary>
+        /// Attempt to construct a new <see cref="TileEntity"/> from a Tile Entity subtree with validation.
+        /// </summary>
+        /// <param name="tree">The root node of a Tile Entity subtree.</param>
+        /// <returns>A new <see cref="TileEntity"/> on success, or null if the tree failed validation.</returns>
+        public static TileEntity FromTreeSafe (TagNode tree)
+        {
+            return new TileEntity().LoadTreeSafe(tree);
+        }
 
 
         #region INBTObject<TileEntity> Members
