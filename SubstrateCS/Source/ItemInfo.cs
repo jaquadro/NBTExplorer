@@ -7,9 +7,7 @@ namespace Substrate
     /// <summary>
     /// Provides named id values for known item types.
     /// </summary>
-    /// <remarks>The BlockType constants are obsolete.  See <see cref="BlockType"/> for additional
-    /// information.</remarks>
-    [Obsolete("Prefer using ItemInfo.Something.ID over ItemType.SOMETHING")]
+    /// <remarks>See <see cref="BlockType"/> for additional information.</remarks>
     public static class ItemType
     {
         public const int IRON_SHOVEL = 256;
