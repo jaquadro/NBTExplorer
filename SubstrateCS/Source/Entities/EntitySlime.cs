@@ -14,7 +14,7 @@ namespace Substrate.Entities
             new SchemaNodeScaler("Size", TagType.TAG_INT),
         });
 
-        public static string TypeId
+        public static new string TypeId
         {
             get { return "Slime"; }
         }

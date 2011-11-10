@@ -12,7 +12,7 @@ namespace Substrate.Entities
             new SchemaNodeList("Items", TagType.TAG_COMPOUND, ItemCollection.Schema),
         });
 
-        public static string TypeId
+        public static new string TypeId
         {
             get { return EntityMinecart.TypeId; }
         }

@@ -19,7 +19,7 @@ namespace Substrate.Entities
             new SchemaNodeScaler("carriedData", TagType.TAG_SHORT, SchemaOptions.CREATE_ON_MISSING),
         });
 
-        public static string TypeId
+        public static new string TypeId
         {
             get { return "Enderman"; }
         }

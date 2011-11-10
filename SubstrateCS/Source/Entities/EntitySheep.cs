@@ -15,7 +15,7 @@ namespace Substrate.Entities
             new SchemaNodeScaler("Color", TagType.TAG_BYTE, SchemaOptions.CREATE_ON_MISSING),
         });
 
-        public static string TypeId
+        public static new string TypeId
         {
             get { return "Sheep"; }
         }

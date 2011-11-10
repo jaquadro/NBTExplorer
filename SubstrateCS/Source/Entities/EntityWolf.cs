@@ -16,7 +16,7 @@ namespace Substrate.Entities
             new SchemaNodeScaler("Angry", TagType.TAG_BYTE),
         });
 
-        public static string TypeId
+        public static new string TypeId
         {
             get { return "Wolf"; }
         }

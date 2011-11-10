@@ -15,7 +15,7 @@ namespace Substrate.Entities
             new SchemaNodeScaler("Fuel", TagType.TAG_SHORT),
         });
 
-        public static string TypeId
+        public static new string TypeId
         {
             get { return EntityMinecart.TypeId; }
         }

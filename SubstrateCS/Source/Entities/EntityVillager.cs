@@ -23,7 +23,7 @@ namespace Substrate.Entities
             new SchemaNodeScaler("Profession", TagType.TAG_INT),
         });
 
-        public static string TypeId
+        public static new string TypeId
         {
             get { return "Villager"; }
         }

@@ -14,7 +14,7 @@ namespace Substrate.Entities
             new SchemaNodeScaler("powered", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
         });
 
-        public static string TypeId
+        public static new string TypeId
         {
             get { return "Creeper"; }
         }

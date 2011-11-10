@@ -13,7 +13,7 @@ namespace Substrate.Entities
             new SchemaNodeString("id", TypeId),
         });
 
-        public static string TypeId
+        public static new string TypeId
         {
             get { return "Skeleton"; }
         }
