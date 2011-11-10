@@ -65,12 +65,12 @@ namespace Substrate.Core
         public void ResetWater (ByteArray blocks, NibbleArray data)
         {
             for (int i = 0; i < blocks.Length; i++) {
-                if ((blocks[i] == BlockType.STATIONARY_WATER || blocks[i] == BlockType.WATER) && data[i] != 0) {
-                    blocks[i] = BlockType.AIR;
+                if ((blocks[i] == BlockInfo.StationaryWater.ID || blocks[i] == BlockInfo.Water.ID) && data[i] != 0) {
+                    blocks[i] = (byte)BlockInfo.Air.ID;
                     data[i] = 0;
                 }
-                else if (blocks[i] == BlockType.WATER) {
-                    blocks[i] = BlockType.STATIONARY_WATER;
+                else if (blocks[i] == BlockInfo.Water.ID) {
+                    blocks[i] = (byte)BlockInfo.StationaryWater.ID;
                 }
             }
         }
@@ -78,12 +78,12 @@ namespace Substrate.Core
         public void ResetLava (ByteArray blocks, NibbleArray data)
         {
             for (int i = 0; i < blocks.Length; i++) {
-                if ((blocks[i] == BlockType.STATIONARY_LAVA || blocks[i] == BlockType.LAVA) && data[i] != 0) {
-                    blocks[i] = BlockType.AIR;
+                if ((blocks[i] == BlockInfo.StationaryLava.ID || blocks[i] == BlockInfo.Lava.ID) && data[i] != 0) {
+                    blocks[i] = (byte)BlockInfo.Air.ID;
                     data[i] = 0;
                 }
-                else if (blocks[i] == BlockType.LAVA) {
-                    blocks[i] = BlockType.STATIONARY_LAVA;
+                else if (blocks[i] == BlockInfo.Lava.ID) {
+                    blocks[i] = (byte)BlockInfo.StationaryWater.ID;
                 }
             }
         }
@@ -112,7 +112,7 @@ namespace Substrate.Core
                 for (int z = 0; z < zdim; z++) {
                     for (int y = 0; y < ydim; y++) {
                         BlockInfo info = _blockset.GetInfo(x, y, z);
-                        if (info.ID == BlockType.STATIONARY_WATER && _blockset.GetData(x, y, z) == 0) {
+                        if (info.ID == BlockInfo.StationaryWater.ID && _blockset.GetData(x, y, z) == 0) {
                             buildQueue.Add(new BlockKey(x, y, z));
                         }
                     }
@@ -138,7 +138,7 @@ namespace Substrate.Core
                 for (int z = 0; z < zdim; z++) {
                     for (int y = 0; y < ydim; y++) {
                         BlockInfo info = _blockset.GetInfo(x, y, z);
-                        if (info.ID == BlockType.STATIONARY_LAVA && _blockset.GetData(x, y, z) == 0) {
+                        if (info.ID == BlockInfo.StationaryLava.ID && _blockset.GetData(x, y, z) == 0) {
                             buildQueue.Add(new BlockKey(x, y, z));
                         }
                     }
@@ -407,7 +407,7 @@ namespace Substrate.Core
 
                 BlockCoord tile = TranslateCoord(key.x, key.y, key.z);
                 BlockInfo tileInfo = tile.chunk.GetInfo(tile.lx, tile.ly, tile.lz);
-                if (tileInfo.ID == BlockType.STATIONARY_WATER || tileInfo.ID == BlockType.WATER) {
+                if (tileInfo.ID == BlockInfo.StationaryWater.ID || tileInfo.ID == BlockInfo.Water.ID) {
                     curflow = tile.chunk.GetData(tile.lx, tile.ly, tile.lz);
                 }
                 else if (tileInfo.BlocksFluid) {
@@ -443,14 +443,14 @@ namespace Substrate.Core
                 // Update flow, add or remove water tile as necessary
                 if (newflow < 16 && curflow == 16) {
                     // If we're overwriting lava, replace with appropriate stone type and abort propagation
-                    if (tileInfo.ID == BlockType.STATIONARY_LAVA || tileInfo.ID == BlockType.LAVA) {
+                    if (tileInfo.ID == BlockInfo.StationaryLava.ID || tileInfo.ID == BlockInfo.Lava.ID) {
                         if ((newflow & (int)LiquidState.FALLING) != 0) {
                             int odata = tile.chunk.GetData(tile.lx, tile.ly, tile.lz);
                             if (odata == 0) {
-                                tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockType.OBSIDIAN);
+                                tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockInfo.Obsidian.ID);
                             }
                             else {
-                                tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockType.COBBLESTONE);
+                                tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockInfo.Cobblestone.ID);
                             }
                             tile.chunk.SetData(tile.lx, tile.ly, tile.lz, 0);
                             continue;
@@ -458,11 +458,11 @@ namespace Substrate.Core
                     }
 
                     // Otherwise replace the tile with our water flow
-                    tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockType.STATIONARY_WATER);
+                    tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockInfo.StationaryWater.ID);
                     tile.chunk.SetData(tile.lx, tile.ly, tile.lz, newflow);
                 }
                 else if (newflow == 16) {
-                    tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockType.AIR);
+                    tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockInfo.Air.ID);
                     tile.chunk.SetData(tile.lx, tile.ly, tile.lz, 0);
                 }
                 else {
@@ -498,7 +498,7 @@ namespace Substrate.Core
 
                 BlockCoord tile = TranslateCoord(key.x, key.y, key.z);
                 BlockInfo tileInfo = tile.chunk.GetInfo(tile.lx, tile.ly, tile.lz);
-                if (tileInfo.ID == BlockType.STATIONARY_LAVA || tileInfo.ID == BlockType.LAVA) {
+                if (tileInfo.ID == BlockInfo.StationaryLava.ID || tileInfo.ID == BlockInfo.Lava.ID) {
                     curflow = tile.chunk.GetData(tile.lx, tile.ly, tile.lz);
                 }
                 else if (tileInfo.BlocksFluid) {
@@ -534,19 +534,19 @@ namespace Substrate.Core
                 // Update flow, add or remove lava tile as necessary
                 if (newflow < 16 && curflow == 16) {
                     // If we're overwriting water, replace with appropriate stone type and abort propagation
-                    if (tileInfo.ID == BlockType.STATIONARY_WATER || tileInfo.ID == BlockType.WATER) {
+                    if (tileInfo.ID == BlockInfo.StationaryWater.ID || tileInfo.ID == BlockInfo.Water.ID) {
                         if ((newflow & (int)LiquidState.FALLING) == 0) {
-                            tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockType.COBBLESTONE);
+                            tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockInfo.Cobblestone.ID);
                             tile.chunk.SetData(tile.lx, tile.ly, tile.lz, 0);
                             continue;
                         }
                     }
 
-                    tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockType.STATIONARY_LAVA);
+                    tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockInfo.StationaryLava.ID);
                     tile.chunk.SetData(tile.lx, tile.ly, tile.lz, newflow);
                 }
                 else if (newflow == 16) {
-                    tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockType.AIR);
+                    tile.chunk.SetID(tile.lx, tile.ly, tile.lz, BlockInfo.Air.ID);
                     tile.chunk.SetData(tile.lx, tile.ly, tile.lz, 0);
                 }
                 else {
