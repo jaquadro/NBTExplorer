@@ -38,7 +38,7 @@ namespace Substrate.Data
         /// Saves any metadata required by the world for managing data resources.
         /// </summary>
         /// <returns><c>true</c> on success, or <c>false</c> if data could not be saved.</returns>
-        public bool Save ()
+        public virtual bool Save ()
         {
             return true;
         }

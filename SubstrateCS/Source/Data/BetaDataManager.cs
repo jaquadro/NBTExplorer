@@ -44,7 +44,7 @@ namespace Substrate.Data
             return _maps;
         }
 
-        public bool Save ()
+        public override bool Save ()
         {
             if (_world == null) {
                 return false;
