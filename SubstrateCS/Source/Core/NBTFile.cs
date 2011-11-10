@@ -7,6 +7,14 @@ using Substrate.Nbt;
 
 namespace Substrate.Core
 {
+    public enum CompressionType
+    {
+        None,
+        Zlib,
+        Deflate,
+        GZip,
+    }
+
     public class NBTFile
     {
         private string _filename;
@@ -37,7 +45,12 @@ namespace Substrate.Core
             return Timestamp(File.GetLastWriteTime(_filename));
         }
 
-        public virtual Stream GetDataInputStream ()
+        public Stream GetDataInputStream ()
+        {
+            return GetDataInputStream(CompressionType.GZip);
+        }
+
+        public virtual Stream GetDataInputStream (CompressionType compression)
         {
             try {
                 FileStream fstr = new FileStream(_filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -50,17 +63,44 @@ namespace Substrate.Core
 
                 fstr.Close();
 
-                return new GZipStream(new MemoryStream(data), CompressionMode.Decompress);
+                switch (compression) {
+                    case CompressionType.None:
+                        return new MemoryStream(data);
+                    case CompressionType.GZip:
+                        return new GZipStream(new MemoryStream(data), CompressionMode.Decompress);
+                    case CompressionType.Zlib:
+                        return new ZlibStream(new MemoryStream(data), CompressionMode.Decompress);
+                    case CompressionType.Deflate:
+                        return new DeflateStream(new MemoryStream(data), CompressionMode.Decompress);
+                    default:
+                        throw new ArgumentException("Invalid CompressionType specified", "compression");
+                }
             }
             catch (Exception ex) {
                 throw new NbtIOException("Failed to open compressed NBT data stream for input.", ex);
             }
         }
 
-        public virtual Stream GetDataOutputStream ()
+        public Stream GetDataOutputStream ()
+        {
+            return GetDataOutputStream(CompressionType.GZip);
+        }
+
+        public virtual Stream GetDataOutputStream (CompressionType compression)
         {
             try {
-                return new GZipStream(new NBTBuffer(this), CompressionMode.Compress);
+                switch (compression) {
+                    case CompressionType.None:
+                        return new NBTBuffer(this);
+                    case CompressionType.GZip:
+                        return new GZipStream(new NBTBuffer(this), CompressionMode.Compress);
+                    case CompressionType.Zlib:
+                        return new ZlibStream(new NBTBuffer(this), CompressionMode.Compress);
+                    case CompressionType.Deflate:
+                        return new DeflateStream(new NBTBuffer(this), CompressionMode.Compress);
+                    default:
+                        throw new ArgumentException("Invalid CompressionType specified", "compression");
+                }
             }
             catch (Exception ex) {
                 throw new NbtIOException("Failed to initialize compressed NBT data stream for output.", ex);

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using Substrate.Core;
 using Substrate.Nbt;
+using Substrate.Data;
 
 namespace Substrate
 {
@@ -18,12 +19,17 @@ namespace Substrate
     /// open worlds of the new format.</para></remarks>
     public abstract class NbtWorld
     {
+        private const string _DATA_DIR = "data";
+
         private string _path;
+        private string _dataDir;
 
         /// <summary>
         /// Creates a new instance of an <see cref="NbtWorld"/> object.
         /// </summary>
-        protected NbtWorld () { }
+        protected NbtWorld () {
+            _dataDir = _DATA_DIR;
+        }
 
         /// <summary>
         /// Gets or sets the path to the directory containing the world.
@@ -32,6 +38,15 @@ namespace Substrate
         {
             get { return _path; }
             set { _path = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the directory containing data resources, rooted in the world directory.
+        /// </summary>
+        public string DataDirectory
+        {
+            get { return _dataDir; }
+            set { _dataDir = value; }
         }
 
         /// <summary>
@@ -87,6 +102,15 @@ namespace Substrate
         }
 
         /// <summary>
+        /// Gets a <see cref="DataManager"/> for managing data resources, such as maps.
+        /// </summary>
+        /// <returns>A <see cref="DataManager"/> for this world.</returns>
+        public DataManager GetDataManager ()
+        {
+            return GetDataManagerVirt();
+        }
+
+        /// <summary>
         /// Attempts to determine the best matching world type of the given path, and open the world as that type.
         /// </summary>
         /// <param name="path">The path to the directory containing the world.</param>
@@ -138,6 +162,15 @@ namespace Substrate
         /// </summary>
         /// <returns>An <see cref="IPlayerManager"/> for the given dimension in the world.</returns>
         protected abstract IPlayerManager GetPlayerManagerVirt ();
+
+        /// <summary>
+        /// Virtual implementor of <see cref="GetDataManager"/>
+        /// </summary>
+        /// <returns>A <see cref="DataManager"/> for the given dimension in the world.</returns>
+        protected virtual DataManager GetDataManagerVirt ()
+        {
+            throw new NotImplementedException();
+        }
 
         #endregion
 

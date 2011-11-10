@@ -144,7 +144,7 @@ namespace Substrate
                 new PlayerFile(_playerPath, name).Delete();
             }
             catch (Exception ex) {
-                PlayerIOException pex = new PlayerIOException("Could not save player", ex);
+                PlayerIOException pex = new PlayerIOException("Could not remove player", ex);
                 pex.Data["PlayerName"] = name;
                 throw pex;
             }
@@ -153,7 +153,7 @@ namespace Substrate
         #region IEnumerable<Player> Members
 
         /// <summary>
-        /// Gets an enumerator that iterates through all the chunks in the world.
+        /// Gets an enumerator that iterates through all the players in the world.
         /// </summary>
         /// <returns>An enumerator for this manager.</returns>
         public IEnumerator<Player> GetEnumerator ()

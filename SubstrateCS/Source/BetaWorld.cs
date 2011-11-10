@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Substrate.Core;
 using Substrate.Nbt;
+using Substrate.Data;
 
 //TODO: Exceptions (+ Alpha)
 
@@ -26,6 +27,7 @@ namespace Substrate
         private Dictionary<int, BlockManager> _blockMgrs;
 
         private PlayerManager _playerMan;
+        private BetaDataManager _dataMan;
 
         private int _prefCacheSize = 256;
 
@@ -130,6 +132,15 @@ namespace Substrate
         }
 
         /// <summary>
+        /// Gets a <see cref="BetaDataManager"/> for managing data resources, such as maps.
+        /// </summary>
+        /// <returns>A <see cref="BetaDataManager"/> for this world.</returns>
+        public new BetaDataManager GetDataManager ()
+        {
+            return GetDataManagerVirt() as BetaDataManager;
+        }
+
+        /// <summary>
         /// Saves the world's <see cref="Level"/> data, and any <see cref="Chunk"/> objects known to have unsaved changes.
         /// </summary>
         public void Save ()
@@ -157,7 +168,7 @@ namespace Substrate
         /// <param name="path">The path to the directory containing the world's level.dat, or the path to level.dat itself.</param>
         /// <param name="cacheSize">The preferred cache size in chunks for each opened dimension in this world.</param>
         /// <returns>A new <see cref="BetaWorld"/> object representing an existing world on disk.</returns>
-        public static new BetaWorld Open (string path, int cacheSize)
+        public static BetaWorld Open (string path, int cacheSize)
         {
             BetaWorld world = new BetaWorld().OpenWorld(path);
             world._prefCacheSize = cacheSize;
@@ -228,6 +239,17 @@ namespace Substrate
 
             _playerMan = new PlayerManager(path);
             return _playerMan;
+        }
+
+        /// <exclude/>
+        protected override Data.DataManager GetDataManagerVirt ()
+        {
+            if (_dataMan != null) {
+                return _dataMan;
+            }
+
+            _dataMan = new BetaDataManager(this);
+            return _dataMan;
         }
 
         private void OpenDimension (int dim)

@@ -60,6 +60,7 @@
       <HintPath>Assemblies\Ionic.Zlib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Source\AlphaWorld.cs" />
@@ -67,9 +68,17 @@
     <Compile Include="Source\BetaWorld.cs" />
     <Compile Include="Source\Core\BoundedBlockInterface.cs" />
     <Compile Include="Source\Core\ItemInterface.cs" />
+    <Compile Include="Source\Data\BetaDataManager.cs" />
+    <Compile Include="Source\Data\DataExceptions.cs" />
+    <Compile Include="Source\Data\MapFile.cs" />
     <Compile Include="Source\Core\OpenWorldEvent.cs" />
     <Compile Include="Source\Core\RegionInterface.cs" />
     <Compile Include="Source\Core\UnboundedBlockInterface.cs" />
+    <Compile Include="Source\Data\DataManager.cs" />
+    <Compile Include="Source\Data\Map.cs" />
+    <Compile Include="Source\Data\MapConverter.cs" />
+    <Compile Include="Source\Data\MapManager.cs" />
+    <Compile Include="Source\Data\MapManagerInterface.cs" />
     <Compile Include="Source\Entities\EntityBlaze.cs" />
     <Compile Include="Source\Entities\EntityCaveSpider.cs" />
     <Compile Include="Source\Entities\EntityEnderDragon.cs" />
