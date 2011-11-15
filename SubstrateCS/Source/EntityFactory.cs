@@ -77,6 +77,19 @@ namespace Substrate
             _registry[id] = subtype;
         }
 
+        /// <summary>
+        /// Gets an enumerator over all registered Entities.
+        /// </summary>
+        public static IEnumerable<KeyValuePair<string, Type>> RegisteredEntities
+        {
+            get 
+            {
+                foreach (KeyValuePair<string, Type> kvp in _registry) {
+                    yield return kvp;
+                }
+            }
+        }
+
         static EntityFactory ()
         {
             _registry[EntityArrow.TypeId] = typeof(EntityArrow);

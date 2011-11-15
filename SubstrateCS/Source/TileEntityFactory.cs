@@ -75,6 +75,19 @@ namespace Substrate
             _registry[id] = subtype;
         }
 
+        /// <summary>
+        /// Gets an enumerator over all registered TileEntities.
+        /// </summary>
+        public static IEnumerable<KeyValuePair<string, Type>> RegisteredTileEntities
+        {
+            get
+            {
+                foreach (KeyValuePair<string, Type> kvp in _registry) {
+                    yield return kvp;
+                }
+            }
+        }
+
         static TileEntityFactory ()
         {
             _registry[TileEntityEndPortal.TypeId] = typeof(TileEntityEndPortal);
