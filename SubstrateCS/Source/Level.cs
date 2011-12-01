@@ -46,6 +46,7 @@ namespace Substrate
                 new SchemaNodeScaler("thunderTime", TagType.TAG_INT, SchemaOptions.OPTIONAL),
                 new SchemaNodeScaler("GameType", TagType.TAG_INT, SchemaOptions.OPTIONAL),
                 new SchemaNodeScaler("MapFeatures", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("hardcore", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
             },
         };
 
@@ -74,6 +75,7 @@ namespace Substrate
 
         private int? _gameType;
         private byte? _mapFeatures;
+        private byte? _hardcore;
 
         /// <summary>
         /// Gets or sets the creation time of the world as a long timestamp.
@@ -218,6 +220,15 @@ namespace Substrate
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether the map is hardcore mode
+        /// </summary>
+        public bool Hardcore
+        {
+            get { return (_hardcore ?? 0) == 1; }
+            set { _hardcore = value ? (byte)1 : (byte)0; }
+        }
+
+        /// <summary>
         /// Gets a <see cref="SchemaNode"/> representing the schema of a level.
         /// </summary>
         public static SchemaNodeCompound Schema
@@ -243,6 +254,7 @@ namespace Substrate
             _randomSeed = new Random().Next();
             _version = 19132;
             _name = "Untitled";
+            _hardcore = 0;
 
             GameType = GameType.SURVIVAL;
             UseMapFeatures = true;
@@ -393,6 +405,9 @@ namespace Substrate
             if (ctree.ContainsKey("MapFeatures")) {
                 _mapFeatures = ctree["MapFeatures"].ToTagByte();
             }
+            if (ctree.ContainsKey("hardcore")) {
+                _hardcore = ctree["hardcore"].ToTagByte();
+            }
 
             _source = ctree.Copy() as TagNodeCompound;
 
@@ -459,6 +474,9 @@ namespace Substrate
             }
             if (_mapFeatures != null) {
                 data["MapFeatures"] = new TagNodeByte(_mapFeatures ?? 0);
+            }
+            if (_hardcore != null) {
+                data["hardcore"] = new TagNodeByte(_hardcore ?? 0);
             }
 
             if (_source != null) {

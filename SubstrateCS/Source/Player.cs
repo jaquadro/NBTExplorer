@@ -6,6 +6,17 @@ using Substrate.Nbt;
 
 namespace Substrate
 {
+    public class PlayerAbilities
+    {
+        private static readonly SchemaNodeCompound _schema = new SchemaNodeCompound("")
+        {
+            new SchemaNodeScaler("flying", TagType.TAG_BYTE),
+            new SchemaNodeScaler("instabuild", TagType.TAG_SHORT),
+            new SchemaNodeScaler("mayfly", TagType.TAG_SHORT),
+            new SchemaNodeScaler("invulnerable", TagType.TAG_SHORT),
+        };
+    }
+
     /// <summary>
     /// Represents a Player from either single- or multi-player Minecraft.
     /// </summary>
@@ -27,6 +38,14 @@ namespace Substrate
             new SchemaNodeScaler("SpawnX", TagType.TAG_INT, SchemaOptions.OPTIONAL),
             new SchemaNodeScaler("SpawnY", TagType.TAG_INT, SchemaOptions.OPTIONAL),
             new SchemaNodeScaler("SpawnZ", TagType.TAG_INT, SchemaOptions.OPTIONAL),
+            new SchemaNodeScaler("foodLevel", TagType.TAG_INT, SchemaOptions.OPTIONAL),
+            new SchemaNodeScaler("foodTickTimer", TagType.TAG_INT, SchemaOptions.OPTIONAL),
+            new SchemaNodeScaler("foodExhaustionLevel", TagType.TAG_FLOAT, SchemaOptions.OPTIONAL),
+            new SchemaNodeScaler("foodSaturationLevel", TagType.TAG_FLOAT, SchemaOptions.OPTIONAL),
+            new SchemaNodeScaler("XpP", TagType.TAG_FLOAT, SchemaOptions.OPTIONAL),
+            new SchemaNodeScaler("XpLevel", TagType.TAG_INT, SchemaOptions.OPTIONAL),
+            new SchemaNodeScaler("XpTotal", TagType.TAG_INT, SchemaOptions.OPTIONAL),
+            new SchemaNodeScaler("Score", TagType.TAG_INT, SchemaOptions.OPTIONAL),
         });
 
         private const int _CAPACITY = 105;
@@ -42,6 +61,15 @@ namespace Substrate
         private int? _spawnX;
         private int? _spawnY;
         private int? _spawnZ;
+
+        private int? _foodLevel;
+        private int? _foodTickTimer;
+        private float? _foodExhaustion;
+        private float? _foodSaturation;
+        private float? _xpP;
+        private int? _xpLevel;
+        private int? _xpTotal;
+        private int? _score;
 
         private string _world;
         private string _name;
@@ -152,6 +180,69 @@ namespace Substrate
         }
 
         /// <summary>
+        /// Gets or sets the player's score.
+        /// </summary>
+        public int Score
+        {
+            get { return _score ?? 0; }
+            set { _score = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the player's XP Level.
+        /// </summary>
+        public int XPLevel
+        {
+            get { return _xpLevel ?? 0; }
+            set { _xpLevel = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the amount of the player's XP points.
+        /// </summary>
+        public int XPTotal
+        {
+            get { return _xpTotal ?? 0; }
+            set { _xpTotal = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the hunger level of the player.  Valid values range 0 - 20.
+        /// </summary>
+        public int HungerLevel
+        {
+            get { return _foodLevel ?? 0; }
+            set { _foodLevel = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the player's hunger saturation level, which is reserve food capacity above <see cref="HungerLevel"/>.
+        /// </summary>
+        public float HungerSaturationLevel
+        {
+            get { return _foodSaturation ?? 0; }
+            set { _foodSaturation = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the counter towards the next hunger point decrement.  Valid values range 0.0 - 4.0.
+        /// </summary>
+        public float HungerExhaustionLevel
+        {
+            get { return _foodExhaustion ?? 0; }
+            set { _foodExhaustion = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the timer used to periodically heal or damage the player based on <see cref="HungerLevel"/>.  Valid values range 0 - 80.
+        /// </summary>
+        public int HungerTimer
+        {
+            get { return _foodTickTimer ?? 0; }
+            set { _foodTickTimer = value; }
+        }
+
+        /// <summary>
         /// Creates a new <see cref="Player"/> object with reasonable default values.
         /// </summary>
         public Player ()
@@ -247,6 +338,31 @@ namespace Substrate
                 _world = ctree["World"].ToTagString();
             }
 
+            if (ctree.ContainsKey("foodLevel")) {
+                _foodLevel = ctree["foodLevel"].ToTagInt();
+            }
+            if (ctree.ContainsKey("foodTickTimer")) {
+                _foodTickTimer = ctree["foodTickTimer"].ToTagInt();
+            }
+            if (ctree.ContainsKey("foodExhaustionLevel")) {
+                _foodExhaustion = ctree["foodExhaustionLevel"].ToTagFloat();
+            }
+            if (ctree.ContainsKey("foodSaturationLevel")) {
+                _foodSaturation = ctree["foodSaturationLevel"].ToTagFloat();
+            }
+            if (ctree.ContainsKey("XpP")) {
+                _xpP = ctree["XpP"].ToTagFloat();
+            }
+            if (ctree.ContainsKey("XpLevel")) {
+                _xpLevel = ctree["XpLevel"].ToTagInt();
+            }
+            if (ctree.ContainsKey("XpTotal")) {
+                _xpTotal = ctree["XpTotal"].ToTagInt();
+            }
+            if (ctree.ContainsKey("Score")) {
+                _score = ctree["Score"].ToTagInt();
+            }
+
             _inventory.LoadTree(ctree["Inventory"].ToTagList());
 
             return this;
@@ -291,6 +407,23 @@ namespace Substrate
             if (_world != null) {
                 tree["World"] = new TagNodeString(_world);
             }
+
+            if (_foodLevel != null)
+                tree["foodLevel"] = new TagNodeInt(_foodLevel ?? 0);
+            if (_foodTickTimer != null)
+                tree["foodTickTimer"] = new TagNodeInt(_foodTickTimer ?? 0);
+            if (_foodExhaustion != null)
+                tree["foodExhaustionLevel"] = new TagNodeFloat(_foodExhaustion ?? 0);
+            if (_foodSaturation != null)
+                tree["foodSaturation"] = new TagNodeFloat(_foodSaturation ?? 0);
+            if (_xpP != null)
+                tree["XpP"] = new TagNodeFloat(_xpP ?? 0);
+            if (_xpLevel != null)
+                tree["XpLevel"] = new TagNodeInt(_xpLevel ?? 0);
+            if (_xpTotal != null)
+                tree["XpTotal"] = new TagNodeInt(_xpTotal ?? 0);
+            if (_score != null)
+                tree["Score"] = new TagNodeInt(_score ?? 0);
 
             tree["Inventory"] = _inventory.BuildTree();
 
