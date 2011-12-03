@@ -139,19 +139,22 @@ namespace NBTPlus
 
         public void LoadRegion (TreeNodeCollection parent, string path)
         {
-            RegionFile rf = new RegionFile(path);
-
             TreeNode root = new TreeNode(Path.GetFileName(path), 11, 11);
+            LoadRegion(root, path);
+            parent.Add(root);
+        }
+
+        public void LoadRegion (TreeNode node, string path)
+        {
+            RegionFile rf = new RegionFile(path);
 
             for (int x = 0; x < 32; x++) {
                 for (int y = 0; y < 32; y++) {
                     if (rf.HasChunk(x, y)) {
-                        root.Nodes.Add(CreateLazyChunk(rf, x, y));
+                        node.Nodes.Add(CreateLazyChunk(rf, x, y));
                     }
                 }
             }
-
-            parent.Add(root);
         }
 
         public TreeNode CreateLazyChunk (RegionFile rf, int x, int z)
@@ -166,6 +169,18 @@ namespace NBTPlus
             return node;
         }
 
+        public TreeNode CreateLazyRegion (string path)
+        {
+            TreeNode node = new TreeNode();
+            node.ImageIndex = 11;
+            node.SelectedImageIndex = 11;
+            node.Text = Path.GetFileName(path);
+            node.Tag = new RegionData(path);
+            node.Nodes.Add(new TreeNode());
+
+            return node;
+        }
+
         public TreeNode CreateLazyNbt (string path, CompressionType cztype)
         {
             TreeNode node = new TreeNode();
@@ -173,6 +188,18 @@ namespace NBTPlus
             node.SelectedImageIndex = 12;
             node.Text = Path.GetFileName(path);
             node.Tag = new NbtFileData(path, cztype);
+            node.Nodes.Add(new TreeNode());
+
+            return node;
+        }
+
+        public TreeNode CreateLazyDirectory (string path)
+        {
+            TreeNode node = new TreeNode();
+            node.ImageIndex = 10;
+            node.SelectedImageIndex = 10;
+            node.Text = Path.GetFileName(path);
+            node.Tag = new DirectoryData(path);
             node.Nodes.Add(new TreeNode());
 
             return node;
@@ -220,6 +247,53 @@ namespace NBTPlus
             node.Nodes.Add(new TreeNode());
         }
 
+        public void LoadLazyDirectory (TreeNode node)
+        {
+            DirectoryData data = node.Tag as DirectoryData;
+            if (data == null)
+                return;
+
+            node.Nodes.Clear();
+
+            foreach (string dirpath in Directory.EnumerateDirectories(data.Path)) {
+                node.Nodes.Add(CreateLazyDirectory(dirpath));
+            }
+
+            foreach (string filepath in Directory.EnumerateFiles(data.Path)) {
+                TryLoadFile(node.Nodes, filepath);
+            }
+        }
+
+        public void UnloadLazyDirectory (TreeNode node)
+        {
+            DirectoryData data = node.Tag as DirectoryData;
+            if (data == null)
+                return;
+
+            node.Nodes.Clear();
+            node.Nodes.Add(new TreeNode());
+        }
+
+        public void LoadLazyRegion (TreeNode node)
+        {
+            RegionData data = node.Tag as RegionData;
+            if (data == null)
+                return;
+
+            node.Nodes.Clear();
+            LoadRegion(node, data.Path);
+        }
+
+        public void UnloadLazyRegion (TreeNode node)
+        {
+            RegionData data = node.Tag as RegionData;
+            if (data == null)
+                return;
+
+            node.Nodes.Clear();
+            node.Nodes.Add(new TreeNode());
+        }
+
         private void NodeExpand (object sender, TreeViewCancelEventArgs e)
         {
             if (e.Node.Tag == null)
@@ -230,6 +304,12 @@ namespace NBTPlus
             }
             else if (e.Node.Tag is NbtFileData) {
                 LoadLazyNbt(e.Node);
+            }
+            else if (e.Node.Tag is DirectoryData) {
+                LoadLazyDirectory(e.Node);
+            }
+            else if (e.Node.Tag is RegionData) {
+                LoadLazyRegion(e.Node);
             }
         }
 
@@ -243,6 +323,12 @@ namespace NBTPlus
             }
             else if (e.Node.Tag is NbtFileData) {
                 UnloadLazyNbt(e.Node);
+            }
+            else if (e.Node.Tag is DirectoryData) {
+                UnloadLazyDirectory(e.Node);
+            }
+            else if (e.Node.Tag is RegionData) {
+                UnloadLazyRegion(e.Node);
             }
         }
 
@@ -261,7 +347,8 @@ namespace NBTPlus
             TreeNode root = new TreeNode(name, 10, 10);
 
             foreach (string dirpath in Directory.EnumerateDirectories(path)) {
-                LoadDirectory(dirpath, root.Nodes, Path.GetFileName(dirpath));
+                root.Nodes.Add(CreateLazyDirectory(dirpath));
+                //LoadDirectory(dirpath, root.Nodes, Path.GetFileName(dirpath));
             }
 
             foreach (string filepath in Directory.EnumerateFiles(path)) {
@@ -274,7 +361,7 @@ namespace NBTPlus
         public void TryLoadFile (TreeNodeCollection parent, string path)
         {
             if (Path.GetExtension(path) == ".mcr") {
-                LoadRegion(parent, path);
+                parent.Add(CreateLazyRegion(path));
                 return;
             }
 
@@ -399,6 +486,16 @@ namespace NBTPlus
         public int Z { get; private set; }
     }
 
+    public class RegionData
+    {
+        public RegionData (string path)
+        {
+            Path = path;
+        }
+
+        public string Path { get; private set; }
+    }
+
     public class NbtFileData
     {
         public NbtFileData (string path, CompressionType cztype)
@@ -409,5 +506,15 @@ namespace NBTPlus
 
         public string Path { get; private set; }
         public CompressionType CompressionType { get; private set; }
+    }
+
+    public class DirectoryData
+    {
+        public DirectoryData (string path)
+        {
+            Path = path;
+        }
+
+        public string Path { get; private set; }
     }
 }
