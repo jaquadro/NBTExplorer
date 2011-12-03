@@ -22,18 +22,18 @@ namespace NBTPlus
 
             _nodeTree.BeforeExpand += NodeExpand;
             _nodeTree.AfterCollapse += NodeCollapse;
+            _nodeTree.AfterSelect += NodeSelected;
 
-            //LoadRegion(@"C:\Users\Justin\AppData\Roaming\.minecraft\saves\Creative1.8\region\r.0.0.mcr");
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            path = Path.Combine(path, ".minecraft");
+            path = Path.Combine(path, "saves");
 
-            LoadDirectory(@"C:\Users\Justin\AppData\Roaming\.minecraft\saves\Creative1.8");
-        }
-
-        public void LoadFile (string path) {
-            NBTFile nbtstr = new NBTFile(path);
-
-            using (Stream fs = nbtstr.GetDataInputStream()) {
-                //LoadNbtStream(fs);
+            if (!Directory.Exists(path)) {
+                path = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
             }
+
+            LoadDirectory(path);
+            _nodeTree.Nodes[0].Expand();
         }
 
         public void LoadNbtStream (TreeNodeCollection parent, Stream stream)
@@ -58,6 +58,10 @@ namespace NBTPlus
             NbtTree tree = new NbtTree();
             tree.ReadFrom(stream);
 
+            if (node.Tag != null && node.Tag is NbtDataNode) {
+                (node.Tag as NbtDataNode).Tree = tree;
+            }
+
             PopulateNodeFromTag(node, tree.Root);
         }
 
@@ -73,6 +77,7 @@ namespace NBTPlus
             TreeNode node = new TreeNode();
             node.ImageIndex = _tagIconIndex[tag.GetTagType()];
             node.SelectedImageIndex = _tagIconIndex[tag.GetTagType()];
+            node.Tag = tag;
 
             switch (tag.GetTagType()) {
                 case TagType.TAG_BYTE:
@@ -205,30 +210,48 @@ namespace NBTPlus
             return node;
         }
 
+        public TreeNode CreateLazyDirectory (string path, TreeNode parent)
+        {
+            TreeNode node = CreateLazyDirectory(path);
+            LinkDataNodeParent(node, parent);
+
+            return node;
+        }
+
+        public TreeNode CreateLazyNbt (string path, CompressionType cztype, TreeNode parent)
+        {
+            TreeNode node = CreateLazyNbt(path, cztype);
+            LinkDataNodeParent(node, parent);
+
+            return node;
+        }
+
+        private void LinkDataNodeParent (TreeNode node, TreeNode parent)
+        {
+            if (node != null && parent != null && node.Tag != null && parent.Tag != null) {
+                DataNode nodeDn = node.Tag as DataNode;
+                DataNode parentDn = parent.Tag as DataNode;
+
+                if (nodeDn != null && parentDn != null) {
+                    nodeDn.Parent = parentDn;
+                }
+            }
+        }
+
         public void LoadLazyChunk (TreeNode node)
         {
             RegionChunkData data = node.Tag as RegionChunkData;
-            if (data == null)
+            if (data == null || data.Modified)
                 return;
 
             node.Nodes.Clear();
             LoadNbtStream(node, data.Region.GetChunkDataInputStream(data.X, data.Z));
         }
 
-        public void UnloadLazyChunk (TreeNode node)
-        {
-            RegionChunkData data = node.Tag as RegionChunkData;
-            if (data == null)
-                return;
-
-            node.Nodes.Clear();
-            node.Nodes.Add(new TreeNode());
-        }
-
         public void LoadLazyNbt (TreeNode node)
         {
             NbtFileData data = node.Tag as NbtFileData;
-            if (data == null)
+            if (data == null || data.Modified)
                 return;
 
             node.Nodes.Clear();
@@ -237,26 +260,16 @@ namespace NBTPlus
             LoadNbtStream(node, file.GetDataInputStream(data.CompressionType));
         }
 
-        public void UnloadLazyNbt (TreeNode node)
-        {
-            NbtFileData data = node.Tag as NbtFileData;
-            if (data == null)
-                return;
-
-            node.Nodes.Clear();
-            node.Nodes.Add(new TreeNode());
-        }
-
         public void LoadLazyDirectory (TreeNode node)
         {
             DirectoryData data = node.Tag as DirectoryData;
-            if (data == null)
+            if (data == null || data.Modified)
                 return;
 
             node.Nodes.Clear();
 
             foreach (string dirpath in Directory.EnumerateDirectories(data.Path)) {
-                node.Nodes.Add(CreateLazyDirectory(dirpath));
+                node.Nodes.Add(CreateLazyDirectory(dirpath, node));
             }
 
             foreach (string filepath in Directory.EnumerateFiles(data.Path)) {
@@ -264,30 +277,20 @@ namespace NBTPlus
             }
         }
 
-        public void UnloadLazyDirectory (TreeNode node)
-        {
-            DirectoryData data = node.Tag as DirectoryData;
-            if (data == null)
-                return;
-
-            node.Nodes.Clear();
-            node.Nodes.Add(new TreeNode());
-        }
-
         public void LoadLazyRegion (TreeNode node)
         {
             RegionData data = node.Tag as RegionData;
-            if (data == null)
+            if (data == null || data.Modified)
                 return;
 
             node.Nodes.Clear();
             LoadRegion(node, data.Path);
         }
 
-        public void UnloadLazyRegion (TreeNode node)
+        public void UnloadLazyDataNode (TreeNode node)
         {
-            RegionData data = node.Tag as RegionData;
-            if (data == null)
+            DataNode data = node.Tag as DataNode;
+            if (data == null || data.Modified)
                 return;
 
             node.Nodes.Clear();
@@ -318,18 +321,82 @@ namespace NBTPlus
             if (e.Node.Tag == null)
                 return;
 
-            if (e.Node.Tag is RegionChunkData) {
-                UnloadLazyChunk(e.Node);
+            if (e.Node.Tag is DataNode) {
+                UnloadLazyDataNode(e.Node);
             }
-            else if (e.Node.Tag is NbtFileData) {
-                UnloadLazyNbt(e.Node);
+        }
+
+        private void NodeSelected (object sender, TreeViewEventArgs e)
+        {
+            UpdateToolbar();
+        }
+
+        private void UpdateToolbar ()
+        {
+            TreeNode node = _nodeTree.SelectedNode;
+            TagNode tag = node.Tag as TagNode;
+
+            _buttonRename.Enabled = tag != null;
+            _buttonDelete.Enabled = tag != null;
+            _buttonEdit.Enabled = tag != null
+                && tag.GetTagType() != TagType.TAG_COMPOUND
+                && tag.GetTagType() != TagType.TAG_LIST;
+
+            if (tag == null || tag.GetTagType() != TagType.TAG_COMPOUND)
+                SetTagButtons(false);
+            if (tag != null && tag.GetTagType() == TagType.TAG_COMPOUND)
+                SetTagButtons(true);
+            if (tag != null && tag.GetTagType() == TagType.TAG_LIST && tag.ToTagList().Count == 0)
+                SetTagButtons(true);
+
+            if (tag != null && tag.GetTagType() == TagType.TAG_LIST) {
+                switch (tag.ToTagList().ValueType) {
+                    case TagType.TAG_BYTE:
+                        _buttonAddTagByte.Enabled = true;
+                        break;
+                    case TagType.TAG_SHORT:
+                        _buttonAddTagShort.Enabled = true;
+                        break;
+                    case TagType.TAG_INT:
+                        _buttonAddTagInt.Enabled = true;
+                        break;
+                    case TagType.TAG_LONG:
+                        _buttonAddTagLong.Enabled = true;
+                        break;
+                    case TagType.TAG_FLOAT:
+                        _buttonAddTagFloat.Enabled = true;
+                        break;
+                    case TagType.TAG_DOUBLE:
+                        _buttonAddTagDouble.Enabled = true;
+                        break;
+                    case TagType.TAG_BYTE_ARRAY:
+                        _buttonAddTagByteArray.Enabled = true;
+                        break;
+                    case TagType.TAG_STRING:
+                        _buttonAddTagString.Enabled = true;
+                        break;
+                    case TagType.TAG_LIST:
+                        _buttonAddTagList.Enabled = true;
+                        break;
+                    case TagType.TAG_COMPOUND:
+                        _buttonAddTagCompound.Enabled = true;
+                        break;
+                }
             }
-            else if (e.Node.Tag is DirectoryData) {
-                UnloadLazyDirectory(e.Node);
-            }
-            else if (e.Node.Tag is RegionData) {
-                UnloadLazyRegion(e.Node);
-            }
+        }
+
+        private void SetTagButtons (bool state)
+        {
+            _buttonAddTagByte.Enabled = state;
+            _buttonAddTagShort.Enabled = state;
+            _buttonAddTagInt.Enabled = state;
+            _buttonAddTagLong.Enabled = state;
+            _buttonAddTagFloat.Enabled = state;
+            _buttonAddTagDouble.Enabled = state;
+            _buttonAddTagByteArray.Enabled = state;
+            _buttonAddTagString.Enabled = state;
+            _buttonAddTagList.Enabled = state;
+            _buttonAddTagCompound.Enabled = state;
         }
 
         public void LoadDirectory (string path)
@@ -347,8 +414,7 @@ namespace NBTPlus
             TreeNode root = new TreeNode(name, 10, 10);
 
             foreach (string dirpath in Directory.EnumerateDirectories(path)) {
-                root.Nodes.Add(CreateLazyDirectory(dirpath));
-                //LoadDirectory(dirpath, root.Nodes, Path.GetFileName(dirpath));
+                root.Nodes.Add(CreateLazyDirectory(dirpath, root));
             }
 
             foreach (string filepath in Directory.EnumerateFiles(path)) {
@@ -370,7 +436,9 @@ namespace NBTPlus
                     NBTFile file = new NBTFile(path);
                     NbtTree tree = new NbtTree();
                     tree.ReadFrom(file.GetDataInputStream());
-                    parent.Add(CreateLazyNbt(path, CompressionType.GZip));
+                    TreeNode node = CreateLazyNbt(path, CompressionType.GZip);
+                    parent.Add(node);
+                    LinkDataNodeParent(node, node.Parent);
                     return;
                 }
                 catch { }
@@ -379,7 +447,9 @@ namespace NBTPlus
                     NBTFile file = new NBTFile(path);
                     NbtTree tree = new NbtTree();
                     tree.ReadFrom(file.GetDataInputStream(CompressionType.None));
-                    parent.Add(CreateLazyNbt(path, CompressionType.None));
+                    TreeNode node = CreateLazyNbt(path, CompressionType.None);
+                    parent.Add(node);
+                    LinkDataNodeParent(node, node.Parent);
                     return;
                 }
                 catch { }
@@ -413,6 +483,39 @@ namespace NBTPlus
             }
         }
 
+        private void SaveAll ()
+        {
+            if (_nodeTree.Nodes.Count > 0) {
+                SaveNode(_nodeTree.Nodes[0]);
+            }
+        }
+
+        private void SaveNode (TreeNode node)
+        {
+            foreach (TreeNode sub in node.Nodes) {
+                if (sub.Tag != null && sub.Tag is DataNode) {
+                    SaveNode(sub);
+                }
+            }
+
+            if (node.Tag is NbtFileData) {
+                SaveNbtFileNode(node);
+            }
+        }
+
+        private void SaveNbtFileNode (TreeNode node)
+        {
+            NbtFileData data = node.Tag as NbtFileData;
+            if (data == null || !data.Modified)
+                return;
+
+            NBTFile file = new NBTFile(data.Path);
+            using (Stream str = file.GetDataOutputStream(data.CompressionType)) {
+                data.Tree.WriteTo(str);
+            }
+            data.Modified = false;
+        }
+
         private void aboutToolStripMenuItem_Click (object sender, EventArgs e)
         {
             new About().Show();
@@ -435,6 +538,75 @@ namespace NBTPlus
         private void toolStripButton1_Click (object sender, EventArgs e)
         {
             OpenFile();
+        }
+
+        private void toolStripButton5_Click (object sender, EventArgs e)
+        {
+            if (_nodeTree.SelectedNode == null)
+                return;
+
+            TreeNode baseNode = _nodeTree.SelectedNode;
+            while (baseNode.Tag == null || !(baseNode.Tag is DataNode)) {
+                baseNode = baseNode.Parent;
+            }
+
+            // Can only delete internal NBT nodes
+            if (baseNode == null || baseNode == _nodeTree.SelectedNode)
+                return;
+
+            (baseNode.Tag as DataNode).Modified = true;
+
+            DeleteNodeNbtTag(_nodeTree.SelectedNode);
+
+            _nodeTree.SelectedNode.Remove();
+        }
+
+        private void DeleteNodeNbtTag (TreeNode node)
+        {
+            TagNode tag = node.Tag as TagNode;
+            if (tag == null)
+                return;
+
+            TagNode parentTag = node.Parent.Tag as TagNode;
+            if (parentTag == null) {
+                NbtDataNode parentData = node.Parent.Tag as NbtDataNode;
+                if (parentData == null)
+                    return;
+
+                parentTag = parentData.Tree.Root;
+                if (parentTag == null)
+                    return;
+            }
+
+            switch (parentTag.GetTagType()) {
+                case TagType.TAG_LIST:
+                    parentTag.ToTagList().Remove(tag);
+                    break;
+
+                case TagType.TAG_COMPOUND:
+                    DeleteTagFromCompound(parentTag.ToTagCompound(), tag);
+                    break;
+            }
+        }
+
+        private void DeleteTagFromCompound (TagNodeCompound parent, TagNode target)
+        {
+            string match = "";
+            foreach (KeyValuePair<string, TagNode> kv in parent) {
+                if (kv.Value == target) {
+                    match = kv.Key;
+                    break;
+                }
+            }
+
+            if (match != null) {
+                parent.Remove(match);
+            }
+        }
+
+        private void _buttonSave_Click (object sender, EventArgs e)
+        {
+            SaveAll();
         }
     }
 
@@ -472,9 +644,56 @@ namespace NBTPlus
         #endregion
     }
 
-    public class RegionChunkData
+    public class DataNode 
+    {
+        public DataNode ()
+        {
+        }
+
+        public DataNode (DataNode parent)
+        {
+            Parent = parent;
+        }
+
+        public DataNode Parent { get; set; }
+
+        private bool _modified;
+        public bool Modified
+        {
+            get { return _modified; }
+            set
+            {
+                if (value && Parent != null) {
+                    Parent.Modified = value;
+                }
+                _modified = value;
+            }
+        }
+    }
+
+    public class NbtDataNode : DataNode
+    {
+        public NbtDataNode ()
+        {
+        }
+
+        public NbtDataNode (DataNode parent)
+            : base(parent)
+        {
+        }
+
+        public NbtTree Tree { get; set; }
+    }
+
+    public class RegionChunkData : NbtDataNode
     {
         public RegionChunkData (RegionFile file, int x, int z)
+            : this(null, file, x, z)
+        {
+        }
+
+        public RegionChunkData (DataNode parent, RegionFile file, int x, int z)
+            : base(parent)
         {
             Region = file;
             X = x;
@@ -486,9 +705,15 @@ namespace NBTPlus
         public int Z { get; private set; }
     }
 
-    public class RegionData
+    public class RegionData : DataNode
     {
         public RegionData (string path)
+            : this(null, path)
+        {
+        }
+
+        public RegionData (DataNode parent, string path)
+            : base(parent)
         {
             Path = path;
         }
@@ -496,9 +721,15 @@ namespace NBTPlus
         public string Path { get; private set; }
     }
 
-    public class NbtFileData
+    public class NbtFileData : NbtDataNode
     {
         public NbtFileData (string path, CompressionType cztype)
+            : this(null, path, cztype)
+        {
+        }
+
+        public NbtFileData (DataNode parent, string path, CompressionType cztype)
+            : base(parent)
         {
             Path = path;
             CompressionType = cztype;
@@ -508,9 +739,15 @@ namespace NBTPlus
         public CompressionType CompressionType { get; private set; }
     }
 
-    public class DirectoryData
+    public class DirectoryData : DataNode
     {
         public DirectoryData (string path)
+            : this(null, path)
+        {
+        }
+
+        public DirectoryData (DataNode parent, string path)
+            : base(parent)
         {
             Path = path;
         }
