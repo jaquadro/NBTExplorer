@@ -6,15 +6,67 @@ using Substrate.Nbt;
 
 namespace Substrate
 {
-    public class PlayerAbilities
+    /// <summary>
+    /// Encompases data to specify player abilities, especially mode-dependent abilities.
+    /// </summary>
+    public class PlayerAbilities : ICopyable<PlayerAbilities>
     {
-        private static readonly SchemaNodeCompound _schema = new SchemaNodeCompound("")
+        private bool _flying;
+        private bool _instabuild;
+        private bool _mayfly;
+        private bool _invulnerable;
+
+        /// <summary>
+        /// Gets or sets whether the player is currently flying.
+        /// </summary>
+        public bool Flying
         {
-            new SchemaNodeScaler("flying", TagType.TAG_BYTE),
-            new SchemaNodeScaler("instabuild", TagType.TAG_SHORT),
-            new SchemaNodeScaler("mayfly", TagType.TAG_SHORT),
-            new SchemaNodeScaler("invulnerable", TagType.TAG_SHORT),
-        };
+            get { return _flying; }
+            set { _flying = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets whether the player can instantly build or mine.
+        /// </summary>
+        public bool InstantBuild
+        {
+            get { return _instabuild; }
+            set { _instabuild = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets whether the player is allowed to fly.
+        /// </summary>
+        public bool MayFly
+        {
+            get { return _mayfly; }
+            set { _mayfly = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets whether the player can take damage.
+        /// </summary>
+        public bool Invulnerable
+        {
+            get { return _invulnerable; }
+            set { _invulnerable = value; }
+        }
+
+        #region ICopyable<PlayerAbilities> Members
+
+        /// <inheritdoc />
+        public PlayerAbilities Copy ()
+        {
+            PlayerAbilities pa = new PlayerAbilities();
+            pa._flying = _flying;
+            pa._instabuild = _instabuild;
+            pa._mayfly = _mayfly;
+            pa._invulnerable = _invulnerable;
+
+            return pa;
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -46,6 +98,12 @@ namespace Substrate
             new SchemaNodeScaler("XpLevel", TagType.TAG_INT, SchemaOptions.OPTIONAL),
             new SchemaNodeScaler("XpTotal", TagType.TAG_INT, SchemaOptions.OPTIONAL),
             new SchemaNodeScaler("Score", TagType.TAG_INT, SchemaOptions.OPTIONAL),
+            new SchemaNodeCompound("abilities", new SchemaNodeCompound("") {
+                new SchemaNodeScaler("flying", TagType.TAG_BYTE),
+                new SchemaNodeScaler("instabuild", TagType.TAG_BYTE),
+                new SchemaNodeScaler("mayfly", TagType.TAG_BYTE),
+                new SchemaNodeScaler("invulnerable", TagType.TAG_BYTE),
+            }, SchemaOptions.OPTIONAL),
         });
 
         private const int _CAPACITY = 105;
@@ -73,6 +131,9 @@ namespace Substrate
 
         private string _world;
         private string _name;
+
+
+        private PlayerAbilities _abilities;
 
         private ItemCollection _inventory;
 
@@ -243,12 +304,21 @@ namespace Substrate
         }
 
         /// <summary>
+        /// Gets the state of the player's abilities.
+        /// </summary>
+        public PlayerAbilities Abilities
+        {
+            get { return _abilities; }
+        }
+
+        /// <summary>
         /// Creates a new <see cref="Player"/> object with reasonable default values.
         /// </summary>
         public Player ()
             : base()
         {
             _inventory = new ItemCollection(_CAPACITY);
+            _abilities = new PlayerAbilities();
 
             // Sane defaults
             _dimension = 0;
@@ -280,6 +350,15 @@ namespace Substrate
             _spawnZ = p._spawnZ;
             _world = p._world;
             _inventory = p._inventory.Copy();
+
+            _foodLevel = p._foodLevel;
+            _foodTickTimer = p._foodTickTimer;
+            _foodSaturation = p._foodSaturation;
+            _foodExhaustion = p._foodExhaustion;
+            _xpP = p._xpP;
+            _xpLevel = p._xpLevel;
+            _xpTotal = p._xpTotal;
+            _abilities = p._abilities.Copy();
         }
 
         /// <summary>
@@ -290,6 +369,14 @@ namespace Substrate
             _spawnX = null;
             _spawnY = null;
             _spawnZ = null;
+        }
+
+        private bool AbilitiesSet ()
+        {
+            return _abilities.Flying
+                || _abilities.InstantBuild
+                || _abilities.MayFly
+                || _abilities.Invulnerable;
         }
 
 
@@ -363,6 +450,16 @@ namespace Substrate
                 _score = ctree["Score"].ToTagInt();
             }
 
+            if (ctree.ContainsKey("abilities")) {
+                TagNodeCompound pb = ctree["abilities"].ToTagCompound();
+
+                _abilities = new PlayerAbilities();
+                _abilities.Flying = pb["flying"].ToTagByte().Data == 1;
+                _abilities.InstantBuild = pb["instabuild"].ToTagByte().Data == 1;
+                _abilities.MayFly = pb["mayfly"].ToTagByte().Data == 1;
+                _abilities.Invulnerable = pb["invulnerable"].ToTagByte().Data == 1;
+            }
+
             _inventory.LoadTree(ctree["Inventory"].ToTagList());
 
             return this;
@@ -424,6 +521,16 @@ namespace Substrate
                 tree["XpTotal"] = new TagNodeInt(_xpTotal ?? 0);
             if (_score != null)
                 tree["Score"] = new TagNodeInt(_score ?? 0);
+
+            if (AbilitiesSet()) {
+                TagNodeCompound pb = new TagNodeCompound();
+                pb["flying"] = new TagNodeByte(_abilities.Flying ? (byte)1 : (byte)0);
+                pb["instabuild"] = new TagNodeByte(_abilities.InstantBuild ? (byte)1 : (byte)0);
+                pb["mayfly"] = new TagNodeByte(_abilities.MayFly ? (byte)1 : (byte)0);
+                pb["invulnerable"] = new TagNodeByte(_abilities.Invulnerable ? (byte)1 : (byte)0);
+
+                tree["abilities"] = pb;
+            }
 
             tree["Inventory"] = _inventory.BuildTree();
 

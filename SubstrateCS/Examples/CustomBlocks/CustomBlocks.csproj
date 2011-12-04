@@ -35,8 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Substrate">
-      <HintPath>..\..\bin\Release\Substrate.dll</HintPath>
+    <Reference Include="Substrate, Version=0.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\Release\NET2\Substrate.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>

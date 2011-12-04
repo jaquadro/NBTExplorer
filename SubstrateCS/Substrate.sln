@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Substrate", "Substrate.csproj", "{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Substrate (NET2)", "Substrate (NET2).csproj", "{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Substrate (NET4)", "Substrate (NET4).csproj", "{7264A1C4-AB4A-4437-B252-7379B98B5509}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +15,10 @@ Global
 		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7264A1C4-AB4A-4437-B252-7379B98B5509}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7264A1C4-AB4A-4437-B252-7379B98B5509}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7264A1C4-AB4A-4437-B252-7379B98B5509}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7264A1C4-AB4A-4437-B252-7379B98B5509}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

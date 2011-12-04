@@ -139,6 +139,7 @@ namespace Substrate
         public const int END_PORTAL = 119;
         public const int END_PORTAL_FRAME = 120;
         public const int END_STONE = 121;
+        public const int DRAGON_EGG = 122;
     }
 
     /// <summary>
@@ -608,6 +609,7 @@ namespace Substrate
         public static BlockInfoEx EndPortal;
         public static BlockInfo EndPortalFrame;
         public static BlockInfo EndStone;
+        public static BlockInfo DragonEgg;
 
         static BlockInfo ()
         {
@@ -741,6 +743,7 @@ namespace Substrate
             EndPortal = (BlockInfoEx)new BlockInfoEx(119, "End Portal").SetOpacity(0).SetLuminance(MAX_LUMINANCE).SetState(BlockState.NONSOLID);
             EndPortalFrame = new BlockInfo(120, "End Portal Frame").SetLuminance(MAX_LUMINANCE);
             EndStone = new BlockInfo(121, "End Stone");
+            DragonEgg = new BlockInfo(122, "Dragon Egg").SetOpacity(0).SetLuminance(1);
 
             for (int i = 0; i < MAX_BLOCKS; i++) {
                 if (_blockTable[i] == null) {

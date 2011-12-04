@@ -5,33 +5,57 @@ using System.Text;
 namespace Substrate.Entities
 {
     using Substrate.Nbt;
+using Substrate.Core;
 
     /// <summary>
-    /// Encompasses data in the "ActiveEffects" compound attribute of mob entity types
+    /// Encompasses data in the "ActiveEffects" compound attribute of mob entity types, used to specify potion effects
     /// </summary>
-    public class ActiveEffects
+    public class ActiveEffects : ICopyable<ActiveEffects>
     {
         private byte _id;
         private byte _amplifier;
         private int _duration;
 
+        /// <summary>
+        /// Gets or sets the ID of the potion effect type.
+        /// </summary>
         public int Id
         {
             get { return _id; }
             set { _id = (byte)value; }
         }
 
+        /// <summary>
+        /// Gets or sets the amplification of the potion effect.
+        /// </summary>
         public int Amplifier
         {
             get { return _amplifier; }
             set { _amplifier = (byte)value; }
         }
 
+        /// <summary>
+        /// Gets or sets the remaining duration of the potion effect.
+        /// </summary>
         public int Duration
         {
             get { return _duration; }
             set { _duration = value; }
         }
+
+        #region ICopyable<ActiveEffects> Members
+
+        public ActiveEffects Copy ()
+        {
+            ActiveEffects ae = new ActiveEffects();
+            ae._amplifier = _amplifier;
+            ae._duration = _duration;
+            ae._id = _id;
+
+            return ae;
+        }
+
+        #endregion
     }
 
     public class EntityMob : TypedEntity
@@ -96,6 +120,7 @@ namespace Substrate.Entities
         protected EntityMob (string id)
             : base(id)
         {
+            _activeEffects = new ActiveEffects();
         }
 
         public EntityMob ()
@@ -112,7 +137,10 @@ namespace Substrate.Entities
                 _deathTime = e2._deathTime;
                 _health = e2._health;
                 _hurtTime = e2._hurtTime;
-                _activeEffects = e2._activeEffects;
+                _activeEffects = e2._activeEffects.Copy();
+            }
+            else {
+                _activeEffects = new ActiveEffects();
             }
         }
 

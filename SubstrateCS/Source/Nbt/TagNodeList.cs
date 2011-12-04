@@ -127,6 +127,9 @@ namespace Substrate.Nbt
         /// </summary>
         /// <param name="index">The zero-based starting index of the subnodes to reverse</param>
         /// <param name="count">The number of subnodes in the range to reverse.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><para><paramref name="index"/> is less than 0.</para><para>-or-</para>
+        ///   <para><paramref name="count"/> is less than 0.</para></exception>
+        /// <exception cref="ArgumentException"><paramref name="index"/> and <paramref name="count"/> do not denote a valid range of elements in the list.</exception>
         public void Reverse (int index, int count)
         {
             _items.Reverse(index, count);
@@ -147,6 +150,19 @@ namespace Substrate.Nbt
         public override string ToString ()
         {
             return _items.ToString();
+        }
+
+        /// <summary>
+        /// Resets and changes the storage type of the list.
+        /// </summary>
+        /// <param name="type">The new tag type to store in the list.</param>
+        public void ChangeValueType (TagType type)
+        {
+            if (type == _type)
+                return;
+
+            _items.Clear();
+            _type = type;
         }
 
         #region IList<NBT_Value> Members

@@ -21,6 +21,16 @@ namespace Substrate
         CREATIVE = 1,
     }
 
+    public enum TimeOfDay
+    {
+        Daytime = 0,
+        Noon = 6000,
+        Sunset = 12000,
+        Nighttime = 13800,
+        Midnight = 18000,
+        Sunrise = 22200,
+    }
+
     /// <summary>
     /// Represents general data and metadata of a single world.
     /// </summary>
@@ -285,6 +295,7 @@ namespace Substrate
 
             _gameType = p._gameType;
             _mapFeatures = p._mapFeatures;
+            _hardcore = p._hardcore;
 
             if (p._player != null) {
                 _player = p._player.Copy();

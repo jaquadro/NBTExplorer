@@ -1,0 +1,276 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7264A1C4-AB4A-4437-B252-7379B98B5509}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Substrate</RootNamespace>
+    <AssemblyName>Substrate</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Substrate.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\NET4\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Substrate.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Source\AlphaWorld.cs" />
+    <Compile Include="Source\BetaChunkManager.cs" />
+    <Compile Include="Source\BetaWorld.cs" />
+    <Compile Include="Source\Core\BoundedBlockInterface.cs" />
+    <Compile Include="Source\Core\ItemInterface.cs" />
+    <Compile Include="Source\Data\BetaDataManager.cs" />
+    <Compile Include="Source\Data\DataExceptions.cs" />
+    <Compile Include="Source\Data\MapFile.cs" />
+    <Compile Include="Source\Core\OpenWorldEvent.cs" />
+    <Compile Include="Source\Core\RegionInterface.cs" />
+    <Compile Include="Source\Core\UnboundedBlockInterface.cs" />
+    <Compile Include="Source\Data\DataManager.cs" />
+    <Compile Include="Source\Data\Map.cs" />
+    <Compile Include="Source\Data\MapConverter.cs" />
+    <Compile Include="Source\Data\MapManager.cs" />
+    <Compile Include="Source\Data\MapManagerInterface.cs" />
+    <Compile Include="Source\Enchantment.cs" />
+    <Compile Include="Source\EnchantmentInfo.cs" />
+    <Compile Include="Source\Entities\EntityBlaze.cs" />
+    <Compile Include="Source\Entities\EntityCaveSpider.cs" />
+    <Compile Include="Source\Entities\EntityEnderDragon.cs" />
+    <Compile Include="Source\Entities\EntityEnderEye.cs" />
+    <Compile Include="Source\Entities\EntityEnderman.cs" />
+    <Compile Include="Source\Entities\EntityEnderPearl.cs" />
+    <Compile Include="Source\Entities\EntityFireball.cs" />
+    <Compile Include="Source\Entities\EntityMagmaCube.cs" />
+    <Compile Include="Source\Entities\EntityMooshroom.cs" />
+    <Compile Include="Source\Entities\EntitySilverfish.cs" />
+    <Compile Include="Source\Entities\EntitySmallFireball.cs" />
+    <Compile Include="Source\Entities\EntitySnowman.cs" />
+    <Compile Include="Source\Entities\EntityVillager.cs" />
+    <Compile Include="Source\Entities\EntityXPOrb.cs" />
+    <Compile Include="Source\ImportExport\Schematic.cs" />
+    <Compile Include="Source\ItemCollection.cs" />
+    <Compile Include="Source\LevelIOException.cs" />
+    <Compile Include="Source\AlphaBlock.cs" />
+    <Compile Include="Source\AlphaBlockRef.cs" />
+    <Compile Include="Source\CacheTable.cs" />
+    <Compile Include="Source\Core\BlockFluid.cs" />
+    <Compile Include="Source\Core\PlayerManagerInterface.cs" />
+    <Compile Include="Source\Data.cs" />
+    <Compile Include="Source\ItemInfo.cs" />
+    <Compile Include="Source\Core\ChunkCache.cs" />
+    <Compile Include="Source\Entities\EntitySquid.cs" />
+    <Compile Include="Source\EntityCollection.cs" />
+    <Compile Include="Source\AlphaBlockCollection.cs" />
+    <Compile Include="Source\Core\BlockLight.cs" />
+    <Compile Include="Source\Core\BlockTileEntities.cs" />
+    <Compile Include="Source\Level.cs" />
+    <Compile Include="Source\NbtWorld.cs" />
+    <Compile Include="Source\NBT\INBTObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\NBT\NbtIOException.cs" />
+    <Compile Include="Source\NBT\NbtTree.cs" />
+    <Compile Include="Source\NBT\NBTVerifier.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\NBT\SchemaNode.cs" />
+    <Compile Include="Source\NBT\SchemaNodeArray.cs" />
+    <Compile Include="Source\NBT\SchemaNodeCompound.cs" />
+    <Compile Include="Source\NBT\SchemaNodeList.cs" />
+    <Compile Include="Source\NBT\SchemaNodeScaler.cs" />
+    <Compile Include="Source\NBT\SchemaNodeString.cs" />
+    <Compile Include="Source\NBT\SchemaOptions.cs" />
+    <Compile Include="Source\NBT\TagNode.cs" />
+    <Compile Include="Source\NBT\TagNodeByteArray.cs" />
+    <Compile Include="Source\NBT\TagNodeCompound.cs" />
+    <Compile Include="Source\NBT\TagNodeDouble.cs" />
+    <Compile Include="Source\NBT\TagNodeFloat.cs" />
+    <Compile Include="Source\NBT\TagNodeInt.cs" />
+    <Compile Include="Source\NBT\TagNodeList.cs" />
+    <Compile Include="Source\NBT\TagNodeLong.cs" />
+    <Compile Include="Source\NBT\TagNodeShort.cs" />
+    <Compile Include="Source\NBT\TagNodeString.cs" />
+    <Compile Include="Source\NBT\TagType.cs" />
+    <Compile Include="Source\NBT\TagNodeByte.cs" />
+    <Compile Include="Source\NBT\TagNodeNull.cs" />
+    <Compile Include="Source\NBT\VerifierLogger.cs" />
+    <Compile Include="Source\Orientation.cs" />
+    <Compile Include="Source\PlayerIOException.cs" />
+    <Compile Include="Source\PlayerManager.cs" />
+    <Compile Include="Source\Core\PlayerFile.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\BlockInfo.cs" />
+    <Compile Include="Source\Core\BlockInterface.cs" />
+    <Compile Include="Source\Core\BlockKey.cs" />
+    <Compile Include="Source\BlockManager.cs" />
+    <Compile Include="Source\Chunk.cs" />
+    <Compile Include="Source\Core\ChunkFile.cs" />
+    <Compile Include="Source\AlphaChunkManager.cs" />
+    <Compile Include="Source\Core\ChunkInterface.cs" />
+    <Compile Include="Source\Core\ChunkKey.cs" />
+    <Compile Include="Source\ChunkRef.cs" />
+    <Compile Include="Source\Entities\EntityArrow.cs" />
+    <Compile Include="Source\Entities\EntityBoat.cs" />
+    <Compile Include="Source\Entities\EntityChicken.cs" />
+    <Compile Include="Source\Entities\EntityCow.cs" />
+    <Compile Include="Source\Entities\EntityCreeper.cs" />
+    <Compile Include="Source\Entities\EntityEgg.cs" />
+    <Compile Include="Source\Entities\EntityFallingSand.cs" />
+    <Compile Include="Source\Entities\EntityGhast.cs" />
+    <Compile Include="Source\Entities\EntityGiant.cs" />
+    <Compile Include="Source\Entities\EntityItem.cs" />
+    <Compile Include="Source\Entities\EntityMinecart.cs" />
+    <Compile Include="Source\Entities\EntityMinecartChest.cs" />
+    <Compile Include="Source\Entities\EntityMinecartFurnace.cs" />
+    <Compile Include="Source\Entities\EntityMob.cs" />
+    <Compile Include="Source\Entities\EntityMonster.cs" />
+    <Compile Include="Source\Entities\EntityPainting.cs" />
+    <Compile Include="Source\Entities\EntityPig.cs" />
+    <Compile Include="Source\Entities\EntityPigZombie.cs" />
+    <Compile Include="Source\Entities\EntityPrimedTnt.cs" />
+    <Compile Include="Source\Entities\EntitySheep.cs" />
+    <Compile Include="Source\Entities\EntitySkeleton.cs" />
+    <Compile Include="Source\Entities\EntitySlime.cs" />
+    <Compile Include="Source\Entities\EntitySnowball.cs" />
+    <Compile Include="Source\Entities\EntitySpider.cs" />
+    <Compile Include="Source\Entities\EntityThrowable.cs" />
+    <Compile Include="Source\Entities\EntityWolf.cs" />
+    <Compile Include="Source\Entities\EntityZombie.cs" />
+    <Compile Include="Source\Entity.cs" />
+    <Compile Include="Source\EntityFactory.cs" />
+    <Compile Include="Source\Item.cs" />
+    <Compile Include="Source\Core\NBTFile.cs" />
+    <Compile Include="Source\NBT\JSONSerializer.cs" />
+    <Compile Include="Source\Player.cs" />
+    <Compile Include="Source\Region.cs" />
+    <Compile Include="Source\Core\RegionFile.cs" />
+    <Compile Include="Source\Core\RegionKey.cs" />
+    <Compile Include="Source\RegionManager.cs" />
+    <Compile Include="Source\SpawnPoint.cs" />
+    <Compile Include="Source\SubstrateException.cs" />
+    <Compile Include="Source\TileEntities\TileEntityBrewingStand.cs" />
+    <Compile Include="Source\TileEntities\TileEntityChest.cs" />
+    <Compile Include="Source\TileEntities\TileEntityEnchantmentTable.cs" />
+    <Compile Include="Source\TileEntities\TileEntityEndPortal.cs" />
+    <Compile Include="Source\TileEntities\TileEntityFurnace.cs" />
+    <Compile Include="Source\TileEntities\TileEntityMobSpawner.cs" />
+    <Compile Include="Source\TileEntities\TileEntityPiston.cs" />
+    <Compile Include="Source\TileEntities\TileEntityMusic.cs" />
+    <Compile Include="Source\TileEntities\TileEntityRecordPlayer.cs" />
+    <Compile Include="Source\TileEntities\TileEntitySign.cs" />
+    <Compile Include="Source\TileEntities\TileEntityTrap.cs" />
+    <Compile Include="Source\TileEntity.cs" />
+    <Compile Include="Source\TileEntityFactory.cs" />
+    <Compile Include="Source\Core\Base.cs" />
+    <Compile Include="Source\Core\ByteArray.cs" />
+    <Compile Include="Source\Core\IndexedLinkedList.cs" />
+    <Compile Include="Source\Core\Interface.cs" />
+    <Compile Include="Source\Core\LRUCache.cs" />
+    <Compile Include="Source\Core\NibbleArray.cs" />
+    <Compile Include="Source\Vector.cs" />
+    <Compile Include="Source\World.cs" />
+    <Compile Include="Vendor\DotNetZip\Zlib\Crc32.cs" />
+    <Compile Include="Vendor\DotNetZip\Zlib\Deflate.cs" />
+    <Compile Include="Vendor\DotNetZip\Zlib\DeflateStream.cs" />
+    <Compile Include="Vendor\DotNetZip\Zlib\GZipStream.cs" />
+    <Compile Include="Vendor\DotNetZip\Zlib\Inflate.cs" />
+    <Compile Include="Vendor\DotNetZip\Zlib\InfTree.cs" />
+    <Compile Include="Vendor\DotNetZip\Zlib\ParallelDeflateOutputStream.cs" />
+    <Compile Include="Vendor\DotNetZip\Zlib\Tree.cs" />
+    <Compile Include="Vendor\DotNetZip\Zlib\Zlib.cs" />
+    <Compile Include="Vendor\DotNetZip\Zlib\ZlibBaseStream.cs" />
+    <Compile Include="Vendor\DotNetZip\Zlib\ZlibCodec.cs" />
+    <Compile Include="Vendor\DotNetZip\Zlib\ZlibConstants.cs" />
+    <Compile Include="Vendor\DotNetZip\Zlib\ZlibStream.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Source\Experimental\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Vendor\DotNetZip\Zlib\LICENSE.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
