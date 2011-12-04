@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using Substrate.Nbt;
 
-namespace NBTPlus
+namespace NBTExplorer
 {
     public enum EditValueType
     {

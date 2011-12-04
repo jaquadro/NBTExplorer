@@ -8,7 +8,7 @@
     <ProjectGuid>{8A458245-8176-4599-95CD-3CA39F2435CE}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NBTPlus</RootNamespace>
+    <RootNamespace>NBTExplorer</RootNamespace>
     <AssemblyName>NBTExplorer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -32,6 +32,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>dead_bush.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zlib">
@@ -64,6 +67,12 @@
     <Compile Include="EditValue.Designer.cs">
       <DependentUpon>EditValue.cs</DependentUpon>
     </Compile>
+    <Compile Include="Find.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Find.Designer.cs">
+      <DependentUpon>Find.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -77,6 +86,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EditValue.resx">
       <DependentUpon>EditValue.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Find.resx">
+      <DependentUpon>Find.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -121,6 +133,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\information-frame.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\binocular.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\binocular--arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="dead_bush.ico" />
+    <None Include="Resources\Dead_Bush.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

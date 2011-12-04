@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace NBTPlus
+namespace NBTExplorer
 {
     public partial class About : Form
     {

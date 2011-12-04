@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace NBTPlus.Properties {
+namespace NBTExplorer.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace NBTPlus.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("NBTPlus.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("NBTExplorer.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,27 @@ namespace NBTPlus.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        internal static System.Drawing.Bitmap binocular {
+            get {
+                object obj = ResourceManager.GetObject("binocular", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap binocular__arrow {
+            get {
+                object obj = ResourceManager.GetObject("binocular--arrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Dead_Bush {
+            get {
+                object obj = ResourceManager.GetObject("Dead_Bush", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

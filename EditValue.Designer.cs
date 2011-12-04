@@ -1,4 +1,4 @@
-﻿namespace NBTPlus
+﻿namespace NBTExplorer
 {
     partial class EditValue
     {

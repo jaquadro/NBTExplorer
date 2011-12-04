@@ -10,7 +10,7 @@ using Substrate.Nbt;
 using System.IO;
 using Substrate.Core;
 
-namespace NBTPlus
+namespace NBTExplorer
 {
     public partial class Form1 : Form
     {
@@ -285,6 +285,8 @@ namespace NBTPlus
 
             node.Nodes.Clear();
             LoadNbtStream(node, data.Region.GetChunkDataInputStream(data.X, data.Z));
+
+            data.Expanded = true;
         }
 
         public void LoadLazyNbt (TreeNode node)
@@ -297,6 +299,8 @@ namespace NBTPlus
 
             NBTFile file = new NBTFile(data.Path);
             LoadNbtStream(node, file.GetDataInputStream(data.CompressionType));
+
+            data.Expanded = true;
         }
 
         public void LoadLazyDirectory (TreeNode node)
@@ -314,6 +318,8 @@ namespace NBTPlus
             foreach (string filepath in Directory.EnumerateFiles(data.Path)) {
                 TryLoadFile(node.Nodes, filepath);
             }
+
+            data.Expanded = true;
         }
 
         public void LoadLazyRegion (TreeNode node)
@@ -324,6 +330,8 @@ namespace NBTPlus
 
             node.Nodes.Clear();
             LoadRegion(node, data.Path);
+
+            data.Expanded = true;
         }
 
         public void UnloadLazyDataNode (TreeNode node)
@@ -334,35 +342,52 @@ namespace NBTPlus
 
             node.Nodes.Clear();
             node.Nodes.Add(new TreeNode());
+
+            data.Expanded = false;
+        }
+
+        private void ExpandNode (TreeNode node)
+        {
+            if (node.Tag == null)
+                return;
+
+            if (node.Tag is DataNode) {
+                if ((node.Tag as DataNode).Expanded)
+                    return;
+            }
+
+            if (node.Tag is RegionChunkData) {
+                LoadLazyChunk(node);
+            }
+            else if (node.Tag is NbtFileData) {
+                LoadLazyNbt(node);
+            }
+            else if (node.Tag is DirectoryData) {
+                LoadLazyDirectory(node);
+            }
+            else if (node.Tag is RegionData) {
+                LoadLazyRegion(node);
+            }
+        }
+
+        private void CollapseNode (TreeNode node)
+        {
+            if (node.Tag == null)
+                return;
+
+            if (node.Tag is DataNode) {
+                UnloadLazyDataNode(node);
+            }
         }
 
         private void NodeExpand (object sender, TreeViewCancelEventArgs e)
         {
-            if (e.Node.Tag == null)
-                return;
-
-            if (e.Node.Tag is RegionChunkData) {
-                LoadLazyChunk(e.Node);
-            }
-            else if (e.Node.Tag is NbtFileData) {
-                LoadLazyNbt(e.Node);
-            }
-            else if (e.Node.Tag is DirectoryData) {
-                LoadLazyDirectory(e.Node);
-            }
-            else if (e.Node.Tag is RegionData) {
-                LoadLazyRegion(e.Node);
-            }
+            ExpandNode(e.Node);
         }
 
         private void NodeCollapse (object sender, TreeViewEventArgs e)
         {
-            if (e.Node.Tag == null)
-                return;
-
-            if (e.Node.Tag is DataNode) {
-                UnloadLazyDataNode(e.Node);
-            }
+            CollapseNode(e.Node);
         }
 
         private void NodeSelected (object sender, TreeViewEventArgs e)
@@ -986,6 +1011,133 @@ namespace NBTPlus
         {
             AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_COMPOUND);
         }
+
+        private void saveToolStripMenuItem_Click (object sender, EventArgs e)
+        {
+            SaveAll();
+        }
+
+        private void exitToolStripMenuItem_Click (object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private TreeNode _rootSearchNode;
+        private string _searchName;
+        private string _searchValue;
+        private IEnumerator<TreeNode> _search;
+
+        private void Find (TreeNode node)
+        {
+            if (node == null)
+                return;
+
+            Find form = new Find();
+            if (form.ShowDialog() == DialogResult.OK) {
+                _rootSearchNode = node;
+
+                _searchName = form.MatchName ? form.NameToken : null;
+                _searchValue = form.MatchValue ? form.ValueToken : null;
+
+                _search = FindNode(node).GetEnumerator();
+
+                FindNext();
+            }
+        }
+
+        private void FindNext ()
+        {
+            if (_search == null)
+                return;
+
+            statusStrip1.Visible = true;
+            Application.DoEvents();
+
+            _nodeTree.SelectedNode = null;
+
+            if (!_search.MoveNext()) {
+                _nodeTree.SelectedNode = _rootSearchNode;
+                if (_rootSearchNode != null && _rootSearchNode.Tag is DataNode) {
+                    if (_rootSearchNode.IsExpanded && !(_rootSearchNode.Tag as DataNode).Expanded) {
+                        _rootSearchNode.Collapse();
+                    }
+                }
+
+                statusStrip1.Visible = false;
+
+                MessageBox.Show("End of results");
+                _search = null;
+            }
+
+            statusStrip1.Visible = false;
+        }
+
+        private IEnumerable<TreeNode> FindNode (TreeNode node)
+        {
+            if (node == null)
+                yield break;
+
+            bool expand = false;
+
+            if (node.Tag is DataNode) {
+                DataNode data = node.Tag as DataNode;
+                if (!data.Expanded) {
+                    ExpandNode(node);
+                    expand = true;
+                }
+            }
+
+            TagNode tag = GetTagNode(node);
+            if (tag != null) {
+                bool mName = _searchName == null;
+                bool mValue = _searchValue == null;
+
+                if (_searchName != null) {
+                    string tagName = GetTagNodeName(node);
+                    if (tagName != null)
+                        mName = tagName.Contains(_searchName);
+                }
+                if (_searchValue != null) {
+                    string tagValue = GetTagNodeText(node);
+                    if (tagValue != null)
+                        mValue = tagValue.Contains(_searchValue);
+                }
+
+                if (mName && mValue) {
+                    _nodeTree.SelectedNode = node;
+                    yield return node;
+                }
+            }
+
+            foreach (TreeNode sub in node.Nodes) {
+                foreach (TreeNode s in FindNode(sub))
+                    yield return s;
+            }
+
+            if (expand) {
+                DataNode data = node.Tag as DataNode;
+                if (!data.Modified)
+                    CollapseNode(node);
+            }
+        }
+
+        private void findToolStripMenuItem_Click (object sender, EventArgs e)
+        {
+            Find(_nodeTree.SelectedNode);
+        }
+
+        private void findNextToolStripMenuItem_Click (object sender, EventArgs e)
+        {
+            FindNext();
+        }
+
+        private void _buttonFindNext_Click (object sender, EventArgs e)
+        {
+            if (_search == null)
+                Find(_nodeTree.SelectedNode);
+            else
+                FindNext();
+        }
     }
 
     public class TagKey : IComparable<TagKey>
@@ -1047,6 +1199,8 @@ namespace NBTPlus
                 _modified = value;
             }
         }
+
+        public bool Expanded { get; set; }
     }
 
     public class NbtDataNode : DataNode
