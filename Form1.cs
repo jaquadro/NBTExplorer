@@ -23,6 +23,8 @@ namespace NBTPlus
             _nodeTree.BeforeExpand += NodeExpand;
             _nodeTree.AfterCollapse += NodeCollapse;
             _nodeTree.AfterSelect += NodeSelected;
+            _nodeTree.NodeMouseClick += NodeClicked;
+            _nodeTree.NodeMouseDoubleClick += NodeDoubleClicked;
 
             string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             path = Path.Combine(path, ".minecraft");
@@ -72,12 +74,26 @@ namespace NBTPlus
 
         private TreeNode NodeFromTag (TagNode tag, string name)
         {
-            string text = String.IsNullOrEmpty(name) ? "" : name + ": ";
-
             TreeNode node = new TreeNode();
             node.ImageIndex = _tagIconIndex[tag.GetTagType()];
             node.SelectedImageIndex = _tagIconIndex[tag.GetTagType()];
             node.Tag = tag;
+            node.Text = GetNodeText(name, tag);
+
+            if (tag.GetTagType() == TagType.TAG_LIST) {
+                PopulateNodeFromTag(node, tag.ToTagList());
+            }
+            else if (tag.GetTagType() == TagType.TAG_COMPOUND) {
+                PopulateNodeFromTag(node, tag.ToTagCompound());
+            }
+
+            return node;
+        }
+
+        private string GetTagNodeText (TagNode tag)
+        {
+            if (tag == null)
+                return null;
 
             switch (tag.GetTagType()) {
                 case TagType.TAG_BYTE:
@@ -87,25 +103,46 @@ namespace NBTPlus
                 case TagType.TAG_FLOAT:
                 case TagType.TAG_DOUBLE:
                 case TagType.TAG_STRING:
-                    node.Text = text + tag.ToString();
-                    break;
+                    return tag.ToString();
 
                 case TagType.TAG_BYTE_ARRAY:
-                    node.Text = text + tag.ToTagByteArray().Length + " bytes";
-                    break;
+                    return tag.ToTagByteArray().Length + " bytes";
 
                 case TagType.TAG_LIST:
-                    node.Text = text + tag.ToTagList().Count + " entries";
-                    PopulateNodeFromTag(node, tag.ToTagList());
-                    break;
+                    return tag.ToTagList().Count + " entries";
 
                 case TagType.TAG_COMPOUND:
-                    node.Text = text + tag.ToTagCompound().Count + " entries";
-                    PopulateNodeFromTag(node, tag.ToTagCompound());
-                    break;
+                    return tag.ToTagCompound().Count + " entries";
             }
 
-            return node;
+            return null;
+        }
+
+        private string GetNodeText (string name, string value)
+        {
+            name = String.IsNullOrEmpty(name) ? "" : name + ": ";
+            value = value ?? "";
+
+            return name + value;
+        }
+
+        private string GetNodeText (string name, TagNode tag)
+        {
+            return GetNodeText(name, GetTagNodeText(tag));
+        }
+
+        private string GetNodeText (TreeNode node)
+        {
+            return GetNodeText(GetTagNodeName(node), GetTagNodeText(node));
+        }
+
+        private string GetTagNodeText (TreeNode node)
+        {
+            TagNode tag = GetTagNode(node);
+            if (tag == null)
+                return null;
+
+            return GetTagNodeText(tag);
         }
 
         private void PopulateNodeFromTag (TreeNode node, TagNodeList list)
@@ -156,7 +193,9 @@ namespace NBTPlus
             for (int x = 0; x < 32; x++) {
                 for (int y = 0; y < 32; y++) {
                     if (rf.HasChunk(x, y)) {
-                        node.Nodes.Add(CreateLazyChunk(rf, x, y));
+                        TreeNode child = CreateLazyChunk(rf, x, y);
+                        node.Nodes.Add(child);
+                        LinkDataNodeParent(child, node);
                     }
                 }
             }
@@ -331,14 +370,32 @@ namespace NBTPlus
             UpdateToolbar();
         }
 
+        private void NodeClicked (object sender, TreeNodeMouseClickEventArgs e)
+        {
+            
+        }
+
+        private void NodeDoubleClicked (object sender, TreeNodeMouseClickEventArgs e)
+        {
+            EditNodeValue(_nodeTree.SelectedNode);
+        }
+
         private void UpdateToolbar ()
         {
             TreeNode node = _nodeTree.SelectedNode;
             TagNode tag = node.Tag as TagNode;
 
-            _buttonRename.Enabled = tag != null;
-            _buttonDelete.Enabled = tag != null;
+            if (tag == null && node.Tag is NbtDataNode) {
+                NbtDataNode data = node.Tag as NbtDataNode;
+                if (data.Tree != null)
+                    tag = data.Tree.Root;
+            }
+
+            _buttonRename.Enabled = tag != null && node.Tag is TagNode;
+            _buttonDelete.Enabled = tag != null && node.Tag is TagNode;
             _buttonEdit.Enabled = tag != null
+                && node.Tag is TagNode
+                && tag.GetTagType() != TagType.TAG_BYTE_ARRAY
                 && tag.GetTagType() != TagType.TAG_COMPOUND
                 && tag.GetTagType() != TagType.TAG_LIST;
 
@@ -427,7 +484,9 @@ namespace NBTPlus
         public void TryLoadFile (TreeNodeCollection parent, string path)
         {
             if (Path.GetExtension(path) == ".mcr") {
-                parent.Add(CreateLazyRegion(path));
+                TreeNode node = CreateLazyRegion(path);
+                parent.Add(node);
+                LinkDataNodeParent(node, node.Parent);
                 return;
             }
 
@@ -501,6 +560,9 @@ namespace NBTPlus
             if (node.Tag is NbtFileData) {
                 SaveNbtFileNode(node);
             }
+            else if (node.Tag is RegionChunkData) {
+                SaveRegionChunkNode(node);
+            }
         }
 
         private void SaveNbtFileNode (TreeNode node)
@@ -511,6 +573,18 @@ namespace NBTPlus
 
             NBTFile file = new NBTFile(data.Path);
             using (Stream str = file.GetDataOutputStream(data.CompressionType)) {
+                data.Tree.WriteTo(str);
+            }
+            data.Modified = false;
+        }
+
+        private void SaveRegionChunkNode (TreeNode node)
+        {
+            RegionChunkData data = node.Tag as RegionChunkData;
+            if (data == null || !data.Modified)
+                return;
+
+            using (Stream str = data.Region.GetChunkDataOutputStream(data.X, data.Z)) {
                 data.Tree.WriteTo(str);
             }
             data.Modified = false;
@@ -540,25 +614,43 @@ namespace NBTPlus
             OpenFile();
         }
 
-        private void toolStripButton5_Click (object sender, EventArgs e)
+        private TreeNode BaseNode (TreeNode node)
         {
-            if (_nodeTree.SelectedNode == null)
-                return;
+            if (node == null)
+                return null;
 
-            TreeNode baseNode = _nodeTree.SelectedNode;
+            TreeNode baseNode = node;
             while (baseNode.Tag == null || !(baseNode.Tag is DataNode)) {
                 baseNode = baseNode.Parent;
             }
 
+            return baseNode;
+        }
+
+        #region Tag Deletion
+
+        private void DeleteNode (TreeNode node)
+        {
+            TreeNode baseNode = BaseNode(node);
+
             // Can only delete internal NBT nodes
-            if (baseNode == null || baseNode == _nodeTree.SelectedNode)
+            if (baseNode == null || baseNode == node)
                 return;
 
             (baseNode.Tag as DataNode).Modified = true;
 
-            DeleteNodeNbtTag(_nodeTree.SelectedNode);
+            DeleteNodeNbtTag(node);
 
-            _nodeTree.SelectedNode.Remove();
+            if (node.Parent != null) {
+                node.Parent.Text = GetNodeText(node.Parent);
+            }
+
+            node.Remove();
+        }
+
+        private void _buttonDelete_Click (object sender, EventArgs e)
+        {
+            DeleteNode(_nodeTree.SelectedNode);
         }
 
         private void DeleteNodeNbtTag (TreeNode node)
@@ -604,9 +696,295 @@ namespace NBTPlus
             }
         }
 
+        #endregion
+
         private void _buttonSave_Click (object sender, EventArgs e)
         {
             SaveAll();
+        }
+
+        private TagNode GetTagNode (TreeNode node)
+        {
+            if (node == null)
+                return null;
+
+            if (node.Tag is TagNode) {
+                return node.Tag as TagNode;
+            }
+            else if (node.Tag is NbtDataNode) {
+                NbtDataNode data = node.Tag as NbtDataNode;
+                if (data == null)
+                    return null;
+
+                return data.Tree.Root;
+            }
+
+            return null;
+        }
+
+        private TagNode GetParentTagNode (TreeNode node)
+        {
+            if (GetTagNode(node) == null)
+                return null;
+
+            return GetTagNode(node.Parent);
+        }
+
+        private string GetTagNodeName (TreeNode node)
+        {
+            TagNode tag = GetTagNode(node);
+            if (tag == null)
+                return null;
+
+            TagNode parentTag = GetTagNode(node.Parent);
+            if (parentTag == null)
+                return null;
+
+            if (parentTag.GetTagType() != TagType.TAG_COMPOUND)
+                return null;
+
+            foreach (KeyValuePair<string, TagNode> sub in parentTag.ToTagCompound()) {
+                if (sub.Value == tag)
+                    return sub.Key;
+            }
+
+            return null;
+        }
+
+        private bool SetTagNodeName (TreeNode node, string name)
+        {
+            TagNode tag = GetTagNode(node);
+            if (tag == null)
+                return false;
+
+            TagNode parentTag = GetTagNode(node.Parent);
+            if (parentTag == null)
+                return false;
+
+            if (parentTag.GetTagType() != TagType.TAG_COMPOUND)
+                return false;
+
+            if (parentTag.ToTagCompound().ContainsKey(name))
+                return false;
+
+            string oldName = null;
+            foreach (KeyValuePair<string, TagNode> sub in parentTag.ToTagCompound()) {
+                if (sub.Value == tag) {
+                    oldName = sub.Key;
+                    break;
+                }
+            }
+
+            parentTag.ToTagCompound().Remove(oldName);
+            parentTag.ToTagCompound().Add(name, tag);
+
+            return true;
+        }
+
+        private void EditNodeValue (TreeNode node)
+        {
+            if (node == null)
+                return;
+
+            TagNode tag = GetTagNode(node);
+            if (tag == null)
+                return;
+
+            if (tag.GetTagType() == TagType.TAG_BYTE_ARRAY ||
+                tag.GetTagType() == TagType.TAG_LIST ||
+                tag.GetTagType() == TagType.TAG_COMPOUND)
+                return;
+
+            EditValue form = new EditValue(tag);
+            if (form.ShowDialog() == DialogResult.OK) {
+                TreeNode baseNode = BaseNode(node);
+                if (baseNode != null) {
+                    (baseNode.Tag as DataNode).Modified = true;
+                }
+
+                node.Text = GetNodeText(node);
+            }
+        }
+
+        private void _buttonEdit_Click (object sender, EventArgs e)
+        {
+            EditNodeValue(_nodeTree.SelectedNode);
+        }
+
+        private void EditNodeName (TreeNode node)
+        {
+            if (node == null)
+                return;
+
+            TagNode tag = GetTagNode(node);
+            if (tag == null)
+                return;
+
+            string name = GetTagNodeName(node);
+            if (name == null)
+                return;
+
+            EditValue form = new EditValue(name);
+
+            TagNode parentTag = GetParentTagNode(node);
+            foreach (string key in parentTag.ToTagCompound().Keys) {
+                form.InvalidNames.Add(key);
+            }
+
+            if (form.ShowDialog() == DialogResult.OK) {
+                TreeNode baseNode = BaseNode(node);
+                if (baseNode != null) {
+                    (baseNode.Tag as DataNode).Modified = true;
+                }
+
+                SetTagNodeName(node, form.NodeName);
+                node.Text = GetNodeText(node);
+            }
+        }
+
+        private void _buttonRename_Click (object sender, EventArgs e)
+        {
+            EditNodeName(_nodeTree.SelectedNode);
+        }
+
+        private void AddTagToNode (TreeNode node, TagType type)
+        {
+            TagNode tag = GetTagNode(node);
+            if (tag == null)
+                return;
+
+            if (tag.GetTagType() != TagType.TAG_COMPOUND &&
+                tag.GetTagType() != TagType.TAG_LIST)
+                return;
+
+            if (tag.GetTagType() == TagType.TAG_LIST &&
+                tag.ToTagList().ValueType != type &&
+                tag.ToTagList().Count > 0)
+                return;
+
+            TagNode newNode = null;
+            switch (type) {
+                case TagType.TAG_BYTE:
+                    newNode = new TagNodeByte();
+                    break;
+                case TagType.TAG_SHORT:
+                    newNode = new TagNodeShort();
+                    break;
+                case TagType.TAG_INT:
+                    newNode = new TagNodeInt();
+                    break;
+                case TagType.TAG_LONG:
+                    newNode = new TagNodeLong();
+                    break;
+                case TagType.TAG_FLOAT:
+                    newNode = new TagNodeFloat();
+                    break;
+                case TagType.TAG_DOUBLE:
+                    newNode = new TagNodeDouble();
+                    break;
+                case TagType.TAG_BYTE_ARRAY:
+                    newNode = new TagNodeByteArray();
+                    break;
+                case TagType.TAG_STRING:
+                    newNode = new TagNodeString();
+                    break;
+                case TagType.TAG_LIST:
+                    newNode = new TagNodeList(TagType.TAG_BYTE);
+                    break;
+                case TagType.TAG_COMPOUND:
+                    newNode = new TagNodeCompound();
+                    break;
+            }
+
+            if (tag is TagNodeCompound) {
+                TagNodeCompound ctag = tag as TagNodeCompound;
+
+                EditValue form = new EditValue("");
+                foreach (string key in ctag.Keys) {
+                    form.InvalidNames.Add(key);
+                }
+
+                if (form.ShowDialog() != DialogResult.OK)
+                    return;
+
+                ctag.Add(form.NodeName, newNode);
+
+                TreeNode tnode = NodeFromTag(newNode, form.NodeName);
+                node.Nodes.Add(tnode);
+
+                _nodeTree.SelectedNode = tnode;
+                tnode.Expand();
+            }
+            else if (tag is TagNodeList) {
+                TagNodeList ltag = tag as TagNodeList;
+                if (ltag.ValueType != type)
+                    ltag.ChangeValueType(type);
+
+                ltag.Add(newNode);
+
+                TreeNode tnode = NodeFromTag(newNode);
+                node.Nodes.Add(tnode);
+
+                _nodeTree.SelectedNode = tnode;
+                tnode.Expand();
+            }
+
+            node.Text = GetNodeText(node);
+
+            TreeNode baseNode = BaseNode(node);
+            if (baseNode != null) {
+                (baseNode.Tag as DataNode).Modified = true;
+            }
+        }
+
+        private void _buttonAddTagByte_Click (object sender, EventArgs e)
+        {
+            AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_BYTE);
+        }
+
+        private void _buttonAddTagShort_Click (object sender, EventArgs e)
+        {
+            AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_SHORT);
+        }
+
+        private void _buttonAddTagInt_Click (object sender, EventArgs e)
+        {
+            AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_INT);
+        }
+
+        private void _buttonAddTagLong_Click (object sender, EventArgs e)
+        {
+            AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_LONG);
+        }
+
+        private void _buttonAddTagFloat_Click (object sender, EventArgs e)
+        {
+            AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_FLOAT);
+        }
+
+        private void _buttonAddTagDouble_Click (object sender, EventArgs e)
+        {
+            AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_DOUBLE);
+        }
+
+        private void _buttonAddTagByteArray_Click (object sender, EventArgs e)
+        {
+            AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_BYTE_ARRAY);
+        }
+
+        private void _buttonAddTagString_Click (object sender, EventArgs e)
+        {
+            AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_STRING);
+        }
+
+        private void _buttonAddTagList_Click (object sender, EventArgs e)
+        {
+            AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_LIST);
+        }
+
+        private void _buttonAddTagCompound_Click (object sender, EventArgs e)
+        {
+            AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_COMPOUND);
         }
     }
 

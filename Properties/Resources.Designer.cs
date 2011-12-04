@@ -60,6 +60,27 @@ namespace NBTPlus.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap disk {
+            get {
+                object obj = ResourceManager.GetObject("disk", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap disk__pencil {
+            get {
+                object obj = ResourceManager.GetObject("disk--pencil", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap door {
+            get {
+                object obj = ResourceManager.GetObject("door", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap folder_open {
             get {
                 object obj = ResourceManager.GetObject("folder-open", resourceCulture);
@@ -70,6 +91,20 @@ namespace NBTPlus.Properties {
         internal static System.Drawing.Bitmap folder_open_document {
             get {
                 object obj = ResourceManager.GetObject("folder-open-document", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap information_frame {
+            get {
+                object obj = ResourceManager.GetObject("information-frame", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap question_frame {
+            get {
+                object obj = ResourceManager.GetObject("question-frame", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
