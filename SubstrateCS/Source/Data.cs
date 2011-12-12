@@ -267,7 +267,7 @@ namespace Substrate
         HEAD = 0x08,
     }
 
-    public enum RepeaterOriengation
+    public enum RepeaterOrientation
     {
         EAST = 0,
         SOUTH = 1,
@@ -298,8 +298,15 @@ namespace Substrate
         NORTH = 3,
     }
 
+    [Flags]
+    public enum TrapdoorState
+    {
+        SWUNG = 0x04,
+    }
+
     public enum PistonOrientation
     {
+        DOWN = 0,
         UP = 1,
         EAST = 2,
         WEST = 3,
