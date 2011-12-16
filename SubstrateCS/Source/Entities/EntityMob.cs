@@ -43,6 +43,17 @@ using Substrate.Core;
             set { _duration = value; }
         }
 
+        /// <summary>
+        /// Determine if the combination of properties in this ActiveEffects is valid.
+        /// </summary>
+        public bool IsValid
+        {
+            get
+            {
+                return !(_id == 0 || _amplifier == 0 || _duration == 0);
+            }
+        }
+
         #region ICopyable<ActiveEffects> Members
 
         public ActiveEffects Copy ()
@@ -179,7 +190,7 @@ using Substrate.Core;
             tree["Health"] = new TagNodeShort(_health);
             tree["HurtTime"] = new TagNodeShort(_hurtTime);
 
-            if (_activeEffects != null) {
+            if (_activeEffects != null && _activeEffects.IsValid) {
                 TagNodeCompound ae = new TagNodeCompound();
                 ae["Id"] = new TagNodeByte((byte)_activeEffects.Id);
                 ae["Amplifier"] = new TagNodeByte((byte)_activeEffects.Amplifier);
