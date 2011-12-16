@@ -6,9 +6,9 @@ namespace Substrate.Entities
 {
     using Substrate.Nbt;
 
-    public class EntityWolf : EntityMob
+    public class EntityWolf : EntityAnimal
     {
-        public static readonly SchemaNodeCompound WolfSchema = MobSchema.MergeInto(new SchemaNodeCompound("")
+        public static readonly SchemaNodeCompound WolfSchema = AnimalSchema.MergeInto(new SchemaNodeCompound("")
         {
             new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("Owner", TagType.TAG_STRING),
