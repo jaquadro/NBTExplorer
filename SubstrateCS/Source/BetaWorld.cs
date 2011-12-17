@@ -26,6 +26,8 @@ namespace Substrate
         private Dictionary<int, BetaChunkManager> _chunkMgrs;
         private Dictionary<int, BlockManager> _blockMgrs;
 
+        private Dictionary<int, ChunkCache> _caches;
+
         private PlayerManager _playerMan;
         private BetaDataManager _dataMan;
 
@@ -36,6 +38,8 @@ namespace Substrate
             _regionMgrs = new Dictionary<int, RegionManager>();
             _chunkMgrs = new Dictionary<int, BetaChunkManager>();
             _blockMgrs = new Dictionary<int, BlockManager>();
+
+            _caches = new Dictionary<int, ChunkCache>();
         }
 
         /// <summary>
@@ -150,6 +154,28 @@ namespace Substrate
             foreach (KeyValuePair<int, BetaChunkManager> cm in _chunkMgrs) {
                 cm.Value.Save();
             }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="ChunkCache"/> currently managing chunks in the default dimension.
+        /// </summary>
+        /// <returns>The <see cref="ChunkCache"/> for the default dimension, or null if the dimension was not found.</returns>
+        public ChunkCache GetChunkCache ()
+        {
+            return GetChunkCache(Dimension.DEFAULT);
+        }
+
+        /// <summary>
+        /// Gets the <see cref="ChunkCache"/> currently managing chunks in the given dimension.
+        /// </summary>
+        /// <param name="dim">The id of a dimension to look up.</param>
+        /// <returns>The <see cref="ChunkCache"/> for the given dimension, or null if the dimension was not found.</returns>
+        public ChunkCache GetChunkCache (int dim)
+        {
+            if (_caches.ContainsKey(dim)) {
+                return _caches[dim];
+            }
+            return null;
         }
 
         /// <summary>
@@ -276,6 +302,8 @@ namespace Substrate
             _regionMgrs[dim] = rm;
             _chunkMgrs[dim] = cm;
             _blockMgrs[dim] = bm;
+
+            _caches[dim] = cc;
         }
 
         private BetaWorld OpenWorld (string path)
