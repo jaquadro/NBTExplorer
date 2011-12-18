@@ -142,7 +142,7 @@ namespace Substrate
             if (ctree.ContainsKey("tag")) {
                 TagNodeCompound tagtree = ctree["tag"].ToTagCompound();
                 if (tagtree.ContainsKey("ench")) {
-                    TagNodeList enchList = ctree["ench"].ToTagList();
+                    TagNodeList enchList = tagtree["ench"].ToTagList();
 
                     foreach (TagNode tag in enchList) {
                         _enchantments.Add(new Enchantment().LoadTree(tag));
