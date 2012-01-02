@@ -30,25 +30,25 @@ namespace Substrate.TileEntities
         public string Text1
         {
             get { return _text1; }
-            set { _text1 = value.Substring(0, 14); }
+            set { _text1 = value.Length > 14 ? value.Substring(0, 14) : value; }
         }
 
         public string Text2
         {
             get { return _text2; }
-            set { _text2 = value.Substring(0, 14); }
+            set { _text2 = value.Length > 14 ? value.Substring(0, 14) : value; }
         }
 
         public string Text3
         {
             get { return _text3; }
-            set { _text3 = value.Substring(0, 14); }
+            set { _text3 = value.Length > 14 ? value.Substring(0, 14) : value; }
         }
 
         public string Text4
         {
             get { return _text4; }
-            set { _text4 = value.Substring(0, 14); }
+            set { _text4 = value.Length > 14 ? value.Substring(0, 14) : value; }
         }
 
         protected TileEntitySign (string id)
