@@ -39,8 +39,6 @@ namespace BlockReplace
                 int ydim = chunk.Blocks.YDim;
                 int zdim = chunk.Blocks.ZDim;
 
-                chunk.Blocks.AutoFluid = true;
-
                 // x, z, y is the most efficient order to scan blocks (not that
                 // you should care about internal detail)
                 for (int x = 0; x < xdim; x++) {
