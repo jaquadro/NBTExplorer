@@ -53,6 +53,23 @@ namespace Substrate
         }
 
         /// <summary>
+        /// Creates a new instance of a nonspecific <see cref="TypedEntity"/> object by NBT node.
+        /// </summary>
+        /// <param name="tree">A <see cref="TagNodeCompound"/> representing a single Entity, containing an 'id' field.</param>
+        /// <returns>A new instance of a <see cref="TypedEntity"/> object, or null if the entity is not typed.</returns>
+        public static TypedEntity CreateGeneric (TagNodeCompound tree)
+        {
+            TagNode type;
+            if (!tree.TryGetValue("id", out type)) {
+                return null;
+            }
+
+            TypedEntity te = new TypedEntity(type.ToTagString().Data);
+
+            return te.LoadTreeSafe(tree);
+        }
+
+        /// <summary>
         /// Lookup a concrete <see cref="TypedEntity"/> type by name.
         /// </summary>
         /// <param name="type">The name that a concrete <see cref="TypedEntity"/> type was registered with.</param>

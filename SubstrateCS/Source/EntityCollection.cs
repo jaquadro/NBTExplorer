@@ -188,12 +188,14 @@ namespace Substrate
         {
             private IEnumerator<TagNode> _enum;
 
+            private bool _next;
             private TypedEntity _cur;
 
             internal Enumerator (TagNodeList entities)
             {
                 _enum = entities.GetEnumerator();
                 _cur = null;
+                _next = false;
             }
 
             #region IEnumerator<Entity> Members
@@ -205,7 +207,7 @@ namespace Substrate
             {
                 get 
                 {
-                    if (_cur == null) {
+                    if (_next == false) {
                         throw new InvalidOperationException();
                     } 
                     return _cur;
@@ -240,10 +242,16 @@ namespace Substrate
             public bool MoveNext ()
             {
                 if (!_enum.MoveNext()) {
+                    _next = false;
                     return false;
                 }
 
                 _cur = EntityFactory.Create(_enum.Current.ToTagCompound());
+                if (_cur == null)
+                    _cur = EntityFactory.CreateGeneric(_enum.Current.ToTagCompound());
+
+                _next = true;
+
                 return true;
             }
 
@@ -253,6 +261,7 @@ namespace Substrate
             void System.Collections.IEnumerator.Reset ()
             {
                 _cur = null;
+                _next = false;
                 _enum.Reset();
             }
 
