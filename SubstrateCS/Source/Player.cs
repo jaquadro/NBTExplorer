@@ -500,6 +500,11 @@ namespace Substrate
                 tree["SpawnY"] = new TagNodeInt(_spawnY ?? 0);
                 tree["SpawnZ"] = new TagNodeInt(_spawnZ ?? 0);
             }
+            else {
+                tree.Remove("SpawnX");
+                tree.Remove("SpawnY");
+                tree.Remove("SpawnZ");
+            }
 
             if (_world != null) {
                 tree["World"] = new TagNodeString(_world);
