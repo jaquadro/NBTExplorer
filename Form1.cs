@@ -26,16 +26,13 @@ namespace NBTExplorer
             _nodeTree.NodeMouseClick += NodeClicked;
             _nodeTree.NodeMouseDoubleClick += NodeDoubleClicked;
 
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            path = Path.Combine(path, ".minecraft");
-            path = Path.Combine(path, "saves");
-
-            if (!Directory.Exists(path)) {
-                path = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Length > 1) {
+                OpenFile(args[1]);
             }
-
-            LoadDirectory(path);
-            _nodeTree.Nodes[0].Expand();
+            else {
+                OpenMinecraftDir();
+            }
         }
 
         public void LoadNbtStream (TreeNodeCollection parent, Stream stream)
@@ -481,6 +478,48 @@ namespace NBTExplorer
             _buttonAddTagCompound.Enabled = state;
         }
 
+        public void OpenDirectory (string path)
+        {
+            _nodeTree.Nodes.Clear();
+
+            LoadDirectory(path);
+
+            if (_nodeTree.Nodes.Count > 0) {
+                _nodeTree.Nodes[0].Expand();
+            }
+        }
+
+        public void OpenPaths (string[] paths)
+        {
+            _nodeTree.Nodes.Clear();
+
+            foreach (string path in paths) {
+                if (Directory.Exists(path)) {
+                    LoadDirectory(path);
+                }
+                else if (File.Exists(path)) {
+                    TryLoadFile(_nodeTree.Nodes, path);
+                }
+            }
+
+            if (_nodeTree.Nodes.Count > 0) {
+                _nodeTree.Nodes[0].Expand();
+            }
+        }
+
+        public void OpenMinecraftDir ()
+        {
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            path = Path.Combine(path, ".minecraft");
+            path = Path.Combine(path, "saves");
+
+            if (!Directory.Exists(path)) {
+                path = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+            }
+
+            OpenDirectory(path);
+        }
+
         public void LoadDirectory (string path)
         {
             LoadDirectory(path, _nodeTree.Nodes);
@@ -559,18 +598,36 @@ namespace NBTExplorer
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.RestoreDirectory = true;
-            ofd.Multiselect = false;
+            ofd.Multiselect = true;
 
             if (ofd.ShowDialog() == DialogResult.OK) {
-                _nodeTree.Nodes.Clear();
-                TryLoadFile(_nodeTree.Nodes, ofd.FileName);
+                OpenPaths(ofd.FileNames);
+            }
+        }
+
+        private void OpenFile (string file)
+        {
+            _nodeTree.Nodes.Clear();
+            TryLoadFile(_nodeTree.Nodes, file);
+        }
+
+        private string _openFolderPath = null;
+        private void OpenFolder ()
+        {
+            FolderBrowserDialog ofd = new FolderBrowserDialog();
+            if (_openFolderPath != null)
+                ofd.SelectedPath = _openFolderPath;
+
+            if (ofd.ShowDialog() == DialogResult.OK) {
+                _openFolderPath = ofd.SelectedPath;
+                OpenDirectory(ofd.SelectedPath);
             }
         }
 
         private void SaveAll ()
         {
-            if (_nodeTree.Nodes.Count > 0) {
-                SaveNode(_nodeTree.Nodes[0]);
+            foreach (TreeNode node in _nodeTree.Nodes) {
+                SaveNode(node);
             }
         }
 
@@ -627,11 +684,7 @@ namespace NBTExplorer
 
         private void openFolderToolStripMenuItem_Click (object sender, EventArgs e)
         {
-            FolderBrowserDialog ofd = new FolderBrowserDialog();
-            if (ofd.ShowDialog() == DialogResult.OK) {
-                _nodeTree.Nodes.Clear();
-                LoadDirectory(ofd.SelectedPath);
-            }
+            OpenFolder();
         }
 
         private void toolStripButton1_Click (object sender, EventArgs e)
@@ -1137,6 +1190,33 @@ namespace NBTExplorer
                 Find(_nodeTree.SelectedNode);
             else
                 FindNext();
+        }
+
+        private void _buttonOpenFolder_Click (object sender, EventArgs e)
+        {
+            OpenFolder();
+        }
+
+        private void DropFile (DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            OpenPaths(files);
+        }
+
+        private void _nodeTree_DragDrop (object sender, DragEventArgs e)
+        {
+            DropFile(e);
+        }
+
+        private void _nodeTree_DragEnter (object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Copy;
+        }
+
+        private void openMinecraftSaveFolderToolStripMenuItem_Click (object sender, EventArgs e)
+        {
+            OpenMinecraftDir();
         }
     }
 

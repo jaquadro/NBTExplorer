@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Substrate.Nbt;
@@ -97,7 +96,7 @@ namespace NBTExplorer
         private bool ValidateNameInput ()
         {
             string text = textBox1.Text.Trim();
-            if (String.IsNullOrWhiteSpace(text)) {
+            if (String.IsNullOrEmpty(text)) {
                 MessageBox.Show("You must provide a nonempty name.");
                 return false;
             }
