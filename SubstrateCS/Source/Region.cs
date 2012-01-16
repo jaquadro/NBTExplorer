@@ -504,7 +504,7 @@ namespace Substrate
 
             rf.DeleteChunk(lcx, lcz);
 
-            ChunkKey k = new ChunkKey(lcx, lcz);
+            ChunkKey k = new ChunkKey(ChunkGlobalX(lcx), ChunkGlobalZ(lcz));
             _cache.Remove(k);
 
             if (ChunkCount() == 0) {
