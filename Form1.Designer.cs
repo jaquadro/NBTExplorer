@@ -33,6 +33,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openMinecraftSaveFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -42,9 +43,6 @@
             this.findNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this._nodeTree = new System.Windows.Forms.TreeView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -68,17 +66,16 @@
             this._buttonAddTagCompound = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this._buttonFindNext = new System.Windows.Forms.ToolStripButton();
-            this._nodeContainerContext = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.openSubTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveItemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openMinecraftSaveFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.BottomToolStripPanel = new System.Windows.Forms.ToolStripPanel();
+            this.TopToolStripPanel = new System.Windows.Forms.ToolStripPanel();
+            this.RightToolStripPanel = new System.Windows.Forms.ToolStripPanel();
+            this.LeftToolStripPanel = new System.Windows.Forms.ToolStripPanel();
+            this.ContentPanel = new System.Windows.Forms.ToolStripContentPanel();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1.SuspendLayout();
-            this.toolStripContainer1.ContentPanel.SuspendLayout();
-            this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
-            this.toolStripContainer1.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
-            this._nodeContainerContext.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -109,7 +106,7 @@
             // 
             // openToolStripMenuItem
             // 
-            this.openToolStripMenuItem.Image = global::NBTExplorer.Properties.Resources.folder_open_document;
+            this.openToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openToolStripMenuItem.Image")));
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.openToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
@@ -118,13 +115,20 @@
             // 
             // openFolderToolStripMenuItem
             // 
-            this.openFolderToolStripMenuItem.Image = global::NBTExplorer.Properties.Resources.folder_open;
+            this.openFolderToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openFolderToolStripMenuItem.Image")));
             this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
             this.openFolderToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.O)));
             this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
             this.openFolderToolStripMenuItem.Text = "Open &Folder...";
             this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
+            // 
+            // openMinecraftSaveFolderToolStripMenuItem
+            // 
+            this.openMinecraftSaveFolderToolStripMenuItem.Name = "openMinecraftSaveFolderToolStripMenuItem";
+            this.openMinecraftSaveFolderToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.openMinecraftSaveFolderToolStripMenuItem.Text = "Open &Minecraft Save Folder";
+            this.openMinecraftSaveFolderToolStripMenuItem.Click += new System.EventHandler(this.openMinecraftSaveFolderToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
@@ -133,7 +137,7 @@
             // 
             // saveToolStripMenuItem
             // 
-            this.saveToolStripMenuItem.Image = global::NBTExplorer.Properties.Resources.disk;
+            this.saveToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripMenuItem.Image")));
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
@@ -147,7 +151,7 @@
             // 
             // exitToolStripMenuItem
             // 
-            this.exitToolStripMenuItem.Image = global::NBTExplorer.Properties.Resources.door;
+            this.exitToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exitToolStripMenuItem.Image")));
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
@@ -165,7 +169,7 @@
             // 
             // findToolStripMenuItem
             // 
-            this.findToolStripMenuItem.Image = global::NBTExplorer.Properties.Resources.binocular;
+            this.findToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("findToolStripMenuItem.Image")));
             this.findToolStripMenuItem.Name = "findToolStripMenuItem";
             this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
             this.findToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
@@ -174,7 +178,7 @@
             // 
             // findNextToolStripMenuItem
             // 
-            this.findNextToolStripMenuItem.Image = global::NBTExplorer.Properties.Resources.binocular__arrow;
+            this.findNextToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("findNextToolStripMenuItem.Image")));
             this.findNextToolStripMenuItem.Name = "findNextToolStripMenuItem";
             this.findNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
             this.findNextToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
@@ -191,61 +195,26 @@
             // 
             // aboutToolStripMenuItem
             // 
-            this.aboutToolStripMenuItem.Image = global::NBTExplorer.Properties.Resources.information_frame;
+            this.aboutToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("aboutToolStripMenuItem.Image")));
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // toolStripContainer1
-            // 
-            // 
-            // toolStripContainer1.ContentPanel
-            // 
-            this.toolStripContainer1.ContentPanel.Controls.Add(this.statusStrip1);
-            this.toolStripContainer1.ContentPanel.Controls.Add(this._nodeTree);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(562, 351);
-            this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.toolStripContainer1.Location = new System.Drawing.Point(0, 24);
-            this.toolStripContainer1.Name = "toolStripContainer1";
-            this.toolStripContainer1.Size = new System.Drawing.Size(562, 376);
-            this.toolStripContainer1.TabIndex = 1;
-            this.toolStripContainer1.Text = "toolStripContainer1";
-            // 
-            // toolStripContainer1.TopToolStripPanel
-            // 
-            this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStrip1);
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 329);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(562, 22);
-            this.statusStrip1.SizingGrip = false;
-            this.statusStrip1.TabIndex = 1;
-            this.statusStrip1.Text = "statusStrip1";
-            this.statusStrip1.Visible = false;
-            // 
-            // toolStripStatusLabel1
-            // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(547, 17);
-            this.toolStripStatusLabel1.Spring = true;
-            this.toolStripStatusLabel1.Text = "Please wait...";
-            // 
             // _nodeTree
             // 
             this._nodeTree.AllowDrop = true;
-            this._nodeTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._nodeTree.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this._nodeTree.ImageIndex = 0;
             this._nodeTree.ImageList = this.imageList1;
-            this._nodeTree.Location = new System.Drawing.Point(0, 0);
+            this._nodeTree.Location = new System.Drawing.Point(0, 49);
+            this._nodeTree.Margin = new System.Windows.Forms.Padding(0);
             this._nodeTree.Name = "_nodeTree";
             this._nodeTree.SelectedImageIndex = 0;
-            this._nodeTree.Size = new System.Drawing.Size(562, 351);
+            this._nodeTree.Size = new System.Drawing.Size(562, 350);
             this._nodeTree.TabIndex = 0;
             this._nodeTree.DragDrop += new System.Windows.Forms.DragEventHandler(this._nodeTree_DragDrop);
             this._nodeTree.DragEnter += new System.Windows.Forms.DragEventHandler(this._nodeTree_DragEnter);
@@ -271,7 +240,6 @@
             // 
             // toolStrip1
             // 
-            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._buttonOpen,
             this._buttonOpenFolder,
@@ -293,7 +261,7 @@
             this._buttonAddTagCompound,
             this.toolStripSeparator5,
             this._buttonFindNext});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(562, 25);
             this.toolStrip1.Stretch = true;
@@ -312,7 +280,7 @@
             // _buttonOpenFolder
             // 
             this._buttonOpenFolder.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._buttonOpenFolder.Image = global::NBTExplorer.Properties.Resources.folder_open;
+            this._buttonOpenFolder.Image = ((System.Drawing.Image)(resources.GetObject("_buttonOpenFolder.Image")));
             this._buttonOpenFolder.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._buttonOpenFolder.Name = "_buttonOpenFolder";
             this._buttonOpenFolder.Size = new System.Drawing.Size(23, 22);
@@ -477,49 +445,76 @@
             // _buttonFindNext
             // 
             this._buttonFindNext.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._buttonFindNext.Image = global::NBTExplorer.Properties.Resources.binocular__arrow;
+            this._buttonFindNext.Image = ((System.Drawing.Image)(resources.GetObject("_buttonFindNext.Image")));
             this._buttonFindNext.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._buttonFindNext.Name = "_buttonFindNext";
             this._buttonFindNext.Size = new System.Drawing.Size(23, 22);
             this._buttonFindNext.Text = "Find / Find Next";
             this._buttonFindNext.Click += new System.EventHandler(this._buttonFindNext_Click);
             // 
-            // _nodeContainerContext
+            // BottomToolStripPanel
             // 
-            this._nodeContainerContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openSubTreeToolStripMenuItem,
-            this.saveItemToolStripMenuItem});
-            this._nodeContainerContext.Name = "contextMenuStrip1";
-            this._nodeContainerContext.Size = new System.Drawing.Size(180, 48);
+            this.BottomToolStripPanel.Location = new System.Drawing.Point(0, 0);
+            this.BottomToolStripPanel.Name = "BottomToolStripPanel";
+            this.BottomToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.BottomToolStripPanel.RowMargin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.BottomToolStripPanel.Size = new System.Drawing.Size(0, 0);
             // 
-            // openSubTreeToolStripMenuItem
+            // TopToolStripPanel
             // 
-            this.openSubTreeToolStripMenuItem.Image = global::NBTExplorer.Properties.Resources.folder_open;
-            this.openSubTreeToolStripMenuItem.Name = "openSubTreeToolStripMenuItem";
-            this.openSubTreeToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
-            this.openSubTreeToolStripMenuItem.Text = "Open Node As Root";
+            this.TopToolStripPanel.Location = new System.Drawing.Point(0, 0);
+            this.TopToolStripPanel.Name = "TopToolStripPanel";
+            this.TopToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.TopToolStripPanel.RowMargin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.TopToolStripPanel.Size = new System.Drawing.Size(0, 0);
             // 
-            // saveItemToolStripMenuItem
+            // RightToolStripPanel
             // 
-            this.saveItemToolStripMenuItem.Image = global::NBTExplorer.Properties.Resources.disk;
-            this.saveItemToolStripMenuItem.Name = "saveItemToolStripMenuItem";
-            this.saveItemToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
-            this.saveItemToolStripMenuItem.Text = "Save Node";
+            this.RightToolStripPanel.Location = new System.Drawing.Point(0, 0);
+            this.RightToolStripPanel.Name = "RightToolStripPanel";
+            this.RightToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.RightToolStripPanel.RowMargin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.RightToolStripPanel.Size = new System.Drawing.Size(0, 0);
             // 
-            // openMinecraftSaveFolderToolStripMenuItem
+            // LeftToolStripPanel
             // 
-            this.openMinecraftSaveFolderToolStripMenuItem.Name = "openMinecraftSaveFolderToolStripMenuItem";
-            this.openMinecraftSaveFolderToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
-            this.openMinecraftSaveFolderToolStripMenuItem.Text = "Open &Minecraft Save Folder";
-            this.openMinecraftSaveFolderToolStripMenuItem.Click += new System.EventHandler(this.openMinecraftSaveFolderToolStripMenuItem_Click);
+            this.LeftToolStripPanel.Location = new System.Drawing.Point(0, 0);
+            this.LeftToolStripPanel.Name = "LeftToolStripPanel";
+            this.LeftToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.LeftToolStripPanel.RowMargin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.LeftToolStripPanel.Size = new System.Drawing.Size(0, 0);
+            // 
+            // ContentPanel
+            // 
+            this.ContentPanel.Size = new System.Drawing.Size(562, 376);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 401);
+            this.statusStrip1.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(562, 22);
+            this.statusStrip1.TabIndex = 1;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(516, 17);
+            this.toolStripStatusLabel1.Spring = true;
+            this.toolStripStatusLabel1.Click += new System.EventHandler(this.toolStripStatusLabel1_Click);
             // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(562, 400);
-            this.Controls.Add(this.toolStripContainer1);
+            this.ClientSize = new System.Drawing.Size(562, 423);
+            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this._nodeTree);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
@@ -527,17 +522,10 @@
             this.Text = "NBTExplorer";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.toolStripContainer1.ContentPanel.ResumeLayout(false);
-            this.toolStripContainer1.ContentPanel.PerformLayout();
-            this.toolStripContainer1.TopToolStripPanel.ResumeLayout(false);
-            this.toolStripContainer1.TopToolStripPanel.PerformLayout();
-            this.toolStripContainer1.ResumeLayout(false);
-            this.toolStripContainer1.PerformLayout();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
-            this._nodeContainerContext.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -549,7 +537,6 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem searchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.TreeView _nodeTree;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton _buttonOpen;
@@ -573,9 +560,6 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openFolderToolStripMenuItem;
-        private System.Windows.Forms.ContextMenuStrip _nodeContainerContext;
-        private System.Windows.Forms.ToolStripMenuItem openSubTreeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveItemToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
@@ -584,10 +568,15 @@
         private System.Windows.Forms.ToolStripMenuItem findNextToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripButton _buttonFindNext;
-        private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripButton _buttonOpenFolder;
         private System.Windows.Forms.ToolStripMenuItem openMinecraftSaveFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripPanel BottomToolStripPanel;
+        private System.Windows.Forms.ToolStripPanel TopToolStripPanel;
+        private System.Windows.Forms.ToolStripPanel RightToolStripPanel;
+        private System.Windows.Forms.ToolStripPanel LeftToolStripPanel;
+        private System.Windows.Forms.ToolStripContentPanel ContentPanel;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
     }
 }
 

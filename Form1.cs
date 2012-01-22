@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -308,11 +307,11 @@ namespace NBTExplorer
 
             node.Nodes.Clear();
 
-            foreach (string dirpath in Directory.EnumerateDirectories(data.Path)) {
+            foreach (string dirpath in Directory.GetDirectories(data.Path)) {
                 node.Nodes.Add(CreateLazyDirectory(dirpath, node));
             }
 
-            foreach (string filepath in Directory.EnumerateFiles(data.Path)) {
+            foreach (string filepath in Directory.GetFiles(data.Path)) {
                 TryLoadFile(node.Nodes, filepath);
             }
 
@@ -509,15 +508,27 @@ namespace NBTExplorer
 
         public void OpenMinecraftDir ()
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            path = Path.Combine(path, ".minecraft");
-            path = Path.Combine(path, "saves");
+            try {
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                path = Path.Combine(path, ".minecraft");
+                path = Path.Combine(path, "saves");
 
-            if (!Directory.Exists(path)) {
-                path = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+                if (!Directory.Exists(path)) {
+                    path = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+                }
+
+                OpenDirectory(path);
             }
-
-            OpenDirectory(path);
+            catch (Exception) {
+                MessageBox.Show("Could not open default Minecraft save directory");
+                try {
+                    OpenDirectory(Directory.GetCurrentDirectory());
+                }
+                catch (Exception) {
+                    MessageBox.Show("Could not open current directory, this tool is probably not compatible with your platform.");
+                    Application.Exit();
+                }
+            }
         }
 
         public void LoadDirectory (string path)
@@ -534,11 +545,11 @@ namespace NBTExplorer
         {
             TreeNode root = new TreeNode(name, 10, 10);
 
-            foreach (string dirpath in Directory.EnumerateDirectories(path)) {
+            foreach (string dirpath in Directory.GetDirectories(path)) {
                 root.Nodes.Add(CreateLazyDirectory(dirpath, root));
             }
 
-            foreach (string filepath in Directory.EnumerateFiles(path)) {
+            foreach (string filepath in Directory.GetFiles(path)) {
                 TryLoadFile(root.Nodes, filepath);
             }
 
@@ -554,7 +565,7 @@ namespace NBTExplorer
                 return;
             }
 
-            if (Path.GetExtension(path) == ".dat") {
+            if (Path.GetExtension(path) == ".dat" || Path.GetExtension(path) == ".schematic") {
                 try {
                     NBTFile file = new NBTFile(path);
                     NbtTree tree = new NbtTree();
@@ -1072,7 +1083,7 @@ namespace NBTExplorer
 
         private void exitToolStripMenuItem_Click (object sender, EventArgs e)
         {
-            Application.Exit();
+            Close();
         }
 
         private TreeNode _rootSearchNode;
@@ -1103,7 +1114,7 @@ namespace NBTExplorer
             if (_search == null)
                 return;
 
-            statusStrip1.Visible = true;
+            toolStripStatusLabel1.Text = "Please wait...";
             Application.DoEvents();
 
             _nodeTree.SelectedNode = null;
@@ -1116,13 +1127,13 @@ namespace NBTExplorer
                     }
                 }
 
-                statusStrip1.Visible = false;
+                toolStripStatusLabel1.Text = "";
 
                 MessageBox.Show("End of results");
                 _search = null;
             }
 
-            statusStrip1.Visible = false;
+            toolStripStatusLabel1.Text = "";
         }
 
         private IEnumerable<TreeNode> FindNode (TreeNode node)
@@ -1217,6 +1228,11 @@ namespace NBTExplorer
         private void openMinecraftSaveFolderToolStripMenuItem_Click (object sender, EventArgs e)
         {
             OpenMinecraftDir();
+        }
+
+        private void toolStripStatusLabel1_Click (object sender, EventArgs e)
+        {
+
         }
     }
 

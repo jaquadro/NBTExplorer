@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NBTExplorer</RootNamespace>
     <AssemblyName>NBTExplorer</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -37,15 +38,13 @@
     <ApplicationIcon>dead_bush.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Substrate">
-      <HintPath>..\Substrate\SubstrateCS\bin\Release\NET4\Substrate.dll</HintPath>
+    <Reference Include="Substrate, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Substrate\SubstrateCS\bin\Release\NET2\Substrate.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="About.cs">
@@ -85,6 +84,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -97,46 +97,9 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\folder-open-document.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\folder-open.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\disk.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\disk--pencil.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\door.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\question-frame.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\information-frame.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\binocular.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\binocular--arrow.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="dead_bush.ico" />
-    <None Include="Resources\Dead_Bush.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
