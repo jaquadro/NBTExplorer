@@ -6,7 +6,7 @@ namespace Substrate
     /// <summary>
     /// Represents an Alpha-compatible interface for globally managing blocks.
     /// </summary>
-    public class BlockManager : IBlockManager
+    public class BlockManager : IVersion10BlockManager, IBlockManager
     {
         public const int MIN_X = -32000000;
         public const int MAX_X = 32000000;
@@ -438,6 +438,93 @@ namespace Substrate
             }
 
             cache.Blocks.ClearTileEntity(x & chunkXMask, y & chunkYMask, z & chunkZMask);
+        }
+
+        #endregion
+
+
+        #region IActiveBlockContainer Members
+
+        IActiveBlock IActiveBlockCollection.GetBlock (int x, int y, int z)
+        {
+            return GetBlock(x, y, z);
+        }
+
+        IActiveBlock IActiveBlockCollection.GetBlockRef (int x, int y, int z)
+        {
+            return GetBlockRef(x, y, z);
+        }
+
+        /// <inheritdoc/>
+        public void SetBlock (int x, int y, int z, IActiveBlock block)
+        {
+            cache.Blocks.SetBlock(x, y, z, block);
+        }
+
+        /// <inheritdoc/>
+        public int GetTileTickValue (int x, int y, int z)
+        {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
+                return 0;
+            }
+
+            return cache.Blocks.GetTileTickValue(x & chunkXMask, y & chunkYMask, z & chunkZMask);
+        }
+
+        /// <inheritdoc/>
+        public void SetTileTickValue (int x, int y, int z, int tickValue)
+        {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
+                return;
+            }
+
+            cache.Blocks.SetTileTickValue(x & chunkXMask, y & chunkYMask, z & chunkZMask, tickValue);
+        }
+
+        /// <inheritdoc/>
+        public TileTick GetTileTick (int x, int y, int z)
+        {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
+                return null;
+            }
+
+            return cache.Blocks.GetTileTick(x & chunkXMask, y & chunkYMask, z & chunkZMask);
+        }
+
+        /// <inheritdoc/>
+        public void SetTileTick (int x, int y, int z, TileTick te)
+        {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
+                return;
+            }
+
+            cache.Blocks.SetTileTick(x & chunkXMask, y & chunkYMask, z & chunkZMask, te);
+        }
+
+        /// <inheritdoc/>
+        public void CreateTileTick (int x, int y, int z)
+        {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
+                return;
+            }
+
+            cache.Blocks.CreateTileTick(x & chunkXMask, y & chunkYMask, z & chunkZMask);
+        }
+
+        /// <inheritdoc/>
+        public void ClearTileTick (int x, int y, int z)
+        {
+            cache = GetChunk(x, y, z);
+            if (cache == null || !Check(x, y, z)) {
+                return;
+            }
+
+            cache.Blocks.ClearTileTick(x & chunkXMask, y & chunkYMask, z & chunkZMask);
         }
 
         #endregion

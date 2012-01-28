@@ -32,6 +32,7 @@ namespace Substrate
                 new SchemaNodeArray("HeightMap", 256),
                 new SchemaNodeList("Entities", TagType.TAG_COMPOUND, SchemaOptions.CREATE_ON_MISSING),
                 new SchemaNodeList("TileEntities", TagType.TAG_COMPOUND, TileEntity.Schema, SchemaOptions.CREATE_ON_MISSING),
+                new SchemaNodeList("TileTicks", TagType.TAG_COMPOUND, TileTick.Schema, SchemaOptions.OPTIONAL),
                 new SchemaNodeScaler("LastUpdate", TagType.TAG_LONG, SchemaOptions.CREATE_ON_MISSING),
                 new SchemaNodeScaler("xPos", TagType.TAG_INT),
                 new SchemaNodeScaler("zPos", TagType.TAG_INT),
@@ -52,6 +53,7 @@ namespace Substrate
 
         private TagNodeList _entities;
         private TagNodeList _tileEntities;
+        private TagNodeList _tileTicks;
 
         private AlphaBlockCollection _blockManager;
         private EntityCollection _entityManager;
@@ -189,6 +191,25 @@ namespace Substrate
                 _tileEntities.Add(te.BuildTree());
             }
 
+            // Update tile tick coordinates
+
+            if (_tileTicks != null) {
+                List<TileTick> tileTicks = new List<TileTick>();
+                foreach (TagNodeCompound tag in _tileTicks) {
+                    TileTick tt = TileTick.FromTreeSafe(tag);
+
+                    if (tt != null) {
+                        tt.MoveBy(diffx, 0, diffz);
+                        tileTicks.Add(tt);
+                    }
+                }
+
+                _tileTicks.Clear();
+                foreach (TileTick tt in tileTicks) {
+                    _tileTicks.Add(tt.BuildTree());
+                }
+            }
+
             // Update entity coordinates
 
             List<TypedEntity> entities = new List<TypedEntity>();
@@ -213,6 +234,8 @@ namespace Substrate
             if (outStream == null || !outStream.CanWrite) {
                 return false;
             }
+
+            BuildConditional();
 
             _tree.WriteTo(outStream);
             outStream.Close();
@@ -248,6 +271,11 @@ namespace Substrate
             _entities = level["Entities"] as TagNodeList;
             _tileEntities = level["TileEntities"] as TagNodeList;
 
+            if (level.ContainsKey("TileTicks"))
+                _tileTicks = level["TileTicks"] as TagNodeList;
+            else
+                _tileTicks = new TagNodeList(TagType.TAG_COMPOUND);
+
             // List-type patch up
             if (_entities.Count == 0) {
                 level["Entities"] = new TagNodeList(TagType.TAG_COMPOUND);
@@ -259,10 +287,15 @@ namespace Substrate
                 _tileEntities = level["TileEntities"] as TagNodeList;
             }
 
+            if (_tileTicks.Count == 0) {
+                level["TileTicks"] = new TagNodeList(TagType.TAG_COMPOUND);
+                _tileTicks = level["TileTicks"] as TagNodeList;
+            }
+
             _cx = level["xPos"].ToTagInt();
             _cz = level["zPos"].ToTagInt();
 
-            _blockManager = new AlphaBlockCollection(_blocks, _data, _blockLight, _skyLight, _heightMap, _tileEntities);
+            _blockManager = new AlphaBlockCollection(_blocks, _data, _blockLight, _skyLight, _heightMap, _tileEntities, _tileTicks);
             _entityManager = new EntityCollection(_entities);
 
             return this;
@@ -288,6 +321,8 @@ namespace Substrate
         /// <returns>The root node of the Chunk's NBT tree.</returns>
         public TagNode BuildTree ()
         {
+            BuildConditional();
+
             return _tree.Root;
         }
 
@@ -319,6 +354,15 @@ namespace Substrate
         #endregion
 
 
+        private void BuildConditional ()
+        {
+            TagNodeCompound level = _tree.Root["Level"] as TagNodeCompound;
+            if (_tileTicks != _blockManager.TileTicks && _blockManager.TileTicks.Count > 0) {
+                _tileTicks = _blockManager.TileTicks;
+                level["TileTicks"] = _tileTicks;
+            }
+        }
+
         private void BuildNBTTree ()
         {
             int elements2 = XDIM * ZDIM;
@@ -338,6 +382,7 @@ namespace Substrate
 
             _entities = new TagNodeList(TagType.TAG_COMPOUND);
             _tileEntities = new TagNodeList(TagType.TAG_COMPOUND);
+            _tileTicks = new TagNodeList(TagType.TAG_COMPOUND);
 
             TagNodeCompound level = new TagNodeCompound();
             level.Add("Blocks", blocks);
@@ -347,6 +392,7 @@ namespace Substrate
             level.Add("HeightMap", heightMap);
             level.Add("Entities", _entities);
             level.Add("TileEntities", _tileEntities);
+            level.Add("TileTicks", _tileTicks);
             level.Add("LastUpdate", new TagNodeLong(Timestamp()));
             level.Add("xPos", new TagNodeInt(_cx));
             level.Add("zPos", new TagNodeInt(_cz));

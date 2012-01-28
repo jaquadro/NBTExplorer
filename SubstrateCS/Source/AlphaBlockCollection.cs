@@ -11,7 +11,7 @@ namespace Substrate
     /// <remarks>An <see cref="AlphaBlockCollection"/> is a wrapper around existing pieces of data.  Although it
     /// holds references to data, it does not "own" the data in the same way that a <see cref="Chunk"/> does.  An
     /// <see cref="AlphaBlockCollection"/> simply overlays a higher-level interface on top of existing data.</remarks>
-    public class AlphaBlockCollection : IBoundedAlphaBlockCollection
+    public class AlphaBlockCollection : IBoundedAlphaBlockCollection, IBoundedActiveBlockCollection
     {
         private readonly int _xdim;
         private readonly int _ydim;
@@ -24,14 +24,17 @@ namespace Substrate
         private ZXByteArray _heightMap;
 
         private TagNodeList _tileEntities;
+        private TagNodeList _tileTicks;
 
         private BlockLight _lightManager;
         private BlockFluid _fluidManager;
         private BlockTileEntities _tileEntityManager;
+        private BlockTileTicks _tileTickManager;
 
         private bool _dirty = false;
         private bool _autoLight = true;
         private bool _autoFluid = false;
+        private bool _autoTick = false;
 
         public delegate AlphaBlockCollection NeighborLookupHandler (int relx, int rely, int relz);
 
@@ -49,6 +52,7 @@ namespace Substrate
             _skyLight = new XZYNibbleArray(xdim, ydim, zdim);
             _heightMap = new ZXByteArray(xdim, zdim);
             _tileEntities = new TagNodeList(TagType.TAG_COMPOUND);
+            _tileTicks = new TagNodeList(TagType.TAG_COMPOUND);
 
             _xdim = xdim;
             _ydim = ydim;
@@ -73,6 +77,28 @@ namespace Substrate
             XZYNibbleArray skyLight,
             ZXByteArray heightMap,
             TagNodeList tileEntities)
+            : this(blocks, data, blockLight, skyLight, heightMap, tileEntities, null)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="AlphaBlockCollection"/> overlay on top of Alpha-specific units of data.
+        /// </summary>
+        /// <param name="blocks">An array of Block IDs.</param>
+        /// <param name="data">An array of data nibbles.</param>
+        /// <param name="blockLight">An array of block light nibbles.</param>
+        /// <param name="skyLight">An array of sky light nibbles.</param>
+        /// <param name="heightMap">An array of height map values.</param>
+        /// <param name="tileEntities">A list of tile entities corresponding to blocks in this collection.</param>
+        /// <param name="tileTicks">A list of tile ticks corresponding to blocks in this collection.</param>
+        public AlphaBlockCollection (
+            XZYByteArray blocks,
+            XZYNibbleArray data,
+            XZYNibbleArray blockLight,
+            XZYNibbleArray skyLight,
+            ZXByteArray heightMap,
+            TagNodeList tileEntities,
+            TagNodeList tileTicks)
         {
             _blocks = blocks;
             _data = data;
@@ -80,6 +106,10 @@ namespace Substrate
             _skyLight = skyLight;
             _heightMap = heightMap;
             _tileEntities = tileEntities;
+            _tileTicks = tileTicks;
+
+            if (_tileTicks == null)
+                _tileTicks = new TagNodeList(TagType.TAG_COMPOUND);
 
             _xdim = _blocks.XDim;
             _ydim = _blocks.YDim;
@@ -96,6 +126,12 @@ namespace Substrate
             _lightManager = new BlockLight(this);
             _fluidManager = new BlockFluid(this);
             _tileEntityManager = new BlockTileEntities(_blocks, _tileEntities);
+            _tileTickManager = new BlockTileTicks(_blocks, _tileTicks);
+        }
+
+        internal TagNodeList TileTicks
+        {
+            get { return _tileTicks; }
         }
 
         #region Events
@@ -148,6 +184,15 @@ namespace Substrate
         {
             get { return _autoFluid; }
             set { _autoFluid = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether changes to blocks will create tile tick entries.
+        /// </summary>
+        public bool AutoTileTick
+        {
+            get { return _autoTick; }
+            set { _autoTick = value; }
         }
 
         /// <summary>
@@ -207,6 +252,11 @@ namespace Substrate
             TileEntity te = block.GetTileEntity();
             if (te != null) {
                 SetTileEntity(x, y, z, te.Copy());
+            }
+
+            TileTick tt = block.GetTileTick();
+            if (tt != null) {
+                SetTileTick(x, y, z, tt.Copy());
             }
         }
 
@@ -324,6 +374,17 @@ namespace Substrate
             if (_autoFluid) {
                 if (info1.State == BlockState.FLUID || info2.State == BlockState.FLUID) {
                     UpdateFluid(x, y, z);
+                }
+            }
+
+            // TileTick consistency
+
+            if (_autoTick) {
+                if (info1.ID != info2.ID) {
+                    ClearTileTick(x, y, z);
+                    if (info2.Tick > 0) {
+                        SetTileTickValue(x, y, z, info2.Tick);
+                    }
                 }
             }
 
@@ -674,6 +735,123 @@ namespace Substrate
 
         #endregion
 
+
+        #region IBoundedActiveBlockCollection Members
+
+        IActiveBlock IBoundedActiveBlockCollection.GetBlock (int x, int y, int z)
+        {
+            return GetBlock(x, y, z);
+        }
+
+        IActiveBlock IBoundedActiveBlockCollection.GetBlockRef (int x, int y, int z)
+        {
+            return GetBlockRef(x, y, z);
+        }
+
+        /// <inheritdoc/>
+        public void SetBlock (int x, int y, int z, IActiveBlock block)
+        {
+            SetID(x, y, z, block.ID);
+            SetTileTick(x, y, z, block.GetTileTick().Copy());
+        }
+
+        /// <inheritdoc/>
+        public int GetTileTickValue (int x, int y, int z)
+        {
+            return _tileTickManager.GetTileTickValue(x, y, z);
+        }
+
+        internal int GetTileTickValue (int index)
+        {
+            int x, y, z;
+            _blocks.GetMultiIndex(index, out x, out y, out z);
+
+            return _tileTickManager.GetTileTickValue(x, y, z);
+        }
+
+        /// <inheritdoc/>
+        public void SetTileTickValue (int x, int y, int z, int tickValue)
+        {
+            _tileTickManager.SetTileTickValue(x, y, z, tickValue);
+            _dirty = true;
+        }
+
+        internal void SetTileTickValue (int index, int tickValue)
+        {
+            int x, y, z;
+            _blocks.GetMultiIndex(index, out x, out y, out z);
+
+            _tileTickManager.SetTileTickValue(x, y, z, tickValue);
+            _dirty = true;
+        }
+
+        /// <inheritdoc/>
+        public TileTick GetTileTick (int x, int y, int z)
+        {
+            return _tileTickManager.GetTileTick(x, y, z);
+        }
+
+        internal TileTick GetTileTick (int index)
+        {
+            int x, y, z;
+            _blocks.GetMultiIndex(index, out x, out y, out z);
+
+            return _tileTickManager.GetTileTick(x, y, z);
+        }
+
+        /// <inheritdoc/>
+        public void SetTileTick (int x, int y, int z, TileTick tt)
+        {
+            _tileTickManager.SetTileTick(x, y, z, tt);
+            _dirty = true;
+        }
+
+        internal void SetTileTick (int index, TileTick tt)
+        {
+            int x, y, z;
+            _blocks.GetMultiIndex(index, out x, out y, out z);
+
+            _tileTickManager.SetTileTick(x, y, z, tt);
+            _dirty = true;
+        }
+
+        /// <inheritdoc/>
+        public void CreateTileTick (int x, int y, int z)
+        {
+            _tileTickManager.CreateTileTick(x, y, z);
+            _dirty = true;
+        }
+
+        internal void CreateTileTick (int index)
+        {
+            int x, y, z;
+            _blocks.GetMultiIndex(index, out x, out y, out z);
+
+            _tileTickManager.CreateTileTick(x, y, z);
+            _dirty = true;
+        }
+
+        /// <inheritdoc/>
+        public void ClearTileTick (int x, int y, int z)
+        {
+            _tileTickManager.ClearTileTick(x, y, z);
+            _dirty = true;
+        }
+
+        internal void ClearTileTick (int index)
+        {
+            int x, y, z;
+            _blocks.GetMultiIndex(index, out x, out y, out z);
+
+            _tileTickManager.ClearTileTick(x, y, z);
+            _dirty = true;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Resets all fluid blocks in the collection to their inactive type.
+        /// </summary>
         public void ResetFluid ()
         {
             _fluidManager.ResetWater(_blocks, _data);
@@ -681,6 +859,12 @@ namespace Substrate
             _dirty = true;
         }
 
+        /// <summary>
+        /// Performs fluid simulation on all fluid blocks on this container.
+        /// </summary>
+        /// <remarks>Simulation will cause inactive fluid blocks to convert into and spread active fluid blocks according
+        /// to the fluid calculation rules in Minecraft.  Fluid calculation may spill into neighboring block collections
+        /// (and beyond).</remarks>
         public void RebuildFluid ()
         {
             _fluidManager.RebuildWater();
@@ -688,6 +872,12 @@ namespace Substrate
             _dirty = true;
         }
 
+        /// <summary>
+        /// Recalculates fluid starting from a given fluid block in this collection.
+        /// </summary>
+        /// <param name="x">Local X-coordinate of block.</param>
+        /// <param name="y">Local Y-coordinate of block.</param>
+        /// <param name="z">Local Z-coordiante of block.</param>
         public void UpdateFluid (int x, int y, int z)
         {
             bool autofluid = _autoFluid;
@@ -706,264 +896,6 @@ namespace Substrate
 
             _autoFluid = autofluid;
         }
-
-
-        #region Unbounded Container Implementations
-
-        /*IBlock IBlockCollection.GetBlock (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                return GetBlock(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        IBlock IBlockCollection.GetBlockRef (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                return GetBlockRef(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        void IBlockCollection.SetBlock (int x, int y, int z, IBlock block)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                SetBlock(x, y, z, block);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        BlockInfo IBlockCollection.GetInfo (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                return GetInfo(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        int IBlockCollection.GetID (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                return GetID(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        void IBlockCollection.SetID (int x, int y, int z, int id)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                SetID(x, y, z, id);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        IDataBlock IDataBlockCollection.GetBlock (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                return GetBlock(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        IDataBlock IDataBlockCollection.GetBlockRef (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                return GetBlockRef(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        void IDataBlockCollection.SetBlock (int x, int y, int z, IDataBlock block)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                SetBlock(x, y, z, block);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        int IDataBlockCollection.GetData (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                return GetData(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        void IDataBlockCollection.SetData (int x, int y, int z, int data)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                SetData(x, y, z, data);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        ILitBlock ILitBlockCollection.GetBlock (int x, int y, int z)
-        {
-            throw new NotImplementedException();
-        }
-
-        ILitBlock ILitBlockCollection.GetBlockRef (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                return GetBlockRef(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        void ILitBlockCollection.SetBlock (int x, int y, int z, ILitBlock block)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                SetBlock(x, y, z, block);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        int ILitBlockCollection.GetBlockLight (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                return GetBlockLight(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        void ILitBlockCollection.SetBlockLight (int x, int y, int z, int light)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                SetBlockLight(x, y, z, light);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        int ILitBlockCollection.GetSkyLight (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                return GetSkyLight(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        void ILitBlockCollection.SetSkyLight (int x, int y, int z, int light)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                SetSkyLight(x, y, z, light);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        int ILitBlockCollection.GetHeight (int x, int z)
-        {
-            if (x >= 0 && x < _xdim && z >= 0 && z < ZDim) {
-                return GetHeight(x, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : "z");
-        }
-
-        void ILitBlockCollection.SetHeight (int x, int z, int height)
-        {
-            if (x >= 0 && x < _xdim && z >= 0 && z < ZDim) {
-                SetHeight(x, z, height);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : "z");
-        }
-
-        void ILitBlockCollection.UpdateBlockLight (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                UpdateBlockLight(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        void ILitBlockCollection.UpdateSkyLight (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                UpdateSkyLight(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        IPropertyBlock IPropertyBlockCollection.GetBlock (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                return GetBlock(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        IPropertyBlock IPropertyBlockCollection.GetBlockRef (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                return GetBlockRef(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        void IPropertyBlockCollection.SetBlock (int x, int y, int z, IPropertyBlock block)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                SetBlock(x, y, z, block);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        TileEntity IPropertyBlockCollection.GetTileEntity (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                return GetTileEntity(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        void IPropertyBlockCollection.SetTileEntity (int x, int y, int z, TileEntity te)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                SetTileEntity(x, y, z, te);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        void IPropertyBlockCollection.CreateTileEntity (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                CreateTileEntity(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        void IPropertyBlockCollection.ClearTileEntity (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                ClearTileEntity(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        AlphaBlock IAlphaBlockCollection.GetBlock (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                return GetBlock(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        AlphaBlockRef IAlphaBlockCollection.GetBlockRef (int x, int y, int z)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                return GetBlockRef(x, y, z);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }
-
-        void IAlphaBlockCollection.SetBlock (int x, int y, int z, AlphaBlock block)
-        {
-            if (x >= 0 && x < _xdim && y >= 0 && y < _ydim && z >= 0 && z < ZDim) {
-                SetBlock(x, y, z, block);
-            }
-            throw new ArgumentOutOfRangeException(x < 0 || x >= _xdim ? "x" : y < 0 || y >= _ydim ? "y" : "z");
-        }*/
-
-        #endregion
 
         /*#region IEnumerable<AlphaBlockRef> Members
 

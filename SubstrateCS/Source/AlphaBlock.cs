@@ -13,12 +13,13 @@ namespace Substrate
     /// offers a relatively compact footprint for storing the unique identity of a block's manifestation in the world.</para>
     /// <para>A single <see cref="AlphaBlock"/> object may also provide a convenient way to paste a block into many locations in
     /// a block collection type.</para></remarks>
-    public class AlphaBlock : IDataBlock, IPropertyBlock, ICopyable<AlphaBlock>
+    public class AlphaBlock : IDataBlock, IPropertyBlock, IActiveBlock, ICopyable<AlphaBlock>
     {
         private int _id;
         private int _data;
 
         private TileEntity _tileEntity;
+        private TileTick _tileTick;
 
         /// <summary>
         /// Create a new <see cref="AlphaBlock"/> instance of the given type with default data.
@@ -170,6 +171,65 @@ namespace Substrate
         public void ClearTileEntity ()
         {
             _tileEntity = null;
+        }
+
+        #endregion
+
+
+        #region IActiveBlock Members
+
+        public int TileTickValue
+        {
+            get
+            {
+                if (_tileTick == null)
+                    return 0;
+                return _tileTick.Ticks;
+            }
+
+            set
+            {
+                if (_tileTick == null)
+                    CreateTileTick();
+                _tileTick.Ticks = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="TileTick"/> record of the block if it has one.
+        /// </summary>
+        /// <returns>The <see cref="TileTick"/> attached to this block, or null if the block type does not require a Tile Entity.</returns>
+        public TileTick GetTileTick ()
+        {
+            return _tileTick;
+        }
+
+        /// <summary>
+        /// Sets a new <see cref="TileTick"/> record for the block.
+        /// </summary>
+        /// <param name="tt">A <see cref="TileTick"/> record compatible with the block's type.</param>
+        public void SetTileTick (TileTick tt)
+        {
+            _tileTick = tt;
+        }
+
+        /// <summary>
+        /// Creates a default <see cref="TileTick"/> record appropriate for the block.
+        /// </summary>
+        public void CreateTileTick ()
+        {
+            _tileTick = new TileTick()
+            {
+                ID = _id,
+            };
+        }
+
+        /// <summary>
+        /// Removes any <see cref="TileTick"/> currently attached to the block.
+        /// </summary>
+        public void ClearTileTick ()
+        {
+            _tileTick = null;
         }
 
         #endregion

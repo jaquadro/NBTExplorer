@@ -62,6 +62,7 @@
     <Compile Include="Source\AlphaWorld.cs" />
     <Compile Include="Source\BetaChunkManager.cs" />
     <Compile Include="Source\BetaWorld.cs" />
+    <Compile Include="Source\Core\BlockTileTicks.cs" />
     <Compile Include="Source\Core\BoundedBlockInterface.cs" />
     <Compile Include="Source\Core\ItemInterface.cs" />
     <Compile Include="Source\Data\BetaDataManager.cs" />
@@ -212,6 +213,7 @@
     <Compile Include="Source\Core\Interface.cs" />
     <Compile Include="Source\Core\LRUCache.cs" />
     <Compile Include="Source\Core\NibbleArray.cs" />
+    <Compile Include="Source\TileTick.cs" />
     <Compile Include="Source\Vector.cs" />
     <Compile Include="Source\World.cs" />
     <Compile Include="Vendor\DotNetZip\Zlib\Crc32.cs" />
