@@ -31,6 +31,7 @@ namespace Substrate
 
         private bool _autoLight = true;
         private bool _autoFluid = false;
+        private bool _autoTileTick = false;
 
         /// <summary>
         /// Gets or sets a value indicating whether changes to blocks will trigger automatic lighting updates.
@@ -48,6 +49,15 @@ namespace Substrate
         {
             get { return _autoFluid; }
             set { _autoFluid = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether changes to blocks will trigger automatic fluid updates.
+        /// </summary>
+        public bool AutoTileTick
+        {
+            get { return _autoTileTick; }
+            set { _autoTileTick = value; }
         }
 
         /// <summary>
@@ -213,14 +223,17 @@ namespace Substrate
 
             bool autolight = cache.Blocks.AutoLight;
             bool autofluid = cache.Blocks.AutoFluid;
+            bool autoTileTick = cache.Blocks.AutoTileTick;
 
             cache.Blocks.AutoLight = _autoLight;
             cache.Blocks.AutoFluid = _autoFluid;
+            cache.Blocks.AutoTileTick = _autoTileTick;
 
             cache.Blocks.SetID(x & chunkXMask, y & chunkYMask, z & chunkZMask, id);
 
             cache.Blocks.AutoFluid = autofluid;
             cache.Blocks.AutoLight = autolight;
+            cache.Blocks.AutoTileTick = autoTileTick;
         }
 
         #endregion
