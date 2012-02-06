@@ -70,7 +70,7 @@ namespace Substrate.Core
                 _tileTickTable[key] = te;
             }
             else {
-                te["Ticks"].ToTagInt().Data = tickValue;
+                te["t"].ToTagInt().Data = tickValue;
             }
         }
 
