@@ -60,6 +60,11 @@ namespace Substrate.Nbt
         /// <summary>
         /// A tag containing a key-value store of tags, where each tag can be of any type.
         /// </summary>
-        TAG_COMPOUND = 10
+        TAG_COMPOUND = 10,
+
+        /// <summary>
+        /// A tag containing an array of signed 32-bit values.
+        /// </summary>
+        TAG_INT_ARRAY = 11,
     }
 }

@@ -110,6 +110,15 @@ namespace Substrate.Nbt
         }
 
         /// <summary>
+        /// Conver this node to an int array tag type if supported.
+        /// </summary>
+        /// <returns>A new int array node.</returns>
+        public virtual TagNodeIntArray ToTagIntArray ()
+        {
+            throw new InvalidCastException();
+        }
+
+        /// <summary>
         /// Gets the underlying tag type of the node.
         /// </summary>
         /// <returns>An NBT tag type.</returns>
