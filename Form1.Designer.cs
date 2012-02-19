@@ -61,6 +61,7 @@
             this._buttonAddTagFloat = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagDouble = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagByteArray = new System.Windows.Forms.ToolStripButton();
+            this._buttonAddTagIntArray = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagString = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagList = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagCompound = new System.Windows.Forms.ToolStripButton();
@@ -237,6 +238,7 @@
             this.imageList1.Images.SetKeyName(11, "block.png");
             this.imageList1.Images.SetKeyName(12, "wooden-box.png");
             this.imageList1.Images.SetKeyName(13, "map.png");
+            this.imageList1.Images.SetKeyName(14, "edit-code-i.png");
             // 
             // toolStrip1
             // 
@@ -256,6 +258,7 @@
             this._buttonAddTagFloat,
             this._buttonAddTagDouble,
             this._buttonAddTagByteArray,
+            this._buttonAddTagIntArray,
             this._buttonAddTagString,
             this._buttonAddTagList,
             this._buttonAddTagCompound,
@@ -407,6 +410,17 @@
             this._buttonAddTagByteArray.Text = "Add Byte Array Tag";
             this._buttonAddTagByteArray.Click += new System.EventHandler(this._buttonAddTagByteArray_Click);
             // 
+            // _buttonAddTagIntArray
+            // 
+            this._buttonAddTagIntArray.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._buttonAddTagIntArray.Image = ((System.Drawing.Image)(resources.GetObject("_buttonAddTagIntArray.Image")));
+            this._buttonAddTagIntArray.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this._buttonAddTagIntArray.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._buttonAddTagIntArray.Name = "_buttonAddTagIntArray";
+            this._buttonAddTagIntArray.Size = new System.Drawing.Size(23, 22);
+            this._buttonAddTagIntArray.Text = "Add Int Array Tag";
+            this._buttonAddTagIntArray.Click += new System.EventHandler(this._buttonAddTagIntArray_Click);
+            // 
             // _buttonAddTagString
             // 
             this._buttonAddTagString.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -502,9 +516,8 @@
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(516, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(547, 17);
             this.toolStripStatusLabel1.Spring = true;
-            this.toolStripStatusLabel1.Click += new System.EventHandler(this.toolStripStatusLabel1_Click);
             // 
             // Form1
             // 
@@ -577,6 +590,7 @@
         private System.Windows.Forms.ToolStripContentPanel ContentPanel;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripButton _buttonAddTagIntArray;
     }
 }
 

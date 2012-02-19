@@ -104,6 +104,9 @@ namespace NBTExplorer
                 case TagType.TAG_BYTE_ARRAY:
                     return tag.ToTagByteArray().Length + " bytes";
 
+                case TagType.TAG_INT_ARRAY:
+                    return tag.ToTagIntArray().Length + " integers";
+
                 case TagType.TAG_LIST:
                     return tag.ToTagList().Count + " entries";
 
@@ -417,6 +420,7 @@ namespace NBTExplorer
             _buttonEdit.Enabled = tag != null
                 && node.Tag is TagNode
                 && tag.GetTagType() != TagType.TAG_BYTE_ARRAY
+                && tag.GetTagType() != TagType.TAG_INT_ARRAY
                 && tag.GetTagType() != TagType.TAG_COMPOUND
                 && tag.GetTagType() != TagType.TAG_LIST;
 
@@ -459,6 +463,9 @@ namespace NBTExplorer
                     case TagType.TAG_COMPOUND:
                         _buttonAddTagCompound.Enabled = true;
                         break;
+                    case TagType.TAG_INT_ARRAY:
+                        _buttonAddTagIntArray.Enabled = true;
+                        break;
                 }
             }
         }
@@ -475,6 +482,7 @@ namespace NBTExplorer
             _buttonAddTagString.Enabled = state;
             _buttonAddTagList.Enabled = state;
             _buttonAddTagCompound.Enabled = state;
+            _buttonAddTagIntArray.Enabled = state;
         }
 
         public void OpenDirectory (string path)
@@ -558,14 +566,15 @@ namespace NBTExplorer
 
         public void TryLoadFile (TreeNodeCollection parent, string path)
         {
-            if (Path.GetExtension(path) == ".mcr") {
+            string ext = Path.GetExtension(path);
+            if (ext == ".mcr" || ext == ".mca") {
                 TreeNode node = CreateLazyRegion(path);
                 parent.Add(node);
                 LinkDataNodeParent(node, node.Parent);
                 return;
             }
 
-            if (Path.GetExtension(path) == ".dat" || Path.GetExtension(path) == ".schematic") {
+            if (ext == ".dat" || ext == ".nbt" || ext == ".schematic") {
                 try {
                     NBTFile file = new NBTFile(path);
                     NbtTree tree = new NbtTree();
@@ -603,6 +612,7 @@ namespace NBTExplorer
             _tagIconIndex[TagType.TAG_STRING] = 7;
             _tagIconIndex[TagType.TAG_LIST] = 8;
             _tagIconIndex[TagType.TAG_COMPOUND] = 9;
+            _tagIconIndex[TagType.TAG_INT_ARRAY] = 14;
         }
 
         private void OpenFile ()
@@ -983,6 +993,9 @@ namespace NBTExplorer
                 case TagType.TAG_COMPOUND:
                     newNode = new TagNodeCompound();
                     break;
+                case TagType.TAG_INT_ARRAY:
+                    newNode = new TagNodeIntArray();
+                    break;
             }
 
             if (tag is TagNodeCompound) {
@@ -1230,9 +1243,9 @@ namespace NBTExplorer
             OpenMinecraftDir();
         }
 
-        private void toolStripStatusLabel1_Click (object sender, EventArgs e)
+        private void _buttonAddTagIntArray_Click (object sender, EventArgs e)
         {
-
+            AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_INT_ARRAY);
         }
     }
 
