@@ -33,6 +33,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openMinecraftSaveFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -71,7 +72,7 @@
             this._nodeContainerContext = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openSubTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveItemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openMinecraftSaveFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findEntityChunkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -126,6 +127,13 @@
             this.openFolderToolStripMenuItem.Text = "Open &Folder...";
             this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
             // 
+            // openMinecraftSaveFolderToolStripMenuItem
+            // 
+            this.openMinecraftSaveFolderToolStripMenuItem.Name = "openMinecraftSaveFolderToolStripMenuItem";
+            this.openMinecraftSaveFolderToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
+            this.openMinecraftSaveFolderToolStripMenuItem.Text = "Open &Minecraft Save Folder";
+            this.openMinecraftSaveFolderToolStripMenuItem.Click += new System.EventHandler(this.openMinecraftSaveFolderToolStripMenuItem_Click);
+            // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
@@ -158,7 +166,8 @@
             // 
             this.searchToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.findToolStripMenuItem,
-            this.findNextToolStripMenuItem});
+            this.findNextToolStripMenuItem,
+            this.findEntityChunkToolStripMenuItem});
             this.searchToolStripMenuItem.Name = "searchToolStripMenuItem";
             this.searchToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
             this.searchToolStripMenuItem.Text = "&Search";
@@ -168,7 +177,7 @@
             this.findToolStripMenuItem.Image = global::NBTExplorer.Properties.Resources.binocular;
             this.findToolStripMenuItem.Name = "findToolStripMenuItem";
             this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this.findToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.findToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.findToolStripMenuItem.Text = "Find...";
             this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
             // 
@@ -177,7 +186,7 @@
             this.findNextToolStripMenuItem.Image = global::NBTExplorer.Properties.Resources.binocular__arrow;
             this.findNextToolStripMenuItem.Name = "findNextToolStripMenuItem";
             this.findNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.findNextToolStripMenuItem.Text = "Find Next";
             this.findNextToolStripMenuItem.Click += new System.EventHandler(this.findNextToolStripMenuItem_Click);
             // 
@@ -506,12 +515,12 @@
             this.saveItemToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.saveItemToolStripMenuItem.Text = "Save Node";
             // 
-            // openMinecraftSaveFolderToolStripMenuItem
+            // findEntityChunkToolStripMenuItem
             // 
-            this.openMinecraftSaveFolderToolStripMenuItem.Name = "openMinecraftSaveFolderToolStripMenuItem";
-            this.openMinecraftSaveFolderToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
-            this.openMinecraftSaveFolderToolStripMenuItem.Text = "Open &Minecraft Save Folder";
-            this.openMinecraftSaveFolderToolStripMenuItem.Click += new System.EventHandler(this.openMinecraftSaveFolderToolStripMenuItem_Click);
+            this.findEntityChunkToolStripMenuItem.Name = "findEntityChunkToolStripMenuItem";
+            this.findEntityChunkToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.findEntityChunkToolStripMenuItem.Text = "Find Entity Chunk";
+            this.findEntityChunkToolStripMenuItem.Click += new System.EventHandler(this.findEntityChunkToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -588,6 +597,7 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripButton _buttonOpenFolder;
         private System.Windows.Forms.ToolStripMenuItem openMinecraftSaveFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem findEntityChunkToolStripMenuItem;
     }
 }
 

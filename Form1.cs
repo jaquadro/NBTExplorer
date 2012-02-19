@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Substrate;
-using Substrate.Nbt;
-using System.IO;
 using Substrate.Core;
-using System.Diagnostics;
+using Substrate.Nbt;
 
 namespace NBTExplorer
 {
@@ -79,7 +76,7 @@ namespace NBTExplorer
             node.ImageIndex = _tagIconIndex[tag.GetTagType()];
             node.SelectedImageIndex = _tagIconIndex[tag.GetTagType()];
             node.Tag = tag;
-            node.Text = GetNodeText(name, tag);
+            node.Text =SubstrateHelper. GetNodeText(name, tag);
 
             if (tag.GetTagType() == TagType.TAG_LIST)
             {
@@ -93,51 +90,9 @@ namespace NBTExplorer
             return node;
         }
 
-        private string GetTagNodeText(TagNode tag)
-        {
-            if (tag == null)
-                return null;
-
-            switch (tag.GetTagType())
-            {
-                case TagType.TAG_BYTE:
-                case TagType.TAG_SHORT:
-                case TagType.TAG_INT:
-                case TagType.TAG_LONG:
-                case TagType.TAG_FLOAT:
-                case TagType.TAG_DOUBLE:
-                case TagType.TAG_STRING:
-                    return tag.ToString();
-
-                case TagType.TAG_BYTE_ARRAY:
-                    return tag.ToTagByteArray().Length + " bytes";
-
-                case TagType.TAG_LIST:
-                    return tag.ToTagList().Count + " entries";
-
-                case TagType.TAG_COMPOUND:
-                    return tag.ToTagCompound().Count + " entries";
-            }
-
-            return null;
-        }
-
-        private string GetNodeText(string name, string value)
-        {
-            name = String.IsNullOrEmpty(name) ? "" : name + ": ";
-            value = value ?? "";
-
-            return name + value;
-        }
-
-        private string GetNodeText(string name, TagNode tag)
-        {
-            return GetNodeText(name, GetTagNodeText(tag));
-        }
-
         private string GetNodeText(TreeNode node)
         {
-            return GetNodeText(GetTagNodeName(node), GetTagNodeText(node));
+            return  SubstrateHelper.GetNodeText(GetTagNodeName(node), GetTagNodeText(node));
         }
 
         private string GetTagNodeText(TreeNode node)
@@ -146,7 +101,7 @@ namespace NBTExplorer
             if (tag == null)
                 return null;
 
-            return GetTagNodeText(tag);
+            return SubstrateHelper. GetTagNodeText(tag);
         }
 
         private void PopulateNodeFromTag(TreeNode parentNode, TagNodeList list)
@@ -154,22 +109,27 @@ namespace NBTExplorer
             foreach (TagNode tag in list)
             {
                 var node = NodeFromTag(tag);
-                if (parentNode.Text.StartsWith("Inventory"))
+                if (parentNode.Text.StartsWith("Inventory")|| parentNode.Text.StartsWith("Item"))
                 {
+
                     Debug.Assert(tag.IsCastableTo(TagType.TAG_COMPOUND));
-                    var tagc = tag as TagNodeCompound;
-                    if (tagc.ContainsKey("id"))
+                    var item = UIHelper.TryGetItemName(tag);
+
+                    if (item != null)
                     {
-                        int id;
-                        if (int.TryParse(tagc["id"].ToString(), out id))
-                        {
-                            var item = Substrate.ItemInfo.ItemTable[id];
-                            if (item != null)
-                                node.Nodes.Insert(0, item.Name);
+                        
+                        TreeNode newNode = new TreeNode();
 
-                        }
+                        //node.ImageIndex = _tagIconIndex[0];
+                        //node.SelectedImageIndex = _tagIconIndex[0];
+                        newNode.Text = item.Name;
+                        newNode.ToolTipText = "StackSize:" + item.StackSize.ToString();
 
+                        node.Nodes.Insert(0, newNode);
                     }
+
+
+
 
                 }
 
@@ -194,30 +154,14 @@ namespace NBTExplorer
             }
         }
 
-        public void LoadWorld(string path)
-        {
-            NbtWorld world = NbtWorld.Open(path);
-
-            BetaWorld beta = world as BetaWorld;
-            if (beta != null)
-            {
-                LoadBetaWorld(beta);
-            }
-        }
-
-        private void LoadBetaWorld(BetaWorld world)
-        {
-            RegionManager rm = world.GetRegionManager();
-        }
-
-        public void LoadRegion(TreeNodeCollection parent, string path)
+         void LoadRegion(TreeNodeCollection parent, string path)
         {
             TreeNode root = new TreeNode(Path.GetFileName(path), 11, 11);
             LoadRegion(root, path);
             parent.Add(root);
         }
 
-        public void LoadRegion(TreeNode node, string path)
+         void LoadRegion(TreeNode node, string path)
         {
             RegionFile rf = new RegionFile(path);
 
@@ -235,7 +179,7 @@ namespace NBTExplorer
             }
         }
 
-        public TreeNode CreateLazyChunk(RegionFile rf, int x, int z)
+         TreeNode CreateLazyChunk(RegionFile rf, int x, int z)
         {
             TreeNode node = new TreeNode();
             node.ImageIndex = 9;
@@ -247,7 +191,7 @@ namespace NBTExplorer
             return node;
         }
 
-        public TreeNode CreateLazyRegion(string path)
+         TreeNode CreateLazyRegion(string path)
         {
             TreeNode node = new TreeNode();
             node.ImageIndex = 11;
@@ -259,7 +203,7 @@ namespace NBTExplorer
             return node;
         }
 
-        public TreeNode CreateLazyNbt(string path, CompressionType cztype)
+         TreeNode CreateLazyNbt(string path, CompressionType cztype)
         {
             TreeNode node = new TreeNode();
             node.ImageIndex = 12;
@@ -271,7 +215,7 @@ namespace NBTExplorer
             return node;
         }
 
-        public TreeNode CreateLazyDirectory(string path)
+         TreeNode CreateLazyDirectory(string path)
         {
             TreeNode node = new TreeNode();
             node.ImageIndex = 10;
@@ -283,7 +227,7 @@ namespace NBTExplorer
             return node;
         }
 
-        public TreeNode CreateLazyDirectory(string path, TreeNode parent)
+         TreeNode CreateLazyDirectory(string path, TreeNode parent)
         {
             TreeNode node = CreateLazyDirectory(path);
             LinkDataNodeParent(node, parent);
@@ -291,7 +235,7 @@ namespace NBTExplorer
             return node;
         }
 
-        public TreeNode CreateLazyNbt(string path, CompressionType cztype, TreeNode parent)
+         TreeNode CreateLazyNbt(string path, CompressionType cztype, TreeNode parent)
         {
             TreeNode node = CreateLazyNbt(path, cztype);
             LinkDataNodeParent(node, parent);
@@ -299,7 +243,7 @@ namespace NBTExplorer
             return node;
         }
 
-        private void LinkDataNodeParent(TreeNode node, TreeNode parent)
+         void LinkDataNodeParent(TreeNode node, TreeNode parent)
         {
             if (node != null && parent != null && node.Tag != null && parent.Tag != null)
             {
@@ -313,7 +257,7 @@ namespace NBTExplorer
             }
         }
 
-        public void LoadLazyChunk(TreeNode node)
+         void LoadLazyChunk(TreeNode node)
         {
             RegionChunkData data = node.Tag as RegionChunkData;
             if (data == null || data.Modified)
@@ -325,7 +269,7 @@ namespace NBTExplorer
             data.Expanded = true;
         }
 
-        public void LoadLazyNbt(TreeNode node)
+         void LoadLazyNbt(TreeNode node)
         {
             NbtFileData data = node.Tag as NbtFileData;
             if (data == null || data.Modified)
@@ -339,7 +283,7 @@ namespace NBTExplorer
             data.Expanded = true;
         }
 
-        public void LoadLazyDirectory(TreeNode node)
+         void LoadLazyDirectory(TreeNode node)
         {
             DirectoryData data = node.Tag as DirectoryData;
             if (data == null || data.Modified)
@@ -360,7 +304,7 @@ namespace NBTExplorer
             data.Expanded = true;
         }
 
-        public void LoadLazyRegion(TreeNode node)
+         void LoadLazyRegion(TreeNode node)
         {
             RegionData data = node.Tag as RegionData;
             if (data == null || data.Modified)
@@ -372,7 +316,7 @@ namespace NBTExplorer
             data.Expanded = true;
         }
 
-        public void UnloadLazyDataNode(TreeNode node)
+         void UnloadLazyDataNode(TreeNode node)
         {
             DataNode data = node.Tag as DataNode;
             if (data == null || data.Modified)
@@ -384,7 +328,7 @@ namespace NBTExplorer
             data.Expanded = false;
         }
 
-        private void ExpandNode(TreeNode node)
+         void ExpandNode(TreeNode node)
         {
             if (node.Tag == null)
                 return;
@@ -413,7 +357,7 @@ namespace NBTExplorer
             }
         }
 
-        private void CollapseNode(TreeNode node)
+         void CollapseNode(TreeNode node)
         {
             if (node.Tag == null)
                 return;
@@ -424,7 +368,7 @@ namespace NBTExplorer
             }
         }
 
-        private void NodeExpand(object sender, TreeViewCancelEventArgs e)
+         void NodeExpand(object sender, TreeViewCancelEventArgs e)
         {
             ExpandNode(e.Node);
         }
@@ -434,7 +378,7 @@ namespace NBTExplorer
             CollapseNode(e.Node);
         }
 
-        private void NodeSelected(object sender, TreeViewEventArgs e)
+         void NodeSelected(object sender, TreeViewEventArgs e)
         {
             UpdateToolbar();
         }
@@ -444,12 +388,12 @@ namespace NBTExplorer
 
         }
 
-        private void NodeDoubleClicked(object sender, TreeNodeMouseClickEventArgs e)
+         void NodeDoubleClicked(object sender, TreeNodeMouseClickEventArgs e)
         {
             EditNodeValue(_nodeTree.SelectedNode);
         }
 
-        private void UpdateToolbar()
+         void UpdateToolbar()
         {
             TreeNode node = _nodeTree.SelectedNode;
             TagNode tag = node.Tag as TagNode;
@@ -514,21 +458,21 @@ namespace NBTExplorer
             }
         }
 
-        private void SetTagButtons(bool state)
+         void SetTagButtons(bool state)
         {
-            _buttonAddTagByte.Enabled = state;
-            _buttonAddTagShort.Enabled = state;
-            _buttonAddTagInt.Enabled = state;
-            _buttonAddTagLong.Enabled = state;
-            _buttonAddTagFloat.Enabled = state;
-            _buttonAddTagDouble.Enabled = state;
-            _buttonAddTagByteArray.Enabled = state;
-            _buttonAddTagString.Enabled = state;
-            _buttonAddTagList.Enabled = state;
-            _buttonAddTagCompound.Enabled = state;
+            var toEnable = new[]
+                               {
+                                   _buttonAddTagByte, _buttonAddTagShort, _buttonAddTagInt,
+                                   _buttonAddTagLong,_buttonAddTagFloat, _buttonAddTagDouble,
+                                   _buttonAddTagByteArray, _buttonAddTagString, _buttonAddTagList,
+                                   _buttonAddTagCompound
+                               };
+            foreach (var button in toEnable)
+                button.Enabled = state;
+
         }
 
-        public void OpenDirectory(string path)
+         void OpenDirectory(string path)
         {
             _nodeTree.Nodes.Clear();
 
@@ -540,7 +484,7 @@ namespace NBTExplorer
             }
         }
 
-        public void OpenPaths(string[] paths)
+         void OpenPaths(string[] paths)
         {
             _nodeTree.Nodes.Clear();
 
@@ -562,7 +506,7 @@ namespace NBTExplorer
             }
         }
 
-        public void OpenMinecraftDir()
+         void OpenMinecraftDir()
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             path = Path.Combine(path, ".minecraft");
@@ -576,17 +520,17 @@ namespace NBTExplorer
             OpenDirectory(path);
         }
 
-        public void LoadDirectory(string path)
+         void LoadDirectory(string path)
         {
             LoadDirectory(path, _nodeTree.Nodes);
         }
 
-        public void LoadDirectory(string path, TreeNodeCollection parent)
+         void LoadDirectory(string path, TreeNodeCollection parent)
         {
             LoadDirectory(path, parent, path);
         }
 
-        public void LoadDirectory(string path, TreeNodeCollection parent, string name)
+        void LoadDirectory(string path, TreeNodeCollection parent, string name)
         {
             TreeNode root = new TreeNode(name, 10, 10);
 
@@ -603,7 +547,7 @@ namespace NBTExplorer
             parent.Add(root);
         }
 
-        public void TryLoadFile(TreeNodeCollection parent, string path)
+        void TryLoadFile(TreeNodeCollection parent, string path)
         {
             if (Path.GetExtension(path) == ".mcr")
             {
@@ -656,7 +600,7 @@ namespace NBTExplorer
             _tagIconIndex[TagType.TAG_COMPOUND] = 9;
         }
 
-        private void OpenFile()
+        void OpenFile()
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.RestoreDirectory = true;
@@ -668,14 +612,14 @@ namespace NBTExplorer
             }
         }
 
-        private void OpenFile(string file)
+        void OpenFile(string file)
         {
             _nodeTree.Nodes.Clear();
             TryLoadFile(_nodeTree.Nodes, file);
         }
 
-        private string _openFolderPath = null;
-        private void OpenFolder()
+        string _openFolderPath = null;
+        void OpenFolder()
         {
             FolderBrowserDialog ofd = new FolderBrowserDialog();
             if (_openFolderPath != null)
@@ -688,7 +632,7 @@ namespace NBTExplorer
             }
         }
 
-        private void SaveAll()
+        void SaveAll()
         {
             foreach (TreeNode node in _nodeTree.Nodes)
             {
@@ -696,7 +640,7 @@ namespace NBTExplorer
             }
         }
 
-        private void SaveNode(TreeNode node)
+        void SaveNode(TreeNode node)
         {
             foreach (TreeNode sub in node.Nodes)
             {
@@ -716,7 +660,7 @@ namespace NBTExplorer
             }
         }
 
-        private void SaveNbtFileNode(TreeNode node)
+        void SaveNbtFileNode(TreeNode node)
         {
             NbtFileData data = node.Tag as NbtFileData;
             if (data == null || !data.Modified)
@@ -730,7 +674,7 @@ namespace NBTExplorer
             data.Modified = false;
         }
 
-        private void SaveRegionChunkNode(TreeNode node)
+        void SaveRegionChunkNode(TreeNode node)
         {
             RegionChunkData data = node.Tag as RegionChunkData;
             if (data == null || !data.Modified)
@@ -743,12 +687,12 @@ namespace NBTExplorer
             data.Modified = false;
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new About().Show();
         }
 
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFile();
         }
@@ -758,12 +702,12 @@ namespace NBTExplorer
             OpenFolder();
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
+        void toolStripButton1_Click(object sender, EventArgs e)
         {
             OpenFile();
         }
 
-        private TreeNode BaseNode(TreeNode node)
+        TreeNode BaseNode(TreeNode node)
         {
             if (node == null)
                 return null;
@@ -779,7 +723,7 @@ namespace NBTExplorer
 
         #region Tag Deletion
 
-        private void DeleteNode(TreeNode node)
+        void DeleteNode(TreeNode node)
         {
             TreeNode baseNode = BaseNode(node);
 
@@ -799,12 +743,12 @@ namespace NBTExplorer
             node.Remove();
         }
 
-        private void _buttonDelete_Click(object sender, EventArgs e)
+        void _buttonDelete_Click(object sender, EventArgs e)
         {
             DeleteNode(_nodeTree.SelectedNode);
         }
 
-        private void DeleteNodeNbtTag(TreeNode node)
+        void DeleteNodeNbtTag(TreeNode node)
         {
             TagNode tag = node.Tag as TagNode;
             if (tag == null)
@@ -834,7 +778,7 @@ namespace NBTExplorer
             }
         }
 
-        private void DeleteTagFromCompound(TagNodeCompound parent, TagNode target)
+        void DeleteTagFromCompound(TagNodeCompound parent, TagNode target)
         {
             string match = "";
             foreach (KeyValuePair<string, TagNode> kv in parent)
@@ -854,12 +798,12 @@ namespace NBTExplorer
 
         #endregion
 
-        private void _buttonSave_Click(object sender, EventArgs e)
+        void _buttonSave_Click(object sender, EventArgs e)
         {
             SaveAll();
         }
 
-        private TagNode GetTagNode(TreeNode node)
+        TagNode GetTagNode(TreeNode node)
         {
             if (node == null)
                 return null;
@@ -880,7 +824,7 @@ namespace NBTExplorer
             return null;
         }
 
-        private TagNode GetParentTagNode(TreeNode node)
+        TagNode GetParentTagNode(TreeNode node)
         {
             if (GetTagNode(node) == null)
                 return null;
@@ -888,7 +832,7 @@ namespace NBTExplorer
             return GetTagNode(node.Parent);
         }
 
-        private string GetTagNodeName(TreeNode node)
+        string GetTagNodeName(TreeNode node)
         {
             TagNode tag = GetTagNode(node);
             if (tag == null)
@@ -910,7 +854,7 @@ namespace NBTExplorer
             return null;
         }
 
-        private bool SetTagNodeName(TreeNode node, string name)
+        bool SetTagNodeName(TreeNode node, string name)
         {
             TagNode tag = GetTagNode(node);
             if (tag == null)
@@ -942,7 +886,7 @@ namespace NBTExplorer
             return true;
         }
 
-        private void EditNodeValue(TreeNode node)
+        void EditNodeValue(TreeNode node)
         {
             if (node == null)
                 return;
@@ -969,12 +913,12 @@ namespace NBTExplorer
             }
         }
 
-        private void _buttonEdit_Click(object sender, EventArgs e)
+        void _buttonEdit_Click(object sender, EventArgs e)
         {
             EditNodeValue(_nodeTree.SelectedNode);
         }
 
-        private void EditNodeName(TreeNode node)
+        void EditNodeName(TreeNode node)
         {
             if (node == null)
                 return;
@@ -1008,12 +952,12 @@ namespace NBTExplorer
             }
         }
 
-        private void _buttonRename_Click(object sender, EventArgs e)
+        void _buttonRename_Click(object sender, EventArgs e)
         {
             EditNodeName(_nodeTree.SelectedNode);
         }
 
-        private void AddTagToNode(TreeNode node, TagType type)
+        void AddTagToNode(TreeNode node, TagType type)
         {
             TagNode tag = GetTagNode(node);
             if (tag == null)
@@ -1108,17 +1052,17 @@ namespace NBTExplorer
             }
         }
 
-        private void _buttonAddTagByte_Click(object sender, EventArgs e)
+        void _buttonAddTagByte_Click(object sender, EventArgs e)
         {
             AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_BYTE);
         }
 
-        private void _buttonAddTagShort_Click(object sender, EventArgs e)
+        void _buttonAddTagShort_Click(object sender, EventArgs e)
         {
             AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_SHORT);
         }
 
-        private void _buttonAddTagInt_Click(object sender, EventArgs e)
+        void _buttonAddTagInt_Click(object sender, EventArgs e)
         {
             AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_INT);
         }
@@ -1128,52 +1072,52 @@ namespace NBTExplorer
             AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_LONG);
         }
 
-        private void _buttonAddTagFloat_Click(object sender, EventArgs e)
+        void _buttonAddTagFloat_Click(object sender, EventArgs e)
         {
             AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_FLOAT);
         }
 
-        private void _buttonAddTagDouble_Click(object sender, EventArgs e)
+        void _buttonAddTagDouble_Click(object sender, EventArgs e)
         {
             AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_DOUBLE);
         }
 
-        private void _buttonAddTagByteArray_Click(object sender, EventArgs e)
+        void _buttonAddTagByteArray_Click(object sender, EventArgs e)
         {
             AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_BYTE_ARRAY);
         }
 
-        private void _buttonAddTagString_Click(object sender, EventArgs e)
+        void _buttonAddTagString_Click(object sender, EventArgs e)
         {
             AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_STRING);
         }
 
-        private void _buttonAddTagList_Click(object sender, EventArgs e)
+        void _buttonAddTagList_Click(object sender, EventArgs e)
         {
             AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_LIST);
         }
 
-        private void _buttonAddTagCompound_Click(object sender, EventArgs e)
+        void _buttonAddTagCompound_Click(object sender, EventArgs e)
         {
             AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_COMPOUND);
         }
 
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveAll();
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
-        private TreeNode _rootSearchNode;
-        private string _searchName;
-        private string _searchValue;
-        private IEnumerator<TreeNode> _search;
+        TreeNode _rootSearchNode;
+        string _searchName;
+        string _searchValue;
+        IEnumerator<TreeNode> _search;
 
-        private void Find(TreeNode node)
+        void Find(TreeNode node)
         {
             if (node == null)
                 return;
@@ -1192,12 +1136,13 @@ namespace NBTExplorer
             }
         }
 
-        private void FindNext()
+        void FindNext()
         {
             if (_search == null)
                 return;
 
             statusStrip1.Visible = true;
+            statusStrip1.Text = "Please wait...";
             Application.DoEvents();
 
             _nodeTree.SelectedNode = null;
@@ -1222,7 +1167,7 @@ namespace NBTExplorer
             statusStrip1.Visible = false;
         }
 
-        private IEnumerable<TreeNode> FindNode(TreeNode node)
+        IEnumerable<TreeNode> FindNode(TreeNode node)
         {
             if (node == null)
                 yield break;
@@ -1279,17 +1224,17 @@ namespace NBTExplorer
             }
         }
 
-        private void findToolStripMenuItem_Click(object sender, EventArgs e)
+        void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Find(_nodeTree.SelectedNode);
         }
 
-        private void findNextToolStripMenuItem_Click(object sender, EventArgs e)
+        void findNextToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FindNext();
         }
 
-        private void _buttonFindNext_Click(object sender, EventArgs e)
+        void _buttonFindNext_Click(object sender, EventArgs e)
         {
             if (_search == null)
                 Find(_nodeTree.SelectedNode);
@@ -1297,179 +1242,114 @@ namespace NBTExplorer
                 FindNext();
         }
 
-        private void _buttonOpenFolder_Click(object sender, EventArgs e)
+        void _buttonOpenFolder_Click(object sender, EventArgs e)
         {
             OpenFolder();
         }
 
-        private void DropFile(DragEventArgs e)
+        void DropFile(DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             OpenPaths(files);
         }
 
-        private void _nodeTree_DragDrop(object sender, DragEventArgs e)
+        void _nodeTree_DragDrop(object sender, DragEventArgs e)
         {
             DropFile(e);
         }
 
-        private void _nodeTree_DragEnter(object sender, DragEventArgs e)
+        void _nodeTree_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
                 e.Effect = DragDropEffects.Copy;
         }
 
-        private void openMinecraftSaveFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        void openMinecraftSaveFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenMinecraftDir();
         }
-    }
 
-    public class TagKey : IComparable<TagKey>
-    {
-        public TagKey(string name, TagType type)
+        IEnumerable<TreeNode> FindChunks(IEnumerable<TreeNode> nodes)
         {
-            Name = name;
-            TagType = type;
-        }
-
-        public string Name { get; set; }
-        public TagType TagType { get; set; }
-
-        #region IComparer<TagKey> Members
-
-        public int Compare(TagKey x, TagKey y)
-        {
-            int typeDiff = (int)x.TagType - (int)y.TagType;
-            if (typeDiff != 0)
-                return typeDiff;
-
-            return String.Compare(x.Name, y.Name, true);
-        }
-
-        #endregion
-
-        #region IComparable<TagKey> Members
-
-        public int CompareTo(TagKey other)
-        {
-            return Compare(this, other);
-        }
-
-        #endregion
-    }
-
-    public class DataNode
-    {
-        public DataNode()
-        {
-        }
-
-        public DataNode(DataNode parent)
-        {
-            Parent = parent;
-        }
-
-        public DataNode Parent { get; set; }
-
-        private bool _modified;
-        public bool Modified
-        {
-            get { return _modified; }
-            set
-            {
-                if (value && Parent != null)
+            foreach (var region in nodes)
+                foreach (var chunk in region.Nodes.Cast<TreeNode>().Where(c => c.Text.StartsWith("Chunk")))
                 {
-                    Parent.Modified = value;
+                    yield return chunk;
                 }
-                _modified = value;
+        }
+
+        int _nodesSearched = 0;
+        bool NeedsExpand(TreeNode node)
+        {
+            return node.Tag is DataNode && (node.Tag as DataNode).Expanded == false;
+
+        }
+        IEnumerable<TreeNode> FindRegions(IEnumerable<TreeNode> nodes, Func<TreeNode, bool> predicate)
+        {
+
+
+            foreach (var node in nodes)
+            {
+                _nodesSearched++;
+                if (NeedsExpand(node))
+                    ExpandNode(node);
+                if (predicate(node))
+                    yield return node;
+                else
+                    foreach (var region in FindRegions(node.Nodes.Cast<TreeNode>(),predicate))
+                    {
+                        yield return region;
+                    }
+            }
+
+
+        }
+
+        void findEntityChunkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _nodesSearched = 0;
+            var entityNodes = FindRegions(_nodeTree.Nodes.Cast<TreeNode>(),tn=>tn.Text.EndsWith(".mcr"));
+            var entityRegions = entityNodes.ToArray();
+            try
+            {
+                if (entityRegions == null || entityRegions.Any() == false)
+                {
+                    return;
+                }
+                var chunks = FindChunks(entityRegions);
+                if (chunks == null || chunks.Any() == false)
+                    return;
+                var populatedChunks = FindChunksWithEntities(chunks);
+                if (populatedChunks == null || populatedChunks.Any() == false)
+                    return;
+                _nodeTree.SelectedNode = populatedChunks.First();
+            }
+            finally
+            {
+                toolStrip1.Text = "Searched " + _nodesSearched + " nodes";
+                toolStrip1.Visible = true;
+            }
+            
+        }
+
+        IEnumerable<TreeNode> FindChunksWithEntities(IEnumerable<TreeNode> chunks)
+        {
+            foreach (var chunk in chunks)
+            {
+                if (NeedsExpand(chunk))
+                    ExpandNode(chunk);
+                var level = chunk.Nodes.Cast<TreeNode>().FirstOrDefault(n => n.Text.StartsWith("Level"));
+                if (level == null)
+                    continue;
+                var entityNode = level.Nodes.Cast<TreeNode>().FirstOrDefault(n => n.Text.StartsWith("Entities"));
+                if (entityNode == null)
+                    continue;
+                var text = entityNode.Text.Where(c => char.IsNumber(c)).Select(c=>c.ToString()).Aggregate((c1,c2)=>c1+c2);
+
+                var entityCount = int.Parse(text);
+                if (entityCount > 0)
+                    yield return chunk;
             }
         }
-
-        public bool Expanded { get; set; }
-    }
-
-    public class NbtDataNode : DataNode
-    {
-        public NbtDataNode()
-        {
-        }
-
-        public NbtDataNode(DataNode parent)
-            : base(parent)
-        {
-        }
-
-        public NbtTree Tree { get; set; }
-    }
-
-    public class RegionChunkData : NbtDataNode
-    {
-        public RegionChunkData(RegionFile file, int x, int z)
-            : this(null, file, x, z)
-        {
-        }
-
-        public RegionChunkData(DataNode parent, RegionFile file, int x, int z)
-            : base(parent)
-        {
-            Region = file;
-            X = x;
-            Z = z;
-        }
-
-        public RegionFile Region { get; private set; }
-        public int X { get; private set; }
-        public int Z { get; private set; }
-    }
-
-    public class RegionData : DataNode
-    {
-        public RegionData(string path)
-            : this(null, path)
-        {
-        }
-
-        public RegionData(DataNode parent, string path)
-            : base(parent)
-        {
-            Path = path;
-        }
-
-        public string Path { get; private set; }
-    }
-
-    public class NbtFileData : NbtDataNode
-    {
-        public NbtFileData(string path, CompressionType cztype)
-            : this(null, path, cztype)
-        {
-        }
-
-        public NbtFileData(DataNode parent, string path, CompressionType cztype)
-            : base(parent)
-        {
-            Path = path;
-            CompressionType = cztype;
-        }
-
-        public string Path { get; private set; }
-        public CompressionType CompressionType { get; private set; }
-    }
-
-    public class DirectoryData : DataNode
-    {
-        public DirectoryData(string path)
-            : this(null, path)
-        {
-        }
-
-        public DirectoryData(DataNode parent, string path)
-            : base(parent)
-        {
-            Path = path;
-        }
-
-        public string Path { get; private set; }
     }
 }
