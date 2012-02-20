@@ -160,7 +160,7 @@
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            this.exitToolStripMenuItem.Click += new System.EventHandler(exitToolStripMenuItem_Click);
             // 
             // searchToolStripMenuItem
             // 
@@ -205,7 +205,7 @@
             this.aboutToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.aboutToolStripMenuItem.Text = "&About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(aboutToolStripMenuItem_Click);
             // 
             // toolStripContainer1
             // 
@@ -257,7 +257,7 @@
             this._nodeTree.Size = new System.Drawing.Size(562, 351);
             this._nodeTree.TabIndex = 0;
             this._nodeTree.DragDrop += new System.Windows.Forms.DragEventHandler(this._nodeTree_DragDrop);
-            this._nodeTree.DragEnter += new System.Windows.Forms.DragEventHandler(this._nodeTree_DragEnter);
+            this._nodeTree.DragEnter += new System.Windows.Forms.DragEventHandler(_nodeTree_DragEnter);
             // 
             // imageList1
             // 

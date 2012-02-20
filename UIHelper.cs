@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Substrate;
+﻿using Substrate;
 using Substrate.Nbt;
 
 namespace NBTExplorer

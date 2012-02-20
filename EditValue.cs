@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Substrate.Nbt;
 
@@ -17,11 +13,11 @@ namespace NBTExplorer
 
     public partial class EditValue : Form
     {
-        private string _name;
-        private TagNode _tag;
-        private EditValueType _type;
+        string _name;
+        readonly TagNode _tag;
+        readonly EditValueType _type;
 
-        private List<string> _invalidNames = new List<string>();
+        readonly List<string> _invalidNames = new List<string>();
 
         public EditValue (TagNode tag)
         {
