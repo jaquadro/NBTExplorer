@@ -69,6 +69,10 @@ namespace Substrate.Core
 
         protected void ReadFile ()
         {
+            if (_disposed) {
+                throw new ObjectDisposedException("RegionFile", "Attempting to use a RegionFile after it has been disposed.");
+            }
+
             // Get last udpate time
             long newModified = -1;
             try {
@@ -201,6 +205,10 @@ namespace Substrate.Core
          * the chunk is not found or an error occurs
          */
         public Stream GetChunkDataInputStream(int x, int z) {
+            if (_disposed) {
+                throw new ObjectDisposedException("RegionFile", "Attempting to use a RegionFile after it has been disposed.");
+            }
+
             if (OutOfBounds(x, z)) {
                 Debugln("READ", x, z, "out of bounds");
                 return null;
@@ -322,6 +330,10 @@ namespace Substrate.Core
 
         /* write a chunk at (x,z) with length bytes of data to disk */
         protected void Write(int x, int z, byte[] data, int length, int timestamp) {
+            if (_disposed) {
+                throw new ObjectDisposedException("RegionFile", "Attempting to use a RegionFile after it has been disposed.");
+            }
+
             try {
                 int offset = GetOffset(x, z);
                 int sectorNumber = offset >> 8;

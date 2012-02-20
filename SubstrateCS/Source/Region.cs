@@ -509,6 +509,7 @@ namespace Substrate
 
             if (ChunkCount() == 0) {
                 _regionMan.DeleteRegion(X, Z);
+                _regionFile.Target = null;
             }
 
             return true;
