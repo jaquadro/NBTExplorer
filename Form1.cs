@@ -72,8 +72,8 @@ namespace NBTExplorer
         TreeNode NodeFromTag(TagNode tag, string name)
         {
             var text = SubstrateHelper.GetNodeText(name, tag);
-            var node=InitializeTreeNode(_tagIconIndex[tag.GetTagType()], text, tag);
-           
+            var node = InitializeTreeNode(_tagIconIndex[tag.GetTagType()], text, tag);
+
 
             if (tag.GetTagType() == TagType.TAG_LIST)
             {
@@ -115,13 +115,7 @@ namespace NBTExplorer
                     if (item != null)
                     {
 
-                        var newNode = new TreeNode();
-
-                        //node.ImageIndex = _tagIconIndex[0];
-                        //node.SelectedImageIndex = _tagIconIndex[0];
-                        newNode.Text = item.Name;
-                        node.ImageIndex = this.imageList1.Images.Count;
-                        node.SelectedImageIndex = this.imageList1.Images.Count;
+                        var newNode = CreateDescriptionNode(item.Name);
                         newNode.ToolTipText = "StackSize:" + item.StackSize.ToString();
 
                         node.Nodes.Insert(0, newNode);
@@ -137,6 +131,15 @@ namespace NBTExplorer
             }
         }
 
+        TreeNode CreateDescriptionNode(string text)
+        {
+            var newNode = new TreeNode();
+            newNode.Text = text;
+            newNode.ImageIndex = this.imageList1.Images.Count;
+            newNode.SelectedImageIndex = this.imageList1.Images.Count;
+            return newNode;
+        }
+
         void PopulateNodeFromTag(TreeNode node, IEnumerable<KeyValuePair<string, TagNode>> dict)
         {
             if (dict == null)
@@ -150,6 +153,14 @@ namespace NBTExplorer
             foreach (KeyValuePair<TagKey, TagNode> kv in list)
             {
                 node.Nodes.Add(NodeFromTag(kv.Value, kv.Key.Name));
+            }
+            if(node.Text.StartsWith("Item"))
+            {
+                var item = UIHelper.TryGetItemName((TagNode) node.Tag);
+                if (item == null)
+                    return;
+                var newNode = CreateDescriptionNode(item.Name);
+                node.Nodes.Insert(0,newNode);
             }
         }
 
@@ -195,10 +206,10 @@ namespace NBTExplorer
             return node;
         }
 
-         static TreeNode InitializeParentNode(Int32 imageIndex, string text, object tag)
-         {
+        static TreeNode InitializeParentNode(Int32 imageIndex, string text, object tag)
+        {
 
-             var node = InitializeTreeNode(imageIndex, text, tag);
+            var node = InitializeTreeNode(imageIndex, text, tag);
             node.Nodes.Add(new TreeNode()); //add stub so that it shows as expandable
             return node;
         }
@@ -214,7 +225,7 @@ namespace NBTExplorer
         static TreeNode CreateLazyNbt(string path, CompressionType cztype)
         {
             var fileName = Path.GetFileName(path);
-            var node = InitializeParentNode(12, fileName,new NbtFileData(path, cztype));
+            var node = InitializeParentNode(12, fileName, new NbtFileData(path, cztype));
 
             return node;
         }
@@ -606,7 +617,7 @@ namespace NBTExplorer
             {
                 _openFolderPath = ofd.SelectedPath;
                 OpenDirectory(ofd.SelectedPath);
-               
+
             }
         }
 
@@ -1283,13 +1294,13 @@ namespace NBTExplorer
         }
 
 
-        static IEnumerable<TreeNode> FindChunks(IEnumerable<TreeNode> nodes,Func<TreeNode,bool> predicate)
+        static IEnumerable<TreeNode> FindChunks(IEnumerable<TreeNode> nodes, Func<TreeNode, bool> predicate)
         {
             foreach (var region in nodes)
                 foreach (var chunk in region.Nodes.Cast<TreeNode>().Where(c => c.Text.StartsWith("Chunk")))
                 {
-                    if(predicate==null || predicate(chunk))
-                    yield return chunk;
+                    if (predicate == null || predicate(chunk))
+                        yield return chunk;
                 }
         }
 
@@ -1319,7 +1330,7 @@ namespace NBTExplorer
             }
 
         }
-        
+
         /// <summary>
         /// Find next chunk that has entities
         /// </summary>
@@ -1347,12 +1358,12 @@ namespace NBTExplorer
         /// <returns></returns>
         IEnumerable<TreeNode> FindFrom(TreeNode start)
         {
-            if (this._nodeTree.Nodes.Count==0)
+            if (this._nodeTree.Nodes.Count == 0)
                 return Enumerable.Empty<TreeNode>();
-            
+
             var entityNodes =
                 FindRegions(
-                    _nodeTree.Nodes.Cast<TreeNode>(),tn => tn.Text.EndsWith(".mcr"));
+                    _nodeTree.Nodes.Cast<TreeNode>(), tn => tn.Text.EndsWith(".mcr"));
 
             var entityRegions = entityNodes.ToArray();
             try
@@ -1361,7 +1372,7 @@ namespace NBTExplorer
                 {
                     return Enumerable.Empty<TreeNode>();
                 }
-                var chunks = FindChunks(entityRegions,tn=> tn.Index > start.Index);
+                var chunks = FindChunks(entityRegions, tn => tn.Index > start.Index);
                 if (chunks == null || chunks.Any() == false)
                     return Enumerable.Empty<TreeNode>();
                 var populatedChunks = FindChunksWithEntities(chunks);
@@ -1378,7 +1389,7 @@ namespace NBTExplorer
         void findEntityChunkToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _nodesSearched = 0;
-            var populatedChunks=FindNextChunk();
+            var populatedChunks = FindNextChunk();
             var first = populatedChunks.FirstOrDefault();
             if (first == null)
                 return;
@@ -1386,7 +1397,7 @@ namespace NBTExplorer
             _nodeTree.SelectedNode = first;
             var ddl = new ToolStripButton();
             ddl.Text = first.Text;
-            ddl.Width = Text.Length*5;
+            ddl.Width = Text.Length * 5;
             ddl.ToolTipText = first.Parent.Text;
 
             ddl.Click += (sender2, e2) =>

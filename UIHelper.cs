@@ -5,7 +5,10 @@ namespace NBTExplorer
 {
     public class UIHelper
     {
-
+        internal static ItemInfo TryGetItemName(int id)
+        {
+            return Substrate.ItemInfo.ItemTable[id];
+        }
         internal static ItemInfo TryGetItemName(TagNode tag)
         {
 
@@ -15,7 +18,7 @@ namespace NBTExplorer
                 int id;
                 if (int.TryParse(tagc["id"].ToString(), out id))
                 {
-                    return Substrate.ItemInfo.ItemTable[id];
+                    return TryGetItemName(id);
                 }
                 return null;
             
