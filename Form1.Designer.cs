@@ -41,6 +41,7 @@
             this.searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findEntityChunkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
@@ -72,7 +73,7 @@
             this._nodeContainerContext = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openSubTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveItemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.findEntityChunkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findBloatedChunkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -167,7 +168,8 @@
             this.searchToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.findToolStripMenuItem,
             this.findNextToolStripMenuItem,
-            this.findEntityChunkToolStripMenuItem});
+            this.findEntityChunkToolStripMenuItem,
+            this.findBloatedChunkToolStripMenuItem});
             this.searchToolStripMenuItem.Name = "searchToolStripMenuItem";
             this.searchToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
             this.searchToolStripMenuItem.Text = "&Search";
@@ -177,7 +179,7 @@
             this.findToolStripMenuItem.Image = global::NBTExplorer.Properties.Resources.binocular;
             this.findToolStripMenuItem.Name = "findToolStripMenuItem";
             this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this.findToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.findToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.findToolStripMenuItem.Text = "Find...";
             this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
             // 
@@ -186,9 +188,16 @@
             this.findNextToolStripMenuItem.Image = global::NBTExplorer.Properties.Resources.binocular__arrow;
             this.findNextToolStripMenuItem.Name = "findNextToolStripMenuItem";
             this.findNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.findNextToolStripMenuItem.Text = "Find Next";
             this.findNextToolStripMenuItem.Click += new System.EventHandler(this.findNextToolStripMenuItem_Click);
+            // 
+            // findEntityChunkToolStripMenuItem
+            // 
+            this.findEntityChunkToolStripMenuItem.Name = "findEntityChunkToolStripMenuItem";
+            this.findEntityChunkToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.findEntityChunkToolStripMenuItem.Text = "Find Entity Chunk";
+            this.findEntityChunkToolStripMenuItem.Click += new System.EventHandler(this.findEntityChunkToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -203,7 +212,7 @@
             this.aboutToolStripMenuItem.Image = global::NBTExplorer.Properties.Resources.information_frame;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(aboutToolStripMenuItem_Click);
             // 
@@ -256,7 +265,7 @@
             this._nodeTree.SelectedImageIndex = 0;
             this._nodeTree.Size = new System.Drawing.Size(562, 351);
             this._nodeTree.TabIndex = 0;
-            this._nodeTree.DragDrop += new System.Windows.Forms.DragEventHandler(this._nodeTree_DragDrop);
+            this._nodeTree.DragDrop += new System.Windows.Forms.DragEventHandler(_nodeTree_DragDrop);
             this._nodeTree.DragEnter += new System.Windows.Forms.DragEventHandler(_nodeTree_DragEnter);
             // 
             // imageList1
@@ -515,12 +524,12 @@
             this.saveItemToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.saveItemToolStripMenuItem.Text = "Save Node";
             // 
-            // findEntityChunkToolStripMenuItem
+            // findBloatedChunkToolStripMenuItem
             // 
-            this.findEntityChunkToolStripMenuItem.Name = "findEntityChunkToolStripMenuItem";
-            this.findEntityChunkToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.findEntityChunkToolStripMenuItem.Text = "Find Entity Chunk";
-            this.findEntityChunkToolStripMenuItem.Click += new System.EventHandler(this.findEntityChunkToolStripMenuItem_Click);
+            this.findBloatedChunkToolStripMenuItem.Name = "findBloatedChunkToolStripMenuItem";
+            this.findBloatedChunkToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.findBloatedChunkToolStripMenuItem.Text = "Find Bloated Chunk";
+            this.findBloatedChunkToolStripMenuItem.Click += new System.EventHandler(this.findBloatedChunkToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -598,6 +607,7 @@
         private System.Windows.Forms.ToolStripButton _buttonOpenFolder;
         private System.Windows.Forms.ToolStripMenuItem openMinecraftSaveFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem findEntityChunkToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem findBloatedChunkToolStripMenuItem;
     }
 }
 
