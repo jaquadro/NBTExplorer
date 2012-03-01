@@ -26,8 +26,9 @@ namespace NBTExplorer.ViewModel
             _tagIconIndex[TagType.TAG_STRING] = 7;
             _tagIconIndex[TagType.TAG_LIST] = 8;
             _tagIconIndex[TagType.TAG_COMPOUND] = 9;
+            _tagIconIndex[TagType.TAG_INT_ARRAY] = 14;
         }
-        
+
         static TagNode GetTagNode(TreeNode node)
         {
             if (node == null)
@@ -184,7 +185,7 @@ namespace NBTExplorer.ViewModel
 
         #endregion
 
-        internal static IEnumerable<TreeNode> FindNode(TreeNode node,int descriptionImageIndex,string searchName,string searchValue)
+        internal static IEnumerable<TreeNode> FindNode(TreeNode node, int descriptionImageIndex, string searchName, string searchValue)
         {
             if (node == null)
                 yield break;
@@ -196,7 +197,7 @@ namespace NBTExplorer.ViewModel
                 DataNode data = node.Tag as DataNode;
                 if (!data.Expanded)
                 {
-                    ServerNode.ExpandNode(node,descriptionImageIndex);
+                    ServerNode.ExpandNode(node, descriptionImageIndex);
                     expand = true;
                 }
             }
@@ -229,7 +230,7 @@ namespace NBTExplorer.ViewModel
 
             foreach (TreeNode sub in node.Nodes)
             {
-                foreach (TreeNode s in FindNode(sub,descriptionImageIndex,searchName,searchValue))
+                foreach (TreeNode s in FindNode(sub, descriptionImageIndex, searchName, searchValue))
                     yield return s;
             }
 
@@ -318,10 +319,9 @@ namespace NBTExplorer.ViewModel
         {
             LoadNbtStream(parent, stream);
         }
-
-       static void LoadNbtStream(TreeNodeCollection parent,int descriptionImageIndex, Stream stream, string name = null)
+        static void LoadNbtStream(TreeNodeCollection parent, int descriptionImageIndex, Stream stream, string name)
         {
-            var text = !String.IsNullOrEmpty(name) ? name : null;
+            string text = !String.IsNullOrEmpty(name) ? name : null;
             text = text ?? "[root]";
 
             TreeNode root = new TreeNode(text, 9, 9);
@@ -330,217 +330,251 @@ namespace NBTExplorer.ViewModel
 
             parent.Add(root);
         }
-       internal static bool NeedsExpand(TreeNode node)
-       {
-           return node.Tag is DataNode && (node.Tag as DataNode).Expanded == false;
+       
+        internal static bool NeedsExpand(TreeNode node)
+        {
+            return node.Tag is DataNode && (node.Tag as DataNode).Expanded == false;
 
-       }
+        }
 
-       static string GetNodeText(TreeNode node)
-       {
-           return SubstrateHelper.GetNodeText(GetTagNodeName(node), GetTagNodeText(node));
-       }
+        static string GetNodeText(TreeNode node)
+        {
+            return SubstrateHelper.GetNodeText(GetTagNodeName(node), GetTagNodeText(node));
+        }
+        static string GetTagNodeText(TagNode tag)
+        {
+            if (tag == null)
+                return null;
 
-       static string GetTagNodeText(TreeNode node)
-       {
-           TagNode tag = GetTagNode(node);
-           if (tag == null)
-               return null;
+            switch (tag.GetTagType())
+            {
+                case TagType.TAG_BYTE:
+                case TagType.TAG_SHORT:
+                case TagType.TAG_INT:
+                case TagType.TAG_LONG:
+                case TagType.TAG_FLOAT:
+                case TagType.TAG_DOUBLE:
+                case TagType.TAG_STRING:
+                    return tag.ToString();
 
-           return SubstrateHelper.GetTagNodeText(tag);
-       }
+                case TagType.TAG_BYTE_ARRAY:
+                    return tag.ToTagByteArray().Length + " bytes";
 
-       static TreeNode CreateDescriptionNode(string text,int imageIndex)
-       {
-           var newNode = new TreeNode();
-           newNode.Text = text;
-           newNode.ImageIndex =imageIndex;
-           newNode.SelectedImageIndex = imageIndex;
-           return newNode;
-       }
+                case TagType.TAG_INT_ARRAY:
+                    return tag.ToTagIntArray().Length + " integers";
 
-       static void PopulateNodeFromTag(TreeNode parentNode,int descriptionIndex, IEnumerable<TagNode> list)
-       {
-           foreach (TagNode tag in list)
-           {
-               var node = NodeFromTag(tag,descriptionIndex);
-               if (parentNode.Text.StartsWith("Inventory") || parentNode.Text.StartsWith("Item"))
-               {
+                case TagType.TAG_LIST:
+                    return tag.ToTagList().Count + " entries";
 
-                   Debug.Assert(tag.IsCastableTo(TagType.TAG_COMPOUND));
-                   var item = UIHelper.TryGetItemName(tag);
+                case TagType.TAG_COMPOUND:
+                    return tag.ToTagCompound().Count + " entries";
+            }
 
-                   if (item != null)
-                   {
+            return null;
+        }
+        static string GetTagNodeText(TreeNode node)
+        {
+            TagNode tag = GetTagNode(node);
+            if (tag == null)
+                return null;
 
-                       var newNode = CreateDescriptionNode(item.Name,descriptionIndex);
-                       newNode.ToolTipText = "StackSize:" + item.StackSize.ToString();
+            return SubstrateHelper.GetTagNodeText(tag);
+        }
 
-                       node.Nodes.Insert(0, newNode);
-                   }
+        static TreeNode CreateDescriptionNode(string text, int imageIndex)
+        {
+            var newNode = new TreeNode();
+            newNode.Text = text;
+            newNode.ImageIndex = imageIndex;
+            newNode.SelectedImageIndex = imageIndex;
+            return newNode;
+        }
 
+        static void PopulateNodeFromTag(TreeNode parentNode, int descriptionIndex, IEnumerable<TagNode> list)
+        {
+            foreach (TagNode tag in list)
+            {
+                var node = NodeFromTag(tag, descriptionIndex);
+                if (parentNode.Text.StartsWith("Inventory") || parentNode.Text.StartsWith("Item"))
+                {
 
+                    Debug.Assert(tag.IsCastableTo(TagType.TAG_COMPOUND));
+                    var item = UIHelper.TryGetItemName(tag);
 
+                    if (item != null)
+                    {
 
-               }
+                        var newNode = CreateDescriptionNode(item.Name, descriptionIndex);
+                        newNode.ToolTipText = "StackSize:" + item.StackSize.ToString();
 
-
-               parentNode.Nodes.Add(node);
-           }
-       }
-       internal static void AddTagToNode( TreeNode node, int descriptionIndex, TagType type)
-       {
-           TagNode tag = GetTagNode(node);
-           if (tag == null)
-               return;
-
-           if (tag.GetTagType() != TagType.TAG_COMPOUND &&
-               tag.GetTagType() != TagType.TAG_LIST)
-               return;
-
-           if (tag.GetTagType() == TagType.TAG_LIST &&
-               tag.ToTagList().ValueType != type &&
-               tag.ToTagList().Count > 0)
-               return;
-
-           TagNode newNode = null;
-           switch (type)
-           {
-               case TagType.TAG_BYTE:
-                   newNode = new TagNodeByte();
-                   break;
-               case TagType.TAG_SHORT:
-                   newNode = new TagNodeShort();
-                   break;
-               case TagType.TAG_INT:
-                   newNode = new TagNodeInt();
-                   break;
-               case TagType.TAG_LONG:
-                   newNode = new TagNodeLong();
-                   break;
-               case TagType.TAG_FLOAT:
-                   newNode = new TagNodeFloat();
-                   break;
-               case TagType.TAG_DOUBLE:
-                   newNode = new TagNodeDouble();
-                   break;
-               case TagType.TAG_BYTE_ARRAY:
-                   newNode = new TagNodeByteArray();
-                   break;
-               case TagType.TAG_STRING:
-                   newNode = new TagNodeString();
-                   break;
-               case TagType.TAG_LIST:
-                   newNode = new TagNodeList(TagType.TAG_BYTE);
-                   break;
-               case TagType.TAG_COMPOUND:
-                   newNode = new TagNodeCompound();
-                   break;
-           }
-
-           if (tag is TagNodeCompound)
-           {
-               TagNodeCompound ctag = tag as TagNodeCompound;
-
-               EditValue form = new EditValue("");
-               foreach (string key in ctag.Keys)
-               {
-                   form.InvalidNames.Add(key);
-               }
-
-               if (form.ShowDialog() != DialogResult.OK)
-                   return;
-
-               ctag.Add(form.NodeName, newNode);
-
-               TreeNode tnode = NodeFromTag(newNode, descriptionIndex, form.NodeName);
-               node.Nodes.Add(tnode);
-
-               tnode.TreeView.SelectedNode = tnode;
-               tnode.Expand();
-           }
-           else if (tag is TagNodeList)
-           {
-               var ltag = tag as TagNodeList;
-               if (ltag.ValueType != type)
-                   ltag.ChangeValueType(type);
-
-               ltag.Add(newNode);
-
-               TreeNode tnode = NodeFromTag(newNode, descriptionIndex);
-               node.Nodes.Add(tnode);
-               tnode.TreeView.SelectedNode = tnode;
-
-               tnode.Expand();
-           }
-
-           node.Text = GetNodeText(node);
-
-           TreeNode baseNode = BaseNode(node);
-           if (baseNode != null)
-           {
-               (baseNode.Tag as DataNode).Modified = true;
-           }
-       }
-       internal static void CollapseNode(TreeNode node)
-       {
-           if (node.Tag == null)
-               return;
-
-           if (node.Tag is DataNode)
-           {
-               UnloadLazyDataNode(node);
-           }
-       }
+                        node.Nodes.Insert(0, newNode);
+                    }
 
 
-       static TreeNode NodeFromTag(TagNode tag, int descriptionImageIndex)
-       {
-           return NodeFromTag(tag, descriptionImageIndex, null);
-       }
-
-       static TreeNode NodeFromTag(TagNode tag, int descriptionIndex ,string name)
-       {
-           var text = SubstrateHelper.GetNodeText(name, tag);
-           var node = ServerNode.InitializeTreeNode(_tagIconIndex[tag.GetTagType()], text, tag);
 
 
-           if (tag.GetTagType() == TagType.TAG_LIST)
-           {
-               PopulateNodeFromTag(node,descriptionIndex, tag.ToTagList());
-           }
-           else if (tag.GetTagType() == TagType.TAG_COMPOUND)
-           {
-               PopulateNodeFromTag(node,descriptionIndex, tag.ToTagCompound());
-           }
+                }
 
-           return node;
-       }
-       static void PopulateNodeFromTag(TreeNode node,int descriptionIndex, IEnumerable<KeyValuePair<string, TagNode>> dict)
-       {
-           if (dict == null)
-               return;
-           var list = new SortedList<TagKey, TagNode>();
-           foreach (KeyValuePair<string, TagNode> kv in dict)
-           {
-               list.Add(new TagKey(kv.Key, kv.Value.GetTagType()), kv.Value);
-           }
 
-           foreach (KeyValuePair<TagKey, TagNode> kv in list)
-           {
-               node.Nodes.Add(NodeFromTag(kv.Value,descriptionIndex, kv.Key.Name));
-           }
-           if (node.Text.StartsWith("Item"))
-           {
-               var item = UIHelper.TryGetItemName((TagNode)node.Tag);
-               if (item == null)
-                   return;
-               var newNode = CreateDescriptionNode(item.Name,descriptionIndex);
-               node.Nodes.Insert(0, newNode);
-           }
-       }
+                parentNode.Nodes.Add(node);
+            }
+        }
+        internal static void AddTagToNode(TreeNode node, int descriptionIndex, TagType type)
+        {
+            TagNode tag = GetTagNode(node);
+            if (tag == null)
+                return;
 
-       static void LoadNbtStream(TreeNode node,int descriptionIndex, Stream stream)
+            if (tag.GetTagType() != TagType.TAG_COMPOUND &&
+                tag.GetTagType() != TagType.TAG_LIST)
+                return;
+
+            if (tag.GetTagType() == TagType.TAG_LIST &&
+                tag.ToTagList().ValueType != type &&
+                tag.ToTagList().Count > 0)
+                return;
+
+            TagNode newNode = null;
+            switch (type)
+            {
+                case TagType.TAG_BYTE:
+                    newNode = new TagNodeByte();
+                    break;
+                case TagType.TAG_SHORT:
+                    newNode = new TagNodeShort();
+                    break;
+                case TagType.TAG_INT:
+                    newNode = new TagNodeInt();
+                    break;
+                case TagType.TAG_LONG:
+                    newNode = new TagNodeLong();
+                    break;
+                case TagType.TAG_FLOAT:
+                    newNode = new TagNodeFloat();
+                    break;
+                case TagType.TAG_DOUBLE:
+                    newNode = new TagNodeDouble();
+                    break;
+                case TagType.TAG_BYTE_ARRAY:
+                    newNode = new TagNodeByteArray();
+                    break;
+                case TagType.TAG_STRING:
+                    newNode = new TagNodeString();
+                    break;
+                case TagType.TAG_LIST:
+                    newNode = new TagNodeList(TagType.TAG_BYTE);
+                    break;
+                case TagType.TAG_COMPOUND:
+                    newNode = new TagNodeCompound();
+                    break;
+                case TagType.TAG_INT_ARRAY:
+                    newNode = new TagNodeIntArray();
+                    break;
+            }
+
+            if (tag is TagNodeCompound)
+            {
+                TagNodeCompound ctag = tag as TagNodeCompound;
+
+                EditValue form = new EditValue("");
+                foreach (string key in ctag.Keys)
+                {
+                    form.InvalidNames.Add(key);
+                }
+
+                if (form.ShowDialog() != DialogResult.OK)
+                    return;
+
+                ctag.Add(form.NodeName, newNode);
+
+                TreeNode tnode = NodeFromTag(newNode, descriptionIndex, form.NodeName);
+                node.Nodes.Add(tnode);
+
+                tnode.TreeView.SelectedNode = tnode;
+                tnode.Expand();
+            }
+            else if (tag is TagNodeList)
+            {
+                var ltag = tag as TagNodeList;
+                if (ltag.ValueType != type)
+                    ltag.ChangeValueType(type);
+
+                ltag.Add(newNode);
+
+                TreeNode tnode = NodeFromTag(newNode, descriptionIndex);
+                node.Nodes.Add(tnode);
+                tnode.TreeView.SelectedNode = tnode;
+
+                tnode.Expand();
+            }
+
+            node.Text = GetNodeText(node);
+
+            TreeNode baseNode = BaseNode(node);
+            if (baseNode != null)
+            {
+                (baseNode.Tag as DataNode).Modified = true;
+            }
+        }
+        internal static void CollapseNode(TreeNode node)
+        {
+            if (node.Tag == null)
+                return;
+
+            if (node.Tag is DataNode)
+            {
+                UnloadLazyDataNode(node);
+            }
+        }
+
+
+        static TreeNode NodeFromTag(TagNode tag, int descriptionImageIndex)
+        {
+            return NodeFromTag(tag, descriptionImageIndex, null);
+        }
+
+        static TreeNode NodeFromTag(TagNode tag, int descriptionIndex, string name)
+        {
+            var text = SubstrateHelper.GetNodeText(name, tag);
+            var node = ServerNode.InitializeTreeNode(_tagIconIndex[tag.GetTagType()], text, tag);
+
+
+            if (tag.GetTagType() == TagType.TAG_LIST)
+            {
+                PopulateNodeFromTag(node, descriptionIndex, tag.ToTagList());
+            }
+            else if (tag.GetTagType() == TagType.TAG_COMPOUND)
+            {
+                PopulateNodeFromTag(node, descriptionIndex, tag.ToTagCompound());
+            }
+
+            return node;
+        }
+        static void PopulateNodeFromTag(TreeNode node, int descriptionIndex, IEnumerable<KeyValuePair<string, TagNode>> dict)
+        {
+            if (dict == null)
+                return;
+            var list = new SortedList<TagKey, TagNode>();
+            foreach (KeyValuePair<string, TagNode> kv in dict)
+            {
+                list.Add(new TagKey(kv.Key, kv.Value.GetTagType()), kv.Value);
+            }
+
+            foreach (KeyValuePair<TagKey, TagNode> kv in list)
+            {
+                node.Nodes.Add(NodeFromTag(kv.Value, descriptionIndex, kv.Key.Name));
+            }
+            if (node.Text.StartsWith("Item"))
+            {
+                var item = UIHelper.TryGetItemName((TagNode)node.Tag);
+                if (item == null)
+                    return;
+                var newNode = CreateDescriptionNode(item.Name, descriptionIndex);
+                node.Nodes.Insert(0, newNode);
+            }
+        }
+       
+        static void LoadNbtStream(TreeNode node, int descriptionIndex, Stream stream)
         {
             NbtTree tree = new NbtTree();
             tree.ReadFrom(stream);
@@ -550,9 +584,9 @@ namespace NBTExplorer.ViewModel
                 (node.Tag as NbtDataNode).Tree = tree;
             }
 
-            PopulateNodeFromTag(node,descriptionIndex, tree.Root);
+            PopulateNodeFromTag(node, descriptionIndex, tree.Root);
         }
-       internal static void LoadLazyNbt(TreeNode node,  int descriptionImageIndex)
+        internal static void LoadLazyNbt(TreeNode node, int descriptionImageIndex)
         {
             NbtFileData data = node.Tag as NbtFileData;
             if (data == null || data.Modified)
@@ -561,11 +595,11 @@ namespace NBTExplorer.ViewModel
             node.Nodes.Clear();
 
             NBTFile file = new NBTFile(data.Path);
-            LoadNbtStream(node,descriptionImageIndex, file.GetDataInputStream(data.CompressionType));
+            LoadNbtStream(node, descriptionImageIndex, file.GetDataInputStream(data.CompressionType));
 
             data.Expanded = true;
         }
-
+      
         internal static void LoadRegion(TreeNodeCollection parent, string path)
         {
             TreeNode root = new TreeNode(Path.GetFileName(path), 11, 11);
@@ -575,7 +609,8 @@ namespace NBTExplorer.ViewModel
 
         internal static void TryLoadFile(TreeNodeCollection parent, string path)
         {
-            if (Path.GetExtension(path) == ".mcr")
+            string ext = Path.GetExtension(path);
+            if (ext == ".mcr" || ext == ".mca")
             {
                 TreeNode node = ServerNode.CreateLazyRegion(path);
                 parent.Add(node);
@@ -583,7 +618,7 @@ namespace NBTExplorer.ViewModel
                 return;
             }
 
-            if (Path.GetExtension(path) == ".dat")
+            if (ext == ".dat" || ext == ".nbt" || ext == ".schematic")
             {
                 try
                 {
@@ -679,49 +714,49 @@ namespace NBTExplorer.ViewModel
 
             parent.Add(root);
         }
-       internal static TreeNode CreateLazyChunk(RegionFile rf, int x, int z)
+        internal static TreeNode CreateLazyChunk(RegionFile rf, int x, int z)
         {
             return InitializeParentNode(9, "Chunk [" + x + ", " + z + "]", new RegionChunkData(rf, x, z));
         }
-       internal static TreeNode CreateLazyRegion(string path)
-       {
-           var fileName = Path.GetFileName(path);
-           var node = InitializeParentNode(11, fileName, new RegionData(path));
+        internal static TreeNode CreateLazyRegion(string path)
+        {
+            var fileName = Path.GetFileName(path);
+            var node = InitializeParentNode(11, fileName, new RegionData(path));
 
-           return node;
-       }
+            return node;
+        }
 
-       internal static TreeNode CreateLazyNbt(string path, CompressionType cztype)
-       {
-           var fileName = Path.GetFileName(path);
-           var node = InitializeParentNode(12, fileName, new NbtFileData(path, cztype));
+        internal static TreeNode CreateLazyNbt(string path, CompressionType cztype)
+        {
+            var fileName = Path.GetFileName(path);
+            var node = InitializeParentNode(12, fileName, new NbtFileData(path, cztype));
 
-           return node;
-       }
+            return node;
+        }
 
-       internal static TreeNode CreateLazyDirectory(string path)
-       {
-           var filename = Path.GetFileName(path);
-           var node = InitializeParentNode(10, filename, new DirectoryData(path));
+        internal static TreeNode CreateLazyDirectory(string path)
+        {
+            var filename = Path.GetFileName(path);
+            var node = InitializeParentNode(10, filename, new DirectoryData(path));
 
-           return node;
-       }
+            return node;
+        }
 
-       internal static TreeNode CreateLazyDirectory(string path, TreeNode parent)
-       {
-           TreeNode node = CreateLazyDirectory(path);
-           LinkDataNodeParent(node, parent);
+        internal static TreeNode CreateLazyDirectory(string path, TreeNode parent)
+        {
+            TreeNode node = CreateLazyDirectory(path);
+            LinkDataNodeParent(node, parent);
 
-           return node;
-       }
+            return node;
+        }
 
-       internal TreeNode CreateLazyNbt(string path, CompressionType cztype, TreeNode parent)
-       {
-           var node = CreateLazyNbt(path, cztype);
-           LinkDataNodeParent(node, parent);
+        internal TreeNode CreateLazyNbt(string path, CompressionType cztype, TreeNode parent)
+        {
+            var node = CreateLazyNbt(path, cztype);
+            LinkDataNodeParent(node, parent);
 
-           return node;
-       }
+            return node;
+        }
 
         internal static void LoadLazyDirectory(TreeNode node)
         {
@@ -768,18 +803,18 @@ namespace NBTExplorer.ViewModel
             data.Expanded = false;
         }
 
-        internal static void LoadLazyChunk(TreeNode node,int descriptionImageIndex)
+        internal static void LoadLazyChunk(TreeNode node, int descriptionImageIndex)
         {
             RegionChunkData data = node.Tag as RegionChunkData;
             if (data == null || data.Modified)
                 return;
 
             node.Nodes.Clear();
-            LoadNbtStream(node, descriptionImageIndex,data.Region.GetChunkDataInputStream(data.X, data.Z));
+            LoadNbtStream(node, descriptionImageIndex, data.Region.GetChunkDataInputStream(data.X, data.Z));
 
             data.Expanded = true;
         }
-        internal static void ExpandNode(TreeNode node,int descriptionImageIndex)
+        internal static void ExpandNode(TreeNode node, int descriptionImageIndex)
         {
             if (node.Tag == null)
                 return;
@@ -792,7 +827,7 @@ namespace NBTExplorer.ViewModel
 
             if (node.Tag is RegionChunkData)
             {
-                LoadLazyChunk(node,descriptionImageIndex);
+                LoadLazyChunk(node, descriptionImageIndex);
             }
             else if (node.Tag is NbtFileData)
             {

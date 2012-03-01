@@ -53,6 +53,7 @@ namespace NBTExplorer
             _buttonEdit.Enabled = tag != null
                 && node.Tag is TagNode
                 && tag.GetTagType() != TagType.TAG_BYTE_ARRAY
+                && tag.GetTagType() != TagType.TAG_INT_ARRAY
                 && tag.GetTagType() != TagType.TAG_COMPOUND
                 && tag.GetTagType() != TagType.TAG_LIST;
 
@@ -97,6 +98,9 @@ namespace NBTExplorer
                     case TagType.TAG_COMPOUND:
                         _buttonAddTagCompound.Enabled = true;
                         break;
+                    case TagType.TAG_INT_ARRAY:
+                        _buttonAddTagIntArray.Enabled = true;
+                        break;
                 }
             }
         }
@@ -108,7 +112,7 @@ namespace NBTExplorer
                                    _buttonAddTagByte, _buttonAddTagShort, _buttonAddTagInt,
                                    _buttonAddTagLong,_buttonAddTagFloat, _buttonAddTagDouble,
                                    _buttonAddTagByteArray, _buttonAddTagString, _buttonAddTagList,
-                                   _buttonAddTagCompound
+                                   _buttonAddTagCompound,_buttonAddTagIntArray
                                };
             foreach (var button in toEnable)
                 button.Enabled = state;
@@ -173,9 +177,9 @@ namespace NBTExplorer
             ServerNode.LoadDirectory(path, parent, path);
         }
 
-       
 
-        
+
+
 
         void OpenFile()
         {
@@ -266,7 +270,7 @@ namespace NBTExplorer
             }
             data.Modified = false;
         }
-        
+
         #region Events
 
         static void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -362,7 +366,7 @@ namespace NBTExplorer
         }
         void _buttonAddTagByte_Click(object sender, EventArgs e)
         {
-           AddTagToNode(TagType.TAG_BYTE);
+            AddTagToNode(TagType.TAG_BYTE);
         }
 
         void _buttonAddTagShort_Click(object sender, EventArgs e)
@@ -389,7 +393,10 @@ namespace NBTExplorer
         {
             AddTagToNode(TagType.TAG_DOUBLE);
         }
-
+        void _buttonAddTagIntArray_Click (object sender, EventArgs e)
+        {
+            AddTagToNode(TagType.TAG_INT_ARRAY);
+        }
         void _buttonAddTagByteArray_Click(object sender, EventArgs e)
         {
             AddTagToNode(TagType.TAG_BYTE_ARRAY);
@@ -456,7 +463,7 @@ namespace NBTExplorer
                 _searchName = form.MatchName ? form.NameToken : null;
                 _searchValue = form.MatchValue ? form.ValueToken : null;
 
-                _search = ServerNode.FindNode(node,this.imageList1.Images.Count,_searchName, _searchValue).GetEnumerator();
+                _search = ServerNode.FindNode(node, this.imageList1.Images.Count, _searchName, _searchValue).GetEnumerator();
 
                 FindNext();
             }
@@ -493,7 +500,7 @@ namespace NBTExplorer
             statusStrip1.Visible = false;
         }
 
-       
+
 
         void DropFile(DragEventArgs e)
         {
@@ -507,13 +514,13 @@ namespace NBTExplorer
             foreach (var region in nodes)
                 foreach (var chunk in region.FindChunks(predicate))
                 {
-                        yield return chunk;
+                    yield return chunk;
                 }
         }
 
         int _nodesSearchedForEntity = 0;
 
-       
+
 
         IEnumerable<TreeNode> FindRegions(IEnumerable<TreeNode> nodes, Func<TreeNode, bool> predicate)
         {
@@ -522,7 +529,7 @@ namespace NBTExplorer
             {
                 _nodesSearchedForEntity++;
                 if (ServerNode.NeedsExpand(node))
-                    ServerNode.ExpandNode(node,this.imageList1.Images.Count);
+                    ServerNode.ExpandNode(node, this.imageList1.Images.Count);
                 if (predicate(node))
                     yield return node;
                 else
@@ -540,7 +547,7 @@ namespace NBTExplorer
         /// <returns></returns>
         IEnumerable<ChunkNode> FindNextPopulatedChunk(IEnumerable<ToolStripItem> previouslyFound)
         {
-         
+
             var lastFound =
                previouslyFound.LastOrDefault(
                     t => t.Text.StartsWith("Chunk"));
@@ -567,7 +574,7 @@ namespace NBTExplorer
 
             var entityNodes =
                 FindRegions(
-                    _nodeTree.Nodes.Cast<TreeNode>(), tn => tn.Text.EndsWith(".mcr")).Select(tn=>new ViewModel.RegionNode(tn,this.imageList1.Images.Count));
+                    _nodeTree.Nodes.Cast<TreeNode>(), tn => tn.Text.EndsWith(".mcr")).Select(tn => new ViewModel.RegionNode(tn, this.imageList1.Images.Count));
 
             var entityRegions = entityNodes.ToArray();
             try
@@ -618,8 +625,8 @@ namespace NBTExplorer
         {
             foreach (var chunk in chunks)
             {
-               
-                if (chunk.GetEntityCount()>0)
+
+                if (chunk.GetEntityCount() > 0)
                     yield return chunk;
             }
         }
@@ -631,13 +638,13 @@ namespace NBTExplorer
             _nodesSearchedForBloat = 0; // findEntityChunkToolStripMenuItem.DropDownItems.Cast<ToolStripItem>()
             var populatedChunks = FindNextPopulatedChunk(findBloatedChunkToolStripMenuItem.DropDownItems.Cast<ToolStripItem>());
             var first = populatedChunks.FirstOrDefault(c => c.GetEntityCount() >= BloatedAt);
-            
+
             if (first == null)
                 return;
             first.EnsureVisible();
             first.EnsureEntitiesVisible();
             first.SelectEntityNode();
-            
+
             var ddl = new ToolStripButton();
             ddl.Text = first.Text;
             ddl.Width = Text.Length * 5;
@@ -645,7 +652,7 @@ namespace NBTExplorer
 
             ddl.Click += (sender2, e2) =>
             {
-                
+
                 first.EnsureVisible();
                 _nodeTree.SelectedNode = first.Node;
             };

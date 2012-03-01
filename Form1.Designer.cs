@@ -11,9 +11,10 @@
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose (bool disposing)
+        protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null)) {
+            if (disposing && (components != null))
+            {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -25,7 +26,7 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent ()
+        private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
@@ -68,6 +69,7 @@
             this._buttonAddTagString = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagList = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagCompound = new System.Windows.Forms.ToolStripButton();
+            this._buttonAddTagIntArray = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this._buttonFindNext = new System.Windows.Forms.ToolStripButton();
             this._nodeContainerContext = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -122,7 +124,7 @@
             // 
             this.openFolderToolStripMenuItem.Image = global::NBTExplorer.Properties.Resources.folder_open;
             this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
-            this.openFolderToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            this.openFolderToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift)
             | System.Windows.Forms.Keys.O)));
             this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
             this.openFolderToolStripMenuItem.Text = "Open &Folder...";
@@ -286,6 +288,7 @@
             this.imageList1.Images.SetKeyName(11, "block.png");
             this.imageList1.Images.SetKeyName(12, "wooden-box.png");
             this.imageList1.Images.SetKeyName(13, "map.png");
+            this.imageList1.Images.SetKeyName(14, "edit-code-i.png");
             // 
             // toolStrip1
             // 
@@ -306,6 +309,7 @@
             this._buttonAddTagFloat,
             this._buttonAddTagDouble,
             this._buttonAddTagByteArray,
+            this._buttonAddTagIntArray,
             this._buttonAddTagString,
             this._buttonAddTagList,
             this._buttonAddTagCompound,
@@ -456,6 +460,16 @@
             this._buttonAddTagByteArray.Size = new System.Drawing.Size(23, 22);
             this._buttonAddTagByteArray.Text = "Add Byte Array Tag";
             this._buttonAddTagByteArray.Click += new System.EventHandler(this._buttonAddTagByteArray_Click);
+            // _buttonAddTagIntArray
+            // 
+            this._buttonAddTagIntArray.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._buttonAddTagIntArray.Image = ((System.Drawing.Image)(resources.GetObject("_buttonAddTagIntArray.Image")));
+            this._buttonAddTagIntArray.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this._buttonAddTagIntArray.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._buttonAddTagIntArray.Name = "_buttonAddTagIntArray";
+            this._buttonAddTagIntArray.Size = new System.Drawing.Size(23, 22);
+            this._buttonAddTagIntArray.Text = "Add Int Array Tag";
+            this._buttonAddTagIntArray.Click += new System.EventHandler(this._buttonAddTagIntArray_Click);
             // 
             // _buttonAddTagString
             // 
@@ -604,10 +618,12 @@
         private System.Windows.Forms.ToolStripButton _buttonFindNext;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripButton _buttonAddTagIntArray;
         private System.Windows.Forms.ToolStripButton _buttonOpenFolder;
         private System.Windows.Forms.ToolStripMenuItem openMinecraftSaveFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem findEntityChunkToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem findBloatedChunkToolStripMenuItem;
+
     }
 }
 
