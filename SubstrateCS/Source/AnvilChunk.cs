@@ -5,7 +5,7 @@ using Substrate.Nbt;
 using Substrate.Core;
 using System.IO;
 
-namespace Substrate.Source
+namespace Substrate
 {
     public class AnvilSection : INbtObject<AnvilSection>, ICopyable<AnvilSection>
     {
@@ -15,7 +15,7 @@ namespace Substrate.Source
             new SchemaNodeArray("Data", 2048),
             new SchemaNodeArray("SkyLight", 2048),
             new SchemaNodeArray("BlockLight", 2048),
-            new SchemaNodeScaler("Y", TagType.TAG_INT),
+            new SchemaNodeScaler("Y", TagType.TAG_BYTE),
             new SchemaNodeArray("AddBlocks", 2048, SchemaOptions.OPTIONAL),
         };
 
@@ -28,7 +28,7 @@ namespace Substrate.Source
 
         private TagNodeCompound _tree;
 
-        private int _y;
+        private byte _y;
         private YZXByteArray _blocks;
         private YZXNibbleArray _data;
         private YZXNibbleArray _blockLight;
@@ -44,13 +44,13 @@ namespace Substrate.Source
             if (y < MIN_Y || y > MAX_Y)
                 throw new ArgumentOutOfRangeException();
 
-            _y = y;
+            _y = (byte)y;
             BuildNbtTree();
         }
 
         public AnvilSection (TagNodeCompound tree)
         {
-            LoadTree(_tree);
+            LoadTree(tree);
         }
 
         public int Y
@@ -61,8 +61,8 @@ namespace Substrate.Source
                 if (value < MIN_Y || value > MAX_Y)
                     throw new ArgumentOutOfRangeException();
 
-                _y = value;
-                _tree["Y"].ToTagInt().Data = _y;
+                _y = (byte)value;
+                _tree["Y"].ToTagByte().Data = _y;
             }
         }
 
@@ -122,7 +122,7 @@ namespace Substrate.Source
                 return null;
             }
 
-            _y = ctree["Y"] as TagNodeInt;
+            _y = ctree["Y"] as TagNodeByte;
 
             _blocks = new YZXByteArray(XDIM, YDIM, ZDIM, ctree["Blocks"] as TagNodeByteArray);
             _data = new YZXNibbleArray(XDIM, YDIM, ZDIM, ctree["Data"] as TagNodeByteArray);
@@ -130,7 +130,7 @@ namespace Substrate.Source
             _blockLight = new YZXNibbleArray(XDIM, YDIM, ZDIM, ctree["BlockLight"] as TagNodeByteArray);
 
             if (!ctree.ContainsKey("AddBlocks"))
-                _tree["AddBlocks"] = new TagNodeByteArray(new byte[2048]);
+                _ctree["AddBlocks"] = new TagNodeByteArray(new byte[2048]);
             _addBlocks = new YZXNibbleArray(XDIM, YDIM, ZDIM, ctree["AddBlocks"] as TagNodeByteArray);
 
             return this;
@@ -193,7 +193,7 @@ namespace Substrate.Source
             _addBlocks = new YZXNibbleArray(XDIM, YDIM, ZDIM, addBlocks);
 
             TagNodeCompound tree = new TagNodeCompound();
-            tree.Add("Y", new TagNodeInt(_y));
+            tree.Add("Y", new TagNodeByte(_y));
             tree.Add("Blocks", blocks);
             tree.Add("Data", data);
             tree.Add("SkyLight", skyLight);
@@ -229,7 +229,7 @@ namespace Substrate.Source
 
         #region IByteArray3 Members
 
-        public byte this[int x, int y, int z]
+        public int this[int x, int y, int z]
         {
             get
             {
@@ -279,7 +279,7 @@ namespace Substrate.Source
 
         #region IByteArray Members
 
-        public byte this[int i]
+        public int this[int i]
         {
             get
             {
@@ -332,7 +332,7 @@ namespace Substrate.Source
 
         #region IByteArray3 Members
 
-        public byte this[int x, int y, int z]
+        public int this[int x, int y, int z]
         {
             get
             {
@@ -345,7 +345,7 @@ namespace Substrate.Source
             {
                 int ydiv = y / _sections[0].YDim;
                 int yrem = y - (ydiv * _sections[0].YDim);
-                _sections[ydiv][x, yrem, z] = value;
+                _sections[ydiv][x, yrem, z] = (byte)value;
             }
         }
 
@@ -382,7 +382,7 @@ namespace Substrate.Source
 
         #region IByteArray Members
 
-        public byte this[int i]
+        public int this[int i]
         {
             get
             {
@@ -394,7 +394,7 @@ namespace Substrate.Source
             {
                 int idiv = i / _sections[0].Length;
                 int irem = i - (idiv * _sections[0].Length);
-                _sections[idiv][irem] = value;
+                _sections[idiv][irem] = (byte)value;
             }
         }
 
@@ -412,7 +412,7 @@ namespace Substrate.Source
         #endregion
     }
 
-    public class AnvilChunk : IChunk, INbtObject<AnvilChunk>, ICopyable<AnvilChunk>
+    public class Chunk : IChunk, INbtObject<Chunk>, ICopyable<Chunk>
     {
         public static SchemaNodeCompound LevelSchema = new SchemaNodeCompound()
         {
@@ -423,11 +423,11 @@ namespace Substrate.Source
                     new SchemaNodeArray("Data", 2048),
                     new SchemaNodeArray("SkyLight", 2048),
                     new SchemaNodeArray("BlockLight", 2048),
-                    new SchemaNodeScaler("Y", TagType.TAG_INT),
+                    new SchemaNodeScaler("Y", TagType.TAG_BYTE),
                     new SchemaNodeArray("AddBlocks", 2048, SchemaOptions.OPTIONAL),
                 }),
                 new SchemaNodeArray("Biomes", 256),
-                new SchemaNodeArray("HeightMap", 256),
+                new SchemaNodeIntArray("HeightMap", 256),
                 new SchemaNodeList("Entities", TagType.TAG_COMPOUND, SchemaOptions.CREATE_ON_MISSING),
                 new SchemaNodeList("TileEntities", TagType.TAG_COMPOUND, TileEntity.Schema, SchemaOptions.CREATE_ON_MISSING),
                 new SchemaNodeList("TileTicks", TagType.TAG_COMPOUND, TileTick.Schema, SchemaOptions.OPTIONAL),
@@ -454,7 +454,7 @@ namespace Substrate.Source
         private IDataArray3 _blockLight;
         private IDataArray3 _skyLight;
 
-        private ZXByteArray _heightMap;
+        private ZXIntArray _heightMap;
 
         private TagNodeList _entities;
         private TagNodeList _tileEntities;
@@ -464,7 +464,7 @@ namespace Substrate.Source
         private EntityCollection _entityManager;
 
 
-        private AnvilChunk ()
+        private Chunk ()
         {
             _sections = new AnvilSection[16];
         }
@@ -500,9 +500,9 @@ namespace Substrate.Source
             set { _tree.Root["Level"].ToTagCompound()["TerrainPopulated"].ToTagByte().Data = (byte)(value ? 1 : 0); }
         }
 
-        public static AnvilChunk Create (int x, int z)
+        public static Chunk Create (int x, int z)
         {
-            AnvilChunk c = new AnvilChunk();
+            Chunk c = new Chunk();
 
             c._cx = x;
             c._cz = z;
@@ -511,16 +511,16 @@ namespace Substrate.Source
             return c;
         }
 
-        public static AnvilChunk Create (NbtTree tree)
+        public static Chunk Create (NbtTree tree)
         {
-            AnvilChunk c = new AnvilChunk();
+            Chunk c = new Chunk();
 
             return c.LoadTree(tree.Root);
         }
 
-        public static AnvilChunk CreateVerified (NbtTree tree)
+        public static Chunk CreateVerified (NbtTree tree)
         {
-            AnvilChunk c = new AnvilChunk();
+            Chunk c = new Chunk();
 
             return c.LoadTreeSafe(tree.Root);
         }
@@ -612,7 +612,7 @@ namespace Substrate.Source
 
         #region INbtObject<AnvilChunk> Members
 
-        public AnvilChunk LoadTree (TagNode tree)
+        public Chunk LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null) {
@@ -623,8 +623,8 @@ namespace Substrate.Source
 
             TagNodeCompound level = _tree.Root["Level"] as TagNodeCompound;
 
-            TagNodeCompound sections = level["Sections"] as TagNodeCompound;
-            foreach (TagNodeCompound section in sections.Values) {
+            TagNodeList sections = level["Sections"] as TagNodeList;
+            foreach (TagNodeCompound section in sections) {
                 AnvilSection anvilSection = new AnvilSection(section);
                 if (anvilSection.Y < 0 || anvilSection.Y >= _sections.Length)
                     continue;
@@ -651,7 +651,7 @@ namespace Substrate.Source
             _skyLight = new CompositeYZXNibbleArray(skyLightBA);
             _blockLight = new CompositeYZXNibbleArray(blockLightBA);
             
-            _heightMap = new ZXByteArray(XDIM, ZDIM, level["HeightMap"] as TagNodeByteArray);
+            _heightMap = new ZXIntArray(XDIM, ZDIM, level["HeightMap"] as TagNodeIntArray);
 
             _entities = level["Entities"] as TagNodeList;
             _tileEntities = level["TileEntities"] as TagNodeList;
@@ -686,7 +686,7 @@ namespace Substrate.Source
             return this;
         }
 
-        public AnvilChunk LoadTreeSafe (TagNode tree)
+        public Chunk LoadTreeSafe (TagNode tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -712,9 +712,9 @@ namespace Substrate.Source
 
         #region ICopyable<AnvilChunk> Members
 
-        public AnvilChunk Copy ()
+        public Chunk Copy ()
         {
-            return AnvilChunk.Create(_tree.Copy());
+            return Chunk.Create(_tree.Copy());
         }
 
         #endregion
@@ -740,8 +740,25 @@ namespace Substrate.Source
                 sections.Add(_sections[i].BuildTree());
             }
 
-            TagNodeByteArray heightMap = new TagNodeByteArray(new byte[elements2]);
-            _heightMap = new ZXByteArray(XDIM, ZDIM, heightMap);
+            YZXByteArray[] blocksBA = new YZXByteArray[_sections.Length];
+            YZXNibbleArray[] dataBA = new YZXNibbleArray[_sections.Length];
+            YZXNibbleArray[] skyLightBA = new YZXNibbleArray[_sections.Length];
+            YZXNibbleArray[] blockLightBA = new YZXNibbleArray[_sections.Length];
+
+            for (int i = 0; i < _sections.Length; i++) {
+                blocksBA[i] = _sections[i].Blocks;
+                dataBA[i] = _sections[i].Data;
+                skyLightBA[i] = _sections[i].SkyLight;
+                blockLightBA[i] = _sections[i].BlockLight;
+            }
+
+            _blocks = new CompositeYZXByteArray(blocksBA);
+            _data = new CompositeYZXNibbleArray(dataBA);
+            _skyLight = new CompositeYZXNibbleArray(skyLightBA);
+            _blockLight = new CompositeYZXNibbleArray(blockLightBA);
+
+            TagNodeIntArray heightMap = new TagNodeIntArray(new int[elements2]);
+            _heightMap = new ZXIntArray(XDIM, ZDIM, heightMap);
 
             _entities = new TagNodeList(TagType.TAG_COMPOUND);
             _tileEntities = new TagNodeList(TagType.TAG_COMPOUND);

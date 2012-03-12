@@ -26,7 +26,7 @@ namespace Substrate
 
         private RegionManager _regionMan;
 
-        private static Regex _namePattern = new Regex("r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.mcr$");
+        private static Regex _namePattern = new Regex("r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.mca$");
 
         private WeakReference _regionFile;
 
@@ -157,7 +157,7 @@ namespace Substrate
         /// <returns>The filename of the region with encoded coordinates.</returns>
         public string GetFileName ()
         {
-            return "r." + _rx + "." + _rz + ".mcr";
+            return "r." + _rx + "." + _rz + ".mca";
             
         }
 

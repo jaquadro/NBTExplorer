@@ -19,7 +19,7 @@ namespace Substrate.Core
             _data = data;
         }
 
-        public byte this[int index]
+        public int this[int index]
         {
             get
             {
@@ -109,7 +109,7 @@ namespace Substrate.Core
             }
         }
 
-        public byte this[int x, int y, int z]
+        public int this[int x, int y, int z]
         {
             get
             {
@@ -193,7 +193,7 @@ namespace Substrate.Core
             }
         }
 
-        public byte this[int x, int y, int z]
+        public int this[int x, int y, int z]
         {
             get
             {

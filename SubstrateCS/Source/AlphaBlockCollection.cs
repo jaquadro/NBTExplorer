@@ -26,7 +26,7 @@ namespace Substrate
         private IDataArray3 _blockLight;
         private IDataArray3 _skyLight;
 
-        private ZXByteArray _heightMap;
+        private IDataArray2 _heightMap;
 
         private TagNodeList _tileEntities;
         private TagNodeList _tileTicks;
@@ -80,7 +80,7 @@ namespace Substrate
             IDataArray3 data,
             IDataArray3 blockLight,
             IDataArray3 skyLight,
-            ZXByteArray heightMap,
+            IDataArray2 heightMap,
             TagNodeList tileEntities)
             : this(blocks, data, blockLight, skyLight, heightMap, tileEntities, null)
         {
@@ -101,7 +101,7 @@ namespace Substrate
             IDataArray3 data,
             IDataArray3 blockLight,
             IDataArray3 skyLight,
-            ZXByteArray heightMap,
+            IDataArray2 heightMap,
             TagNodeList tileEntities,
             TagNodeList tileTicks)
         {
