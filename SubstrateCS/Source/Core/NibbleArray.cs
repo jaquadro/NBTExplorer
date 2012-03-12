@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Substrate.Core
 {
 
-    public class NibbleArray : ICopyable<NibbleArray>
+    public class NibbleArray : IDataArray, ICopyable<NibbleArray>
     {
         private readonly byte[] _data = null;
 
@@ -82,7 +82,7 @@ namespace Substrate.Core
         #endregion
     }
 
-    public sealed class XZYNibbleArray : NibbleArray
+    public sealed class XZYNibbleArray : NibbleArray, IDataArray3
     {
         private readonly int _xdim;
         private readonly int _ydim;
@@ -139,6 +139,21 @@ namespace Substrate.Core
             get { return _zdim; }
         }
 
+        public int GetIndex (int x, int y, int z)
+        {
+            return _ydim * (x * _zdim + z) + y;
+        }
+
+        public void GetMultiIndex (int index, out int x, out int y, out int z)
+        {
+            int yzdim = _ydim * _zdim;
+            x = index / yzdim;
+
+            int zy = index - (x * yzdim);
+            z = zy / _ydim;
+            y = zy - (z * _ydim);
+        }
+
         #region ICopyable<NibbleArray> Members
 
         public override NibbleArray Copy ()
@@ -152,7 +167,7 @@ namespace Substrate.Core
         #endregion
     }
 
-    public sealed class YZXNibbleArray : NibbleArray
+    public sealed class YZXNibbleArray : NibbleArray, IDataArray3
     {
         private readonly int _xdim;
         private readonly int _ydim;
@@ -206,6 +221,21 @@ namespace Substrate.Core
         public int ZDim
         {
             get { return _zdim; }
+        }
+
+        public int GetIndex (int x, int y, int z)
+        {
+            return _xdim * (y * _zdim + z) + x;
+        }
+
+        public void GetMultiIndex (int index, out int x, out int y, out int z)
+        {
+            int xzdim = _xdim * _zdim;
+            y = index / xzdim;
+
+            int zx = index - (y * xzdim);
+            z = zx / _xdim;
+            x = zx - (z * _xdim);
         }
 
         #region ICopyable<NibbleArray> Members

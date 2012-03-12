@@ -4,7 +4,27 @@ using System.Collections.Generic;
 
 namespace Substrate.Core
 {
-    public class ByteArray : ICopyable<ByteArray>
+    public interface IDataArray
+    {
+        byte this[int i] { get; set; }
+        int Length { get; }
+
+        void Clear ();
+    }
+
+    public interface IDataArray3 : IDataArray
+    {
+        byte this[int x, int y, int z] { get; set; }
+
+        int XDim { get; }
+        int YDim { get; }
+        int ZDim { get; }
+
+        int GetIndex (int x, int y, int z);
+        void GetMultiIndex (int index, out int x, out int y, out int z);
+    }
+
+    public class ByteArray : IDataArray, ICopyable<ByteArray>
     {
         protected readonly byte[] dataArray;
 
@@ -37,7 +57,7 @@ namespace Substrate.Core
             }
         }
 
-        #region ICopyable<yteArray> Members
+        #region ICopyable<ByteArray> Members
 
         public virtual ByteArray Copy ()
         {
@@ -50,7 +70,7 @@ namespace Substrate.Core
         #endregion
     }
 
-    public sealed class XZYByteArray : ByteArray
+    public sealed class XZYByteArray : ByteArray, IDataArray3
     {
         private readonly int _xdim;
         private readonly int _ydim;
@@ -135,7 +155,7 @@ namespace Substrate.Core
         #endregion
     }
 
-    public sealed class YZXByteArray : ByteArray
+    public sealed class YZXByteArray : ByteArray, IDataArray3
     {
         private readonly int _xdim;
         private readonly int _ydim;

@@ -62,7 +62,7 @@ namespace Substrate.Core
             _chunks = new Dictionary<ChunkKey, IBoundedDataBlockCollection>();
         }
 
-        public void ResetWater (ByteArray blocks, NibbleArray data)
+        public void ResetWater (IDataArray blocks, IDataArray data)
         {
             for (int i = 0; i < blocks.Length; i++) {
                 if ((blocks[i] == BlockInfo.StationaryWater.ID || blocks[i] == BlockInfo.Water.ID) && data[i] != 0) {
@@ -75,7 +75,7 @@ namespace Substrate.Core
             }
         }
 
-        public void ResetLava (ByteArray blocks, NibbleArray data)
+        public void ResetLava (IDataArray blocks, IDataArray data)
         {
             for (int i = 0; i < blocks.Length; i++) {
                 if ((blocks[i] == BlockInfo.StationaryLava.ID || blocks[i] == BlockInfo.Lava.ID) && data[i] != 0) {

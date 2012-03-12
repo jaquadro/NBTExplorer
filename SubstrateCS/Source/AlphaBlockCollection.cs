@@ -17,10 +17,15 @@ namespace Substrate
         private readonly int _ydim;
         private readonly int _zdim;
 
-        private XZYByteArray _blocks;
-        private XZYNibbleArray _data;
-        private XZYNibbleArray _blockLight;
-        private XZYNibbleArray _skyLight;
+        //private XZYByteArray _blocks;
+        //private XZYNibbleArray _data;
+        //private XZYNibbleArray _blockLight;
+        //private XZYNibbleArray _skyLight;
+        private IDataArray3 _blocks;
+        private IDataArray3 _data;
+        private IDataArray3 _blockLight;
+        private IDataArray3 _skyLight;
+
         private ZXByteArray _heightMap;
 
         private TagNodeList _tileEntities;
@@ -71,10 +76,10 @@ namespace Substrate
         /// <param name="heightMap">An array of height map values.</param>
         /// <param name="tileEntities">A list of tile entities corresponding to blocks in this collection.</param>
         public AlphaBlockCollection (
-            XZYByteArray blocks,
-            XZYNibbleArray data,
-            XZYNibbleArray blockLight,
-            XZYNibbleArray skyLight,
+            IDataArray3 blocks,
+            IDataArray3 data,
+            IDataArray3 blockLight,
+            IDataArray3 skyLight,
             ZXByteArray heightMap,
             TagNodeList tileEntities)
             : this(blocks, data, blockLight, skyLight, heightMap, tileEntities, null)
@@ -92,10 +97,10 @@ namespace Substrate
         /// <param name="tileEntities">A list of tile entities corresponding to blocks in this collection.</param>
         /// <param name="tileTicks">A list of tile ticks corresponding to blocks in this collection.</param>
         public AlphaBlockCollection (
-            XZYByteArray blocks,
-            XZYNibbleArray data,
-            XZYNibbleArray blockLight,
-            XZYNibbleArray skyLight,
+            IDataArray3 blocks,
+            IDataArray3 data,
+            IDataArray3 blockLight,
+            IDataArray3 skyLight,
             ZXByteArray heightMap,
             TagNodeList tileEntities,
             TagNodeList tileTicks)

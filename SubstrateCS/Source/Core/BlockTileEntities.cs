@@ -8,14 +8,14 @@ namespace Substrate.Core
 
     public class BlockTileEntities
     {
-        private XZYByteArray _blocks;
+        private IDataArray3 _blocks;
         private TagNodeList _tileEntities;
 
         private Dictionary<BlockKey, TagNodeCompound> _tileEntityTable;
 
         public event BlockCoordinateHandler TranslateCoordinates;
 
-        public BlockTileEntities (XZYByteArray blocks, TagNodeList tileEntities)
+        public BlockTileEntities (IDataArray3 blocks, TagNodeList tileEntities)
         {
             _blocks = blocks;
             _tileEntities = tileEntities;

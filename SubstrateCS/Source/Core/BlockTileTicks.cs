@@ -6,14 +6,14 @@ namespace Substrate.Core
 {
     public class BlockTileTicks
     {
-        private XZYByteArray _blocks;
+        private IDataArray3 _blocks;
         private TagNodeList _tileTicks;
 
         private Dictionary<BlockKey, TagNodeCompound> _tileTickTable;
 
         public event BlockCoordinateHandler TranslateCoordinates;
 
-        public BlockTileTicks (XZYByteArray blocks, TagNodeList tileTicks)
+        public BlockTileTicks (IDataArray3 blocks, TagNodeList tileTicks)
         {
             _blocks = blocks;
             _tileTicks = tileTicks;
