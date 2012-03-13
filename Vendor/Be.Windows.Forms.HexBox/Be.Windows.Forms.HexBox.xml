@@ -1,0 +1,1616 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Be.Windows.Forms.HexBox</name>
+    </assembly>
+    <members>
+        <member name="T:Be.Windows.Forms.FileByteProvider">
+            <summary>
+            Byte provider for (big) files.
+            </summary>
+        </member>
+        <member name="T:Be.Windows.Forms.IByteProvider">
+            <summary>
+            Defines a byte provider for HexBox control
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.IByteProvider.ReadByte(System.Int64)">
+            <summary>
+            Reads a byte from the provider
+            </summary>
+            <param name="index">the index of the byte to read</param>
+            <returns>the byte to read</returns>
+        </member>
+        <member name="M:Be.Windows.Forms.IByteProvider.WriteByte(System.Int64,System.Byte)">
+            <summary>
+            Writes a byte into the provider
+            </summary>
+            <param name="index">the index of the byte to write</param>
+            <param name="value">the byte to write</param>
+        </member>
+        <member name="M:Be.Windows.Forms.IByteProvider.InsertBytes(System.Int64,System.Byte[])">
+            <summary>
+            Inserts bytes into the provider
+            </summary>
+            <param name="index"></param>
+            <param name="bs"></param>
+            <remarks>This method must raise the LengthChanged event.</remarks>
+        </member>
+        <member name="M:Be.Windows.Forms.IByteProvider.DeleteBytes(System.Int64,System.Int64)">
+            <summary>
+            Deletes bytes from the provider
+            </summary>
+            <param name="index">the start index of the bytes to delete</param>
+            <param name="length">the length of the bytes to delete</param>
+            <remarks>This method must raise the LengthChanged event.</remarks>
+        </member>
+        <member name="M:Be.Windows.Forms.IByteProvider.HasChanges">
+            <summary>
+            True, when changes are done.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.IByteProvider.ApplyChanges">
+            <summary>
+            Applies changes.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.IByteProvider.SupportsWriteByte">
+            <summary>
+            Returns a value if the WriteByte methods is supported by the provider.
+            </summary>
+            <returns>True, when it´s supported.</returns>
+        </member>
+        <member name="M:Be.Windows.Forms.IByteProvider.SupportsInsertBytes">
+            <summary>
+            Returns a value if the InsertBytes methods is supported by the provider.
+            </summary>
+            <returns>True, when it´s supported.</returns>
+        </member>
+        <member name="M:Be.Windows.Forms.IByteProvider.SupportsDeleteBytes">
+            <summary>
+            Returns a value if the DeleteBytes methods is supported by the provider.
+            </summary>
+            <returns>True, when it´s supported.</returns>
+        </member>
+        <member name="P:Be.Windows.Forms.IByteProvider.Length">
+            <summary>
+            Returns the total length of bytes the byte provider is providing.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.IByteProvider.LengthChanged">
+            <summary>
+            Occurs, when the Length property changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.IByteProvider.Changed">
+            <summary>
+            Occurs, when bytes are changed.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.FileByteProvider._writes">
+            <summary>
+            Contains all changes
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.FileByteProvider._fileName">
+            <summary>
+            Contains the file name.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.FileByteProvider._fileStream">
+            <summary>
+            Contains the file stream.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.FileByteProvider._readOnly">
+            <summary>
+            Read-only access.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.FileByteProvider.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the FileByteProvider class.
+            </summary>
+            <param name="fileName"></param>
+        </member>
+        <member name="M:Be.Windows.Forms.FileByteProvider.Finalize">
+            <summary>
+            Terminates the instance of the FileByteProvider class.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.FileByteProvider.OnChanged(System.EventArgs)">
+            <summary>
+            Raises the Changed event.
+            </summary>
+            <remarks>Never used.</remarks>
+        </member>
+        <member name="M:Be.Windows.Forms.FileByteProvider.HasChanges">
+            <summary>
+            Returns a value if there are some changes.
+            </summary>
+            <returns>true, if there are some changes</returns>
+        </member>
+        <member name="M:Be.Windows.Forms.FileByteProvider.ApplyChanges">
+            <summary>
+            Updates the file with all changes the write buffer contains.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.FileByteProvider.RejectChanges">
+            <summary>
+            Clears the write buffer and reject all changes made.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.FileByteProvider.ReadByte(System.Int64)">
+            <summary>
+            Reads a byte from the file.
+            </summary>
+            <param name="index">the index of the byte to read</param>
+            <returns>the byte</returns>
+        </member>
+        <member name="M:Be.Windows.Forms.FileByteProvider.WriteByte(System.Int64,System.Byte)">
+            <summary>
+            Writes a byte into write buffer
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.FileByteProvider.DeleteBytes(System.Int64,System.Int64)">
+            <summary>
+            Not supported
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.FileByteProvider.InsertBytes(System.Int64,System.Byte[])">
+            <summary>
+            Not supported
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.FileByteProvider.SupportsWriteByte">
+            <summary>
+            Returns true
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.FileByteProvider.SupportsInsertBytes">
+            <summary>
+            Returns false
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.FileByteProvider.SupportsDeleteBytes">
+            <summary>
+            Returns false
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.FileByteProvider.Dispose">
+            <summary>
+            Releases the file handle used by the FileByteProvider.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.FileByteProvider.Changed">
+            <summary>
+            Occurs, when the write buffer contains new changes.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.FileByteProvider.FileName">
+            <summary>
+            Gets the name of the file the byte provider is using.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.FileByteProvider.LengthChanged">
+            <summary>
+            Never used.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.FileByteProvider.Length">
+            <summary>
+            Gets the length of the file.
+            </summary>
+        </member>
+        <member name="T:Be.Windows.Forms.FileByteProvider.WriteCollection">
+            <summary>
+            Represents the write buffer class
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.FileByteProvider.WriteCollection.Add(System.Int64,System.Byte)">
+            <summary>
+            Adds a byte into the collection
+            </summary>
+            <param name="index">the index of the byte</param>
+            <param name="value">the value of the byte</param>
+        </member>
+        <member name="M:Be.Windows.Forms.FileByteProvider.WriteCollection.Contains(System.Int64)">
+            <summary>
+            Determines if a byte with the given index exists.
+            </summary>
+            <param name="index">the index of the byte</param>
+            <returns>true, if the is in the collection</returns>
+        </member>
+        <member name="P:Be.Windows.Forms.FileByteProvider.WriteCollection.Item(System.Int64)">
+            <summary>
+            Gets or sets a byte in the collection
+            </summary>
+        </member>
+        <member name="T:Be.Windows.Forms.BuiltInContextMenu">
+            <summary>
+            Defines a build-in ContextMenuStrip manager for HexBox control to show Copy, Cut, Paste menu in contextmenu of the control.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.BuiltInContextMenu._hexBox">
+            <summary>
+            Contains the HexBox control.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.BuiltInContextMenu._contextMenuStrip">
+            <summary>
+            Contains the ContextMenuStrip control.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.BuiltInContextMenu._cutToolStripMenuItem">
+            <summary>
+            Contains the "Cut"-ToolStripMenuItem object.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.BuiltInContextMenu._copyToolStripMenuItem">
+            <summary>
+            Contains the "Copy"-ToolStripMenuItem object.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.BuiltInContextMenu._pasteToolStripMenuItem">
+            <summary>
+            Contains the "Paste"-ToolStripMenuItem object.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.BuiltInContextMenu._selectAllToolStripMenuItem">
+            <summary>
+            Contains the "Select All"-ToolStripMenuItem object.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.BuiltInContextMenu.#ctor(Be.Windows.Forms.HexBox)">
+            <summary>
+            Initializes a new instance of BuildInContextMenu class.
+            </summary>
+            <param name="hexBox">the HexBox control</param>
+        </member>
+        <member name="M:Be.Windows.Forms.BuiltInContextMenu.HexBox_ByteProviderChanged(System.Object,System.EventArgs)">
+            <summary>
+            If ByteProvider
+            </summary>
+            <param name="sender">the sender object</param>
+            <param name="e">the event data</param>
+        </member>
+        <member name="M:Be.Windows.Forms.BuiltInContextMenu.CheckBuiltInContextMenu">
+            <summary>
+            Assigns the ContextMenuStrip control to the HexBox control.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.BuiltInContextMenu.BuildInContextMenuStrip_Opening(System.Object,System.ComponentModel.CancelEventArgs)">
+            <summary>
+            Before opening the ContextMenuStrip, we manage the availability of the items.
+            </summary>
+            <param name="sender">the sender object</param>
+            <param name="e">the event data</param>
+        </member>
+        <member name="M:Be.Windows.Forms.BuiltInContextMenu.CutMenuItem_Click(System.Object,System.EventArgs)">
+            <summary>
+            The handler for the "Cut"-Click event
+            </summary>
+            <param name="sender">the sender object</param>
+            <param name="e">the event data</param>
+        </member>
+        <member name="M:Be.Windows.Forms.BuiltInContextMenu.CopyMenuItem_Click(System.Object,System.EventArgs)">
+            <summary>
+            The handler for the "Copy"-Click event
+            </summary>
+            <param name="sender">the sender object</param>
+            <param name="e">the event data</param>
+        </member>
+        <member name="M:Be.Windows.Forms.BuiltInContextMenu.PasteMenuItem_Click(System.Object,System.EventArgs)">
+            <summary>
+            The handler for the "Paste"-Click event
+            </summary>
+            <param name="sender">the sender object</param>
+            <param name="e">the event data</param>
+        </member>
+        <member name="M:Be.Windows.Forms.BuiltInContextMenu.SelectAllMenuItem_Click(System.Object,System.EventArgs)">
+            <summary>
+            The handler for the "Select All"-Click event
+            </summary>
+            <param name="sender">the sender object</param>
+            <param name="e">the event data</param>
+        </member>
+        <member name="P:Be.Windows.Forms.BuiltInContextMenu.CopyMenuItemText">
+            <summary>
+            Gets or sets the custom text of the "Copy" ContextMenuStrip item.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.BuiltInContextMenu.CutMenuItemText">
+            <summary>
+            Gets or sets the custom text of the "Cut" ContextMenuStrip item.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.BuiltInContextMenu.PasteMenuItemText">
+            <summary>
+            Gets or sets the custom text of the "Paste" ContextMenuStrip item.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.BuiltInContextMenu.SelectAllMenuItemText">
+            <summary>
+            Gets or sets the custom text of the "Select All" ContextMenuStrip item.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.BuiltInContextMenu.CutMenuItemTextInternal">
+            <summary>
+            Gets the text of the "Cut" ContextMenuStrip item.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.BuiltInContextMenu.CopyMenuItemTextInternal">
+            <summary>
+            Gets the text of the "Copy" ContextMenuStrip item.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.BuiltInContextMenu.PasteMenuItemTextInternal">
+            <summary>
+            Gets the text of the "Paste" ContextMenuStrip item.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.BuiltInContextMenu.SelectAllMenuItemTextInternal">
+            <summary>
+            Gets the text of the "Select All" ContextMenuStrip item.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.BuiltInContextMenu.CutMenuItemImage">
+            <summary>
+            Gets or sets the image of the "Cut" ContextMenuStrip item.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.BuiltInContextMenu.CopyMenuItemImage">
+            <summary>
+            Gets or sets the image of the "Copy" ContextMenuStrip item.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.BuiltInContextMenu.PasteMenuItemImage">
+            <summary>
+            Gets or sets the image of the "Paste" ContextMenuStrip item.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.BuiltInContextMenu.SelectAllMenuItemImage">
+            <summary>
+            Gets or sets the image of the "Select All" ContextMenuStrip item.
+            </summary>
+        </member>
+        <member name="T:Be.Windows.Forms.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="T:Be.Windows.Forms.ByteCollection">
+            <summary>
+            Represents a collection of bytes.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.ByteCollection.#ctor">
+            <summary>
+            Initializes a new instance of ByteCollection class.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.ByteCollection.#ctor(System.Byte[])">
+            <summary>
+            Initializes a new instance of ByteCollection class.
+            </summary>
+            <param name="bs">an array of bytes to add to collection</param>
+        </member>
+        <member name="M:Be.Windows.Forms.ByteCollection.Add(System.Byte)">
+            <summary>
+            Adds a byte into the collection.
+            </summary>
+            <param name="b">the byte to add</param>
+        </member>
+        <member name="M:Be.Windows.Forms.ByteCollection.AddRange(System.Byte[])">
+            <summary>
+            Adds a range of bytes to the collection.
+            </summary>
+            <param name="bs">the bytes to add</param>
+        </member>
+        <member name="M:Be.Windows.Forms.ByteCollection.Remove(System.Byte)">
+            <summary>
+            Removes a byte from the collection.
+            </summary>
+            <param name="b">the byte to remove</param>
+        </member>
+        <member name="M:Be.Windows.Forms.ByteCollection.RemoveRange(System.Int32,System.Int32)">
+            <summary>
+            Removes a range of bytes from the collection.
+            </summary>
+            <param name="index">the index of the start byte</param>
+            <param name="count">the count of the bytes to remove</param>
+        </member>
+        <member name="M:Be.Windows.Forms.ByteCollection.InsertRange(System.Int32,System.Byte[])">
+            <summary>
+            Inserts a range of bytes to the collection.
+            </summary>
+            <param name="index">the index of start byte</param>
+            <param name="bs">an array of bytes to insert</param>
+        </member>
+        <member name="M:Be.Windows.Forms.ByteCollection.GetBytes">
+            <summary>
+            Gets all bytes in the array
+            </summary>
+            <returns>an array of bytes.</returns>
+        </member>
+        <member name="M:Be.Windows.Forms.ByteCollection.Insert(System.Int32,System.Byte)">
+            <summary>
+            Inserts a byte to the collection.
+            </summary>
+            <param name="index">the index</param>
+            <param name="b">a byte to insert</param>
+        </member>
+        <member name="M:Be.Windows.Forms.ByteCollection.IndexOf(System.Byte)">
+            <summary>
+            Returns the index of the given byte.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.ByteCollection.Contains(System.Byte)">
+            <summary>
+            Returns true, if the byte exists in the collection.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.ByteCollection.CopyTo(System.Byte[],System.Int32)">
+            <summary>
+            Copies the content of the collection into the given array.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.ByteCollection.ToArray">
+            <summary>
+            Copies the content of the collection into an array.
+            </summary>
+            <returns>the array containing all bytes.</returns>
+        </member>
+        <member name="P:Be.Windows.Forms.ByteCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the value of a byte
+            </summary>
+        </member>
+        <member name="T:Be.Windows.Forms.HexCasing">
+            <summary>
+            Specifies the case of hex characters in the HexBox control
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexCasing.Upper">
+            <summary>
+            Converts all characters to uppercase.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexCasing.Lower">
+            <summary>
+            Converts all characters to lowercase.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.Util._designMode">
+            <summary>
+            Contains true, if we are in design mode of Visual Studio
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.Util.#cctor">
+            <summary>
+            Initializes an instance of Util class
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.Util.DesignMode">
+            <summary>
+            Gets true, if we are in design mode of Visual Studio
+            </summary>
+            <remarks>
+            In Visual Studio 2008 SP1 the designer is crashing sometimes on windows forms. 
+            The DesignMode property of Control class is buggy and cannot be used, so use our own implementation instead.
+            </remarks>
+        </member>
+        <member name="T:Be.Windows.Forms.IByteCharConverter">
+            <summary>
+            The interface for objects that can translate between characters and bytes.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.IByteCharConverter.ToChar(System.Byte)">
+            <summary>
+            Returns the character to display for the byte passed across.
+            </summary>
+            <param name="b"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Be.Windows.Forms.IByteCharConverter.ToByte(System.Char)">
+            <summary>
+            Returns the byte to use when the character passed across is entered during editing.
+            </summary>
+            <param name="c"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Be.Windows.Forms.DefaultByteCharConverter">
+            <summary>
+            The default <see cref="T:Be.Windows.Forms.IByteCharConverter"/> implementation.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DefaultByteCharConverter.ToChar(System.Byte)">
+            <summary>
+            Returns the character to display for the byte passed across.
+            </summary>
+            <param name="b"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Be.Windows.Forms.DefaultByteCharConverter.ToByte(System.Char)">
+            <summary>
+            Returns the byte to use for the character passed across.
+            </summary>
+            <param name="c"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Be.Windows.Forms.DefaultByteCharConverter.ToString">
+            <summary>
+            Returns a description of the byte char provider.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Be.Windows.Forms.EbcdicByteCharProvider">
+            <summary>
+            A byte char provider that can translate bytes encoded in codepage 500 EBCDIC
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.EbcdicByteCharProvider._ebcdicEncoding">
+            <summary>
+            The IBM EBCDIC code page 500 encoding. Note that this is not always supported by .NET,
+            the underlying platform has to provide support for it.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.EbcdicByteCharProvider.ToChar(System.Byte)">
+            <summary>
+            Returns the EBCDIC character corresponding to the byte passed across.
+            </summary>
+            <param name="b"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Be.Windows.Forms.EbcdicByteCharProvider.ToByte(System.Char)">
+            <summary>
+            Returns the byte corresponding to the EBCDIC character passed across.
+            </summary>
+            <param name="c"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Be.Windows.Forms.EbcdicByteCharProvider.ToString">
+            <summary>
+            Returns a description of the byte char provider.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Be.Windows.Forms.BytePositionInfo">
+            <summary>
+            Represents a position in the HexBox control
+            </summary>
+        </member>
+        <member name="T:Be.Windows.Forms.DynamicByteProvider">
+            <summary>
+            Byte provider for a small amount of data.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.DynamicByteProvider._hasChanges">
+            <summary>
+            Contains information about changes.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.DynamicByteProvider._bytes">
+            <summary>
+            Contains a byte collection.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicByteProvider.#ctor(System.Byte[])">
+            <summary>
+            Initializes a new instance of the DynamicByteProvider class.
+            </summary>
+            <param name="data"></param>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicByteProvider.#ctor(System.Collections.Generic.List{System.Byte})">
+            <summary>
+            Initializes a new instance of the DynamicByteProvider class.
+            </summary>
+            <param name="bytes"></param>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicByteProvider.OnChanged(System.EventArgs)">
+            <summary>
+            Raises the Changed event.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicByteProvider.OnLengthChanged(System.EventArgs)">
+            <summary>
+            Raises the LengthChanged event.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicByteProvider.HasChanges">
+            <summary>
+            True, when changes are done.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicByteProvider.ApplyChanges">
+            <summary>
+            Applies changes.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicByteProvider.ReadByte(System.Int64)">
+            <summary>
+            Reads a byte from the byte collection.
+            </summary>
+            <param name="index">the index of the byte to read</param>
+            <returns>the byte</returns>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicByteProvider.WriteByte(System.Int64,System.Byte)">
+            <summary>
+            Write a byte into the byte collection.
+            </summary>
+            <param name="index">the index of the byte to write.</param>
+            <param name="value">the byte</param>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicByteProvider.DeleteBytes(System.Int64,System.Int64)">
+            <summary>
+            Deletes bytes from the byte collection.
+            </summary>
+            <param name="index">the start index of the bytes to delete.</param>
+            <param name="length">the length of bytes to delete.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicByteProvider.InsertBytes(System.Int64,System.Byte[])">
+            <summary>
+            Inserts byte into the byte collection.
+            </summary>
+            <param name="index">the start index of the bytes in the byte collection</param>
+            <param name="bs">the byte array to insert</param>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicByteProvider.SupportsWriteByte">
+            <summary>
+            Returns true
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicByteProvider.SupportsInsertBytes">
+            <summary>
+            Returns true
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicByteProvider.SupportsDeleteBytes">
+            <summary>
+            Returns true
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.DynamicByteProvider.Bytes">
+            <summary>
+            Gets the byte collection.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.DynamicByteProvider.Changed">
+            <summary>
+            Occurs, when the write buffer contains new changes.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.DynamicByteProvider.LengthChanged">
+            <summary>
+            Occurs, when InsertBytes or DeleteBytes method is called.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.DynamicByteProvider.Length">
+            <summary>
+            Gets the length of the bytes in the byte collection.
+            </summary>
+        </member>
+        <member name="T:Be.Windows.Forms.HexBox">
+            <summary>
+            Represents a hex box control.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox.THUMPTRACKDELAY">
+            <summary>
+            Contains the thumptrack delay for scrolling in milliseconds.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._recContent">
+            <summary>
+            Contains the hole content bounds of all text
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._recLineInfo">
+            <summary>
+            Contains the line info bounds
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._recHex">
+            <summary>
+            Contains the hex data bounds
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._recStringView">
+            <summary>
+            Contains the string view bounds
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._stringFormat">
+            <summary>
+            Contains string format information for text drawing
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._charSize">
+            <summary>
+            Contains the width and height of a single char
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._iHexMaxHBytes">
+            <summary>
+            Contains the maximum of visible horizontal bytes
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._iHexMaxVBytes">
+            <summary>
+            Contains the maximum of visible vertical bytes
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._iHexMaxBytes">
+            <summary>
+            Contains the maximum of visible bytes.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._scrollVmin">
+            <summary>
+            Contains the scroll bars minimum value
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._scrollVmax">
+            <summary>
+            Contains the scroll bars maximum value
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._scrollVpos">
+            <summary>
+            Contains the scroll bars current position
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._vScrollBar">
+            <summary>
+            Contains a vertical scroll
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._thumbTrackTimer">
+            <summary>
+            Contains a timer for thumbtrack scrolling
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._thumbTrackPosition">
+            <summary>
+            Contains the thumbtrack scrolling position
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._lastThumbtrack">
+            <summary>
+            Contains the Enviroment.TickCount of the last refresh
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._recBorderLeft">
+            <summary>
+            Contains the border´s left shift
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._recBorderRight">
+            <summary>
+            Contains the border´s right shift
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._recBorderTop">
+            <summary>
+            Contains the border´s top shift
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._recBorderBottom">
+            <summary>
+            Contains the border bottom shift
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._startByte">
+            <summary>
+            Contains the index of the first visible byte
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._endByte">
+            <summary>
+            Contains the index of the last visible byte
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._bytePos">
+            <summary>
+            Contains the current byte position
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._byteCharacterPos">
+            <summary>
+            Contains the current char position in one byte
+            </summary>
+            <example>
+            "1A"
+            "1" = char position of 0
+            "A" = char position of 1
+            </example>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._hexStringFormat">
+            <summary>
+            Contains string format information for hex values
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._keyInterpreter">
+            <summary>
+            Contains the current key interpreter
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._eki">
+            <summary>
+            Contains an empty key interpreter without functionality
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._ki">
+            <summary>
+            Contains the default key interpreter
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._ski">
+            <summary>
+            Contains the string key interpreter
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._caretVisible">
+            <summary>
+            Contains True if caret is visible
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._abortFind">
+            <summary>
+            Contains true, if the find (Find method) should be aborted.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._findingPos">
+            <summary>
+            Contains a value of the current finding position.
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox._insertActive">
+            <summary>
+            Contains a state value about Insert or Write mode. When this value is true and the ByteProvider SupportsInsert is true bytes are inserted instead of overridden.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.#ctor">
+            <summary>
+            Initializes a new instance of a HexBox class.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.PerformScrollThumbTrack(System.Object,System.EventArgs)">
+            <summary>
+            Performs the thumbtrack scrolling after an delay.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.ScrollByteIntoView">
+            <summary>
+            Scrolls the selection start byte into view
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.ScrollByteIntoView(System.Int64)">
+            <summary>
+            Scrolls the specific byte into view
+            </summary>
+            <param name="index">the index of the byte</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.CanSelectAll">
+            <summary>
+            Returns true if Select method could be invoked.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.SelectAll">
+            <summary>
+            Selects all bytes.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.Select(System.Int64,System.Int64)">
+            <summary>
+            Selects the hex box.
+            </summary>
+            <param name="start">the start index of the selection</param>
+            <param name="length">the length of the selection</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.PreProcessMessage(System.Windows.Forms.Message@)">
+            <summary>
+            Preprocesses windows messages.
+            </summary>
+            <param name="m">the message to process.</param>
+            <returns>true, if the message was processed</returns>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.Find(System.Byte[],System.Int64)">
+            <summary>
+            Searches the current ByteProvider
+            </summary>
+            <param name="bytes">the array of bytes to find</param>
+            <param name="startIndex">the start index</param>
+            <returns>the SelectionStart property value if find was successfull or
+            -1 if there is no match
+            -2 if Find was aborted.</returns>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.AbortFind">
+            <summary>
+            Aborts a working Find method.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.Copy">
+            <summary>
+            Copies the current selection in the hex box to the Clipboard.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.CanCopy">
+            <summary>
+            Return true if Copy method could be invoked.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.Cut">
+            <summary>
+            Moves the current selection in the hex box to the Clipboard.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.CanCut">
+            <summary>
+            Return true if Cut method could be invoked.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.Paste">
+            <summary>
+            Replaces the current selection in the hex box with the contents of the Clipboard.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.CanPaste">
+            <summary>
+            Return true if Paste method could be invoked.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.CanPasteHex">
+            <summary>
+            Return true if PasteHex method could be invoked.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.PasteHex">
+            <summary>
+            Replaces the current selection in the hex box with the hex string data of the Clipboard.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.CopyHex">
+            <summary>
+            Copies the current selection in the hex box to the Clipboard in hex format.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnPaintBackground(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Paints the background.
+            </summary>
+            <param name="e">A PaintEventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnPaint(System.Windows.Forms.PaintEventArgs)">
+            <summary>
+            Paints the hex box.
+            </summary>
+            <param name="e">A PaintEventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.ConvertBytesToHex(System.Byte[])">
+            <summary>
+            Converts a byte array to a hex string. For example: {10,11} = "0A 0B"
+            </summary>
+            <param name="data">the byte array</param>
+            <returns>the hex string</returns>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.ConvertByteToHex(System.Byte)">
+            <summary>
+            Converts the byte to a hex string. For example: "10" = "0A";
+            </summary>
+            <param name="b">the byte to format</param>
+            <returns>the hex string</returns>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.ConvertHexToBytes(System.String)">
+            <summary>
+            Converts the hex string to an byte array. The hex string must be separated by a space char ' '. If there is any invalid hex information in the string the result will be null.
+            </summary>
+            <param name="hex">the hex string separated by ' '. For example: "0A 0B 0C"</param>
+            <returns>the byte array. null if hex is invalid or empty</returns>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnInsertActiveChanged(System.EventArgs)">
+            <summary>
+            Raises the InsertActiveChanged event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnReadOnlyChanged(System.EventArgs)">
+            <summary>
+            Raises the ReadOnlyChanged event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnByteProviderChanged(System.EventArgs)">
+            <summary>
+            Raises the ByteProviderChanged event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnSelectionStartChanged(System.EventArgs)">
+            <summary>
+            Raises the SelectionStartChanged event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnSelectionLengthChanged(System.EventArgs)">
+            <summary>
+            Raises the SelectionLengthChanged event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnLineInfoVisibleChanged(System.EventArgs)">
+            <summary>
+            Raises the LineInfoVisibleChanged event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnStringViewVisibleChanged(System.EventArgs)">
+            <summary>
+            Raises the StringViewVisibleChanged event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnBorderStyleChanged(System.EventArgs)">
+            <summary>
+            Raises the BorderStyleChanged event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnUseFixedBytesPerLineChanged(System.EventArgs)">
+            <summary>
+            Raises the UseFixedBytesPerLineChanged event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnBytesPerLineChanged(System.EventArgs)">
+            <summary>
+            Raises the BytesPerLineChanged event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnVScrollBarVisibleChanged(System.EventArgs)">
+            <summary>
+            Raises the VScrollBarVisibleChanged event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnHexCasingChanged(System.EventArgs)">
+            <summary>
+            Raises the HexCasingChanged event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnHorizontalByteCountChanged(System.EventArgs)">
+            <summary>
+            Raises the HorizontalByteCountChanged event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnVerticalByteCountChanged(System.EventArgs)">
+            <summary>
+            Raises the VerticalByteCountChanged event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnCurrentLineChanged(System.EventArgs)">
+            <summary>
+            Raises the CurrentLineChanged event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnCurrentPositionInLineChanged(System.EventArgs)">
+            <summary>
+            Raises the CurrentPositionInLineChanged event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnCopied(System.EventArgs)">
+            <summary>
+            Raises the Copied event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnCopiedHex(System.EventArgs)">
+            <summary>
+            Raises the CopiedHex event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnMouseDown(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Raises the MouseDown event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnMouseWheel(System.Windows.Forms.MouseEventArgs)">
+            <summary>
+            Raises the MouseWhell event
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnResize(System.EventArgs)">
+            <summary>
+            Raises the Resize event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnGotFocus(System.EventArgs)">
+            <summary>
+            Raises the GotFocus event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.OnLostFocus(System.EventArgs)">
+            <summary>
+            Raises the LostFocus event.
+            </summary>
+            <param name="e">An EventArgs that contains the event data.</param>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.InsertActiveChanged">
+            <summary>
+            Occurs, when the value of InsertActive property has changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.ReadOnlyChanged">
+            <summary>
+            Occurs, when the value of ReadOnly property has changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.ByteProviderChanged">
+            <summary>
+            Occurs, when the value of ByteProvider property has changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.SelectionStartChanged">
+            <summary>
+            Occurs, when the value of SelectionStart property has changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.SelectionLengthChanged">
+            <summary>
+            Occurs, when the value of SelectionLength property has changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.LineInfoVisibleChanged">
+            <summary>
+            Occurs, when the value of LineInfoVisible property has changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.StringViewVisibleChanged">
+            <summary>
+            Occurs, when the value of StringViewVisible property has changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.BorderStyleChanged">
+            <summary>
+            Occurs, when the value of BorderStyle property has changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.BytesPerLineChanged">
+            <summary>
+            Occurs, when the value of BytesPerLine property has changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.UseFixedBytesPerLineChanged">
+            <summary>
+            Occurs, when the value of UseFixedBytesPerLine property has changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.VScrollBarVisibleChanged">
+            <summary>
+            Occurs, when the value of VScrollBarVisible property has changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.HexCasingChanged">
+            <summary>
+            Occurs, when the value of HexCasing property has changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.HorizontalByteCountChanged">
+            <summary>
+            Occurs, when the value of HorizontalByteCount property has changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.VerticalByteCountChanged">
+            <summary>
+            Occurs, when the value of VerticalByteCount property has changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.CurrentLineChanged">
+            <summary>
+            Occurs, when the value of CurrentLine property has changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.CurrentPositionInLineChanged">
+            <summary>
+            Occurs, when the value of CurrentPositionInLine property has changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.Copied">
+            <summary>
+            Occurs, when Copy method was invoked and ClipBoardData changed.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.HexBox.CopiedHex">
+            <summary>
+            Occurs, when CopyHex method was invoked and ClipBoardData changed.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.CurrentFindingPosition">
+            <summary>
+            Gets a value that indicates the current position during Find method execution.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.BackColor">
+            <summary>
+            Gets or sets the background color for the control.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.Font">
+            <summary>
+            The font used to display text in the hexbox.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.Text">
+            <summary>
+            Not used.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.RightToLeft">
+            <summary>
+            Not used.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.BackColorDisabled">
+            <summary>
+            Gets or sets the background color for the disabled control.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.ReadOnly">
+            <summary>
+            Gets or sets if the count of bytes in one line is fix.
+            </summary>
+            <remarks>
+            When set to True, BytesPerLine property determine the maximum count of bytes in one line.
+            </remarks>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.BytesPerLine">
+            <summary>
+            Gets or sets the maximum count of bytes in one line.
+            </summary>
+            <remarks>
+            UsedFixedBytesPerLine property must set to true
+            </remarks>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.UseFixedBytesPerLine">
+            <summary>
+            Gets or sets if the count of bytes in one line is fix.
+            </summary>
+            <remarks>
+            When set to True, BytesPerLine property determine the maximum count of bytes in one line.
+            </remarks>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.VScrollBarVisible">
+            <summary>
+            Gets or sets the visibility of a vertical scroll bar.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.ByteProvider">
+            <summary>
+            Gets or sets the ByteProvider.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.LineInfoVisible">
+            <summary>
+            Gets or sets the visibility of a line info.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.LineInfoOffset">
+            <summary>
+            Gets or sets the offset of a line info.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.BorderStyle">
+            <summary>
+            Gets or sets the hex box´s border style.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.StringViewVisible">
+            <summary>
+            Gets or sets the visibility of the string view.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.HexCasing">
+            <summary>
+            Gets or sets whether the HexBox control displays the hex characters in upper or lower case.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.SelectionStart">
+            <summary>
+            Gets and sets the starting point of the bytes selected in the hex box.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.SelectionLength">
+            <summary>
+            Gets and sets the number of bytes selected in the hex box.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.LineInfoForeColor">
+            <summary>
+            Gets or sets the line info color. When this property is null, then ForeColor property is used.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.SelectionBackColor">
+            <summary>
+            Gets or sets the background color for the selected bytes.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.SelectionForeColor">
+            <summary>
+            Gets or sets the foreground color for the selected bytes.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.ShadowSelectionVisible">
+            <summary>
+            Gets or sets the visibility of a shadow selection.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.ShadowSelectionColor">
+            <summary>
+            Gets or sets the color of the shadow selection. 
+            </summary>
+            <remarks>
+            A alpha component must be given! 
+            Default alpha = 100
+            </remarks>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.HorizontalByteCount">
+            <summary>
+            Gets the number bytes drawn horizontally.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.VerticalByteCount">
+            <summary>
+            Gets the number bytes drawn vertically.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.CurrentLine">
+            <summary>
+            Gets the current line
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.CurrentPositionInLine">
+            <summary>
+            Gets the current position in the current line
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.InsertActive">
+            <summary>
+            Gets the a value if insertion mode is active or not.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.BuiltInContextMenu">
+            <summary>
+            Gets or sets the built-in context menu.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.HexBox.ByteCharConverter">
+            <summary>
+            Gets or sets the converter that will translate between byte and character values.
+            </summary>
+        </member>
+        <member name="T:Be.Windows.Forms.HexBox.IKeyInterpreter">
+            <summary>
+            Defines a user input handler such as for mouse and keyboard input
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.IKeyInterpreter.Activate">
+            <summary>
+            Activates mouse events
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.IKeyInterpreter.Deactivate">
+            <summary>
+            Deactivate mouse events
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.IKeyInterpreter.PreProcessWmKeyUp(System.Windows.Forms.Message@)">
+            <summary>
+            Preprocesses WM_KEYUP window message.
+            </summary>
+            <param name="m">the Message object to process.</param>
+            <returns>True, if the message was processed.</returns>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.IKeyInterpreter.PreProcessWmChar(System.Windows.Forms.Message@)">
+            <summary>
+            Preprocesses WM_CHAR window message.
+            </summary>
+            <param name="m">the Message object to process.</param>
+            <returns>True, if the message was processed.</returns>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.IKeyInterpreter.PreProcessWmKeyDown(System.Windows.Forms.Message@)">
+            <summary>
+            Preprocesses WM_KEYDOWN window message.
+            </summary>
+            <param name="m">the Message object to process.</param>
+            <returns>True, if the message was processed.</returns>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.IKeyInterpreter.GetCaretPointF(System.Int64)">
+            <summary>
+            Gives some information about where to place the caret.
+            </summary>
+            <param name="byteIndex">the index of the byte</param>
+            <returns>the position where the caret is to place.</returns>
+        </member>
+        <member name="T:Be.Windows.Forms.HexBox.EmptyKeyInterpreter">
+            <summary>
+            Represents an empty input handler without any functionality. 
+            If is set ByteProvider to null, then this interpreter is used.
+            </summary>
+        </member>
+        <member name="T:Be.Windows.Forms.HexBox.KeyInterpreter">
+            <summary>
+            Handles user input such as mouse and keyboard input during hex view edit
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox.KeyInterpreter._hexBox">
+            <summary>
+            Contains the parent HexBox control
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox.KeyInterpreter._shiftDown">
+            <summary>
+            Contains True, if shift key is down
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox.KeyInterpreter._mouseDown">
+            <summary>
+            Contains True, if mouse is down
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox.KeyInterpreter._bpiStart">
+            <summary>
+            Contains the selection start position info
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox.KeyInterpreter._bpi">
+            <summary>
+            Contains the current mouse selection position info
+            </summary>
+        </member>
+        <member name="F:Be.Windows.Forms.HexBox.KeyInterpreter._messageHandlers">
+            <summary>
+            Contains all message handlers of key interpreter key down message
+            </summary>
+        </member>
+        <member name="T:Be.Windows.Forms.HexBox.KeyInterpreter.MessageDelegate">
+            <summary>
+            Delegate for key-down processing.
+            </summary>
+            <param name="m">the message object contains key data information</param>
+            <returns>True, if the message was processed</returns>
+        </member>
+        <member name="T:Be.Windows.Forms.HexBox.StringKeyInterpreter">
+            <summary>
+            Handles user input such as mouse and keyboard input during string view edit
+            </summary>
+        </member>
+        <member name="T:Be.Windows.Forms.DynamicFileByteProvider">
+            <summary>
+            Implements a fully editable byte provider for file data of any size.
+            </summary>
+            <remarks>
+            Only changes to the file are stored in memory with reads from the
+            original data occurring as required.
+            </remarks>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicFileByteProvider.#ctor(System.String)">
+            <summary>
+            Constructs a new <see cref="T:Be.Windows.Forms.DynamicFileByteProvider"/> instance.
+            </summary>
+            <param name="fileName">The name of the file from which bytes should be provided.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicFileByteProvider.#ctor(System.String,System.Boolean)">
+            <summary>
+            Constructs a new <see cref="T:Be.Windows.Forms.DynamicFileByteProvider"/> instance.
+            </summary>
+            <param name="fileName">The name of the file from which bytes should be provided.</param>
+            <param name="readOnly">True, opens the file in read-only mode.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicFileByteProvider.#ctor(System.IO.Stream)">
+            <summary>
+            Constructs a new <see cref="T:Be.Windows.Forms.DynamicFileByteProvider"/> instance.
+            </summary>
+            <param name="stream">the stream containing the data.</param>
+            <remarks>
+            The stream must supported seek operations.
+            </remarks>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicFileByteProvider.ReadByte(System.Int64)">
+            <summary>
+            See <see cref="M:Be.Windows.Forms.IByteProvider.ReadByte(System.Int64)"/> for more information.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicFileByteProvider.WriteByte(System.Int64,System.Byte)">
+            <summary>
+            See <see cref="M:Be.Windows.Forms.IByteProvider.WriteByte(System.Int64,System.Byte)"/> for more information.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicFileByteProvider.InsertBytes(System.Int64,System.Byte[])">
+            <summary>
+            See <see cref="M:Be.Windows.Forms.IByteProvider.InsertBytes(System.Int64,System.Byte[])"/> for more information.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicFileByteProvider.DeleteBytes(System.Int64,System.Int64)">
+            <summary>
+            See <see cref="M:Be.Windows.Forms.IByteProvider.DeleteBytes(System.Int64,System.Int64)"/> for more information.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicFileByteProvider.HasChanges">
+            <summary>
+            See <see cref="M:Be.Windows.Forms.IByteProvider.HasChanges"/> for more information.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicFileByteProvider.ApplyChanges">
+            <summary>
+            See <see cref="M:Be.Windows.Forms.IByteProvider.ApplyChanges"/> for more information.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicFileByteProvider.SupportsWriteByte">
+            <summary>
+            See <see cref="M:Be.Windows.Forms.IByteProvider.SupportsWriteByte"/> for more information.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicFileByteProvider.SupportsInsertBytes">
+            <summary>
+            See <see cref="M:Be.Windows.Forms.IByteProvider.SupportsInsertBytes"/> for more information.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicFileByteProvider.SupportsDeleteBytes">
+            <summary>
+            See <see cref="M:Be.Windows.Forms.IByteProvider.SupportsDeleteBytes"/> for more information.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicFileByteProvider.Finalize">
+            <summary>
+            See <see cref="M:System.Object.Finalize"/> for more information.
+            </summary>
+        </member>
+        <member name="M:Be.Windows.Forms.DynamicFileByteProvider.Dispose">
+            <summary>
+            See <see cref="M:System.IDisposable.Dispose"/> for more information.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.DynamicFileByteProvider.LengthChanged">
+            <summary>
+            See <see cref="E:Be.Windows.Forms.IByteProvider.LengthChanged"/> for more information.
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.DynamicFileByteProvider.Changed">
+            <summary>
+            See <see cref="E:Be.Windows.Forms.IByteProvider.Changed"/> for more information.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.DynamicFileByteProvider.Length">
+            <summary>
+            See <see cref="P:Be.Windows.Forms.IByteProvider.Length"/> for more information.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.DynamicFileByteProvider.ReadOnly">
+            <summary>
+            Gets a value, if the file is opened in read-only mode.
+            </summary>
+        </member>
+    </members>
+</doc>

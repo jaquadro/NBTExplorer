@@ -419,8 +419,6 @@ namespace NBTExplorer
             _buttonDelete.Enabled = tag != null && node.Tag is TagNode;
             _buttonEdit.Enabled = tag != null
                 && node.Tag is TagNode
-                && tag.GetTagType() != TagType.TAG_BYTE_ARRAY
-                && tag.GetTagType() != TagType.TAG_INT_ARRAY
                 && tag.GetTagType() != TagType.TAG_COMPOUND
                 && tag.GetTagType() != TagType.TAG_LIST;
 
@@ -889,19 +887,35 @@ namespace NBTExplorer
             if (tag == null)
                 return;
 
-            if (tag.GetTagType() == TagType.TAG_BYTE_ARRAY ||
-                tag.GetTagType() == TagType.TAG_LIST ||
+            if (tag.GetTagType() == TagType.TAG_LIST ||
                 tag.GetTagType() == TagType.TAG_COMPOUND)
                 return;
 
-            EditValue form = new EditValue(tag);
-            if (form.ShowDialog() == DialogResult.OK) {
-                TreeNode baseNode = BaseNode(node);
-                if (baseNode != null) {
-                    (baseNode.Tag as DataNode).Modified = true;
+            if (tag.GetTagType() == TagType.TAG_BYTE_ARRAY) {
+                HexEditor form = new HexEditor(GetTagNodeName(node), tag.ToTagByteArray().Data);
+                form.ShowDialog();
+            }
+            else if (tag.GetTagType() == TagType.TAG_INT_ARRAY) {
+                TagNodeIntArray iatag = tag.ToTagIntArray();
+                byte[] data = new byte[iatag.Length * 4];
+                for (int i = 0; i < iatag.Length; i++) {
+                    byte[] buf = BitConverter.GetBytes(iatag.Data[i]);
+                    Array.Copy(buf, 0, data, 4 * i, 4);
                 }
 
-                node.Text = GetNodeText(node);
+                HexEditor form = new HexEditor(GetTagNodeName(node), data);
+                form.ShowDialog();
+            }
+            else {
+                EditValue form = new EditValue(tag);
+                if (form.ShowDialog() == DialogResult.OK) {
+                    TreeNode baseNode = BaseNode(node);
+                    if (baseNode != null) {
+                        (baseNode.Tag as DataNode).Modified = true;
+                    }
+
+                    node.Text = GetNodeText(node);
+                }
             }
         }
 
