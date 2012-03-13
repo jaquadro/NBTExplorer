@@ -130,7 +130,7 @@ namespace Substrate
             _blockLight = new YZXNibbleArray(XDIM, YDIM, ZDIM, ctree["BlockLight"] as TagNodeByteArray);
 
             if (!ctree.ContainsKey("AddBlocks"))
-                _ctree["AddBlocks"] = new TagNodeByteArray(new byte[2048]);
+                ctree["AddBlocks"] = new TagNodeByteArray(new byte[2048]);
             _addBlocks = new YZXNibbleArray(XDIM, YDIM, ZDIM, ctree["AddBlocks"] as TagNodeByteArray);
 
             return this;
@@ -147,9 +147,15 @@ namespace Substrate
 
         public TagNode BuildTree ()
         {
-            BuildConditional();
+            TagNodeCompound copy = new TagNodeCompound();
+            foreach (KeyValuePair<string, TagNode> node in _tree) {
+                copy.Add(node.Key, node.Value);
+            }
 
-            return _tree;
+            if (CheckAddBlocksEmpty())
+                copy.Remove("AddBlocks");
+
+            return copy;
         }
 
         public bool ValidateTree (TagNode tree)
@@ -159,13 +165,6 @@ namespace Substrate
         }
 
         #endregion
-
-        private void BuildConditional ()
-        {
-            if (CheckAddBlocksEmpty()) {
-                _tree.Remove("AddBlocks");
-            }
-        }
 
         #region ICopyable<AnvilSection> Members
 
@@ -253,7 +252,7 @@ namespace Substrate
 
         public int YDim
         {
-            get { return _sections[0].YDim; }
+            get { return _sections[0].YDim * _sections.Length; }
         }
 
         public int ZDim
@@ -356,7 +355,7 @@ namespace Substrate
 
         public int YDim
         {
-            get { return _sections[0].YDim; }
+            get { return _sections[0].YDim * _sections.Length; }
         }
 
         public int ZDim
@@ -455,6 +454,7 @@ namespace Substrate
         private IDataArray3 _skyLight;
 
         private ZXIntArray _heightMap;
+        private ZXByteArray _biomes;
 
         private TagNodeList _entities;
         private TagNodeList _tileEntities;
@@ -604,7 +604,10 @@ namespace Substrate
 
             BuildConditional();
 
-            _tree.WriteTo(outStream);
+            NbtTree tree = new NbtTree();
+            tree.Root["Level"] = BuildTree();
+
+            tree.WriteTo(outStream);
             outStream.Close();
 
             return true;
@@ -652,6 +655,7 @@ namespace Substrate
             _blockLight = new CompositeYZXNibbleArray(blockLightBA);
             
             _heightMap = new ZXIntArray(XDIM, ZDIM, level["HeightMap"] as TagNodeIntArray);
+            _biomes = new ZXByteArray(XDIM, ZDIM, level["Biomes"] as TagNodeByteArray);
 
             _entities = level["Entities"] as TagNodeList;
             _tileEntities = level["TileEntities"] as TagNodeList;
@@ -697,9 +701,19 @@ namespace Substrate
 
         public TagNode BuildTree ()
         {
-            BuildConditional();
+            TagNodeCompound level = _tree.Root["Level"] as TagNodeCompound;
+            TagNodeCompound levelCopy = new TagNodeCompound();
+            foreach (KeyValuePair<string, TagNode> node in level)
+                levelCopy.Add(node.Key, node.Value);
 
-            return _tree.Root;
+            TagNodeList sections = new TagNodeList(TagType.TAG_COMPOUND);
+            for (int i = 0; i < _sections.Length; i++)
+                if (!_sections[i].CheckEmpty())
+                    sections.Add(_sections[i].BuildTree());
+
+            levelCopy["Sections"] = sections;
+
+            return levelCopy;
         }
 
         public bool ValidateTree (TagNode tree)
@@ -760,6 +774,9 @@ namespace Substrate
             TagNodeIntArray heightMap = new TagNodeIntArray(new int[elements2]);
             _heightMap = new ZXIntArray(XDIM, ZDIM, heightMap);
 
+            TagNodeByteArray biomes = new TagNodeByteArray(new byte[elements2]);
+            _biomes = new ZXByteArray(XDIM, ZDIM, biomes);
+
             _entities = new TagNodeList(TagType.TAG_COMPOUND);
             _tileEntities = new TagNodeList(TagType.TAG_COMPOUND);
             _tileTicks = new TagNodeList(TagType.TAG_COMPOUND);
@@ -767,6 +784,7 @@ namespace Substrate
             TagNodeCompound level = new TagNodeCompound();
             level.Add("Sections", sections);
             level.Add("HeightMap", heightMap);
+            level.Add("Biomes", biomes);
             level.Add("Entities", _entities);
             level.Add("TileEntities", _tileEntities);
             level.Add("TileTicks", _tileTicks);

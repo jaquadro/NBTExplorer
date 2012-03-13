@@ -75,7 +75,7 @@ namespace Substrate
         {
             Region r = GetRegion(rx, rz);
             if (r == null) {
-                string fp = "r." + rx + "." + rz + ".mcr";
+                string fp = "r." + rx + "." + rz + ".mca";
                 using (RegionFile rf = new RegionFile(Path.Combine(_regionPath, fp))) {
                     
                 }
