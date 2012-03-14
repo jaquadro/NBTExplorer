@@ -11,7 +11,7 @@ namespace Substrate
         public const int MIN_X = -32000000;
         public const int MAX_X = 32000000;
         public const int MIN_Y = 0;
-        public const int MAX_Y = 128;
+        public const int MAX_Y = 256;
         public const int MIN_Z = -32000000;
         public const int MAX_Z = 32000000;
 

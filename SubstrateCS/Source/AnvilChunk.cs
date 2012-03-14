@@ -713,6 +713,9 @@ namespace Substrate
 
             levelCopy["Sections"] = sections;
 
+            if (_tileTicks.Count == 0)
+                levelCopy.Remove("TileTicks");
+
             return levelCopy;
         }
 
@@ -776,6 +779,9 @@ namespace Substrate
 
             TagNodeByteArray biomes = new TagNodeByteArray(new byte[elements2]);
             _biomes = new ZXByteArray(XDIM, ZDIM, biomes);
+            for (int x = 0; x < XDIM; x++)
+                for (int z = 0; z < ZDIM; z++)
+                    _biomes[x, z] = BiomeType.Default;
 
             _entities = new TagNodeList(TagType.TAG_COMPOUND);
             _tileEntities = new TagNodeList(TagType.TAG_COMPOUND);

@@ -262,7 +262,8 @@ namespace Substrate
             _spawnZ = 0;
             _sizeOnDisk = 0;
             _randomSeed = new Random().Next();
-            _version = 19132;
+            //_version = 19132;
+            _version = 19133;
             _name = "Untitled";
             _hardcore = 0;
 

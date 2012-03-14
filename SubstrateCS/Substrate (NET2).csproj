@@ -63,6 +63,7 @@
     <Compile Include="Source\AnvilChunk.cs" />
     <Compile Include="Source\BetaChunkManager.cs" />
     <Compile Include="Source\BetaWorld.cs" />
+    <Compile Include="Source\BiomeInfo.cs" />
     <Compile Include="Source\Core\BlockTileTicks.cs" />
     <Compile Include="Source\Core\BoundedBlockInterface.cs" />
     <Compile Include="Source\Core\ItemInterface.cs" />
@@ -152,7 +153,7 @@
     <Compile Include="Source\Core\BlockInterface.cs" />
     <Compile Include="Source\Core\BlockKey.cs" />
     <Compile Include="Source\BlockManager.cs" />
-    <Compile Include="Source\Chunk.cs" />
+    <None Include="Source\Chunk.cs" />
     <Compile Include="Source\Core\ChunkFile.cs" />
     <Compile Include="Source\AlphaChunkManager.cs" />
     <Compile Include="Source\Core\ChunkInterface.cs" />
