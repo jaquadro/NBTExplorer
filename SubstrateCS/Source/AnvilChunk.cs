@@ -133,6 +133,8 @@ namespace Substrate
                 ctree["AddBlocks"] = new TagNodeByteArray(new byte[2048]);
             _addBlocks = new YZXNibbleArray(XDIM, YDIM, ZDIM, ctree["AddBlocks"] as TagNodeByteArray);
 
+            _tree = ctree;
+
             return this;
         }
 
