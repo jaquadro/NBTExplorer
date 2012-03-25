@@ -427,7 +427,7 @@ namespace Substrate
                     new SchemaNodeScaler("Y", TagType.TAG_BYTE),
                     new SchemaNodeArray("AddBlocks", 2048, SchemaOptions.OPTIONAL),
                 }),
-                new SchemaNodeArray("Biomes", 256),
+                new SchemaNodeArray("Biomes", 256, SchemaOptions.OPTIONAL),
                 new SchemaNodeIntArray("HeightMap", 256),
                 new SchemaNodeList("Entities", TagType.TAG_COMPOUND, SchemaOptions.CREATE_ON_MISSING),
                 new SchemaNodeList("TileEntities", TagType.TAG_COMPOUND, TileEntity.Schema, SchemaOptions.CREATE_ON_MISSING),
@@ -657,7 +657,16 @@ namespace Substrate
             _blockLight = new CompositeYZXNibbleArray(blockLightBA);
             
             _heightMap = new ZXIntArray(XDIM, ZDIM, level["HeightMap"] as TagNodeIntArray);
-            _biomes = new ZXByteArray(XDIM, ZDIM, level["Biomes"] as TagNodeByteArray);
+
+            if (level.ContainsKey("Biomes"))
+                _biomes = new ZXByteArray(XDIM, ZDIM, level["Biomes"] as TagNodeByteArray);
+            else {
+                level["Biomes"] = new TagNodeByteArray(new byte[256]);
+                _biomes = new ZXByteArray(XDIM, ZDIM, level["Biomes"] as TagNodeByteArray);
+                for (int x = 0; x < XDIM; x++)
+                    for (int z = 0; z < ZDIM; z++)
+                        _biomes[x, z] = BiomeType.Default;
+            }
 
             _entities = level["Entities"] as TagNodeList;
             _tileEntities = level["TileEntities"] as TagNodeList;
