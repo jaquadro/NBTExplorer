@@ -36,6 +36,8 @@ namespace Substrate.Core
         /// <remarks>Terrain features include ores, water and lava sources, dungeons, trees, flowers, etc.</remarks>
         bool IsTerrainPopulated { get; set; }
 
+        void SetLocation (int x, int z);
+
         /// <summary>
         /// Writes out the chunk's data to an output stream.
         /// </summary>
@@ -90,19 +92,19 @@ namespace Substrate.Core
         int ChunkLocalZ (int cz);
 
         /// <summary>
-        /// Gets an unwrapped <see cref="Chunk"/> object for the given container-local coordinates.
+        /// Gets an unwrapped <see cref="IChunk"/> object for the given container-local coordinates.
         /// </summary>
         /// <param name="cx">The container-local X-coordinate of a chunk.</param>
         /// <param name="cz">The container-local Z-coordinate of a chunk.</param>
-        /// <returns>A <see cref="Chunk"/> for the given coordinates, or null if no chunk exists at those coordinates.</returns>
-        Chunk GetChunk (int cx, int cz);
+        /// <returns>A <see cref="IChunk"/> for the given coordinates, or null if no chunk exists at those coordinates.</returns>
+        IChunk GetChunk (int cx, int cz);
 
         /// <summary>
         /// Gets a <see cref="ChunkRef"/> binding a chunk to this container for the given container-local coordinates.
         /// </summary>
         /// <param name="cx">The container-local X-coordinate of a chunk.</param>
         /// <param name="cz">The container-local Z-coordinate of a chunk.</param>
-        /// <returns>A <see cref="ChunkRef"/> for the given coordinates binding a <see cref="Chunk"/> to this container, or null if
+        /// <returns>A <see cref="ChunkRef"/> for the given coordinates binding a <see cref="IChunk"/> to this container, or null if
         /// no chunk exists at the given coordinates.</returns>
         ChunkRef GetChunkRef (int cx, int cz);
 
@@ -117,19 +119,19 @@ namespace Substrate.Core
         ChunkRef CreateChunk (int cx, int cz);
 
         /// <summary>
-        /// Saves an unwrapped <see cref="Chunk"/> to the container at the given container-local coordinates.
+        /// Saves an unwrapped <see cref="IChunk"/> to the container at the given container-local coordinates.
         /// </summary>
         /// <param name="cx">The container-local X-coordinate to save the chunk to.</param>
         /// <param name="cz">The container-local Z-coordinate to save the chunk to.</param>
-        /// <param name="chunk">The <see cref="Chunk"/> to save at the given coordinates.</param>
+        /// <param name="chunk">The <see cref="IChunk"/> to save at the given coordinates.</param>
         /// <returns>A <see cref="ChunkRef"/> binding <paramref name="chunk"/> to this container at the given location.</returns>
-        /// <remarks><para>The <see cref="Chunk"/> argument will be updated to reflect new global coordinates corresponding to
+        /// <remarks><para>The <see cref="IChunk"/> argument will be updated to reflect new global coordinates corresponding to
         /// the given location in this container.  It is up to the developer to ensure that no competing <see cref="ChunkRef"/>
-        /// has a handle to the <see cref="Chunk"/> argument, or an inconsistency could develop where the chunk held by the
+        /// has a handle to the <see cref="IChunk"/> argument, or an inconsistency could develop where the chunk held by the
         /// other <see cref="ChunkRef"/> is written to the underlying data store with invalid coordinates.</para>
         /// <para>The <see cref="ChunkRef"/> specification is designed to avoid this situation from occuring, but
         /// class hierarchy extensions could violate these safeguards.</para></remarks>
-        ChunkRef SetChunk (int cx, int cz, Chunk chunk);
+        ChunkRef SetChunk (int cx, int cz, IChunk chunk);
 
         /// <summary>
         /// Checks if a chunk exists at the given container-local coordinates.
@@ -159,7 +161,7 @@ namespace Substrate.Core
 
         // TODO: Check that this doesn't violate borders
         /// <exclude/>
-        bool SaveChunk (Chunk chunk);
+        bool SaveChunk (IChunk chunk);
 
         /// <summary>
         /// Checks if this container supports delegating an action on out-of-bounds coordinates to another container.

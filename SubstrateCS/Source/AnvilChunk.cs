@@ -413,7 +413,7 @@ namespace Substrate
         #endregion
     }
 
-    public class Chunk : IChunk, INbtObject<Chunk>, ICopyable<Chunk>
+    public class AnvilChunk : IChunk, INbtObject<AnvilChunk>, ICopyable<AnvilChunk>
     {
         public static SchemaNodeCompound LevelSchema = new SchemaNodeCompound()
         {
@@ -466,7 +466,7 @@ namespace Substrate
         private EntityCollection _entityManager;
 
 
-        private Chunk ()
+        private AnvilChunk ()
         {
             _sections = new AnvilSection[16];
         }
@@ -502,9 +502,9 @@ namespace Substrate
             set { _tree.Root["Level"].ToTagCompound()["TerrainPopulated"].ToTagByte().Data = (byte)(value ? 1 : 0); }
         }
 
-        public static Chunk Create (int x, int z)
+        public static AnvilChunk Create (int x, int z)
         {
-            Chunk c = new Chunk();
+            AnvilChunk c = new AnvilChunk();
 
             c._cx = x;
             c._cz = z;
@@ -513,16 +513,16 @@ namespace Substrate
             return c;
         }
 
-        public static Chunk Create (NbtTree tree)
+        public static AnvilChunk Create (NbtTree tree)
         {
-            Chunk c = new Chunk();
+            AnvilChunk c = new AnvilChunk();
 
             return c.LoadTree(tree.Root);
         }
 
-        public static Chunk CreateVerified (NbtTree tree)
+        public static AnvilChunk CreateVerified (NbtTree tree)
         {
-            Chunk c = new Chunk();
+            AnvilChunk c = new AnvilChunk();
 
             return c.LoadTreeSafe(tree.Root);
         }
@@ -617,7 +617,7 @@ namespace Substrate
 
         #region INbtObject<AnvilChunk> Members
 
-        public Chunk LoadTree (TagNode tree)
+        public AnvilChunk LoadTree (TagNode tree)
         {
             TagNodeCompound ctree = tree as TagNodeCompound;
             if (ctree == null) {
@@ -701,7 +701,7 @@ namespace Substrate
             return this;
         }
 
-        public Chunk LoadTreeSafe (TagNode tree)
+        public AnvilChunk LoadTreeSafe (TagNode tree)
         {
             if (!ValidateTree(tree)) {
                 return null;
@@ -740,9 +740,9 @@ namespace Substrate
 
         #region ICopyable<AnvilChunk> Members
 
-        public Chunk Copy ()
+        public AnvilChunk Copy ()
         {
-            return Chunk.Create(_tree.Copy());
+            return AnvilChunk.Create(_tree.Copy());
         }
 
         #endregion

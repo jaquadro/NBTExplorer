@@ -101,13 +101,13 @@ namespace Substrate
         }
 
         /// <inheritdoc/>
-        public Chunk GetChunk (int cx, int cz)
+        public IChunk GetChunk (int cx, int cz)
         {
             if (!ChunkExists(cx, cz)) {
                 return null;
             }
 
-            return Chunk.CreateVerified(GetChunkTree(cx, cz));
+            return AlphaChunk.CreateVerified(GetChunkTree(cx, cz));
         }
 
         /// <inheritdoc/>
@@ -134,7 +134,7 @@ namespace Substrate
         public ChunkRef CreateChunk (int cx, int cz)
         {
             DeleteChunk(cx, cz);
-            Chunk c = Chunk.Create(cx, cz);
+            AlphaChunk c = AlphaChunk.Create(cx, cz);
             c.Save(GetChunkOutStream(cx, cz));
 
             ChunkRef cr = ChunkRef.Create(this, cx, cz);
@@ -163,7 +163,7 @@ namespace Substrate
         }
 
         /// <inheritdoc/>
-        public ChunkRef SetChunk (int cx, int cz, Chunk chunk)
+        public ChunkRef SetChunk (int cx, int cz, IChunk chunk)
         {
             DeleteChunk(cx, cz);
             chunk.SetLocation(cx, cz);
@@ -200,7 +200,7 @@ namespace Substrate
         }
 
         /// <inheritdoc/>
-        public bool SaveChunk (Chunk chunk)
+        public bool SaveChunk (IChunk chunk)
         {
             if (chunk.Save(GetChunkOutStream(ChunkGlobalX(chunk.X), ChunkGlobalZ(chunk.Z)))) {
                 _dirty.Remove(new ChunkKey(chunk.X, chunk.Z));

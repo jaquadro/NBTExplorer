@@ -14,7 +14,7 @@ namespace Substrate
     public class ChunkRef : IChunk
     {
         private IChunkContainer _container;
-        private Chunk _chunk;
+        private IChunk _chunk;
 
         private AlphaBlockCollection _blocks;
         private EntityCollection _entities;
@@ -167,6 +167,15 @@ namespace Substrate
             return true;
         }
 
+        public void SetLocation (int x, int z)
+        {
+            ChunkRef c = _container.SetChunk(x, z, GetChunk());
+
+            _container = c._container;
+            _cx = c._cx;
+            _cz = c._cz;
+        }
+
         /// <summary>
         /// Gets a ChunkRef to the chunk positioned immediately north (X - 1).
         /// </summary>
@@ -207,10 +216,10 @@ namespace Substrate
         /// Returns a deep copy of the physical chunk underlying the ChunkRef.
         /// </summary>
         /// <returns>A copy of the physical Chunk object.</returns>
-        public Chunk GetChunkCopy ()
+        /*public Chunk GetChunkCopy ()
         {
             return GetChunk().Copy();
-        }
+        }*/
 
         /// <summary>
         /// Returns the reference of the physical chunk underlying the ChunkRef, and releases the reference from itself.
@@ -223,9 +232,9 @@ namespace Substrate
         /// to modify them without intending to permanently store the changes.
         /// </remarks>
         /// <returns>The physical Chunk object underlying the ChunkRef</returns>
-        public Chunk GetChunkRef ()
+        public IChunk GetChunkRef ()
         {
-            Chunk chunk = GetChunk();
+            IChunk chunk = GetChunk();
             _chunk = null;
             _dirty = false;
 
@@ -240,7 +249,7 @@ namespace Substrate
         /// move a physical chunk between locations within a container (by taking the reference from another ChunkRef).
         /// </remarks>
         /// <param name="chunk">Physical Chunk to store into the location represented by this ChunkRef.</param>
-        public void SetChunkRef (Chunk chunk)
+        public void SetChunkRef (IChunk chunk)
         {
             _chunk = chunk;
             _chunk.SetLocation(X, Z);
@@ -251,7 +260,7 @@ namespace Substrate
         /// Gets an internal Chunk reference from cache or queries the container for it.
         /// </summary>
         /// <returns>The ChunkRef's underlying Chunk.</returns>
-        private Chunk GetChunk ()
+        private IChunk GetChunk ()
         {
             if (_chunk == null) {
                 _chunk = _container.GetChunk(_cx, _cz);

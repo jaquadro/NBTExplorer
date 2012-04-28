@@ -176,8 +176,9 @@ namespace Substrate
 
         static NbtWorld ()
         {
-            ResolveOpen += AlphaWorld.OnResolveOpen;
+            ResolveOpen += AnvilWorld.OnResolveOpen;
             ResolveOpen += BetaWorld.OnResolveOpen;
+            ResolveOpen += AlphaWorld.OnResolveOpen;
         }
     }
 }

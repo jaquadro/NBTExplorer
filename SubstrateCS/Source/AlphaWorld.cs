@@ -44,7 +44,7 @@ namespace Substrate
         /// <returns>A <see cref="BlockManager"/> tied to the default dimension in this world.</returns>
         /// <remarks>Get a <see cref="BlockManager"/> if you need to manage blocks as a global, unbounded matrix.  This abstracts away
         /// any higher-level organizational divisions.  If your task is going to be heavily performance-bound, consider getting a
-        /// <see cref="BetaChunkManager"/> instead and working with blocks on a chunk-local level.</remarks>
+        /// <see cref="RegionChunkManager"/> instead and working with blocks on a chunk-local level.</remarks>
         public new BlockManager GetBlockManager ()
         {
             return GetBlockManagerVirt(Dimension.DEFAULT) as BlockManager;
@@ -57,28 +57,28 @@ namespace Substrate
         /// <returns>A <see cref="BlockManager"/> tied to the given dimension in this world.</returns>
         /// <remarks>Get a <see cref="BlockManager"/> if you need to manage blocks as a global, unbounded matrix.  This abstracts away
         /// any higher-level organizational divisions.  If your task is going to be heavily performance-bound, consider getting a
-        /// <see cref="BetaChunkManager"/> instead and working with blocks on a chunk-local level.</remarks>
+        /// <see cref="RegionChunkManager"/> instead and working with blocks on a chunk-local level.</remarks>
         public new BlockManager GetBlockManager (int dim)
         {
             return GetBlockManagerVirt(dim) as BlockManager;
         }
 
         /// <summary>
-        /// Gets a <see cref="BetaChunkManager"/> for the default dimension.
+        /// Gets a <see cref="RegionChunkManager"/> for the default dimension.
         /// </summary>
-        /// <returns>A <see cref="BetaChunkManager"/> tied to the default dimension in this world.</returns>
-        /// <remarks>Get a <see cref="BetaChunkManager"/> if you you need to work with easily-digestible, bounded chunks of blocks.</remarks>
+        /// <returns>A <see cref="RegionChunkManager"/> tied to the default dimension in this world.</returns>
+        /// <remarks>Get a <see cref="RegionChunkManager"/> if you you need to work with easily-digestible, bounded chunks of blocks.</remarks>
         public new AlphaChunkManager GetChunkManager ()
         {
             return GetChunkManagerVirt(Dimension.DEFAULT) as AlphaChunkManager;
         }
 
         /// <summary>
-        /// Gets a <see cref="BetaChunkManager"/> for the given dimension.
+        /// Gets a <see cref="RegionChunkManager"/> for the given dimension.
         /// </summary>
         /// <param name="dim">The id of the dimension to look up.</param>
-        /// <returns>A <see cref="BetaChunkManager"/> tied to the given dimension in this world.</returns>
-        /// <remarks>Get a <see cref="BetaChunkManager"/> if you you need to work with easily-digestible, bounded chunks of blocks.</remarks>
+        /// <returns>A <see cref="RegionChunkManager"/> tied to the given dimension in this world.</returns>
+        /// <remarks>Get a <see cref="RegionChunkManager"/> if you you need to work with easily-digestible, bounded chunks of blocks.</remarks>
         public new AlphaChunkManager GetChunkManager (int dim)
         {
             return GetChunkManagerVirt(dim) as AlphaChunkManager;
@@ -95,7 +95,7 @@ namespace Substrate
         }
 
         /// <summary>
-        /// Saves the world's <see cref="Level"/> data, and any <see cref="Chunk"/> objects known to have unsaved changes.
+        /// Saves the world's <see cref="Level"/> data, and any <see cref="IChunk"/> objects known to have unsaved changes.
         /// </summary>
         public void Save ()
         {

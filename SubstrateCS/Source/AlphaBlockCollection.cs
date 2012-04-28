@@ -9,7 +9,7 @@ namespace Substrate
     /// Functions for reading and modifying a bounded-size collection of Alpha-compatible block data.
     /// </summary>
     /// <remarks>An <see cref="AlphaBlockCollection"/> is a wrapper around existing pieces of data.  Although it
-    /// holds references to data, it does not "own" the data in the same way that a <see cref="Chunk"/> does.  An
+    /// holds references to data, it does not "own" the data in the same way that a <see cref="IChunk"/> does.  An
     /// <see cref="AlphaBlockCollection"/> simply overlays a higher-level interface on top of existing data.</remarks>
     public class AlphaBlockCollection : IBoundedAlphaBlockCollection, IBoundedActiveBlockCollection
     {

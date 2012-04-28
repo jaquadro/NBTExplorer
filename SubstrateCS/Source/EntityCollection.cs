@@ -89,7 +89,7 @@ namespace Substrate
         /// <param name="ent">The <see cref="TypedEntity"/> object to add.</param>
         /// <remarks>It is up to the developer to ensure that the <see cref="TypedEntity"/> being added to the collection has a position that
         /// is within acceptable range of the collection.  <see cref="EntityCollection"/> transparently back other objects such as 
-        /// <see cref="Chunk"/> objects, which have a well-defined position in global space.  The <see cref="EntityCollection"/> itself has
+        /// <see cref="IChunk"/> objects, which have a well-defined position in global space.  The <see cref="EntityCollection"/> itself has
         /// no concept of position and will not enforce constraints on the positions of <see cref="TypedEntity"/> objects being added.</remarks>
         public void Add (TypedEntity ent)
         {

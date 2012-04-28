@@ -68,7 +68,7 @@ namespace Substrate
         {
             chunkMan = cm;
 
-            Chunk c = Chunk.Create(0, 0);
+            IChunk c = AlphaChunk.Create(0, 0);
 
             chunkXDim = c.Blocks.XDim;
             chunkYDim = c.Blocks.YDim;

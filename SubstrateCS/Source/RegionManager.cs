@@ -6,16 +6,99 @@ using Substrate.Core;
 
 namespace Substrate
 {
+    public class BetaRegionManager : RegionManager
+    {
+        public BetaRegionManager (string regionDir, ChunkCache cache)
+            : base(regionDir, cache)
+        {
+        }
+
+        protected override IRegion CreateRegionCore (int rx, int rz)
+        {
+            return new BetaRegion(this, _chunkCache, rx, rz);
+        }
+
+        protected override RegionFile CreateRegionFileCore (int rx, int rz)
+        {
+            string fp = "r." + rx + "." + rz + ".mcr";
+            return new RegionFile(Path.Combine(_regionPath, fp));
+        }
+
+        protected override void DeleteRegionCore (IRegion region)
+        {
+            BetaRegion r = region as BetaRegion;
+            if (r != null) {
+                r.Dispose();
+            }
+        }
+
+        public override IRegion GetRegion (string filename)
+        {
+            int rx, rz;
+            if (!BetaRegion.ParseFileName(filename, out rx, out rz)) {
+                throw new ArgumentException("Malformed region file name: " + filename, "filename");
+            }
+
+            return GetRegion(rx, rz);
+        }
+    }
+
+    public class AnvilRegionManager : RegionManager
+    {
+        public AnvilRegionManager (string regionDir, ChunkCache cache)
+            : base(regionDir, cache)
+        {
+        }
+
+        protected override IRegion CreateRegionCore (int rx, int rz)
+        {
+            return new AnvilRegion(this, _chunkCache, rx, rz);
+        }
+
+        protected override RegionFile CreateRegionFileCore (int rx, int rz)
+        {
+            string fp = "r." + rx + "." + rz + ".mca";
+            return new RegionFile(Path.Combine(_regionPath, fp));
+        }
+
+        protected override void DeleteRegionCore (IRegion region)
+        {
+            AnvilRegion r = region as AnvilRegion;
+            if (r != null) {
+                r.Dispose();
+            }
+        }
+
+        public override IRegion GetRegion (string filename)
+        {
+            int rx, rz;
+            if (!AnvilRegion.ParseFileName(filename, out rx, out rz)) {
+                throw new ArgumentException("Malformed region file name: " + filename, "filename");
+            }
+
+            return GetRegion(rx, rz);
+        }
+    }
+
     /// <summary>
     /// Manages the regions of a Beta-compatible world.
     /// </summary>
-    public class RegionManager : IRegionManager
+    public abstract class RegionManager : IRegionManager
     {
-        private string _regionPath;
+        protected string _regionPath;
 
-        private Dictionary<RegionKey, Region> _cache;
+        protected Dictionary<RegionKey, IRegion> _cache;
 
-        private ChunkCache _chunkCache;
+        protected ChunkCache _chunkCache;
+
+
+        protected abstract IRegion CreateRegionCore (int rx, int rz);
+
+        protected abstract RegionFile CreateRegionFileCore (int rx, int rz);
+
+        protected abstract void DeleteRegionCore (IRegion region);
+
+        public abstract IRegion GetRegion (string filename);
 
         /// <summary>
         /// Creates a new instance of a <see cref="RegionManager"/> for the given region directory and chunk cache.
@@ -26,7 +109,7 @@ namespace Substrate
         {
             _regionPath = regionDir;
             _chunkCache = cache;
-            _cache = new Dictionary<RegionKey, Region>();
+            _cache = new Dictionary<RegionKey, IRegion>();
         }
 
         /// <summary>
@@ -35,14 +118,14 @@ namespace Substrate
         /// <param name="rx">The global X-coordinate of a region.</param>
         /// <param name="rz">The global Z-coordinate of a region.</param>
         /// <returns>A <see cref="Region"/> representing a region at the given coordinates, or null if the region does not exist.</returns>
-        public Region GetRegion (int rx, int rz)
+        public IRegion GetRegion (int rx, int rz)
         {
             RegionKey k = new RegionKey(rx, rz);
-            Region r;
+            IRegion r;
 
             try {
                 if (_cache.TryGetValue(k, out r) == false) {
-                    r = new Region(this, _chunkCache, rx, rz);
+                    r = CreateRegionCore(rz, rz);
                     _cache.Add(k, r);
                 }
                 return r;
@@ -53,55 +136,30 @@ namespace Substrate
             }
         }
 
-        /// <summary>
-        /// Determines if a region exists at the given coordinates.
-        /// </summary>
-        /// <param name="rx">The global X-coordinate of a region.</param>
-        /// <param name="rz">The global Z-coordinate of a region.</param>
-        /// <returns>True if a region exists at the given global region coordinates; false otherwise.</returns>
+        /// <inherits />
         public bool RegionExists (int rx, int rz)
         {
-            Region r = GetRegion(rx, rz);
+            IRegion r = GetRegion(rx, rz);
             return r != null;
         }
 
-        /// <summary>
-        /// Creates a new empty region at the given coordinates, if no region exists.
-        /// </summary>
-        /// <param name="rx">The global X-coordinate of a region.</param>
-        /// <param name="rz">The global Z-coordinate of a region.</param>
-        /// <returns>A new empty <see cref="Region"/> object for the given coordinates, or an existing <see cref="Region"/> if one exists.</returns>
-        public Region CreateRegion (int rx, int rz)
+        /// <inherits />
+        public IRegion CreateRegion (int rx, int rz)
         {
-            Region r = GetRegion(rx, rz);
+            IRegion r = GetRegion(rx, rz);
             if (r == null) {
                 string fp = "r." + rx + "." + rz + ".mca";
-                using (RegionFile rf = new RegionFile(Path.Combine(_regionPath, fp))) {
+                using (RegionFile rf = CreateRegionFileCore(rx, rz)) {
                     
                 }
 
-                r = new Region(this, _chunkCache, rx, rz);
+                r = CreateRegionCore(rx, rz);
 
                 RegionKey k = new RegionKey(rx, rz);
                 _cache[k] = r;
             }
 
             return r;
-        }
-
-        /// <summary>
-        /// Gets a <see cref="Region"/> for the given region filename.
-        /// </summary>
-        /// <param name="filename">The filename of the region to get.</param>
-        /// <returns>A <see cref="Region"/> corresponding to the coordinates encoded in the filename.</returns>
-        public Region GetRegion (string filename)
-        {
-            int rx, rz;
-            if (!Region.ParseFileName(filename, out rx, out rz)) {
-                throw new ArgumentException("Malformed region file name: " + filename, "filename");
-            }
-
-            return GetRegion(rx, rz);
         }
 
         /// <summary>
@@ -114,15 +172,10 @@ namespace Substrate
         }
 
         // XXX: Exceptions
-        /// <summary>
-        /// Deletes a region at the given coordinates.
-        /// </summary>
-        /// <param name="rx">The global X-coordinate of a region.</param>
-        /// <param name="rz">The global Z-coordinate of a region.</param>
-        /// <returns>True if a region was deleted; false otherwise.</returns>
+        /// <inherits />
         public bool DeleteRegion (int rx, int rz)
         {
-            Region r = GetRegion(rx, rz);
+            IRegion r = GetRegion(rx, rz);
             if (r == null) {
                 return false;
             }
@@ -130,7 +183,7 @@ namespace Substrate
             RegionKey k = new RegionKey(rx, rz);
             _cache.Remove(k);
 
-            r.Dispose();
+            DeleteRegionCore(r);
 
             try {
                 File.Delete(r.GetFilePath());
@@ -143,13 +196,13 @@ namespace Substrate
             return true;
         }
 
-        #region IEnumerable<Region> Members
+        #region IEnumerable<IRegion> Members
 
         /// <summary>
         /// Returns an enumerator that iterates over all of the regions in the underlying dimension.
         /// </summary>
         /// <returns>An enumerator instance.</returns>
-        public IEnumerator<Region> GetEnumerator ()
+        public IEnumerator<IRegion> GetEnumerator ()
         {
             return new Enumerator(this);
         }
@@ -170,14 +223,14 @@ namespace Substrate
         #endregion
 
 
-        private struct Enumerator : IEnumerator<Region>
+        private struct Enumerator : IEnumerator<IRegion>
         {
-            private List<Region> _regions;
+            private List<IRegion> _regions;
             private int _pos;
 
             public Enumerator (RegionManager rm)
             {
-                _regions = new List<Region>();
+                _regions = new List<IRegion>();
                 _pos = -1;
 
                 if (!Directory.Exists(rm.GetRegionPath())) {
@@ -189,7 +242,7 @@ namespace Substrate
 
                 foreach (string file in files) {
                     try {
-                        Region r = rm.GetRegion(file);
+                        IRegion r = rm.GetRegion(file);
                         _regions.Add(r);
                     }
                     catch (ArgumentException) {
@@ -219,7 +272,7 @@ namespace Substrate
                 }
             }
 
-            Region IEnumerator<Region>.Current
+            IRegion IEnumerator<IRegion>.Current
             {
                 get
                 {
@@ -227,7 +280,7 @@ namespace Substrate
                 }
             }
 
-            public Region Current
+            public IRegion Current
             {
                 get
                 {
