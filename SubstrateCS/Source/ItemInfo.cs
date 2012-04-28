@@ -137,8 +137,22 @@ namespace Substrate
         public const int CAULDRON = 380;
         public const int EYE_OF_ENDER = 381;
         public const int GLISTERING_MELON = 382;
-        public const int GOLD_MUSIC_DISC = 2256;
-        public const int GREEN_MUSIC_DISC = 2257;
+        public const int SPAWN_EGG = 383;
+        public const int BOTTLE_O_ENCHANTING = 384;
+        public const int FIRE_CHARGE = 385;
+        public const int BOOK_AND_QUILL = 386;
+        public const int WRITTEN_BOOK = 387;
+        public const int MUSIC_DISC_13 = 2256;
+        public const int MUSIC_DISC_CAT = 2257;
+        public const int MUSIC_DISC_BLOCKS = 2258;
+        public const int MUSIC_DISC_CHIRP = 2259;
+        public const int MUSIC_DISC_FAR = 2260;
+        public const int MUSIC_DISC_MALL = 2261;
+        public const int MUSIC_DISC_MELLOHI = 2262;
+        public const int MUSIC_DISC_STAL = 2263;
+        public const int MUSIC_DISC_STRAD = 2264;
+        public const int MUSIC_DISC_WARD = 2265;
+        public const int MUSIC_DISC_11 = 2266;
     }
 
     /// <summary>
@@ -384,8 +398,22 @@ namespace Substrate
         public static ItemInfo Cauldron;
         public static ItemInfo EyeOfEnder;
         public static ItemInfo GlisteringMelon;
-        public static ItemInfo GoldMusicDisc;
-        public static ItemInfo GreenMusicDisc;
+        public static ItemInfo SpawnEgg;
+        public static ItemInfo BottleOEnchanting;
+        public static ItemInfo FireCharge;
+        public static ItemInfo BookAndQuill;
+        public static ItemInfo WrittenBook;
+        public static ItemInfo MusicDisc13;
+        public static ItemInfo MusicDiscCat;
+        public static ItemInfo MusicDiscBlocks;
+        public static ItemInfo MusicDiscChirp;
+        public static ItemInfo MusicDiscFar;
+        public static ItemInfo MusicDiscMall;
+        public static ItemInfo MusicDiscMellohi;
+        public static ItemInfo MusicDiscStal;
+        public static ItemInfo MusicDiscStrad;
+        public static ItemInfo MusicDiscWard;
+        public static ItemInfo MusicDisc11;
 
         static ItemInfo ()
         {
@@ -519,8 +547,22 @@ namespace Substrate
             Cauldron = new ItemInfo(380, "Cauldron");
             EyeOfEnder = new ItemInfo(381, "Eye of Ender").SetStackSize(64);
             GlisteringMelon = new ItemInfo(382, "Glistering Melon").SetStackSize(64);
-            GoldMusicDisc = new ItemInfo(2256, "Gold Music Disc");
-            GreenMusicDisc = new ItemInfo(2257, "Green Music Disc");
+            SpawnEgg = new ItemInfo(383, "Spawn Egg").SetStackSize(64);
+            BottleOEnchanting = new ItemInfo(384, "Bottle O' Enchanting").SetStackSize(64);
+            FireCharge = new ItemInfo(385, "Fire Charge").SetStackSize(64);
+            BookAndQuill = new ItemInfo(386, "Book and Quill");
+            WrittenBook = new ItemInfo(387, "Written Book");
+            MusicDisc13 = new ItemInfo(2256, "13 Disc");
+            MusicDiscCat = new ItemInfo(2257, "Cat Disc");
+            MusicDiscBlocks = new ItemInfo(2258, "Blocks Disc");
+            MusicDiscChirp = new ItemInfo(2259, "Chirp Disc");
+            MusicDiscFar = new ItemInfo(2260, "Far Disc");
+            MusicDiscMall = new ItemInfo(2261, "Mall Disc");
+            MusicDiscMellohi = new ItemInfo(2262, "Mellohi Disc");
+            MusicDiscStal = new ItemInfo(2263, "Stal Disc");
+            MusicDiscStrad = new ItemInfo(2264, "Strad Disc");
+            MusicDiscWard = new ItemInfo(2265, "Ward Disc");
+            MusicDisc11 = new ItemInfo(2266, "11 Disc");
         }
     }
 }

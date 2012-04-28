@@ -60,8 +60,8 @@ namespace Substrate
         public const int RED_MUSHROOM = 40;
         public const int GOLD_BLOCK = 41;
         public const int IRON_BLOCK = 42;
-        public const int DOUBLE_SLAB = 43;
-        public const int SLAB = 44;
+        public const int DOUBLE_STONE_SLAB = 43;
+        public const int STONE_SLAB = 44;
         public const int BRICK_BLOCK = 45;
         public const int TNT = 46;
         public const int BOOKSHELF = 47;
@@ -140,6 +140,10 @@ namespace Substrate
         public const int END_PORTAL_FRAME = 120;
         public const int END_STONE = 121;
         public const int DRAGON_EGG = 122;
+        public const int REDSTONE_LAMP_OFF = 123;
+        public const int REDSTONE_LAMP_ON = 124;
+        public const int DOUBLE_WOOD_SLAB = 125;
+        public const int WOOD_SLAB = 126;
     }
 
     /// <summary>
@@ -553,8 +557,8 @@ namespace Substrate
         public static BlockInfo RedMushroom;
         public static BlockInfo GoldBlock;
         public static BlockInfo IronBlock;
-        public static BlockInfo DoubleSlab;
-        public static BlockInfo Slab;
+        public static BlockInfo DoubleStoneSlab;
+        public static BlockInfo StoneSlab;
         public static BlockInfo BrickBlock;
         public static BlockInfo TNT;
         public static BlockInfo Bookshelf;
@@ -633,6 +637,10 @@ namespace Substrate
         public static BlockInfo EndPortalFrame;
         public static BlockInfo EndStone;
         public static BlockInfo DragonEgg;
+        public static BlockInfo RedstoneLampOff;
+        public static BlockInfo RedstoneLampOn;
+        public static BlockInfo DoubleWoodSlab;
+        public static BlockInfo WoodSlab;
 
         static BlockInfo ()
         {
@@ -687,8 +695,8 @@ namespace Substrate
             RedMushroom = new BlockInfo(40, "Red Mushroom").SetOpacity(0).SetState(BlockState.NONSOLID).SetTick(10);
             GoldBlock = new BlockInfo(41, "Gold Block");
             IronBlock = new BlockInfo(42, "Iron Block");
-            DoubleSlab = new BlockInfo(43, "Double Slab");
-            Slab = new BlockInfo(44, "Slab").SetOpacity(0);
+            DoubleStoneSlab = new BlockInfo(43, "Double Slab");
+            StoneSlab = new BlockInfo(44, "Slab").SetOpacity(0);
             BrickBlock = new BlockInfo(45, "Brick Block");
             TNT = new BlockInfo(46, "TNT");
             Bookshelf = new BlockInfo(47, "Bookshelf");
@@ -767,6 +775,10 @@ namespace Substrate
             EndPortalFrame = new BlockInfo(120, "End Portal Frame").SetLuminance(MAX_LUMINANCE);
             EndStone = new BlockInfo(121, "End Stone");
             DragonEgg = new BlockInfo(122, "Dragon Egg").SetOpacity(0).SetLuminance(1).SetTick(3);
+            RedstoneLampOff = new BlockInfo(123, "Redstone Lamp (Off)").SetTick(2);
+            RedstoneLampOn = new BlockInfo(124, "Redstone Lamp (On)").SetLuminance(15).SetTick(2);
+            DoubleWoodSlab = new BlockInfo(125, "Double Wood Slab");
+            WoodSlab = new BlockInfo(126, "Wood Slab");
 
             for (int i = 0; i < MAX_BLOCKS; i++) {
                 if (_blockTable[i] == null) {
@@ -778,7 +790,7 @@ namespace Substrate
 
             Lava.SetLightTransmission(false);
             StationaryLava.SetLightTransmission(false);
-            Slab.SetLightTransmission(false);
+            StoneSlab.SetLightTransmission(false);
             WoodStairs.SetLightTransmission(false);
             Farmland.SetLightTransmission(false);
             CobbleStairs.SetLightTransmission(false);
@@ -830,8 +842,8 @@ namespace Substrate
             RedstoneTorchOn.SetDataLimits(0, 5, 0);
             Rails.SetDataLimits(0, 9, 0);
             Ladder.SetDataLimits(2, 5, 0);
-            WoodStairs.SetDataLimits(0, 3, 0);
-            CobbleStairs.SetDataLimits(0, 3, 0);
+            WoodStairs.SetDataLimits(0, 3, 0x4);
+            CobbleStairs.SetDataLimits(0, 3, 0x4);
             Lever.SetDataLimits(0, 6, 0x8);
             WoodDoor.SetDataLimits(0, 3, 0xC);
             IronDoor.SetDataLimits(0, 3, 0xC);
@@ -846,8 +858,8 @@ namespace Substrate
             JackOLantern.SetDataLimits(0, 3, 0);
             StonePlate.SetDataLimits(0, 0, 0x1);
             WoodPlate.SetDataLimits(0, 0, 0x1);
-            Slab.SetDataLimits(0, 6, 0);
-            DoubleSlab.SetDataLimits(0, 3, 0);
+            StoneSlab.SetDataLimits(0, 5, 0);
+            DoubleStoneSlab.SetDataLimits(0, 5, 0x8);
             Cactus.SetDataLimits(0, 5, 0);
             Bed.SetDataLimits(0, 3, 0x8);
             RedstoneRepeater.SetDataLimits(0, 0, 0xF);
@@ -862,6 +874,8 @@ namespace Substrate
             BrewingStand.SetDataLimits(0, 0, 0x7);
             Cauldron.SetDataLimits(0, 3, 0);
             EndPortalFrame.SetDataLimits(0, 0, 0x7);
+            WoodSlab.SetDataLimits(0, 5, 0);
+            DoubleWoodSlab.SetDataLimits(0, 5, 0x8);
         }
     }
 

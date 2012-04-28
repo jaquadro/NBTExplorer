@@ -153,6 +153,12 @@ namespace Substrate
         ASCEND_EAST = 3,
     }
 
+    [Flags]
+    public enum StairInversion
+    {
+        Inverted = 0x04,
+    }
+
     public enum LeverOrientation
     {
         SOUTH = 1,
@@ -241,6 +247,12 @@ namespace Substrate
         COBBLESTONE = 3,
         BRICK = 4,
         STONE_BRICK = 5,
+    }
+
+    [Flags]
+    public enum SlabInversion
+    {
+        Inverted = 0x08,
     }
 
     public enum BedOrientation
