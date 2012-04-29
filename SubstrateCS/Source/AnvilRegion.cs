@@ -7,7 +7,7 @@ namespace Substrate
 {
     public class AnvilRegion : Region
     {
-        private static Regex _namePattern = new Regex("r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.mcr$");
+        private static Regex _namePattern = new Regex("r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.mca$");
 
         public AnvilRegion (AnvilRegionManager rm, ChunkCache cache, int rx, int rz)
             : base(rm, cache, rx, rz)
@@ -17,7 +17,7 @@ namespace Substrate
         /// <inherits />
         public override string GetFileName ()
         {
-            return "r." + _rx + "." + _rz + ".mcr";
+            return "r." + _rx + "." + _rz + ".mca";
 
         }
 
@@ -71,12 +71,12 @@ namespace Substrate
 
         protected override IChunk CreateChunkCore (int cx, int cz)
         {
-            return AlphaChunk.Create(cz, cz);
+            return AnvilChunk.Create(cz, cz);
         }
 
         protected override IChunk CreateChunkVerifiedCore (NbtTree tree)
         {
-            return AlphaChunk.CreateVerified(tree);
+            return AnvilChunk.CreateVerified(tree);
         }
     }
 }

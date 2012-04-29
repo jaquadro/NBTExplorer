@@ -144,10 +144,8 @@ namespace Substrate
             return GetDataManagerVirt() as BetaDataManager;
         }
 
-        /// <summary>
-        /// Saves the world's <see cref="Level"/> data, and any <see cref="IChunk"/> objects known to have unsaved changes.
-        /// </summary>
-        public void Save ()
+        /// <inherits />
+        public override void Save ()
         {
             _level.Save();
 
@@ -345,6 +343,7 @@ namespace Substrate
 
             Path = path;
             _level = new Level(this);
+            _level.Version = 19132;
 
             return this;
         }

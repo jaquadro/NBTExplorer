@@ -46,7 +46,7 @@ namespace Substrate.Core
 
             try {
                 if (_cache.TryGetValue(k, out r) == false) {
-                    r = CreateRegionCore(rz, rz);
+                    r = CreateRegionCore(rx, rz);
                     _cache.Add(k, r);
                 }
                 return r;

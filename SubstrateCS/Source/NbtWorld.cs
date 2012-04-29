@@ -137,6 +137,11 @@ namespace Substrate
         }
 
         /// <summary>
+        /// Saves the world's <see cref="Level"/> data, and any <see cref="IChunk"/> objects known to have unsaved changes.
+        /// </summary>
+        public abstract void Save ();
+
+        /// <summary>
         /// Raised when <see cref="Open"/> is called, used to find a concrete <see cref="NbtWorld"/> type that can open the world.
         /// </summary>
         protected static event EventHandler<OpenWorldEventArgs> ResolveOpen;

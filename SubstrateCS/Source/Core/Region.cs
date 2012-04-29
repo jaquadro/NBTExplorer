@@ -293,7 +293,7 @@ namespace Substrate.Core
             int cx = lcx + _rx * XDIM;
             int cz = lcz + _rz * ZDIM;
 
-            AlphaChunk c = AlphaChunk.Create(cx, cz);
+            IChunk c = CreateChunkCore(cx, cz);
             c.Save(GetChunkOutStream(lcx, lcz));
 
             ChunkRef cr = ChunkRef.Create(this, lcx, lcz);

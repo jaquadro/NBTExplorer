@@ -59,14 +59,24 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Source\AlphaChunk.cs" />
     <Compile Include="Source\AlphaWorld.cs" />
     <Compile Include="Source\AnvilChunk.cs" />
-    <Compile Include="Source\BetaChunkManager.cs" />
+    <Compile Include="Source\AnvilRegion.cs" />
+    <Compile Include="Source\AnvilRegionManager.cs" />
+    <Compile Include="Source\AnvilSection.cs" />
+    <Compile Include="Source\AnvilWorld.cs" />
+    <Compile Include="Source\BetaRegion.cs" />
+    <Compile Include="Source\BetaRegionManager.cs" />
     <Compile Include="Source\BetaWorld.cs" />
     <Compile Include="Source\BiomeInfo.cs" />
     <Compile Include="Source\Core\BlockTileTicks.cs" />
     <Compile Include="Source\Core\BoundedBlockInterface.cs" />
+    <Compile Include="Source\Core\CompositeByteArray.cs" />
+    <Compile Include="Source\Core\CompositeNibbleArray.cs" />
     <Compile Include="Source\Core\ItemInterface.cs" />
+    <Compile Include="Source\Core\Region.cs" />
+    <Compile Include="Source\Core\RegionManager.cs" />
     <Compile Include="Source\Data\BetaDataManager.cs" />
     <Compile Include="Source\Data\DataExceptions.cs" />
     <Compile Include="Source\Data\MapFile.cs" />
@@ -192,10 +202,9 @@
     <Compile Include="Source\Core\NBTFile.cs" />
     <Compile Include="Source\NBT\JSONSerializer.cs" />
     <Compile Include="Source\Player.cs" />
-    <Compile Include="Source\Region.cs" />
     <Compile Include="Source\Core\RegionFile.cs" />
     <Compile Include="Source\Core\RegionKey.cs" />
-    <Compile Include="Source\RegionManager.cs" />
+    <Compile Include="Source\RegionChunkManager.cs" />
     <Compile Include="Source\SpawnPoint.cs" />
     <Compile Include="Source\SubstrateException.cs" />
     <Compile Include="Source\TileEntities\TileEntityBrewingStand.cs" />
