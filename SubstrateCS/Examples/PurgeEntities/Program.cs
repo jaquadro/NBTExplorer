@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Substrate;
+using Substrate.Core;
 
 // This example is a tool to delete all entities of a given type (e.g., "pig")
 // on a map.  It optionally can be restricted to boxed region in block coords.
@@ -35,8 +36,8 @@ namespace PurgeEntities
             }
 
             // Load world
-            BetaWorld world = BetaWorld.Open(dest);
-            BetaChunkManager cm = world.GetChunkManager();
+            NbtWorld world = NbtWorld.Open(dest);
+            IChunkManager cm = world.GetChunkManager();
 
             // Remove entities
             foreach (ChunkRef chunk in cm) {

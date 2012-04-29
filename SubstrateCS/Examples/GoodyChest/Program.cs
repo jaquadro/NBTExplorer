@@ -1,6 +1,7 @@
 ﻿using System;
 using Substrate;
 using Substrate.TileEntities;
+using Substrate.Core;
 
 // GoodyChest is an example that creates chests filled with random
 // items throughout the world, according to a probability of
@@ -30,8 +31,8 @@ namespace GoodyChest
             rand = new Random();
 
             // Open our world
-            BetaWorld world = BetaWorld.Open(dest);
-            BetaChunkManager cm = world.GetChunkManager();
+            NbtWorld world = NbtWorld.Open(dest);
+            IChunkManager cm = world.GetChunkManager();
 
             int added = 0;
 

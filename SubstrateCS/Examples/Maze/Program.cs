@@ -8,7 +8,13 @@ namespace Maze
     {
         static void Main (string[] args)
         {
-            BetaWorld world = BetaWorld.Open("F:\\Minecraft\\test");
+            if (args.Length < 1) {
+                Console.WriteLine("You must specify a target directory");
+                return;
+            }
+            string dest = args[0];
+
+            AnvilWorld world = AnvilWorld.Open("F:\\Minecraft\\test");
             BlockManager bm = world.GetBlockManager();
 
             bm.AutoLight = false;
@@ -48,7 +54,7 @@ namespace Maze
 
             Console.WriteLine("Relight Chunks");
 
-            BetaChunkManager cm = world.GetChunkManager();
+            RegionChunkManager cm = world.GetChunkManager();
             cm.RelightDirtyChunks();
 
             world.Save();

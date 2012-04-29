@@ -1,6 +1,7 @@
 ﻿using System;
 using Substrate;
 using Substrate.Core;
+using Substrate.Nbt;
 
 // This example will reset and rebuild the lighting (heightmap, block light,
 // skylight) for all chunks in a map.
@@ -23,6 +24,16 @@ namespace Relight
                 return;
             }
             string dest = args[0];
+
+            NbtVerifier.InvalidTagType += (e) => {
+                throw new Exception("Invalid Tag Type: " + e.TagName + " [" + e.Tag + "]");
+            };
+            NbtVerifier.InvalidTagValue += (e) => {
+                throw new Exception("Invalid Tag Value: " + e.TagName + " [" + e.Tag + "]");
+            };
+            NbtVerifier.MissingTag += (e) => {
+                throw new Exception("Missing Tag: " + e.TagName);
+            };
 
             // Opening an NbtWorld will try to autodetect if a world is Alpha-style or Beta-style
             NbtWorld world = NbtWorld.Open(dest);

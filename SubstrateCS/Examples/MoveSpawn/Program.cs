@@ -21,7 +21,7 @@ namespace MoveSpawn
             int z = Convert.ToInt32(args[3]);
 
             // Open our world
-            BetaWorld world = BetaWorld.Open(dest);
+            NbtWorld world = NbtWorld.Open(dest);
 
             // Set the level's spawn
             // Note: Players do not have separate spawns by default

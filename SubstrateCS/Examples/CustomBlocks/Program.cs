@@ -26,11 +26,11 @@ namespace CustomBlocks
             string dest = args[0];
 
             // Open our world
-            BetaWorld world = BetaWorld.Open(dest);
+            NbtWorld world = NbtWorld.Open(dest);
 
             // The chunk manager is more efficient than the block manager for
             // this purpose, since we'll inspect every block
-            BetaChunkManager cm = world.GetChunkManager();
+            IChunkManager cm = world.GetChunkManager();
 
             foreach (ChunkRef chunk in cm) {
                 // You could hardcode your dimensions, but maybe some day they

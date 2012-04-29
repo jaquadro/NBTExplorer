@@ -1,5 +1,8 @@
 ﻿using System;
 using Substrate;
+using Substrate.Nbt;
+using Substrate.Core;
+using System.IO;
 
 // FlatMap is an example of generating worlds from scratch with Substrate.
 // It will produce a completely flat, solid map with grass, dirt, stone,
@@ -12,19 +15,48 @@ namespace FlatMap
     {
         static void Main (string[] args)
         {
-            string dest = "F:\\Minecraft\\test";
+            if (args.Length < 2) {
+                Console.WriteLine("Usage: flatmap <type> <target_dir>");
+                Console.WriteLine("Available Types: alpha, beta, anvil");
+                return;
+            }
+
+            string dest = args[1];
             int xmin = -20;
             int xmax = 20;
             int zmin = -20;
             int zmaz = 20;
 
+            NbtVerifier.InvalidTagType += (e) =>
+            {
+                throw new Exception("Invalid Tag Type: " + e.TagName + " [" + e.Tag + "]");
+            };
+            NbtVerifier.InvalidTagValue += (e) =>
+            {
+                throw new Exception("Invalid Tag Value: " + e.TagName + " [" + e.Tag + "]");
+            };
+            NbtVerifier.MissingTag += (e) =>
+            {
+                throw new Exception("Missing Tag: " + e.TagName);
+            };
+
+            if (!Directory.Exists(dest))
+                Directory.CreateDirectory(dest);
+
             // This will instantly create any necessary directory structure
-            BetaWorld world = BetaWorld.Create(dest);
-            BetaChunkManager cm = world.GetChunkManager();
+            NbtWorld world;
+            switch (args[0]) {
+                case "alpha": world = AlphaWorld.Create(dest); break;
+                case "beta": world = BetaWorld.Create(dest); break;
+                case "anvil": world = AnvilWorld.Create(dest); break;
+                default: throw new Exception("Invalid world type specified.");
+            }
+
+            IChunkManager cm = world.GetChunkManager();
 
             // We can set different world parameters
             world.Level.LevelName = "Flatlands";
-            world.Level.Spawn = new SpawnPoint(20, 20, 70);
+            world.Level.Spawn = new SpawnPoint(20, 70, 20);
 
             // world.Level.SetDefaultPlayer();
             // We'll let MC create the player for us, but you could use the above
@@ -51,6 +83,7 @@ namespace FlatMap
                     FlatChunk(chunk, 64);
 
                     // Reset and rebuild the lighting for the entire chunk at once
+                    chunk.Blocks.RebuildHeightMap();
                     chunk.Blocks.RebuildBlockLight();
                     chunk.Blocks.RebuildSkyLight();
 

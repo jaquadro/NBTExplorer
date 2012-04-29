@@ -1,5 +1,6 @@
 ﻿using System;
 using Substrate;
+using Substrate.Core;
 
 // This example will insert x amount of an item into a player's
 // inventory in an SMP server (where there is a player directory)
@@ -21,8 +22,8 @@ namespace GiveItem
             int count = Convert.ToInt32(args[3]);
 
             // Open the world and grab its player manager
-            BetaWorld world = BetaWorld.Open(dest);
-            PlayerManager pm = world.GetPlayerManager();
+            NbtWorld world = NbtWorld.Open(dest);
+            IPlayerManager pm = world.GetPlayerManager();
 
             // Check that the named player exists
             if (!pm.PlayerExists(player)) {
