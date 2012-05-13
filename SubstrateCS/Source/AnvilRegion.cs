@@ -71,7 +71,7 @@ namespace Substrate
 
         protected override IChunk CreateChunkCore (int cx, int cz)
         {
-            return AnvilChunk.Create(cz, cz);
+            return AnvilChunk.Create(cx, cz);
         }
 
         protected override IChunk CreateChunkVerifiedCore (NbtTree tree)
