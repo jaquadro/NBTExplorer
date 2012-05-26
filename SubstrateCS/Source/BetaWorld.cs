@@ -295,7 +295,7 @@ namespace Substrate
 
             BetaRegionManager rm = new BetaRegionManager(path, cc);
             RegionChunkManager cm = new RegionChunkManager(rm, cc);
-            BlockManager bm = new BlockManager(cm);
+            BlockManager bm = new AlphaBlockManager(cm);
 
             _regionMgrs[dim] = rm;
             _chunkMgrs[dim] = cm;

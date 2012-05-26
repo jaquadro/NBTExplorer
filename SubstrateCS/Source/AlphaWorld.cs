@@ -175,7 +175,7 @@ namespace Substrate
             }
 
             AlphaChunkManager cm = new AlphaChunkManager(path);
-            BlockManager bm = new BlockManager(cm);
+            BlockManager bm = new AlphaBlockManager(cm);
 
             _chunkMgrs[dim] = cm;
             _blockMgrs[dim] = bm;

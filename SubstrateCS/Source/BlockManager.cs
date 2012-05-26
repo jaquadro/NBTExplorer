@@ -3,10 +3,48 @@ using Substrate.Core;
 
 namespace Substrate
 {
+    public class AlphaBlockManager : BlockManager
+    {
+        public AlphaBlockManager (IChunkManager cm)
+            : base(cm)
+        {
+            IChunk c = AlphaChunk.Create(0, 0);
+
+            chunkXDim = c.Blocks.XDim;
+            chunkYDim = c.Blocks.YDim;
+            chunkZDim = c.Blocks.ZDim;
+            chunkXMask = chunkXDim - 1;
+            chunkYMask = chunkYDim - 1;
+            chunkZMask = chunkZDim - 1;
+            chunkXLog = Log2(chunkXDim);
+            chunkYLog = Log2(chunkYDim);
+            chunkZLog = Log2(chunkZDim);
+        }
+    }
+
+    public class AnvilBlockManager : BlockManager
+    {
+        public AnvilBlockManager (IChunkManager cm)
+            : base(cm)
+        {
+            IChunk c = AnvilChunk.Create(0, 0);
+
+            chunkXDim = c.Blocks.XDim;
+            chunkYDim = c.Blocks.YDim;
+            chunkZDim = c.Blocks.ZDim;
+            chunkXMask = chunkXDim - 1;
+            chunkYMask = chunkYDim - 1;
+            chunkZMask = chunkZDim - 1;
+            chunkXLog = Log2(chunkXDim);
+            chunkYLog = Log2(chunkYDim);
+            chunkZLog = Log2(chunkZDim);
+        }
+    }
+
     /// <summary>
     /// Represents an Alpha-compatible interface for globally managing blocks.
     /// </summary>
-    public class BlockManager : IVersion10BlockManager, IBlockManager
+    public abstract class BlockManager : IVersion10BlockManager, IBlockManager
     {
         public const int MIN_X = -32000000;
         public const int MAX_X = 32000000;
@@ -67,18 +105,6 @@ namespace Substrate
         public BlockManager (IChunkManager cm)
         {
             chunkMan = cm;
-
-            IChunk c = AlphaChunk.Create(0, 0);
-
-            chunkXDim = c.Blocks.XDim;
-            chunkYDim = c.Blocks.YDim;
-            chunkZDim = c.Blocks.ZDim;
-            chunkXMask = chunkXDim - 1;
-            chunkYMask = chunkYDim - 1;
-            chunkZMask = chunkZDim - 1;
-            chunkXLog = Log2(chunkXDim);
-            chunkYLog = Log2(chunkYDim);
-            chunkZLog = Log2(chunkZDim);
         }
 
         /// <summary>
@@ -151,7 +177,7 @@ namespace Substrate
             return chunkMan.GetChunkRef(x, z);
         }
 
-        private int Log2 (int x)
+        protected int Log2 (int x)
         {
             int c = 0;
             while (x > 1) {
