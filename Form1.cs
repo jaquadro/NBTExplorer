@@ -422,6 +422,20 @@ namespace NBTExplorer
                 && tag.GetTagType() != TagType.TAG_COMPOUND
                 && tag.GetTagType() != TagType.TAG_LIST;
 
+            renameToolStripMenuItem.Enabled = _buttonRename.Enabled;
+            deleteToolStripMenuItem.Enabled = _buttonDelete.Enabled;
+            editValueToolStripMenuItem.Enabled = _buttonEdit.Enabled;
+
+            _buttonCut.Enabled = tag != null && node.Tag is TagNode;
+            _buttonCopy.Enabled = tag != null && node.Tag is TagNode;
+            _buttonPaste.Enabled = tag != null && NbtClipboardData.ContainsData
+                && (tag.GetTagType() == TagType.TAG_COMPOUND
+                    || (tag.GetTagType() == TagType.TAG_LIST));
+
+            cutToolStripMenuItem.Enabled = _buttonCut.Enabled;
+            copyToolStripMenuItem.Enabled = _buttonCopy.Enabled;
+            pasteToolStripMenuItem.Enabled = _buttonPaste.Enabled;
+
             if (tag == null || tag.GetTagType() != TagType.TAG_COMPOUND)
                 SetTagButtons(false);
             if (tag != null && tag.GetTagType() == TagType.TAG_COMPOUND)
@@ -750,6 +764,11 @@ namespace NBTExplorer
             DeleteNode(_nodeTree.SelectedNode);
         }
 
+        private void deleteToolStripMenuItem_Click (object sender, EventArgs e)
+        {
+            DeleteNode(_nodeTree.SelectedNode);
+        }
+
         private void DeleteNodeNbtTag (TreeNode node)
         {
             TagNode tag = node.Tag as TagNode;
@@ -924,6 +943,11 @@ namespace NBTExplorer
             EditNodeValue(_nodeTree.SelectedNode);
         }
 
+        private void editValueToolStripMenuItem_Click (object sender, EventArgs e)
+        {
+            EditNodeValue(_nodeTree.SelectedNode);
+        }
+
         private void EditNodeName (TreeNode node)
         {
             if (node == null)
@@ -956,6 +980,11 @@ namespace NBTExplorer
         }
 
         private void _buttonRename_Click (object sender, EventArgs e)
+        {
+            EditNodeName(_nodeTree.SelectedNode);
+        }
+
+        private void renameToolStripMenuItem_Click (object sender, EventArgs e)
         {
             EditNodeName(_nodeTree.SelectedNode);
         }
@@ -1261,6 +1290,102 @@ namespace NBTExplorer
         {
             AddTagToNode(_nodeTree.SelectedNode, TagType.TAG_INT_ARRAY);
         }
+
+        private void CutNode ()
+        {
+            TagNode node = GetTagNode(_nodeTree.SelectedNode);
+            if (node == null)
+                return;
+
+            string name = GetTagNodeName(_nodeTree.SelectedNode);
+
+            NbtClipboardData clip = new NbtClipboardData(name, node);
+            clip.CopyToClipboard();
+
+            DeleteNode(_nodeTree.SelectedNode);
+        }
+
+        private void CopyNode ()
+        {
+            TagNode node = GetTagNode(_nodeTree.SelectedNode);
+            if (node == null)
+                return;
+
+            string name = GetTagNodeName(_nodeTree.SelectedNode);
+
+            NbtClipboardData clip = new NbtClipboardData(name, node);
+            clip.CopyToClipboard();
+        }
+
+        private void PasteNode ()
+        {
+            if (!NbtClipboardData.ContainsData)
+                return;
+
+            TagNode targetNode = GetTagNode(_nodeTree.SelectedNode);
+            if (targetNode == null)
+                return;
+
+            NbtClipboardData clip = NbtClipboardData.CopyFromClipboard();
+            if (clip == null)
+                return;
+
+            TagNodeCompound compoundTarget = targetNode as TagNodeCompound;
+            if (compoundTarget != null) {
+                string name = UniqueName(compoundTarget, clip.Name ?? clip.Node.ToString());
+
+                compoundTarget.Add(name, clip.Node);
+
+                TreeNode tnode = NodeFromTag(clip.Node, name);
+                _nodeTree.SelectedNode.Nodes.Add(tnode);
+
+                _nodeTree.SelectedNode = tnode;
+                tnode.Expand();
+            }
+        }
+
+        private string UniqueName (TagNodeCompound target, string sourceName)
+        {
+            string name = sourceName;
+            int count = 0;
+
+            while (target.ContainsKey(name)) {
+                count++;
+                name = sourceName + "(" + count + ")";
+            }
+
+            return name;
+        }
+
+        private void cutToolStripMenuItem_Click (object sender, EventArgs e)
+        {
+            CutNode();
+        }
+
+        private void copyToolStripMenuItem_Click (object sender, EventArgs e)
+        {
+            CopyNode();
+        }
+
+        private void pasteToolStripMenuItem_Click (object sender, EventArgs e)
+        {
+            PasteNode();
+        }
+
+        private void _buttonCut_Click (object sender, EventArgs e)
+        {
+            CutNode();
+        }
+
+        private void _buttonCopy_Click (object sender, EventArgs e)
+        {
+            CopyNode();
+        }
+
+        private void _buttonPaste_Click (object sender, EventArgs e)
+        {
+            PasteNode();
+        }
     }
 
     public class TagKey : IComparable<TagKey>
@@ -1408,5 +1533,60 @@ namespace NBTExplorer
         }
 
         public string Path { get; private set; }
+    }
+
+    [Serializable]
+    public class NbtClipboardData
+    {
+        public string Name;
+
+        private byte[] _data;
+
+        [NonSerialized]
+        public TagNode Node;
+
+        public NbtClipboardData (String name, TagNode node)
+        {
+            Name = name;
+
+            TagNodeCompound root = new TagNodeCompound();
+            root.Add("root", node);
+            NbtTree tree = new NbtTree(root);
+
+            using (MemoryStream ms = new MemoryStream()) {
+                tree.WriteTo(ms);
+                _data = new byte[ms.Length];
+                Array.Copy(ms.GetBuffer(), _data, ms.Length);
+            }
+        }
+
+        public static bool ContainsData
+        {
+            get { return Clipboard.ContainsData(typeof(NbtClipboardData).FullName); }
+        }
+
+        public void CopyToClipboard ()
+        {
+            Clipboard.SetData(typeof(NbtClipboardData).FullName, this);
+        }
+
+        public static NbtClipboardData CopyFromClipboard ()
+        {
+            NbtClipboardData clip = Clipboard.GetData(typeof(NbtClipboardData).FullName) as NbtClipboardData;
+            if (clip == null)
+                return null;
+
+            NbtTree tree = new NbtTree();
+            using (MemoryStream ms = new MemoryStream(clip._data)) {
+                tree.ReadFrom(ms);
+            }
+
+            TagNodeCompound root = tree.Root;
+            if (root == null || !root.ContainsKey("root"))
+                return null;
+
+            clip.Node = root["root"];
+            return clip;
+        }
     }
 }
