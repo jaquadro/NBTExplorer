@@ -83,7 +83,7 @@ namespace Substrate.Core
                     data[i] = 0;
                 }
                 else if (blocks[i] == BlockInfo.Lava.ID) {
-                    blocks[i] = (byte)BlockInfo.StationaryWater.ID;
+                    blocks[i] = (byte)BlockInfo.StationaryLava.ID;
                 }
             }
         }
