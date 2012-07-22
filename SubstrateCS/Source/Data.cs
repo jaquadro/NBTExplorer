@@ -414,6 +414,28 @@ namespace Substrate
         EYE_OF_ENDER = 0x4,
     }
 
+    public enum TripwireHookDirection
+    {
+        SOUTH = 0,
+        WEST = 1,
+        NORTH = 2,
+        EAST = 3,
+    }
+
+    [Flags]
+    public enum TripwireHookState
+    {
+        READY = 0x04,
+        ACTIVATED = 0x08,
+    }
+
+    [Flags]
+    public enum TripwireState
+    {
+        UNDER_OBJECT = 0x01,
+        ACTIVATED = 0x04,
+    }
+
     // Item Data
 
     public enum CoalType

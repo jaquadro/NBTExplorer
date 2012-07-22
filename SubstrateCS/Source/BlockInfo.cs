@@ -144,6 +144,16 @@ namespace Substrate
         public const int REDSTONE_LAMP_ON = 124;
         public const int DOUBLE_WOOD_SLAB = 125;
         public const int WOOD_SLAB = 126;
+        public const int COCOA_PLANT = 127;
+        public const int SANDSTONE_STAIRS = 128;
+        public const int EMERALD_ORE = 129;
+        public const int ENDER_CHEST = 130;
+        public const int TRIPWIRE_HOOK = 131;
+        public const int TRIPWIRE = 132;
+        public const int EMERALD_BLOCK = 133;
+        public const int SPRUCE_WOOD_STAIRS = 134;
+        public const int BIRCH_WOOD_STAIRS = 135;
+        public const int JUNGLE_WOOD_STAIRS = 136;
     }
 
     /// <summary>
@@ -641,6 +651,16 @@ namespace Substrate
         public static BlockInfo RedstoneLampOn;
         public static BlockInfo DoubleWoodSlab;
         public static BlockInfo WoodSlab;
+        public static BlockInfo CocoaPlant;
+        public static BlockInfo SandstoneStairs;
+        public static BlockInfo EmeraldOre;
+        public static BlockInfoEx EnderChest;
+        public static BlockInfo TripwireHook;
+        public static BlockInfo Tripwire;
+        public static BlockInfo EmeraldBlock;
+        public static BlockInfo SpruceWoodStairs;
+        public static BlockInfo BirchWoodStairs;
+        public static BlockInfo JungleWoodStairs;
 
         static BlockInfo ()
         {
@@ -779,6 +799,16 @@ namespace Substrate
             RedstoneLampOn = new BlockInfo(124, "Redstone Lamp (On)").SetLuminance(15).SetTick(2);
             DoubleWoodSlab = new BlockInfo(125, "Double Wood Slab");
             WoodSlab = new BlockInfo(126, "Wood Slab");
+            CocoaPlant = new BlockInfo(127, "Cocoa Plant").SetLuminance(2).SetOpacity(0);
+            SandstoneStairs = new BlockInfo(128, "Sandstone Stairs").SetOpacity(0);
+            EmeraldOre = new BlockInfo(129, "Emerald Ore");
+            EnderChest = (BlockInfoEx)new BlockInfoEx(130, "Ender Chest").SetLuminance(7).SetOpacity(0);
+            TripwireHook = new BlockInfo(131, "Tripwire Hook").SetOpacity(0).SetState(BlockState.NONSOLID);
+            Tripwire = new BlockInfo(132, "Tripwire").SetOpacity(0).SetState(BlockState.NONSOLID);
+            EmeraldBlock = new BlockInfo(133, "Emerald Block");
+            SpruceWoodStairs = new BlockInfo(134, "Sprice Wood Stairs").SetOpacity(0);
+            BirchWoodStairs = new BlockInfo(135, "Birch Wood Stairs").SetOpacity(0);
+            JungleWoodStairs = new BlockInfo(136, "Jungle Wood Stairs").SetOpacity(0);
 
             for (int i = 0; i < MAX_BLOCKS; i++) {
                 if (_blockTable[i] == null) {
@@ -797,6 +827,11 @@ namespace Substrate
             BrickStairs.SetLightTransmission(false);
             StoneBrickStairs.SetLightTransmission(false);
             NetherBrickStairs.SetLightTransmission(false);
+            WoodSlab.SetLightTransmission(false);
+            SandstoneStairs.SetLightTransmission(false);
+            SpruceWoodStairs.SetLightTransmission(false);
+            BirchWoodStairs.SetLightTransmission(false);
+            JungleWoodStairs.SetLightTransmission(false);
 
             // Override default fluid blocking rules
 
@@ -818,6 +853,7 @@ namespace Substrate
             EnchantmentTable.SetTileEntity("EnchantTable");
             BrewingStand.SetTileEntity("Cauldron");
             EndPortal.SetTileEntity("Airportal");
+            EnderChest.SetTileEntity("EnderChest");
 
             // Set Data Limits
 
@@ -876,6 +912,8 @@ namespace Substrate
             EndPortalFrame.SetDataLimits(0, 0, 0x7);
             WoodSlab.SetDataLimits(0, 5, 0);
             DoubleWoodSlab.SetDataLimits(0, 5, 0x8);
+            TripwireHook.SetDataLimits(0, 3, 0xC);
+            Tripwire.SetDataLimits(0, 0, 0x5);
         }
     }
 

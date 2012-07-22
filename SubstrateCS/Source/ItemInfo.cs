@@ -142,6 +142,7 @@ namespace Substrate
         public const int FIRE_CHARGE = 385;
         public const int BOOK_AND_QUILL = 386;
         public const int WRITTEN_BOOK = 387;
+        public const int EMERALD = 388;
         public const int MUSIC_DISC_13 = 2256;
         public const int MUSIC_DISC_CAT = 2257;
         public const int MUSIC_DISC_BLOCKS = 2258;
@@ -403,6 +404,7 @@ namespace Substrate
         public static ItemInfo FireCharge;
         public static ItemInfo BookAndQuill;
         public static ItemInfo WrittenBook;
+        public static ItemInfo Emerald;
         public static ItemInfo MusicDisc13;
         public static ItemInfo MusicDiscCat;
         public static ItemInfo MusicDiscBlocks;
@@ -552,6 +554,7 @@ namespace Substrate
             FireCharge = new ItemInfo(385, "Fire Charge").SetStackSize(64);
             BookAndQuill = new ItemInfo(386, "Book and Quill");
             WrittenBook = new ItemInfo(387, "Written Book");
+            Emerald = new ItemInfo(388, "Emerald").SetStackSize(64);
             MusicDisc13 = new ItemInfo(2256, "13 Disc");
             MusicDiscCat = new ItemInfo(2257, "Cat Disc");
             MusicDiscBlocks = new ItemInfo(2258, "Blocks Disc");

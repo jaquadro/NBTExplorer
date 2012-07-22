@@ -9,12 +9,17 @@ namespace Substrate
     /// <summary>
     /// Encompases data to specify player abilities, especially mode-dependent abilities.
     /// </summary>
+    /// <remarks>Whether or not any of these values are respected by the game client is dependent upon the active game mode.</remarks>
     public class PlayerAbilities : ICopyable<PlayerAbilities>
     {
         private bool _flying;
         private bool _instabuild;
         private bool _mayfly;
         private bool _invulnerable;
+        private bool _maybuild;
+
+        private float _walkSpeed = 0.1f;
+        private float _flySpeed = 0.05f;
 
         /// <summary>
         /// Gets or sets whether the player is currently flying.
@@ -52,6 +57,33 @@ namespace Substrate
             set { _invulnerable = value; }
         }
 
+        /// <summary>
+        /// Gets or sets whether the player can create or destroy blocks.
+        /// </summary>
+        public bool MayBuild 
+        {
+            get { return _maybuild; }
+            set { _maybuild = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the player's walking speed.  Always 0.1.
+        /// </summary>
+        public float FlySpeed
+        {
+            get { return _flySpeed; }
+            set { _flySpeed = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the player's flying speed.  Always 0.05.
+        /// </summary>
+        public float WalkSpeed
+        {
+            get { return _walkSpeed; }
+            set { _walkSpeed = value; }
+        }
+
         #region ICopyable<PlayerAbilities> Members
 
         /// <inheritdoc />
@@ -62,11 +94,21 @@ namespace Substrate
             pa._instabuild = _instabuild;
             pa._mayfly = _mayfly;
             pa._invulnerable = _invulnerable;
+            pa._maybuild = _maybuild;
+            pa._walkSpeed = _walkSpeed;
+            pa._flySpeed = _flySpeed;
 
             return pa;
         }
 
         #endregion
+    }
+
+    public enum PlayerGameType
+    {
+        Survival = 0,
+        Creative = 1,
+        Adventure = 2,
     }
 
     /// <summary>
@@ -84,6 +126,7 @@ namespace Substrate
             new SchemaNodeScaler("HurtTime", TagType.TAG_SHORT),
             new SchemaNodeScaler("Dimension", TagType.TAG_INT),
             new SchemaNodeList("Inventory", TagType.TAG_COMPOUND, ItemCollection.Schema),
+            //new SchemaNodeList("EnderItems", TagType.TAG_COMPOUND, ItemCollection.Schema, SchemaOptions.OPTIONAL),
             new SchemaNodeScaler("World", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
             new SchemaNodeScaler("Sleeping", TagType.TAG_BYTE, SchemaOptions.CREATE_ON_MISSING),
             new SchemaNodeScaler("SleepTimer", TagType.TAG_SHORT, SchemaOptions.CREATE_ON_MISSING),
@@ -98,15 +141,20 @@ namespace Substrate
             new SchemaNodeScaler("XpLevel", TagType.TAG_INT, SchemaOptions.OPTIONAL),
             new SchemaNodeScaler("XpTotal", TagType.TAG_INT, SchemaOptions.OPTIONAL),
             new SchemaNodeScaler("Score", TagType.TAG_INT, SchemaOptions.OPTIONAL),
+            new SchemaNodeScaler("PlayerGameType", TagType.TAG_INT, SchemaOptions.OPTIONAL),
             new SchemaNodeCompound("abilities", new SchemaNodeCompound("") {
                 new SchemaNodeScaler("flying", TagType.TAG_BYTE),
                 new SchemaNodeScaler("instabuild", TagType.TAG_BYTE),
                 new SchemaNodeScaler("mayfly", TagType.TAG_BYTE),
                 new SchemaNodeScaler("invulnerable", TagType.TAG_BYTE),
+                new SchemaNodeScaler("mayBuild", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("walkSpeed", TagType.TAG_FLOAT, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("flySpeed", TagType.TAG_FLOAT, SchemaOptions.OPTIONAL),
             }, SchemaOptions.OPTIONAL),
         });
 
         private const int _CAPACITY = 105;
+        private const int _ENDER_CAPACITY = 27;
 
         private short _attackTime;
         private short _deathTime;
@@ -134,8 +182,10 @@ namespace Substrate
 
 
         private PlayerAbilities _abilities;
+        private PlayerGameType? _gameType;
 
         private ItemCollection _inventory;
+        private ItemCollection _enderItems;
 
         /// <summary>
         /// Gets or sets the number of ticks left in the player's "invincibility shield" after last struck.
@@ -180,6 +230,12 @@ namespace Substrate
         {
             get { return _dimension; }
             set { _dimension = value; }
+        }
+
+        public PlayerGameType GameType
+        {
+            get { return _gameType ?? PlayerGameType.Survival; }
+            set { _gameType = value; }
         }
 
         /// <summary>
@@ -318,6 +374,7 @@ namespace Substrate
             : base()
         {
             _inventory = new ItemCollection(_CAPACITY);
+            _enderItems = new ItemCollection(_ENDER_CAPACITY);
             _abilities = new PlayerAbilities();
 
             // Sane defaults
@@ -343,6 +400,7 @@ namespace Substrate
             _hurtTime = p._hurtTime;
 
             _dimension = p._dimension;
+            _gameType = p._gameType;
             _sleeping = p._sleeping;
             _sleepTimer = p._sleepTimer;
             _spawnX = p._spawnX;
@@ -350,6 +408,7 @@ namespace Substrate
             _spawnZ = p._spawnZ;
             _world = p._world;
             _inventory = p._inventory.Copy();
+            _enderItems = p._inventory.Copy();
 
             _foodLevel = p._foodLevel;
             _foodTickTimer = p._foodTickTimer;
@@ -458,9 +517,21 @@ namespace Substrate
                 _abilities.InstantBuild = pb["instabuild"].ToTagByte().Data == 1;
                 _abilities.MayFly = pb["mayfly"].ToTagByte().Data == 1;
                 _abilities.Invulnerable = pb["invulnerable"].ToTagByte().Data == 1;
+                _abilities.MayBuild = pb["mayBuild"].ToTagByte().Data == 1;
+                _abilities.WalkSpeed = pb["walkSpeed"].ToTagFloat();
+                _abilities.FlySpeed = pb["flySpeed"].ToTagFloat();
+            }
+
+            if (ctree.ContainsKey("PlayerGameType")) {
+                _gameType = (PlayerGameType)ctree["PlayerGameType"].ToTagInt().Data;
             }
 
             _inventory.LoadTree(ctree["Inventory"].ToTagList());
+
+            if (ctree.ContainsKey("EnderItems")) {
+                if (ctree["EnderItems"].ToTagList().Count > 0)
+                    _enderItems.LoadTree(ctree["EnderItems"].ToTagList());
+            }
 
             return this;
         }
@@ -527,17 +598,24 @@ namespace Substrate
             if (_score != null)
                 tree["Score"] = new TagNodeInt(_score ?? 0);
 
+            if (_gameType != null)
+                tree["PlayerGameType"] = new TagNodeInt((int)(_gameType ?? PlayerGameType.Survival));
+
             if (AbilitiesSet()) {
                 TagNodeCompound pb = new TagNodeCompound();
                 pb["flying"] = new TagNodeByte(_abilities.Flying ? (byte)1 : (byte)0);
                 pb["instabuild"] = new TagNodeByte(_abilities.InstantBuild ? (byte)1 : (byte)0);
                 pb["mayfly"] = new TagNodeByte(_abilities.MayFly ? (byte)1 : (byte)0);
                 pb["invulnerable"] = new TagNodeByte(_abilities.Invulnerable ? (byte)1 : (byte)0);
+                pb["mayBuild"] = new TagNodeByte(_abilities.MayBuild ? (byte)1 : (byte)0);
+                pb["walkSpeed"] = new TagNodeFloat(_abilities.WalkSpeed);
+                pb["flySpeed"] = new TagNodeFloat(_abilities.FlySpeed);
 
                 tree["abilities"] = pb;
             }
 
             tree["Inventory"] = _inventory.BuildTree();
+            tree["EnderItems"] = _enderItems.BuildTree();
 
             return tree;
         }
@@ -580,5 +658,10 @@ namespace Substrate
         }
 
         #endregion
+
+        public ItemCollection EnderItems
+        {
+            get { return _enderItems; }
+        }
     }
 }

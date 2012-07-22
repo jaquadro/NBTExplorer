@@ -17,6 +17,9 @@ namespace Substrate
             new SchemaNodeScaler("Count", TagType.TAG_BYTE),
             new SchemaNodeCompound("tag", new SchemaNodeCompound("") {
                 new SchemaNodeList("ench", TagType.TAG_COMPOUND, Enchantment.Schema, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("title", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("author", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
+                new SchemaNodeList("pages", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
             }, SchemaOptions.OPTIONAL),
         };
 
