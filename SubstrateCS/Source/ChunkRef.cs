@@ -169,7 +169,10 @@ namespace Substrate
 
         public void SetLocation (int x, int z)
         {
-            ChunkRef c = _container.SetChunk(x, z, GetChunk());
+            int relX = LocalX + (x - X);
+            int relZ = LocalZ + (z - Z);
+
+            ChunkRef c = _container.SetChunk(relX, relZ, GetChunk());
 
             _container = c._container;
             _cx = c._cx;
