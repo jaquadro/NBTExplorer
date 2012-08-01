@@ -12,11 +12,11 @@ namespace Substrate
     /// <remarks>Whether or not any of these values are respected by the game client is dependent upon the active game mode.</remarks>
     public class PlayerAbilities : ICopyable<PlayerAbilities>
     {
-        private bool _flying;
-        private bool _instabuild;
-        private bool _mayfly;
-        private bool _invulnerable;
-        private bool _maybuild;
+        private bool _flying = false;
+        private bool _instabuild = false;
+        private bool _mayfly = false;
+        private bool _invulnerable = false;
+        private bool _maybuild = true;
 
         private float _walkSpeed = 0.1f;
         private float _flySpeed = 0.05f;
@@ -517,9 +517,13 @@ namespace Substrate
                 _abilities.InstantBuild = pb["instabuild"].ToTagByte().Data == 1;
                 _abilities.MayFly = pb["mayfly"].ToTagByte().Data == 1;
                 _abilities.Invulnerable = pb["invulnerable"].ToTagByte().Data == 1;
-                _abilities.MayBuild = pb["mayBuild"].ToTagByte().Data == 1;
-                _abilities.WalkSpeed = pb["walkSpeed"].ToTagFloat();
-                _abilities.FlySpeed = pb["flySpeed"].ToTagFloat();
+
+                if (pb.ContainsKey("mayBuild"))
+                    _abilities.MayBuild = pb["mayBuild"].ToTagByte().Data == 1;
+                if (pb.ContainsKey("walkSpeed"))
+                    _abilities.WalkSpeed = pb["walkSpeed"].ToTagFloat();
+                if (pb.ContainsKey("flySpeed"))
+                    _abilities.FlySpeed = pb["flySpeed"].ToTagFloat();
             }
 
             if (ctree.ContainsKey("PlayerGameType")) {
