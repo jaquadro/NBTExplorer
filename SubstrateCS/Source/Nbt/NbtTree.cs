@@ -271,7 +271,7 @@ namespace Substrate.Nbt
             byte[] strBytes = new byte[len];
             _stream.Read(strBytes, 0, len);
 
-            System.Text.Encoding str = Encoding.GetEncoding(28591);
+            System.Text.Encoding str = Encoding.UTF8;
 
             TagNodeString val = new TagNodeString(str.GetString(strBytes));
 
@@ -496,16 +496,16 @@ namespace Substrate.Nbt
 
         private void WriteString (TagNodeString val)
         {
-            byte[] lenBytes = BitConverter.GetBytes((short)val.Length);
+            System.Text.Encoding str = Encoding.UTF8;
+            byte[] gzBytes = str.GetBytes(val.Data);
+
+            byte[] lenBytes = BitConverter.GetBytes((short)gzBytes.Length);
 
             if (BitConverter.IsLittleEndian) {
                 Array.Reverse(lenBytes);
             }
 
             _stream.Write(lenBytes, 0, 2);
-
-            System.Text.Encoding str = Encoding.GetEncoding(28591);
-            byte[] gzBytes = str.GetBytes(val.Data);
 
             _stream.Write(gzBytes, 0, gzBytes.Length);
         }
