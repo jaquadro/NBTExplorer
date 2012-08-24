@@ -42,9 +42,10 @@
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(245, 120);
             this.linkLabel1.TabIndex = 0;
-            this.linkLabel1.Text = "NBTExplorer\r\nCopyright ©2011 Justin Aquadro\r\n\r\nNBTExplorer is based on NBTEdit by" +
-    " copyboy\r\nFugue icon set: p.yusukekamiyamane.com\r\n\r\nEmail: jaquadro@gmail.com\r\nN" +
-    "BTExplorer Github Project Page";
+            this.linkLabel1.Text = "NBTExplorer\r\nCopyright ©2011-2012 Justin Aquadro\r\n\r\nNBTExplorer is based on NBTEd" +
+    "it by copyboy\r\nFugue icon set: p.yusukekamiyamane.com\r\n\r\nEmail: jaquadro@gmail.c" +
+    "om\r\nNBTExplorer Github Project Page";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // pictureBox1
             // 

@@ -8,25 +8,14 @@ using Substrate.Nbt;
 
 namespace NBTExplorer
 {
-    public enum EditValueType
-    {
-        Name,
-        Value,
-    }
-
     public partial class EditValue : Form
     {
-        private string _name;
         private TagNode _tag;
-        private EditValueType _type;
-
-        private List<string> _invalidNames = new List<string>();
 
         public EditValue (TagNode tag)
         {
             InitializeComponent();
 
-            _type = EditValueType.Value;
             _tag = tag;
 
             if (tag == null) {
@@ -35,26 +24,7 @@ namespace NBTExplorer
                 return;
             }
 
-            SetTitle();
-
             textBox1.Text = _tag.ToString();
-        }
-
-        public EditValue (string name)
-        {
-            InitializeComponent();
-
-            _type = EditValueType.Name;
-            _name = name ?? "";
-
-            SetTitle();
-
-            textBox1.Text = _name.ToString();
-        }
-
-        public string NodeName
-        {
-            get { return _name; }
         }
 
         public TagNode NodeTag
@@ -62,51 +32,17 @@ namespace NBTExplorer
             get { return _tag; }
         }
 
-        public List<string> InvalidNames
+        private void Apply ()
         {
-            get { return _invalidNames; }
-        }
-
-        private void SetTitle ()
-        {
-            switch (_type) {
-                case EditValueType.Name:
-                    base.Text = "Edit Name...";
-                    break;
-
-                case EditValueType.Value:
-                    base.Text = "Edit Value...";
-                    break;
+            if (ValidateInput()) {
+                DialogResult = DialogResult.OK;
+                Close();
             }
         }
 
         private bool ValidateInput ()
         {
-            switch (_type) {
-                case EditValueType.Name:
-                    return ValidateNameInput();
-                case EditValueType.Value:
-                    return ValidateValueInput();
-            }
-
-            return false;
-        }
-
-        private bool ValidateNameInput ()
-        {
-            string text = textBox1.Text.Trim();
-            if (String.IsNullOrEmpty(text)) {
-                MessageBox.Show("You must provide a nonempty name.");
-                return false;
-            }
-
-            if (_invalidNames.Contains(text)) {
-                MessageBox.Show("Duplicate name provided.");
-                return false;
-            }
-
-            _name = textBox1.Text.Trim();
-            return true;
+            return ValidateValueInput();
         }
 
         private bool ValidateValueInput ()
@@ -157,23 +93,9 @@ namespace NBTExplorer
             return true;
         }
 
-        protected override void OnKeyDown (KeyEventArgs e)
+        private void _buttonOK_Click (object sender, EventArgs e)
         {
-            switch (e.KeyCode) {
-                case Keys.Escape:
-                    DialogResult = DialogResult.Cancel;
-                    Close();
-                    return;
-
-                case Keys.Enter:
-                    if (ValidateInput()) {
-                        DialogResult = DialogResult.OK;
-                        Close();
-                    }
-                    return;
-            }
-
-            base.OnKeyDown(e);
+            Apply();
         }
     }
 }

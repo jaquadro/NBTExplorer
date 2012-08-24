@@ -30,7 +30,8 @@
             this.hexBox1 = new Be.Windows.Forms.HexBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this._curPositionLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this._buttonClose = new System.Windows.Forms.Button();
+            this._buttonCancel = new System.Windows.Forms.Button();
+            this._buttonOK = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -67,24 +68,36 @@
             this._curPositionLabel.Size = new System.Drawing.Size(100, 17);
             this._curPositionLabel.Text = "0000";
             // 
-            // _buttonClose
+            // _buttonCancel
             // 
-            this._buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this._buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this._buttonClose.Location = new System.Drawing.Point(429, 307);
-            this._buttonClose.Name = "_buttonClose";
-            this._buttonClose.Size = new System.Drawing.Size(75, 23);
-            this._buttonClose.TabIndex = 2;
-            this._buttonClose.Text = "Close";
-            this._buttonClose.UseVisualStyleBackColor = true;
+            this._buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this._buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this._buttonCancel.Location = new System.Drawing.Point(348, 307);
+            this._buttonCancel.Name = "_buttonCancel";
+            this._buttonCancel.Size = new System.Drawing.Size(75, 23);
+            this._buttonCancel.TabIndex = 13;
+            this._buttonCancel.Text = "Cancel";
+            this._buttonCancel.UseVisualStyleBackColor = true;
+            // 
+            // _buttonOK
+            // 
+            this._buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this._buttonOK.Location = new System.Drawing.Point(429, 307);
+            this._buttonOK.Name = "_buttonOK";
+            this._buttonOK.Size = new System.Drawing.Size(75, 23);
+            this._buttonOK.TabIndex = 12;
+            this._buttonOK.Text = "OK";
+            this._buttonOK.UseVisualStyleBackColor = true;
+            this._buttonOK.Click += new System.EventHandler(this._buttonOK_Click);
             // 
             // HexEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this._buttonClose;
+            this.CancelButton = this._buttonCancel;
             this.ClientSize = new System.Drawing.Size(516, 355);
-            this.Controls.Add(this._buttonClose);
+            this.Controls.Add(this._buttonCancel);
+            this.Controls.Add(this._buttonOK);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.hexBox1);
             this.Name = "HexEditor";
@@ -101,6 +114,7 @@
         private Be.Windows.Forms.HexBox hexBox1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel _curPositionLabel;
-        private System.Windows.Forms.Button _buttonClose;
+        private System.Windows.Forms.Button _buttonCancel;
+        private System.Windows.Forms.Button _buttonOK;
     }
 }

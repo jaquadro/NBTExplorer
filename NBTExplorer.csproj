@@ -38,7 +38,7 @@
     <ApplicationIcon>dead_bush.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Substrate, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Substrate, Version=1.3.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Substrate\SubstrateCS\bin\Release\NET2\Substrate.dll</HintPath>
     </Reference>
@@ -54,6 +54,24 @@
     </Compile>
     <Compile Include="About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditName.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditName.Designer.cs">
+      <DependentUpon>EditName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditString.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditString.Designer.cs">
+      <DependentUpon>EditString.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CreateNode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreateNode.Designer.cs">
+      <DependentUpon>CreateNode.cs</DependentUpon>
     </Compile>
     <Compile Include="EditValue.cs">
       <SubType>Form</SubType>
@@ -83,6 +101,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditName.resx">
+      <DependentUpon>EditName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditString.resx">
+      <DependentUpon>EditString.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CreateNode.resx">
+      <DependentUpon>CreateNode.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EditValue.resx">
       <DependentUpon>EditValue.cs</DependentUpon>

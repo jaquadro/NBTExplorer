@@ -151,7 +151,7 @@ namespace Be.Windows.Forms
 		/// <summary>
 		/// Returns true
 		/// </summary>
-		public bool SupportsWriteByte()
+		public virtual bool SupportsWriteByte()
 		{
 			return true;
 		}
@@ -159,7 +159,7 @@ namespace Be.Windows.Forms
 		/// <summary>
 		/// Returns true
 		/// </summary>
-		public bool SupportsInsertBytes()
+		public virtual bool SupportsInsertBytes()
 		{
 			return true;
 		}
@@ -167,7 +167,7 @@ namespace Be.Windows.Forms
 		/// <summary>
 		/// Returns true
 		/// </summary>
-		public bool SupportsDeleteBytes()
+		public virtual bool SupportsDeleteBytes()
 		{
 			return true;
 		}

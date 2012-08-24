@@ -99,7 +99,7 @@ namespace NBTExplorer
                 case TagType.TAG_FLOAT:
                 case TagType.TAG_DOUBLE:
                 case TagType.TAG_STRING:
-                    return tag.ToString();
+                    return tag.ToString().Replace('\n', (char)0x00B6);
 
                 case TagType.TAG_BYTE_ARRAY:
                     return tag.ToTagByteArray().Length + " bytes";
@@ -910,9 +910,28 @@ namespace NBTExplorer
                 tag.GetTagType() == TagType.TAG_COMPOUND)
                 return;
 
-            if (tag.GetTagType() == TagType.TAG_BYTE_ARRAY) {
+            if (tag.GetTagType() == TagType.TAG_STRING) {
+                EditString form = new EditString(tag.ToTagString().Data);
+                if (form.ShowDialog() == DialogResult.OK) {
+                    TreeNode baseNode = BaseNode(node);
+                    if (baseNode != null) {
+                        (baseNode.Tag as DataNode).Modified = true;
+                    }
+
+                    tag.ToTagString().Data = form.StringValue;
+                    node.Text = GetNodeText(node);
+                }
+            }
+            else if (tag.GetTagType() == TagType.TAG_BYTE_ARRAY) {
                 HexEditor form = new HexEditor(GetTagNodeName(node), tag.ToTagByteArray().Data);
-                form.ShowDialog();
+                if (form.ShowDialog() == DialogResult.OK && form.Modified) {
+                    TreeNode baseNode = BaseNode(node);
+                    if (baseNode != null) {
+                        (baseNode.Tag as DataNode).Modified = true;
+                    }
+
+                    Array.Copy(form.Data, tag.ToTagByteArray().Data, tag.ToTagByteArray().Length);
+                }
             }
             else if (tag.GetTagType() == TagType.TAG_INT_ARRAY) {
                 TagNodeIntArray iatag = tag.ToTagIntArray();
@@ -923,7 +942,16 @@ namespace NBTExplorer
                 }
 
                 HexEditor form = new HexEditor(GetTagNodeName(node), data);
-                form.ShowDialog();
+                if (form.ShowDialog() == DialogResult.OK && form.Modified) {
+                    TreeNode baseNode = BaseNode(node);
+                    if (baseNode != null) {
+                        (baseNode.Tag as DataNode).Modified = true;
+                    }
+
+                    for (int i = 0; i < iatag.Length; i++) {
+                        iatag.Data[i] = BitConverter.ToInt32(form.Data, i * 4);
+                    }
+                }
             }
             else {
                 EditValue form = new EditValue(tag);
@@ -961,11 +989,12 @@ namespace NBTExplorer
             if (name == null)
                 return;
 
-            EditValue form = new EditValue(name);
+            EditName form = new EditName(name);
 
             TagNode parentTag = GetParentTagNode(node);
             foreach (string key in parentTag.ToTagCompound().Keys) {
-                form.InvalidNames.Add(key);
+                if (key != name)
+                    form.InvalidNames.Add(key);
             }
 
             if (form.ShowDialog() == DialogResult.OK) {
@@ -974,7 +1003,7 @@ namespace NBTExplorer
                     (baseNode.Tag as DataNode).Modified = true;
                 }
 
-                SetTagNodeName(node, form.NodeName);
+                SetTagNodeName(node, form.TagName);
                 node.Text = GetNodeText(node);
             }
         }
@@ -1004,47 +1033,10 @@ namespace NBTExplorer
                 tag.ToTagList().Count > 0)
                 return;
 
-            TagNode newNode = null;
-            switch (type) {
-                case TagType.TAG_BYTE:
-                    newNode = new TagNodeByte();
-                    break;
-                case TagType.TAG_SHORT:
-                    newNode = new TagNodeShort();
-                    break;
-                case TagType.TAG_INT:
-                    newNode = new TagNodeInt();
-                    break;
-                case TagType.TAG_LONG:
-                    newNode = new TagNodeLong();
-                    break;
-                case TagType.TAG_FLOAT:
-                    newNode = new TagNodeFloat();
-                    break;
-                case TagType.TAG_DOUBLE:
-                    newNode = new TagNodeDouble();
-                    break;
-                case TagType.TAG_BYTE_ARRAY:
-                    newNode = new TagNodeByteArray();
-                    break;
-                case TagType.TAG_STRING:
-                    newNode = new TagNodeString();
-                    break;
-                case TagType.TAG_LIST:
-                    newNode = new TagNodeList(TagType.TAG_BYTE);
-                    break;
-                case TagType.TAG_COMPOUND:
-                    newNode = new TagNodeCompound();
-                    break;
-                case TagType.TAG_INT_ARRAY:
-                    newNode = new TagNodeIntArray();
-                    break;
-            }
-
             if (tag is TagNodeCompound) {
                 TagNodeCompound ctag = tag as TagNodeCompound;
 
-                EditValue form = new EditValue("");
+                CreateNode form = new CreateNode(type);
                 foreach (string key in ctag.Keys) {
                     form.InvalidNames.Add(key);
                 }
@@ -1052,15 +1044,27 @@ namespace NBTExplorer
                 if (form.ShowDialog() != DialogResult.OK)
                     return;
 
-                ctag.Add(form.NodeName, newNode);
+                ctag.Add(form.TagName, form.TagNode);
 
-                TreeNode tnode = NodeFromTag(newNode, form.NodeName);
+                TreeNode tnode = NodeFromTag(form.TagNode, form.TagName);
                 node.Nodes.Add(tnode);
 
                 _nodeTree.SelectedNode = tnode;
                 tnode.Expand();
             }
             else if (tag is TagNodeList) {
+                TagNode newNode;
+                if (TagIsSizedType(type)) {
+                    CreateNode form = new CreateNode(type, false);
+                    if (form.ShowDialog() != DialogResult.OK)
+                        return;
+
+                    newNode = form.TagNode;
+                }
+                else {
+                    newNode = CreateDefaultTag(type);
+                }
+
                 TagNodeList ltag = tag as TagNodeList;
                 if (ltag.ValueType != type)
                     ltag.ChangeValueType(type);
@@ -1079,6 +1083,47 @@ namespace NBTExplorer
             TreeNode baseNode = BaseNode(node);
             if (baseNode != null) {
                 (baseNode.Tag as DataNode).Modified = true;
+            }
+        }
+
+        private TagNode CreateDefaultTag (TagType type)
+        {
+            switch (type) {
+                case TagType.TAG_BYTE:
+                    return new TagNodeByte();
+                case TagType.TAG_SHORT:
+                    return new TagNodeShort();
+                case TagType.TAG_INT:
+                    return new TagNodeInt();
+                case TagType.TAG_LONG:
+                    return new TagNodeLong();
+                case TagType.TAG_FLOAT:
+                    return new TagNodeFloat();
+                case TagType.TAG_DOUBLE:
+                    return new TagNodeDouble();
+                case TagType.TAG_BYTE_ARRAY:
+                    return new TagNodeByteArray(new byte[0]);
+                case TagType.TAG_STRING:
+                    return new TagNodeString();
+                case TagType.TAG_LIST:
+                    return new TagNodeList(TagType.TAG_BYTE);
+                case TagType.TAG_COMPOUND:
+                    return new TagNodeCompound();
+                case TagType.TAG_INT_ARRAY:
+                    return new TagNodeIntArray(new int[0]);
+                default:
+                    return new TagNodeByte();
+            }
+        }
+
+        private bool TagIsSizedType (TagType type)
+        {
+            switch (type) {
+                case TagType.TAG_BYTE_ARRAY:
+                case TagType.TAG_INT_ARRAY:
+                    return true;
+                default:
+                    return false;
             }
         }
 

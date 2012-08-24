@@ -11,17 +11,51 @@ namespace NBTExplorer
 {
     public partial class HexEditor : Form
     {
+        private byte[] _data;
+        private bool _modified;
+        DynamicByteProvider _byteProvider;
+
+        private class FixedByteProvider : DynamicByteProvider
+        {
+            public FixedByteProvider (byte[] data)
+                : base(data)
+            { }
+
+            public override bool SupportsInsertBytes ()
+            {
+                return false;
+            }
+        }
+
         public HexEditor (string tagName, byte[] data)
         {
             InitializeComponent();
 
-            this.Text = "Editing: " + tagName + " (Read Only)";
+            this.Text = "Editing: " + tagName;
 
-            hexBox1.ByteProvider = new DynamicByteProvider(data);
+            _data = new byte[data.Length];
+            Array.Copy(data, _data, data.Length);
+
+            _byteProvider = new FixedByteProvider(_data);
+            _byteProvider.Changed += (o, e) => { _modified = true; };
+
+            hexBox1.ByteProvider = _byteProvider;
 
             hexBox1.HorizontalByteCountChanged += HexBox_HorizontalByteCountChanged;
             hexBox1.CurrentLineChanged += HexBox_CurrentLineChanged;
             hexBox1.CurrentPositionInLineChanged += HexBox_CurrentPositionInLineChanged;
+
+            hexBox1.ReadOnly = false;
+        }
+
+        public byte[] Data
+        {
+            get { return _data; }
+        }
+
+        public bool Modified
+        {
+            get { return _modified; }
         }
 
         private void HexBox_HorizontalByteCountChanged (object sender, EventArgs e)
@@ -44,6 +78,23 @@ namespace NBTExplorer
             long pos = (hexBox1.CurrentLine - 1) * hexBox1.HorizontalByteCount + hexBox1.CurrentPositionInLine;
 
             _curPositionLabel.Text = pos.ToString();
+        }
+
+        private void Apply ()
+        {
+            long len = Math.Min(_data.Length, _byteProvider.Length);
+
+            for (int i = 0; i < len; i++) {
+                _data[i] = _byteProvider.Bytes[i];
+            }
+
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+        private void _buttonOK_Click (object sender, EventArgs e)
+        {
+            Apply();
         }
     }
 }

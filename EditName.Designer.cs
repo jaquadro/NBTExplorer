@@ -1,6 +1,6 @@
 ﻿namespace NBTExplorer
 {
-    partial class EditValue
+    partial class EditName
     {
         /// <summary>
         /// Required designer variable.
@@ -27,17 +27,17 @@
         /// </summary>
         private void InitializeComponent ()
         {
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this._nameField = new System.Windows.Forms.TextBox();
             this._buttonCancel = new System.Windows.Forms.Button();
             this._buttonOK = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // textBox1
+            // _nameField
             // 
-            this.textBox1.Location = new System.Drawing.Point(12, 10);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(196, 20);
-            this.textBox1.TabIndex = 0;
+            this._nameField.Location = new System.Drawing.Point(12, 10);
+            this._nameField.Name = "_nameField";
+            this._nameField.Size = new System.Drawing.Size(196, 20);
+            this._nameField.TabIndex = 0;
             // 
             // _buttonCancel
             // 
@@ -61,7 +61,7 @@
             this._buttonOK.UseVisualStyleBackColor = true;
             this._buttonOK.Click += new System.EventHandler(this._buttonOK_Click);
             // 
-            // EditValue
+            // EditName
             // 
             this.AcceptButton = this._buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -70,13 +70,13 @@
             this.ClientSize = new System.Drawing.Size(220, 72);
             this.Controls.Add(this._buttonCancel);
             this.Controls.Add(this._buttonOK);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this._nameField);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "EditValue";
-            this.Text = "Edit Value...";
+            this.Name = "EditName";
+            this.Text = "Edit Name...";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -84,7 +84,7 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox _nameField;
         private System.Windows.Forms.Button _buttonCancel;
         private System.Windows.Forms.Button _buttonOK;
     }
