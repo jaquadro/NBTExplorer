@@ -32,6 +32,7 @@
             this._curPositionLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this._buttonCancel = new System.Windows.Forms.Button();
             this._buttonOK = new System.Windows.Forms.Button();
+            this._curElementLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -54,7 +55,8 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._curPositionLabel});
+            this._curPositionLabel,
+            this._curElementLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 333);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(516, 22);
@@ -90,6 +92,13 @@
             this._buttonOK.UseVisualStyleBackColor = true;
             this._buttonOK.Click += new System.EventHandler(this._buttonOK_Click);
             // 
+            // _curElementLabel
+            // 
+            this._curElementLabel.Name = "_curElementLabel";
+            this._curElementLabel.Size = new System.Drawing.Size(59, 17);
+            this._curElementLabel.Text = "Element 0";
+            this._curElementLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // HexEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -116,5 +125,6 @@
         private System.Windows.Forms.ToolStripStatusLabel _curPositionLabel;
         private System.Windows.Forms.Button _buttonCancel;
         private System.Windows.Forms.Button _buttonOK;
+        private System.Windows.Forms.ToolStripStatusLabel _curElementLabel;
     }
 }

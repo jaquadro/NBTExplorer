@@ -11,6 +11,7 @@ namespace NBTExplorer
 {
     public partial class HexEditor : Form
     {
+        private int _bytesPerElem;
         private byte[] _data;
         private bool _modified;
         DynamicByteProvider _byteProvider;
@@ -27,11 +28,15 @@ namespace NBTExplorer
             }
         }
 
-        public HexEditor (string tagName, byte[] data)
+        public HexEditor (string tagName, byte[] data, int bytesPerElem)
         {
             InitializeComponent();
 
             this.Text = "Editing: " + tagName;
+
+            _bytesPerElem = bytesPerElem;
+            _curPositionLabel.Text = "0x0000";
+            _curElementLabel.Text = "Element 0";
 
             _data = new byte[data.Length];
             Array.Copy(data, _data, data.Length);
@@ -75,9 +80,10 @@ namespace NBTExplorer
 
         private void UpdatePosition ()
         {
-            long pos = (hexBox1.CurrentLine - 1) * hexBox1.HorizontalByteCount + hexBox1.CurrentPositionInLine;
+            long pos = (hexBox1.CurrentLine - 1) * hexBox1.HorizontalByteCount + hexBox1.CurrentPositionInLine - 1;
 
-            _curPositionLabel.Text = pos.ToString();
+            _curPositionLabel.Text = "0x" + pos.ToString("X4");
+            _curElementLabel.Text = "Element " + pos / _bytesPerElem;
         }
 
         private void Apply ()

@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Text;
+using System.IO;
 using System.Windows.Forms;
 using Substrate;
-using Substrate.Nbt;
-using System.IO;
 using Substrate.Core;
+using Substrate.Nbt;
 
 namespace NBTExplorer
 {
@@ -923,7 +920,7 @@ namespace NBTExplorer
                 }
             }
             else if (tag.GetTagType() == TagType.TAG_BYTE_ARRAY) {
-                HexEditor form = new HexEditor(GetTagNodeName(node), tag.ToTagByteArray().Data);
+                HexEditor form = new HexEditor(GetTagNodeName(node), tag.ToTagByteArray().Data, 1);
                 if (form.ShowDialog() == DialogResult.OK && form.Modified) {
                     TreeNode baseNode = BaseNode(node);
                     if (baseNode != null) {
@@ -941,7 +938,7 @@ namespace NBTExplorer
                     Array.Copy(buf, 0, data, 4 * i, 4);
                 }
 
-                HexEditor form = new HexEditor(GetTagNodeName(node), data);
+                HexEditor form = new HexEditor(GetTagNodeName(node), data, 4);
                 if (form.ShowDialog() == DialogResult.OK && form.Modified) {
                     TreeNode baseNode = BaseNode(node);
                     if (baseNode != null) {
@@ -1430,208 +1427,6 @@ namespace NBTExplorer
         private void _buttonPaste_Click (object sender, EventArgs e)
         {
             PasteNode();
-        }
-    }
-
-    public class TagKey : IComparable<TagKey>
-    {
-        public TagKey (string name, TagType type)
-        {
-            Name = name;
-            TagType = type;
-        }
-
-        public string Name { get; set; }
-        public TagType TagType { get; set; }
-    
-        #region IComparer<TagKey> Members
-
-        public int Compare(TagKey x, TagKey y)
-        {
-            int typeDiff = (int)x.TagType - (int)y.TagType;
-            if (typeDiff != 0)
-                return typeDiff;
-
-            return String.Compare(x.Name, y.Name, true);
-        }
-
-        #endregion
-
-        #region IComparable<TagKey> Members
-
-        public int CompareTo (TagKey other)
-        {
-            return Compare(this, other);
-        }
-
-        #endregion
-    }
-
-    public class DataNode 
-    {
-        public DataNode ()
-        {
-        }
-
-        public DataNode (DataNode parent)
-        {
-            Parent = parent;
-        }
-
-        public DataNode Parent { get; set; }
-
-        private bool _modified;
-        public bool Modified
-        {
-            get { return _modified; }
-            set
-            {
-                if (value && Parent != null) {
-                    Parent.Modified = value;
-                }
-                _modified = value;
-            }
-        }
-
-        public bool Expanded { get; set; }
-    }
-
-    public class NbtDataNode : DataNode
-    {
-        public NbtDataNode ()
-        {
-        }
-
-        public NbtDataNode (DataNode parent)
-            : base(parent)
-        {
-        }
-
-        public NbtTree Tree { get; set; }
-    }
-
-    public class RegionChunkData : NbtDataNode
-    {
-        public RegionChunkData (RegionFile file, int x, int z)
-            : this(null, file, x, z)
-        {
-        }
-
-        public RegionChunkData (DataNode parent, RegionFile file, int x, int z)
-            : base(parent)
-        {
-            Region = file;
-            X = x;
-            Z = z;
-        }
-
-        public RegionFile Region { get; private set; }
-        public int X { get; private set; }
-        public int Z { get; private set; }
-    }
-
-    public class RegionData : DataNode
-    {
-        public RegionData (string path)
-            : this(null, path)
-        {
-        }
-
-        public RegionData (DataNode parent, string path)
-            : base(parent)
-        {
-            Path = path;
-        }
-
-        public string Path { get; private set; }
-    }
-
-    public class NbtFileData : NbtDataNode
-    {
-        public NbtFileData (string path, CompressionType cztype)
-            : this(null, path, cztype)
-        {
-        }
-
-        public NbtFileData (DataNode parent, string path, CompressionType cztype)
-            : base(parent)
-        {
-            Path = path;
-            CompressionType = cztype;
-        }
-
-        public string Path { get; private set; }
-        public CompressionType CompressionType { get; private set; }
-    }
-
-    public class DirectoryData : DataNode
-    {
-        public DirectoryData (string path)
-            : this(null, path)
-        {
-        }
-
-        public DirectoryData (DataNode parent, string path)
-            : base(parent)
-        {
-            Path = path;
-        }
-
-        public string Path { get; private set; }
-    }
-
-    [Serializable]
-    public class NbtClipboardData
-    {
-        public string Name;
-
-        private byte[] _data;
-
-        [NonSerialized]
-        public TagNode Node;
-
-        public NbtClipboardData (String name, TagNode node)
-        {
-            Name = name;
-
-            TagNodeCompound root = new TagNodeCompound();
-            root.Add("root", node);
-            NbtTree tree = new NbtTree(root);
-
-            using (MemoryStream ms = new MemoryStream()) {
-                tree.WriteTo(ms);
-                _data = new byte[ms.Length];
-                Array.Copy(ms.GetBuffer(), _data, ms.Length);
-            }
-        }
-
-        public static bool ContainsData
-        {
-            get { return Clipboard.ContainsData(typeof(NbtClipboardData).FullName); }
-        }
-
-        public void CopyToClipboard ()
-        {
-            Clipboard.SetData(typeof(NbtClipboardData).FullName, this);
-        }
-
-        public static NbtClipboardData CopyFromClipboard ()
-        {
-            NbtClipboardData clip = Clipboard.GetData(typeof(NbtClipboardData).FullName) as NbtClipboardData;
-            if (clip == null)
-                return null;
-
-            NbtTree tree = new NbtTree();
-            using (MemoryStream ms = new MemoryStream(clip._data)) {
-                tree.ReadFrom(ms);
-            }
-
-            TagNodeCompound root = tree.Root;
-            if (root == null || !root.ContainsKey("root"))
-                return null;
-
-            clip.Node = root["root"];
-            return clip;
         }
     }
 }

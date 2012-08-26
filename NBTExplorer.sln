@@ -1,9 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBTExplorer", "NBTExplorer.csproj", "{8A458245-8176-4599-95CD-3CA39F2435CE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Be.Windows.Forms.HexBox", "Vendor\Be.Windows.Forms.HexBox\Be.Windows.Forms.HexBox.csproj", "{26C5F25F-B450-4CAF-AD8B-B8D11AE73457}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,16 +23,6 @@ Global
 		{8A458245-8176-4599-95CD-3CA39F2435CE}.Release|Mixed Platforms.Build.0 = Release|x86
 		{8A458245-8176-4599-95CD-3CA39F2435CE}.Release|x86.ActiveCfg = Release|x86
 		{8A458245-8176-4599-95CD-3CA39F2435CE}.Release|x86.Build.0 = Release|x86
-		{26C5F25F-B450-4CAF-AD8B-B8D11AE73457}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{26C5F25F-B450-4CAF-AD8B-B8D11AE73457}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{26C5F25F-B450-4CAF-AD8B-B8D11AE73457}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{26C5F25F-B450-4CAF-AD8B-B8D11AE73457}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{26C5F25F-B450-4CAF-AD8B-B8D11AE73457}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{26C5F25F-B450-4CAF-AD8B-B8D11AE73457}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{26C5F25F-B450-4CAF-AD8B-B8D11AE73457}.Release|Any CPU.Build.0 = Release|Any CPU
-		{26C5F25F-B450-4CAF-AD8B-B8D11AE73457}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{26C5F25F-B450-4CAF-AD8B-B8D11AE73457}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{26C5F25F-B450-4CAF-AD8B-B8D11AE73457}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

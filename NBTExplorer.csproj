@@ -49,40 +49,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="About.cs">
+    <Compile Include="DataNode.cs" />
+    <Compile Include="Forms\About.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="About.Designer.cs">
+    <Compile Include="Forms\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
-    <Compile Include="EditName.cs">
+    <Compile Include="Forms\EditName.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EditName.Designer.cs">
+    <Compile Include="Forms\EditName.Designer.cs">
       <DependentUpon>EditName.cs</DependentUpon>
     </Compile>
-    <Compile Include="EditString.cs">
+    <Compile Include="Forms\EditString.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EditString.Designer.cs">
+    <Compile Include="Forms\EditString.Designer.cs">
       <DependentUpon>EditString.cs</DependentUpon>
     </Compile>
-    <Compile Include="CreateNode.cs">
+    <Compile Include="Forms\CreateNode.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CreateNode.Designer.cs">
+    <Compile Include="Forms\CreateNode.Designer.cs">
       <DependentUpon>CreateNode.cs</DependentUpon>
     </Compile>
-    <Compile Include="EditValue.cs">
+    <Compile Include="Forms\EditValue.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EditValue.Designer.cs">
+    <Compile Include="Forms\EditValue.Designer.cs">
       <DependentUpon>EditValue.cs</DependentUpon>
     </Compile>
-    <Compile Include="Find.cs">
+    <Compile Include="Forms\Find.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Find.Designer.cs">
+    <Compile Include="Forms\Find.Designer.cs">
       <DependentUpon>Find.cs</DependentUpon>
     </Compile>
     <Compile Include="Form1.cs">
@@ -91,38 +92,60 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="HexEditor.cs">
+    <Compile Include="Forms\EditHex.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="HexEditor.Designer.cs">
-      <DependentUpon>HexEditor.cs</DependentUpon>
+    <Compile Include="Forms\EditHex.Designer.cs">
+      <DependentUpon>EditHex.cs</DependentUpon>
     </Compile>
+    <Compile Include="NbtClipboardData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="About.resx">
+    <Compile Include="TagKey.cs" />
+    <Compile Include="Vendor\Be.Windows.Forms.HexBox\BuiltInContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Vendor\Be.Windows.Forms.HexBox\ByteCharConverters.cs" />
+    <Compile Include="Vendor\Be.Windows.Forms.HexBox\ByteCollection.cs" />
+    <Compile Include="Vendor\Be.Windows.Forms.HexBox\BytePositionInfo.cs" />
+    <Compile Include="Vendor\Be.Windows.Forms.HexBox\DataBlock.cs" />
+    <Compile Include="Vendor\Be.Windows.Forms.HexBox\DataMap.cs" />
+    <Compile Include="Vendor\Be.Windows.Forms.HexBox\DynamicByteProvider.cs" />
+    <Compile Include="Vendor\Be.Windows.Forms.HexBox\DynamicFileByteProvider.cs" />
+    <Compile Include="Vendor\Be.Windows.Forms.HexBox\FileByteProvider.cs" />
+    <Compile Include="Vendor\Be.Windows.Forms.HexBox\FileDataBlock.cs" />
+    <Compile Include="Vendor\Be.Windows.Forms.HexBox\HexBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Vendor\Be.Windows.Forms.HexBox\HexCasing.cs" />
+    <Compile Include="Vendor\Be.Windows.Forms.HexBox\IByteProvider.cs" />
+    <Compile Include="Vendor\Be.Windows.Forms.HexBox\MemoryDataBlock.cs" />
+    <Compile Include="Vendor\Be.Windows.Forms.HexBox\NativeMethods.cs" />
+    <Compile Include="Vendor\Be.Windows.Forms.HexBox\Util.cs" />
+    <EmbeddedResource Include="Forms\About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="EditName.resx">
+    <EmbeddedResource Include="Forms\EditName.resx">
       <DependentUpon>EditName.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="EditString.resx">
+    <EmbeddedResource Include="Forms\EditString.resx">
       <DependentUpon>EditString.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CreateNode.resx">
+    <EmbeddedResource Include="Forms\CreateNode.resx">
       <DependentUpon>CreateNode.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="EditValue.resx">
+    <EmbeddedResource Include="Forms\EditValue.resx">
       <DependentUpon>EditValue.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Find.resx">
+    <EmbeddedResource Include="Forms\Find.resx">
       <DependentUpon>Find.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="HexEditor.resx">
-      <DependentUpon>HexEditor.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\EditHex.resx">
+      <DependentUpon>EditHex.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -134,16 +157,14 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Vendor\Be.Windows.Forms.HexBox\HexBox.resx">
+      <DependentUpon>HexBox.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="dead_bush.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="Vendor\Be.Windows.Forms.HexBox\Be.Windows.Forms.HexBox.csproj">
-      <Project>{26C5F25F-B450-4CAF-AD8B-B8D11AE73457}</Project>
-      <Name>Be.Windows.Forms.HexBox</Name>
-    </ProjectReference>
+    <Content Include="Vendor\Be.Windows.Forms.HexBox\HexBox.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
