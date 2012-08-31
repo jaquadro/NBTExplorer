@@ -1,6 +1,6 @@
 ﻿namespace NBTExplorer
 {
-    partial class CreateNode
+    partial class CreateNodeForm
     {
         /// <summary>
         /// Required designer variable.

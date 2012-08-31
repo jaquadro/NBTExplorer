@@ -10,6 +10,7 @@ namespace NBTExplorer
 {
     public partial class EditName : Form
     {
+        private string _originalName;
         private string _name;
 
         private List<string> _invalidNames = new List<string>();
@@ -18,6 +19,7 @@ namespace NBTExplorer
         {
             InitializeComponent();
 
+            _originalName = name;
             _name = name;
 
             _nameField.Text = _name;
@@ -31,6 +33,11 @@ namespace NBTExplorer
         public List<string> InvalidNames
         {
             get { return _invalidNames; }
+        }
+
+        public bool IsModified
+        {
+            get { return _name != _originalName; }
         }
 
         private void Apply ()
@@ -54,7 +61,7 @@ namespace NBTExplorer
                 return false;
             }
 
-            if (_invalidNames.Contains(text)) {
+            if (text != _originalName && _invalidNames.Contains(text)) {
                 MessageBox.Show("Duplicate name provided.");
                 return false;
             }

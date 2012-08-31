@@ -1,20 +1,23 @@
 ﻿using Substrate.Core;
 using Substrate.Nbt;
+using System.Collections.Generic;
+using System;
+using System.Windows.Forms;
 
 namespace NBTExplorer
 {
-    public class DataNode
+    public class DataNodeOld
     {
-        public DataNode ()
+        public DataNodeOld ()
         {
         }
 
-        public DataNode (DataNode parent)
+        public DataNodeOld (DataNodeOld parent)
         {
             Parent = parent;
         }
 
-        public DataNode Parent { get; set; }
+        public DataNodeOld Parent { get; set; }
 
         private bool _modified;
         public bool Modified
@@ -32,13 +35,13 @@ namespace NBTExplorer
         public bool Expanded { get; set; }
     }
 
-    public class NbtDataNode : DataNode
+    public class NbtDataNode : DataNodeOld
     {
         public NbtDataNode ()
         {
         }
 
-        public NbtDataNode (DataNode parent)
+        public NbtDataNode (DataNodeOld parent)
             : base(parent)
         {
         }
@@ -53,7 +56,7 @@ namespace NBTExplorer
         {
         }
 
-        public RegionChunkData (DataNode parent, RegionFile file, int x, int z)
+        public RegionChunkData (DataNodeOld parent, RegionFile file, int x, int z)
             : base(parent)
         {
             Region = file;
@@ -66,14 +69,14 @@ namespace NBTExplorer
         public int Z { get; private set; }
     }
 
-    public class RegionData : DataNode
+    public class RegionData : DataNodeOld
     {
         public RegionData (string path)
             : this(null, path)
         {
         }
 
-        public RegionData (DataNode parent, string path)
+        public RegionData (DataNodeOld parent, string path)
             : base(parent)
         {
             Path = path;
@@ -89,7 +92,7 @@ namespace NBTExplorer
         {
         }
 
-        public NbtFileData (DataNode parent, string path, CompressionType cztype)
+        public NbtFileData (DataNodeOld parent, string path, CompressionType cztype)
             : base(parent)
         {
             Path = path;
@@ -100,14 +103,14 @@ namespace NBTExplorer
         public CompressionType CompressionType { get; private set; }
     }
 
-    public class DirectoryData : DataNode
+    public class DirectoryData : DataNodeOld
     {
         public DirectoryData (string path)
             : this(null, path)
         {
         }
 
-        public DirectoryData (DataNode parent, string path)
+        public DirectoryData (DataNodeOld parent, string path)
             : base(parent)
         {
             Path = path;

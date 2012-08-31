@@ -9,7 +9,7 @@ using Substrate.Nbt;
 
 namespace NBTExplorer
 {
-    public partial class CreateNode : Form
+    public partial class CreateNodeForm : Form
     {
         private string _name;
         private int _size;
@@ -20,11 +20,11 @@ namespace NBTExplorer
 
         private List<string> _invalidNames = new List<string>();
 
-        public CreateNode (TagType tagType)
+        public CreateNodeForm (TagType tagType)
             : this(tagType, true)
         { }
 
-        public CreateNode (TagType tagType, bool hasName)
+        public CreateNodeForm (TagType tagType, bool hasName)
         {
             InitializeComponent();
 

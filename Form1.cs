@@ -264,8 +264,8 @@ namespace NBTExplorer
         private void LinkDataNodeParent (TreeNode node, TreeNode parent)
         {
             if (node != null && parent != null && node.Tag != null && parent.Tag != null) {
-                DataNode nodeDn = node.Tag as DataNode;
-                DataNode parentDn = parent.Tag as DataNode;
+                DataNodeOld nodeDn = node.Tag as DataNodeOld;
+                DataNodeOld parentDn = parent.Tag as DataNodeOld;
 
                 if (nodeDn != null && parentDn != null) {
                     nodeDn.Parent = parentDn;
@@ -332,7 +332,7 @@ namespace NBTExplorer
 
         public void UnloadLazyDataNode (TreeNode node)
         {
-            DataNode data = node.Tag as DataNode;
+            DataNodeOld data = node.Tag as DataNodeOld;
             if (data == null || data.Modified)
                 return;
 
@@ -347,8 +347,8 @@ namespace NBTExplorer
             if (node.Tag == null)
                 return;
 
-            if (node.Tag is DataNode) {
-                if ((node.Tag as DataNode).Expanded)
+            if (node.Tag is DataNodeOld) {
+                if ((node.Tag as DataNodeOld).Expanded)
                     return;
             }
 
@@ -371,7 +371,7 @@ namespace NBTExplorer
             if (node.Tag == null)
                 return;
 
-            if (node.Tag is DataNode) {
+            if (node.Tag is DataNodeOld) {
                 UnloadLazyDataNode(node);
             }
         }
@@ -664,7 +664,7 @@ namespace NBTExplorer
         private void SaveNode (TreeNode node)
         {
             foreach (TreeNode sub in node.Nodes) {
-                if (sub.Tag != null && sub.Tag is DataNode) {
+                if (sub.Tag != null && sub.Tag is DataNodeOld) {
                     SaveNode(sub);
                 }
             }
@@ -728,7 +728,7 @@ namespace NBTExplorer
                 return null;
 
             TreeNode baseNode = node;
-            while (baseNode.Tag == null || !(baseNode.Tag is DataNode)) {
+            while (baseNode.Tag == null || !(baseNode.Tag is DataNodeOld)) {
                 baseNode = baseNode.Parent;
             }
 
@@ -745,7 +745,7 @@ namespace NBTExplorer
             if (baseNode == null || baseNode == node)
                 return;
 
-            (baseNode.Tag as DataNode).Modified = true;
+            (baseNode.Tag as DataNodeOld).Modified = true;
 
             DeleteNodeNbtTag(node);
 
@@ -912,7 +912,7 @@ namespace NBTExplorer
                 if (form.ShowDialog() == DialogResult.OK) {
                     TreeNode baseNode = BaseNode(node);
                     if (baseNode != null) {
-                        (baseNode.Tag as DataNode).Modified = true;
+                        (baseNode.Tag as DataNodeOld).Modified = true;
                     }
 
                     tag.ToTagString().Data = form.StringValue;
@@ -924,7 +924,7 @@ namespace NBTExplorer
                 if (form.ShowDialog() == DialogResult.OK && form.Modified) {
                     TreeNode baseNode = BaseNode(node);
                     if (baseNode != null) {
-                        (baseNode.Tag as DataNode).Modified = true;
+                        (baseNode.Tag as DataNodeOld).Modified = true;
                     }
 
                     Array.Copy(form.Data, tag.ToTagByteArray().Data, tag.ToTagByteArray().Length);
@@ -942,7 +942,7 @@ namespace NBTExplorer
                 if (form.ShowDialog() == DialogResult.OK && form.Modified) {
                     TreeNode baseNode = BaseNode(node);
                     if (baseNode != null) {
-                        (baseNode.Tag as DataNode).Modified = true;
+                        (baseNode.Tag as DataNodeOld).Modified = true;
                     }
 
                     for (int i = 0; i < iatag.Length; i++) {
@@ -955,7 +955,7 @@ namespace NBTExplorer
                 if (form.ShowDialog() == DialogResult.OK) {
                     TreeNode baseNode = BaseNode(node);
                     if (baseNode != null) {
-                        (baseNode.Tag as DataNode).Modified = true;
+                        (baseNode.Tag as DataNodeOld).Modified = true;
                     }
 
                     node.Text = GetNodeText(node);
@@ -997,7 +997,7 @@ namespace NBTExplorer
             if (form.ShowDialog() == DialogResult.OK) {
                 TreeNode baseNode = BaseNode(node);
                 if (baseNode != null) {
-                    (baseNode.Tag as DataNode).Modified = true;
+                    (baseNode.Tag as DataNodeOld).Modified = true;
                 }
 
                 SetTagNodeName(node, form.TagName);
@@ -1033,7 +1033,7 @@ namespace NBTExplorer
             if (tag is TagNodeCompound) {
                 TagNodeCompound ctag = tag as TagNodeCompound;
 
-                CreateNode form = new CreateNode(type);
+                CreateNodeForm form = new CreateNodeForm(type);
                 foreach (string key in ctag.Keys) {
                     form.InvalidNames.Add(key);
                 }
@@ -1052,7 +1052,7 @@ namespace NBTExplorer
             else if (tag is TagNodeList) {
                 TagNode newNode;
                 if (TagIsSizedType(type)) {
-                    CreateNode form = new CreateNode(type, false);
+                    CreateNodeForm form = new CreateNodeForm(type, false);
                     if (form.ShowDialog() != DialogResult.OK)
                         return;
 
@@ -1079,7 +1079,7 @@ namespace NBTExplorer
 
             TreeNode baseNode = BaseNode(node);
             if (baseNode != null) {
-                (baseNode.Tag as DataNode).Modified = true;
+                (baseNode.Tag as DataNodeOld).Modified = true;
             }
         }
 
@@ -1219,8 +1219,8 @@ namespace NBTExplorer
 
             if (!_search.MoveNext()) {
                 _nodeTree.SelectedNode = _rootSearchNode;
-                if (_rootSearchNode != null && _rootSearchNode.Tag is DataNode) {
-                    if (_rootSearchNode.IsExpanded && !(_rootSearchNode.Tag as DataNode).Expanded) {
+                if (_rootSearchNode != null && _rootSearchNode.Tag is DataNodeOld) {
+                    if (_rootSearchNode.IsExpanded && !(_rootSearchNode.Tag as DataNodeOld).Expanded) {
                         _rootSearchNode.Collapse();
                     }
                 }
@@ -1241,8 +1241,8 @@ namespace NBTExplorer
 
             bool expand = false;
 
-            if (node.Tag is DataNode) {
-                DataNode data = node.Tag as DataNode;
+            if (node.Tag is DataNodeOld) {
+                DataNodeOld data = node.Tag as DataNodeOld;
                 if (!data.Expanded) {
                     ExpandNode(node);
                     expand = true;
@@ -1277,7 +1277,7 @@ namespace NBTExplorer
             }
 
             if (expand) {
-                DataNode data = node.Tag as DataNode;
+                DataNodeOld data = node.Tag as DataNodeOld;
                 if (!data.Modified)
                     CollapseNode(node);
             }
