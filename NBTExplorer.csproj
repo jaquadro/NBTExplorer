@@ -48,6 +48,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\CancelSearchForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CancelSearchForm.Designer.cs">
+      <DependentUpon>CancelSearchForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="IconRegistry.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -141,6 +147,9 @@
     <Compile Include="Vendor\Be.Windows.Forms.HexBox\MemoryDataBlock.cs" />
     <Compile Include="Vendor\Be.Windows.Forms.HexBox\NativeMethods.cs" />
     <Compile Include="Vendor\Be.Windows.Forms.HexBox\Util.cs" />
+    <EmbeddedResource Include="Forms\CancelSearchForm.resx">
+      <DependentUpon>CancelSearchForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>

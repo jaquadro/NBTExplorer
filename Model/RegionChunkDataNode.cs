@@ -1,5 +1,6 @@
 ﻿using Substrate.Core;
 using Substrate.Nbt;
+using System.IO;
 
 namespace NBTExplorer.Model
 {
@@ -61,6 +62,13 @@ namespace NBTExplorer.Model
         {
             _tree = null;
             Nodes.Clear();
+        }
+
+        protected override void SaveCore ()
+        {
+            using (Stream str = _regionFile.GetChunkDataOutputStream(_x, _z)) {
+                _tree.WriteTo(str);
+            }
         }
 
         public bool IsNamedContainer

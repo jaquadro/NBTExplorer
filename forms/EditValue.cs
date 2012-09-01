@@ -50,7 +50,7 @@ namespace NBTExplorer
             try {
                 switch (_tag.GetTagType()) {
                     case TagType.TAG_BYTE:
-                        _tag.ToTagByte().Data = byte.Parse(textBox1.Text);
+                        _tag.ToTagByte().Data = unchecked((byte)sbyte.Parse(textBox1.Text));
                         break;
 
                     case TagType.TAG_SHORT:

@@ -91,6 +91,14 @@ namespace NBTExplorer.Model
             Nodes.Clear();
         }
 
+        protected override void SaveCore ()
+        {
+            NBTFile file = new NBTFile(_path);
+            using (Stream str = file.GetDataOutputStream(_compressionType)) {
+                _tree.WriteTo(str);
+            }
+        }
+
         public bool IsNamedContainer
         {
             get { return true; }

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
-using Substrate;
-using Substrate.Core;
-using Substrate.Nbt;
+using NBTExplorer.Forms;
 using NBTExplorer.Model;
+using Substrate.Nbt;
 
 namespace NBTExplorer
 {
@@ -14,6 +15,8 @@ namespace NBTExplorer
         private static Dictionary<TagType, int> _tagIconIndex;
 
         private IconRegistry _iconRegistry;
+
+        private string _openFolderPath = null;
 
         static MainForm ()
         {
@@ -36,10 +39,18 @@ namespace NBTExplorer
             InitializeComponent();
             InitializeIconRegistry();
 
+            FormClosing += MainForm_Closing;
+
             _nodeTree.BeforeExpand += _nodeTree_BeforeExpand;
+            _nodeTree.AfterCollapse += _nodeTree_AfterCollapse;
             _nodeTree.AfterSelect += _nodeTree_AfterSelect;
             _nodeTree.NodeMouseDoubleClick += _nodeTree_NodeMouseDoubleClick;
+            _nodeTree.DragEnter += _nodeTree_DragEnter;
+            _nodeTree.DragDrop += _nodeTree_DragDrop;
 
+            _buttonOpen.Click += _buttonOpen_Click;
+            _buttonOpenFolder.Click += _buttonOpenFolder_Click;
+            _buttonSave.Click += _buttonSave_Click;
             _buttonEdit.Click += _buttonEdit_Click;
             _buttonRename.Click += _buttonRename_Click;
             _buttonDelete.Click += _buttonDelete_Click;
@@ -57,7 +68,12 @@ namespace NBTExplorer
             _buttonAddTagLong.Click += _buttonAddTagLong_Click;
             _buttonAddTagShort.Click += _buttonAddTagShort_Click;
             _buttonAddTagString.Click += _buttonAddTagString_Click;
+            _buttonFindNext.Click += _buttonFindNext_Click;
 
+            _menuItemOpen.Click += _menuItemOpen_Click;
+            _menuItemOpenFolder.Click += _menuItemOpenFolder_Click;
+            _menuItemOpenMinecraftSaveFolder.Click += _menuItemOpenMinecraftSaveFolder_Click;
+            _menuItemSave.Click += _menuItemSave_Click;
             _menuItemExit.Click += _menuItemExit_Click;
             _menuItemEditValue.Click += _menuItemEditValue_Click;
             _menuItemRename.Click += _menuItemRename_Click;
@@ -65,27 +81,15 @@ namespace NBTExplorer
             _menuItemCopy.Click += _menuItemCopy_Click;
             _menuItemCut.Click += _menuItemCut_Click;
             _menuItemPaste.Click += _menuItemPaste_Click;
+            _menuItemFind.Click += _menuItemFind_Click;
+            _menuItemFindNext.Click += _menuItemFindNext_Click;
             _menuItemAbout.Click += _menuItemAbout_Click;
 
-            /*_nodeTree.BeforeExpand += NodeExpand;
-            _nodeTree.AfterCollapse += NodeCollapse;
-            _nodeTree.AfterSelect += NodeSelected;
-            _nodeTree.NodeMouseClick += NodeClicked;
-            _nodeTree.NodeMouseDoubleClick += NodeDoubleClicked;
-
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1) {
-                OpenFile(args[1]);
-            }
-            else {
-                OpenMinecraftDir();
-            }*/
-
-            //OpenDirectory(@"F:\Minecraft\tps");
-
-            string[] args = Environment.GetCommandLineArgs();
-            if (args.Length > 1) {
-                OpenFile(args[1]);
+                string[] paths = new string[args.Length - 1];
+                Array.Copy(args, 1, paths, 0, paths.Length);
+                OpenPaths(paths);
             }
             else {
                 OpenMinecraftDirectory();
@@ -114,26 +118,47 @@ namespace NBTExplorer
             _iconRegistry.Register(typeof(TagIntArrayDataNode), 14);
         }
 
-        private void OpenFile (string path)
+        public void OpenFile ()
         {
-            _nodeTree.Nodes.Clear();
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.RestoreDirectory = true;
+            ofd.Multiselect = true;
 
-            NbtFileDataNode node = NbtFileDataNode.TryCreateFrom(path);
-
-            _nodeTree.Nodes.Add(CreateUnexpandedNode(node));
+            if (ofd.ShowDialog() == DialogResult.OK) {
+                OpenPaths(ofd.FileNames);
+            }
         }
 
-        private void OpenDirectory (string path)
+        private void OpenFolder ()
+        {
+            FolderBrowserDialog ofd = new FolderBrowserDialog();
+            if (_openFolderPath != null)
+                ofd.SelectedPath = _openFolderPath;
+
+            if (ofd.ShowDialog() == DialogResult.OK) {
+                _openFolderPath = ofd.SelectedPath;
+                OpenPaths(new string[] { ofd.SelectedPath });
+            }
+        }
+
+        public void OpenPaths (string[] paths)
         {
             _nodeTree.Nodes.Clear();
 
-            DirectoryDataNode node = new DirectoryDataNode(path);
+            foreach (string path in paths) {
+                if (Directory.Exists(path)) {
+                    DirectoryDataNode node = new DirectoryDataNode(path);
+                    _nodeTree.Nodes.Add(CreateUnexpandedNode(node));
+                }
+                else if (File.Exists(path)) {
+                    NbtFileDataNode node = NbtFileDataNode.TryCreateFrom(path);
+                    _nodeTree.Nodes.Add(CreateUnexpandedNode(node));
+                }
+            }
 
-            TreeNode frontNode = CreateUnexpandedNode(node);
-            _nodeTree.Nodes.Add(frontNode);
-
-            ExpandNode(frontNode);
-            frontNode.Expand();
+            if (_nodeTree.Nodes.Count > 0) {
+                _nodeTree.Nodes[0].Expand();
+            }
         }
 
         private void OpenMinecraftDirectory ()
@@ -147,12 +172,12 @@ namespace NBTExplorer
                     path = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
                 }
 
-                OpenDirectory(path);
+                OpenPaths(new string[] { path });
             }
             catch (Exception) {
                 MessageBox.Show("Could not open default Minecraft save directory");
                 try {
-                    OpenDirectory(Directory.GetCurrentDirectory());
+                    OpenPaths(new string[] { Directory.GetCurrentDirectory() });
                 }
                 catch (Exception) {
                     MessageBox.Show("Could not open current directory, this tool is probably not compatible with your platform.");
@@ -179,17 +204,33 @@ namespace NBTExplorer
             if (node == null || !(node.Tag is DataNode))
                 return;
 
-            DataNode backNode = node.Tag as DataNode;
-            if (!backNode.HasUnexpandedChildren)
+            if (node.IsExpanded)
                 return;
 
             node.Nodes.Clear();
 
+            DataNode backNode = node.Tag as DataNode;
             if (!backNode.IsExpanded)
                 backNode.Expand();
 
             foreach (DataNode child in backNode.Nodes)
                 node.Nodes.Add(CreateUnexpandedNode(child));
+        }
+
+        private void CollapseNode (TreeNode node)
+        {
+            if (node == null || !(node.Tag is DataNode))
+                return;
+
+            DataNode backNode = node.Tag as DataNode;
+            if (backNode.IsModified)
+                return;
+
+            backNode.Collapse();
+
+            node.Nodes.Clear();
+            if (backNode.HasUnexpandedChildren)
+                node.Nodes.Add(new TreeNode());
         }
 
         private void CreateNode (TreeNode node, TagType type)
@@ -244,6 +285,7 @@ namespace NBTExplorer
 
             if (dataNode.EditNode()) {
                 node.Text = dataNode.NodeDisplay;
+                UpdateUI(dataNode);
             }
         }
 
@@ -321,6 +363,167 @@ namespace NBTExplorer
             }
         }
 
+        private void Save ()
+        {
+            foreach (TreeNode node in _nodeTree.Nodes) {
+                DataNode dataNode = node.Tag as DataNode;
+                if (dataNode != null)
+                    dataNode.Save();
+            }
+
+            UpdateUI();
+        }
+
+        private bool ConfirmExit ()
+        {
+            if (CheckModifications()) {
+                if (MessageBox.Show("You currently have unsaved changes.  Close anyway?", "Unsaved Changes", MessageBoxButtons.OKCancel) != DialogResult.OK)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private CancelSearchForm _searchForm;
+        private SearchState _searchState;
+
+        private void SearchNode (TreeNode node)
+        {
+            if (node == null || !(node.Tag is DataNode))
+                return;
+
+            DataNode dataNode = node.Tag as DataNode;
+            if (!dataNode.CanSearchNode)
+                return;
+
+            Find form = new Find();
+            if (form.ShowDialog() != DialogResult.OK)
+                return;
+
+            _searchState = new SearchState() {
+                RootNode = dataNode,
+                SearchName = form.NameToken,
+                SearchValue = form.ValueToken,
+                DiscoverCallback = SearchDiscoveryCallback,
+                CollapseCallback = SearchCollapseCallback,
+                EndCallback = SearchEndCallback,
+            };
+
+            SearchNextNode();
+        }
+
+        private void SearchNextNode ()
+        {
+            if (_searchState == null)
+                return;
+
+            SearchWorker worker = new SearchWorker(_searchState, this);
+
+            Thread t = new Thread(new ThreadStart(worker.Run));
+            t.IsBackground = true;
+            t.Start();
+
+            _searchForm = new CancelSearchForm();
+            if (_searchForm.ShowDialog(this) == DialogResult.Cancel) {
+                worker.Cancel();
+                _searchState = null;
+            }
+
+            t.Join();
+        }
+
+        private void SearchDiscoveryCallback (DataNode node)
+        {
+            _nodeTree.SelectedNode = FindFrontNode(node);
+
+            if (_searchForm != null) {
+                _searchForm.DialogResult = DialogResult.OK;
+                _searchForm = null;
+            }
+        }
+
+        private void SearchCollapseCallback (DataNode node)
+        {
+            CollapseBelow(node);
+        }
+
+        private void SearchEndCallback ()
+        {
+            _searchForm.DialogResult = DialogResult.OK;
+            _searchForm = null;
+
+            MessageBox.Show("End of results");
+        }
+
+        private TreeNode GetRootFromDataNodePath (DataNode node, out Stack<DataNode> hierarchy)
+        {
+            hierarchy = new Stack<DataNode>();
+            while (node != null) {
+                hierarchy.Push(node);
+                node = node.Parent;
+            }
+
+            DataNode rootDataNode = hierarchy.Pop();
+            TreeNode frontNode = null;
+            foreach (TreeNode child in _nodeTree.Nodes) {
+                if (child.Tag == rootDataNode)
+                    frontNode = child;
+            }
+
+            return frontNode;
+        }
+
+        private TreeNode FindFrontNode (DataNode node)
+        {
+            Stack<DataNode> hierarchy;
+            TreeNode frontNode = GetRootFromDataNodePath(node, out hierarchy);
+
+            if (frontNode == null)
+                return null;
+
+            while (hierarchy.Count > 0) {
+                if (!frontNode.IsExpanded) {
+                    frontNode.Nodes.Add(new TreeNode());
+                    frontNode.Expand();
+                }
+
+                DataNode childData = hierarchy.Pop();
+                foreach (TreeNode childFront in frontNode.Nodes) {
+                    if (childFront.Tag == childData) {
+                        frontNode = childFront;
+                        break;
+                    }
+                }
+            }
+
+            return frontNode;
+        }
+
+        private void CollapseBelow (DataNode node)
+        {
+            Stack<DataNode> hierarchy;
+            TreeNode frontNode = GetRootFromDataNodePath(node, out hierarchy);
+
+            if (frontNode == null)
+                return;
+
+            while (hierarchy.Count > 0) {
+                if (!frontNode.IsExpanded)
+                    return;
+
+                DataNode childData = hierarchy.Pop();
+                foreach (TreeNode childFront in frontNode.Nodes) {
+                    if (childFront.Tag == childData) {
+                        frontNode = childFront;
+                        break;
+                    }
+                }
+            }
+
+            if (frontNode.IsExpanded)
+                frontNode.Collapse();
+        }
+
         private void UpdateNodeText (TreeNode node)
         {
             if (node == null || !(node.Tag is DataNode))
@@ -328,6 +531,33 @@ namespace NBTExplorer
 
             DataNode dataNode = node.Tag as DataNode;
             node.Text = dataNode.NodeDisplay;
+        }
+
+        private bool CheckModifications ()
+        {
+            foreach (TreeNode node in _nodeTree.Nodes) {
+                DataNode dataNode = node.Tag as DataNode;
+                if (dataNode != null && dataNode.IsModified)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private void UpdateUI ()
+        {
+            TreeNode selected = _nodeTree.SelectedNode;
+            if (selected != null && selected.Tag is DataNode) {
+                UpdateUI(selected.Tag as DataNode);
+            }
+            else {
+                _buttonSave.Enabled = CheckModifications();
+                _buttonFindNext.Enabled = false;
+
+                _menuItemSave.Enabled = _buttonSave.Enabled;
+                _menuItemFind.Enabled = false;
+                _menuItemFindNext.Enabled = _searchState != null;
+            }
         }
 
         private void UpdateUI (DataNode node)
@@ -347,24 +577,34 @@ namespace NBTExplorer
             _buttonAddTagShort.Enabled = node.CanCreateTag(TagType.TAG_SHORT);
             _buttonAddTagString.Enabled = node.CanCreateTag(TagType.TAG_STRING);
 
+            _buttonSave.Enabled = CheckModifications();
             _buttonCopy.Enabled = node.CanCopyNode;
             _buttonCut.Enabled = node.CanCutNode;
             _buttonDelete.Enabled = node.CanDeleteNode;
             _buttonEdit.Enabled = node.CanEditNode;
-            _buttonFindNext.Enabled = node.CanSearchNode; // Not entirely
-            _buttonPaste.Enabled = node.CanPasteIntoNode; // Not entirely
+            _buttonFindNext.Enabled = node.CanSearchNode || _searchState != null;
+            _buttonPaste.Enabled = node.CanPasteIntoNode;
             _buttonRename.Enabled = node.CanRenameNode;
 
+            _menuItemSave.Enabled = _buttonSave.Enabled;
             _menuItemCopy.Enabled = node.CanCopyNode;
             _menuItemCut.Enabled = node.CanCutNode;
             _menuItemDelete.Enabled = node.CanDeleteNode;
             _menuItemEditValue.Enabled = node.CanEditNode;
             _menuItemFind.Enabled = node.CanSearchNode;
-            _menuItemPaste.Enabled = node.CanPasteIntoNode; // Not entirely
+            _menuItemPaste.Enabled = node.CanPasteIntoNode;
             _menuItemRename.Enabled = node.CanRenameNode;
+            _menuItemFind.Enabled = node.CanSearchNode;
+            _menuItemFindNext.Enabled = _searchState != null;
         }
 
         #region Event Handlers
+
+        private void MainForm_Closing (object sender, CancelEventArgs e)
+        {
+            if (!ConfirmExit())
+                e.Cancel = true;
+        }
 
         #region TreeView Event Handlers
 
@@ -373,9 +613,15 @@ namespace NBTExplorer
             ExpandNode(e.Node);
         }
 
+        private void _nodeTree_AfterCollapse (object sender, TreeViewEventArgs e)
+        {
+            CollapseNode(e.Node);
+        }
+
         private void _nodeTree_AfterSelect (object sender, TreeViewEventArgs e)
         {
-            UpdateUI(e.Node.Tag as DataNode);
+            if (e.Node != null)
+                UpdateUI(e.Node.Tag as DataNode);
         }
 
         private void _nodeTree_NodeMouseDoubleClick (object sender, TreeNodeMouseClickEventArgs e)
@@ -383,9 +629,35 @@ namespace NBTExplorer
             EditNode(e.Node);
         }
 
+        private void _nodeTree_DragDrop (object sender, DragEventArgs e)
+        {
+            OpenPaths((string[])e.Data.GetData(DataFormats.FileDrop));
+        }
+
+        private void _nodeTree_DragEnter (object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Copy;
+        }
+
         #endregion
 
         #region Toolstrip Event Handlers
+
+        private void _buttonOpen_Click (object sender, EventArgs e)
+        {
+            OpenFile();
+        }
+
+        private void _buttonOpenFolder_Click (object sender, EventArgs e)
+        {
+            OpenFolder();
+        }
+
+        private void _buttonSave_Click (object sender, EventArgs e)
+        {
+            Save();
+        }
 
         private void _buttonEdit_Click (object sender, EventArgs e)
         {
@@ -472,9 +744,37 @@ namespace NBTExplorer
             CreateNode(_nodeTree.SelectedNode, TagType.TAG_STRING);
         }
 
+        private void _buttonFindNext_Click (object sender, EventArgs e)
+        {
+            if (_searchState != null)
+                SearchNextNode();
+            else
+                SearchNode(_nodeTree.SelectedNode);
+        }
+
         #endregion
 
         #region Menu Event Handlers
+
+        private void _menuItemOpen_Click (object sender, EventArgs e)
+        {
+            OpenFile();
+        }
+
+        private void _menuItemOpenFolder_Click (object sender, EventArgs e)
+        {
+            OpenFolder();
+        }
+
+        private void _menuItemOpenMinecraftSaveFolder_Click (object sender, EventArgs e)
+        {
+            OpenMinecraftDirectory();
+        }
+
+        private void _menuItemSave_Click (object sender, EventArgs e)
+        {
+            Save();
+        }
 
         private void _menuItemExit_Click (object sender, EventArgs e)
         {
@@ -508,7 +808,17 @@ namespace NBTExplorer
 
         private void _menuItemPaste_Click (object sender, EventArgs e)
         {
-            PasteNode(_nodeTree.SelectedNode);
+            PasteNode(_nodeTree.SelectedNode); 
+        }
+
+        private void _menuItemFind_Click (object sender, EventArgs e)
+        {
+            SearchNode(_nodeTree.SelectedNode);
+        }
+
+        private void _menuItemFindNext_Click (object sender, EventArgs e)
+        {
+            SearchNextNode();
         }
 
         private void _menuItemAbout_Click (object sender, EventArgs e)
@@ -519,5 +829,119 @@ namespace NBTExplorer
         #endregion
 
         #endregion
+    }
+
+    internal class SearchState
+    {
+        public DataNode RootNode { get; set; }
+        public string SearchName { get; set; }
+        public string SearchValue { get; set; }
+
+        public IEnumerator<DataNode> State { get; set; }
+
+        public Action<DataNode> DiscoverCallback { get; set; }
+        public Action<DataNode> ProgressCallback { get; set; }
+        public Action<DataNode> CollapseCallback { get; set; }
+        public Action EndCallback { get; set; }
+    }
+
+    internal class SearchWorker
+    {
+        private ContainerControl _sender;
+        private SearchState _state;
+        private bool _cancel;
+        private object _lock;
+
+        public SearchWorker (SearchState state, ContainerControl sender)
+        {
+            _state = state;
+            _sender = sender;
+            _lock = new object();
+        }
+
+        public void Cancel ()
+        {
+            lock (_lock) {
+                _cancel = true;
+            }
+        }
+
+        public void Run ()
+        {
+            if (_state.State == null)
+                _state.State = FindNode(_state.RootNode).GetEnumerator();
+
+            if (!_state.State.MoveNext())
+                InvokeEndCallback();
+        }
+
+        private IEnumerable<DataNode> FindNode (DataNode node)
+        {
+            lock (_lock) {
+                if (_cancel)
+                    yield break;
+            }
+
+            if (node == null)
+                yield break;
+
+            bool searchExpanded = false;
+            if (!node.IsExpanded) {
+                node.Expand();
+                searchExpanded = true;
+            }
+
+            TagDataNode tagNode = node as TagDataNode;
+            if (tagNode != null) {
+                bool mName = _state.SearchName == null;
+                bool mValue = _state.SearchValue == null;
+
+                if (_state.SearchName != null) {
+                    string tagName = node.NodeName;
+                    if (tagName != null)
+                        mName = tagName.Contains(_state.SearchName);
+                }
+                if (_state.SearchValue != null) {
+                    string tagValue = node.NodeDisplay;
+                    if (tagValue != null)
+                        mValue = tagValue.Contains(_state.SearchValue);
+                }
+
+                if (mName && mValue) {
+                    InvokeDiscoverCallback(node);
+                    yield return node;
+                }
+            }
+
+            foreach (DataNode sub in node.Nodes) {
+                foreach (DataNode s in FindNode(sub))
+                    yield return s;
+            }
+
+            if (searchExpanded) {
+                if (!node.IsModified) {
+                    node.Collapse();
+                    InvokeCollapseCallback(node);
+                }
+            }
+        }
+
+        private void InvokeDiscoverCallback (DataNode node)
+        {
+            if (_sender != null && _state.DiscoverCallback != null)
+                _sender.BeginInvoke(_state.DiscoverCallback, new object[] { node });
+        }
+
+        private void InvokeCollapseCallback (DataNode node)
+        {
+            if (_sender != null && _state.CollapseCallback != null)
+                _sender.BeginInvoke(_state.CollapseCallback, new object[] { node });
+        }
+
+        private void InvokeEndCallback ()
+        {
+            if (_sender != null && _state.EndCallback != null)
+                _sender.BeginInvoke(_state.EndCallback);
+        }
     }
 }

@@ -31,11 +31,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openMinecraftSaveFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this._menuItemOpen = new System.Windows.Forms.ToolStripMenuItem();
+            this._menuItemOpenFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this._menuItemOpenMinecraftSaveFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this._menuItemSave = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this._menuItemExit = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,7 +48,7 @@
             this._menuItemDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this._menuItemFind = new System.Windows.Forms.ToolStripMenuItem();
-            this.findNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this._menuItemFindNext = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this._menuItemAbout = new System.Windows.Forms.ToolStripMenuItem();
             this._nodeTree = new System.Windows.Forms.TreeView();
@@ -107,11 +107,11 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openToolStripMenuItem,
-            this.openFolderToolStripMenuItem,
-            this.openMinecraftSaveFolderToolStripMenuItem,
+            this._menuItemOpen,
+            this._menuItemOpenFolder,
+            this._menuItemOpenMinecraftSaveFolder,
             this.toolStripSeparator3,
-            this.saveToolStripMenuItem,
+            this._menuItemSave,
             this.toolStripSeparator4,
             this._menuItemExit});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -120,26 +120,26 @@
             // 
             // openToolStripMenuItem
             // 
-            this.openToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openToolStripMenuItem.Image")));
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
-            this.openToolStripMenuItem.Text = "&Open...";
+            this._menuItemOpen.Image = ((System.Drawing.Image)(resources.GetObject("openToolStripMenuItem.Image")));
+            this._menuItemOpen.Name = "openToolStripMenuItem";
+            this._menuItemOpen.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this._menuItemOpen.Size = new System.Drawing.Size(223, 22);
+            this._menuItemOpen.Text = "&Open...";
             // 
             // openFolderToolStripMenuItem
             // 
-            this.openFolderToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openFolderToolStripMenuItem.Image")));
-            this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
-            this.openFolderToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            this._menuItemOpenFolder.Image = ((System.Drawing.Image)(resources.GetObject("openFolderToolStripMenuItem.Image")));
+            this._menuItemOpenFolder.Name = "openFolderToolStripMenuItem";
+            this._menuItemOpenFolder.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.O)));
-            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
-            this.openFolderToolStripMenuItem.Text = "Open &Folder...";
+            this._menuItemOpenFolder.Size = new System.Drawing.Size(223, 22);
+            this._menuItemOpenFolder.Text = "Open &Folder...";
             // 
             // openMinecraftSaveFolderToolStripMenuItem
             // 
-            this.openMinecraftSaveFolderToolStripMenuItem.Name = "openMinecraftSaveFolderToolStripMenuItem";
-            this.openMinecraftSaveFolderToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
-            this.openMinecraftSaveFolderToolStripMenuItem.Text = "Open &Minecraft Save Folder";
+            this._menuItemOpenMinecraftSaveFolder.Name = "openMinecraftSaveFolderToolStripMenuItem";
+            this._menuItemOpenMinecraftSaveFolder.Size = new System.Drawing.Size(223, 22);
+            this._menuItemOpenMinecraftSaveFolder.Text = "Open &Minecraft Save Folder";
             // 
             // toolStripSeparator3
             // 
@@ -148,11 +148,11 @@
             // 
             // saveToolStripMenuItem
             // 
-            this.saveToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripMenuItem.Image")));
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(223, 22);
-            this.saveToolStripMenuItem.Text = "&Save";
+            this._menuItemSave.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripMenuItem.Image")));
+            this._menuItemSave.Name = "saveToolStripMenuItem";
+            this._menuItemSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this._menuItemSave.Size = new System.Drawing.Size(223, 22);
+            this._menuItemSave.Text = "&Save";
             // 
             // toolStripSeparator4
             // 
@@ -238,7 +238,7 @@
             // 
             this.searchToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._menuItemFind,
-            this.findNextToolStripMenuItem});
+            this._menuItemFindNext});
             this.searchToolStripMenuItem.Name = "searchToolStripMenuItem";
             this.searchToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
             this.searchToolStripMenuItem.Text = "&Search";
@@ -253,11 +253,11 @@
             // 
             // findNextToolStripMenuItem
             // 
-            this.findNextToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("findNextToolStripMenuItem.Image")));
-            this.findNextToolStripMenuItem.Name = "findNextToolStripMenuItem";
-            this.findNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
-            this.findNextToolStripMenuItem.Text = "Find Next";
+            this._menuItemFindNext.Image = ((System.Drawing.Image)(resources.GetObject("findNextToolStripMenuItem.Image")));
+            this._menuItemFindNext.Name = "findNextToolStripMenuItem";
+            this._menuItemFindNext.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this._menuItemFindNext.Size = new System.Drawing.Size(146, 22);
+            this._menuItemFindNext.Text = "Find Next";
             // 
             // helpToolStripMenuItem
             // 
@@ -661,18 +661,18 @@
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.ToolStripButton _buttonAddTagString;
         private System.Windows.Forms.ToolStripMenuItem _menuItemAbout;
-        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem _menuItemOpen;
+        private System.Windows.Forms.ToolStripMenuItem _menuItemOpenFolder;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem _menuItemSave;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem _menuItemExit;
         private System.Windows.Forms.ToolStripMenuItem _menuItemFind;
-        private System.Windows.Forms.ToolStripMenuItem findNextToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem _menuItemFindNext;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripButton _buttonFindNext;
         private System.Windows.Forms.ToolStripButton _buttonOpenFolder;
-        private System.Windows.Forms.ToolStripMenuItem openMinecraftSaveFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem _menuItemOpenMinecraftSaveFolder;
         private System.Windows.Forms.ToolStripPanel BottomToolStripPanel;
         private System.Windows.Forms.ToolStripPanel TopToolStripPanel;
         private System.Windows.Forms.ToolStripPanel RightToolStripPanel;

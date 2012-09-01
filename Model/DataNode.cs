@@ -75,6 +75,20 @@ namespace NBTExplorer.Model
             Nodes.Clear();
         }
 
+        public void Save ()
+        {
+            foreach (DataNode node in Nodes)
+                if (node.IsModified)
+                    node.Save();
+
+            SaveCore();
+            IsModified = false;
+        }
+
+        protected virtual void SaveCore ()
+        {
+        }
+
         public virtual string NodeName
         {
             get { return ""; }
