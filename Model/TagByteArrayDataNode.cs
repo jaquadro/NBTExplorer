@@ -1,4 +1,5 @@
-﻿using Substrate.Nbt;
+﻿using System;
+using Substrate.Nbt;
 
 namespace NBTExplorer.Model
 {
@@ -13,6 +14,11 @@ namespace NBTExplorer.Model
             get { return base.Tag as TagNodeByteArray; }
         }
 
+        public override bool CanEditNode
+        {
+            get { return !IsMono(); }
+        }
+
         public override bool EditNode ()
         {
             return EditByteHexValue(Tag);
@@ -21,6 +27,11 @@ namespace NBTExplorer.Model
         public override string NodeDisplay
         {
             get { return NodeDisplayPrefix + Tag.Data.Length + " bytes"; }
+        }
+
+        private bool IsMono ()
+        {
+            return Type.GetType("Mono.Runtime") != null;
         }
     }
 }
