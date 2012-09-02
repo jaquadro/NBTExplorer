@@ -500,7 +500,7 @@ namespace NBTExplorer
             CollapseBelow(node);
         }
 
-        private void SearchEndCallback ()
+        private void SearchEndCallback (DataNode node)
         {
             _searchForm.DialogResult = DialogResult.OK;
             _searchForm = null;

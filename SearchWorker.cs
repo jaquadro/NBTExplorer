@@ -16,7 +16,7 @@ namespace NBTExplorer
         public Action<DataNode> DiscoverCallback { get; set; }
         public Action<DataNode> ProgressCallback { get; set; }
         public Action<DataNode> CollapseCallback { get; set; }
-        public Action EndCallback { get; set; }
+        public Action<DataNode> EndCallback { get; set; }
     }
 
     internal class SearchWorker
@@ -115,7 +115,7 @@ namespace NBTExplorer
         private void InvokeEndCallback ()
         {
             if (_sender != null && _state.EndCallback != null)
-                _sender.BeginInvoke(_state.EndCallback);
+                _sender.BeginInvoke(_state.EndCallback, new object[] { null });
         }
     }
 }
