@@ -62,4 +62,24 @@ namespace NBTExplorer.Model
             Nodes.Clear();
         }
     }
+
+    public class RegionFile256 : RegionFile
+    {
+        private const int _sectorBytes = 256;
+        private static byte[] _emptySector = new byte[_sectorBytes];
+
+        public RegionFile256 (string path)
+            : base(path)
+        { }
+
+        protected override int SectorBytes
+        {
+            get { return _sectorBytes; }
+        }
+
+        protected override byte[] EmptySector
+        {
+            get { return _emptySector; }
+        }
+    }
 }

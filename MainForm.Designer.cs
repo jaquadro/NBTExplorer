@@ -86,6 +86,9 @@
             this.ContentPanel = new System.Windows.Forms.ToolStripContentPanel();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this._menuItemRecentFiles = new System.Windows.Forms.ToolStripMenuItem();
+            this._menuItemRecentFolders = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -113,6 +116,9 @@
             this.toolStripSeparator3,
             this._menuItemSave,
             this.toolStripSeparator4,
+            this._menuItemRecentFiles,
+            this._menuItemRecentFolders,
+            this.toolStripSeparator8,
             this._menuItemExit});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -605,6 +611,23 @@
             this.testToolStripMenuItem.Size = new System.Drawing.Size(96, 22);
             this.testToolStripMenuItem.Text = "Test";
             // 
+            // _menuItemRecentFiles
+            // 
+            this._menuItemRecentFiles.Name = "_menuItemRecentFiles";
+            this._menuItemRecentFiles.Size = new System.Drawing.Size(223, 22);
+            this._menuItemRecentFiles.Text = "Recent Files";
+            // 
+            // _menuItemRecentFolders
+            // 
+            this._menuItemRecentFolders.Name = "_menuItemRecentFolders";
+            this._menuItemRecentFolders.Size = new System.Drawing.Size(223, 22);
+            this._menuItemRecentFolders.Text = "Recent Folders";
+            // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(220, 6);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -687,6 +710,9 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem _menuItemRecentFiles;
+        private System.Windows.Forms.ToolStripMenuItem _menuItemRecentFolders;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
     }
 }
 

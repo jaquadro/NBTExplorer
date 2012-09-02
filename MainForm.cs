@@ -7,6 +7,8 @@ using System.Windows.Forms;
 using NBTExplorer.Forms;
 using NBTExplorer.Model;
 using Substrate.Nbt;
+using NBTExplorer.Properties;
+using System.Collections.Specialized;
 
 namespace NBTExplorer
 {
@@ -95,6 +97,8 @@ namespace NBTExplorer
             else {
                 OpenMinecraftDirectory();
             }
+
+            UpdateOpenMenu();
         }
 
         private void InitializeIconRegistry ()
@@ -119,7 +123,7 @@ namespace NBTExplorer
             _iconRegistry.Register(typeof(TagIntArrayDataNode), 14);
         }
 
-        public void OpenFile ()
+        private void OpenFile ()
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.RestoreDirectory = true;
@@ -146,7 +150,7 @@ namespace NBTExplorer
             UpdateUI();
         }
 
-        public void OpenPaths (string[] paths)
+        private void OpenPaths (string[] paths)
         {
             _nodeTree.Nodes.Clear();
 
@@ -154,10 +158,14 @@ namespace NBTExplorer
                 if (Directory.Exists(path)) {
                     DirectoryDataNode node = new DirectoryDataNode(path);
                     _nodeTree.Nodes.Add(CreateUnexpandedNode(node));
+
+                    AddPathToHistory(Settings.Default.RecentDirectories, path);
                 }
                 else if (File.Exists(path)) {
                     NbtFileDataNode node = NbtFileDataNode.TryCreateFrom(path);
                     _nodeTree.Nodes.Add(CreateUnexpandedNode(node));
+
+                    AddPathToHistory(Settings.Default.RecentFiles, path);
                 }
             }
 
@@ -166,6 +174,7 @@ namespace NBTExplorer
             }
 
             UpdateUI();
+            UpdateOpenMenu();
         }
 
         private void OpenMinecraftDirectory ()
@@ -658,10 +667,60 @@ namespace NBTExplorer
             _menuItemFindNext.Enabled = _searchState != null;
         }
 
+        private void UpdateOpenMenu ()
+        {
+            try {
+                if (Settings.Default.RecentDirectories == null)
+                    Settings.Default.RecentDirectories = new StringCollection();
+                if (Settings.Default.RecentFiles == null)
+                    Settings.Default.RecentFiles = new StringCollection();
+            }
+            catch {
+                return;
+            }
+
+            _menuItemRecentFolders.DropDown = BuildRecentEntriesDropDown(Settings.Default.RecentDirectories);
+            _menuItemRecentFiles.DropDown = BuildRecentEntriesDropDown(Settings.Default.RecentFiles);
+        }
+
+        private ToolStripDropDown BuildRecentEntriesDropDown (StringCollection list)
+        {
+            if (list == null || list.Count == 0)
+                return new ToolStripDropDown();
+
+            ToolStripDropDown menu = new ToolStripDropDown();
+            foreach (string entry in list) {
+                ToolStripMenuItem item = new ToolStripMenuItem("&" + (menu.Items.Count + 1) + " " + entry);
+                item.Tag = entry;
+                item.Click += _menuItemRecentPaths_Click;
+
+                menu.Items.Add(item);
+            }
+
+            return menu;
+        }
+
+        private void AddPathToHistory (StringCollection list, string entry)
+        {
+            foreach (string item in list) {
+                if (item == entry) {
+                    list.Remove(item);
+                    break;
+                }
+            }
+
+            while (list.Count >= 5)
+                list.RemoveAt(list.Count - 1);
+
+            list.Insert(0, entry);
+        }
+
         #region Event Handlers
 
         private void MainForm_Closing (object sender, CancelEventArgs e)
         {
+            Settings.Default.RecentFiles = Settings.Default.RecentFiles;
+            Settings.Default.Save();
             if (!ConfirmExit())
                 e.Cancel = true;
         }
@@ -844,6 +903,7 @@ namespace NBTExplorer
 
         private void _menuItemExit_Click (object sender, EventArgs e)
         {
+            Settings.Default.Save();
             Close();
         }
 
@@ -890,6 +950,15 @@ namespace NBTExplorer
         private void _menuItemAbout_Click (object sender, EventArgs e)
         {
             new About().ShowDialog();
+        }
+
+        private void _menuItemRecentPaths_Click (object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = sender as ToolStripMenuItem;
+            if (item == null || !(item.Tag is string))
+                return;
+
+            OpenPaths(new string[] { item.Tag as string });
         }
 
         #endregion
