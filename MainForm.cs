@@ -128,6 +128,8 @@ namespace NBTExplorer
             if (ofd.ShowDialog() == DialogResult.OK) {
                 OpenPaths(ofd.FileNames);
             }
+
+            UpdateUI();
         }
 
         private void OpenFolder ()
@@ -140,6 +142,8 @@ namespace NBTExplorer
                 _openFolderPath = ofd.SelectedPath;
                 OpenPaths(new string[] { ofd.SelectedPath });
             }
+
+            UpdateUI();
         }
 
         public void OpenPaths (string[] paths)
@@ -160,6 +164,8 @@ namespace NBTExplorer
             if (_nodeTree.Nodes.Count > 0) {
                 _nodeTree.Nodes[0].Expand();
             }
+
+            UpdateUI();
         }
 
         private void OpenMinecraftDirectory ()
@@ -185,6 +191,8 @@ namespace NBTExplorer
                     Application.Exit();
                 }
             }
+
+            UpdateUI();
         }
 
         private TreeNode CreateUnexpandedNode (DataNode node)
@@ -310,17 +318,6 @@ namespace NBTExplorer
             foreach (TreeNode child in node.Nodes)
                 child.ContextMenuStrip = BuildNodeContextMenu(child.Tag as DataNode);
 
-            /*foreach (DataNode child in dataNode.Nodes) {
-                if (!currentNodes.ContainsKey(child))
-                    node.Nodes.Add(CreateUnexpandedNode(child));   
-                else
-                    currentNodes.Remove(child);
-            }
-
-            foreach (TreeNode child in currentNodes.Values) {
-                node.Nodes.Remove(child);
-            }*/
-
             if (node.Nodes.Count == 0 && dataNode.HasUnexpandedChildren) {
                 ExpandNode(node);
                 node.Expand();
@@ -353,6 +350,7 @@ namespace NBTExplorer
 
             if (dataNode.RenameNode()) {
                 node.Text = dataNode.NodeDisplay;
+                UpdateUI(dataNode);
             }
         }
 

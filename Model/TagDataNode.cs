@@ -275,6 +275,7 @@ namespace NBTExplorer.Model
                 DataNode parent = Parent;
                 parent.Nodes.Remove(this);
                 parent.Nodes.Insert(newIndex, this);
+                parent.IsModified = true;
                 return true;
             }
 
