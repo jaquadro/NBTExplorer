@@ -246,7 +246,16 @@ namespace NBTExplorer
 
         private void _contextMoveDown_Click (object sender, EventArgs e)
         {
+            TreeNode frontNode = _nodeTree.SelectedNode;
+            if (frontNode == null)
+                return;
 
+            DataNode node = frontNode.Tag as DataNode;
+            if (node == null || !node.CanMoveNodeDown)
+                return;
+
+            node.ChangeRelativePosition(1);
+            RefreshChildNodes(frontNode.Parent, node.Parent);
         }
 
         private void ExpandNode (TreeNode node)

@@ -130,12 +130,6 @@
     <Compile Include="Forms\Find.Designer.cs">
       <DependentUpon>Find.cs</DependentUpon>
     </Compile>
-    <None Include="Form1.cs">
-      <SubType>Form</SubType>
-    </None>
-    <None Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </None>
     <Compile Include="Forms\EditHex.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -214,10 +208,6 @@
     <EmbeddedResource Include="Forms\Find.resx">
       <DependentUpon>Find.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </None>
     <EmbeddedResource Include="Forms\EditHex.resx">
       <DependentUpon>EditHex.cs</DependentUpon>
     </EmbeddedResource>
@@ -234,7 +224,9 @@
     <EmbeddedResource Include="Vendor\Be.Windows.Forms.HexBox\HexBox.resx">
       <DependentUpon>HexBox.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="dead_bush.ico" />
