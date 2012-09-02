@@ -119,13 +119,23 @@
     <Compile Include="Model\NodeCapabilities.cs" />
     <Compile Include="Model\RegionChunkDataNode.cs" />
     <Compile Include="Model\RegionFileDataNode.cs" />
+    <Compile Include="Model\TagByteArrayDataNode.cs" />
+    <Compile Include="Model\TagByteDataNode.cs" />
     <Compile Include="Model\TagCompoundDataNode.cs" />
     <Compile Include="Model\TagContainerInterface.cs" />
     <Compile Include="Model\TagDataNode.cs" />
+    <Compile Include="Model\TagDoubleDataNode.cs" />
+    <Compile Include="Model\TagFloatDataNode.cs" />
+    <Compile Include="Model\TagIntArrayDataNode.cs" />
+    <Compile Include="Model\TagIntDataNode.cs" />
     <Compile Include="Model\TagListDataNode.cs" />
+    <Compile Include="Model\TagLongDataNode.cs" />
+    <Compile Include="Model\TagShortDataNode.cs" />
+    <Compile Include="Model\TagStringDataNode.cs" />
     <Compile Include="NbtClipboardData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchWorker.cs" />
     <Compile Include="TagKey.cs" />
     <Compile Include="Vendor\Be.Windows.Forms.HexBox\BuiltInContextMenu.cs">
       <SubType>Component</SubType>
@@ -196,6 +206,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="dead_bush.ico" />
+    <None Include="Resources\arrow-090.png" />
+    <None Include="Resources\arrow-270.png" />
     <Content Include="Vendor\Be.Windows.Forms.HexBox\HexBox.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

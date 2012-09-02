@@ -146,6 +146,21 @@ namespace NBTExplorer.Model
             get { return (Capabilities & NodeCapabilities.Search) != NodeCapabilities.None; }
         }
 
+        public virtual bool CanReoderNode
+        {
+            get { return (Capabilities & NodeCapabilities.Reorder) != NodeCapabilities.None; }
+        }
+
+        public virtual bool CanMoveNodeUp
+        {
+            get { return false; }
+        }
+
+        public virtual bool CanMoveNodeDown
+        {
+            get { return false; }
+        }
+
         public virtual bool CanCreateTag (TagType type)
         {
             return false;
@@ -186,6 +201,11 @@ namespace NBTExplorer.Model
         }
 
         public virtual bool PasteNode ()
+        {
+            return false;
+        }
+
+        public virtual bool ChangeRelativePosition (int offset)
         {
             return false;
         }

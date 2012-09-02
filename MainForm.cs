@@ -45,6 +45,7 @@ namespace NBTExplorer
             _nodeTree.AfterCollapse += _nodeTree_AfterCollapse;
             _nodeTree.AfterSelect += _nodeTree_AfterSelect;
             _nodeTree.NodeMouseDoubleClick += _nodeTree_NodeMouseDoubleClick;
+            _nodeTree.NodeMouseClick += _nodeTree_NodeMouseClick;
             _nodeTree.DragEnter += _nodeTree_DragEnter;
             _nodeTree.DragDrop += _nodeTree_DragDrop;
 
@@ -192,11 +193,52 @@ namespace NBTExplorer
             frontNode.ImageIndex = _iconRegistry.Lookup(node.GetType());
             frontNode.SelectedImageIndex = frontNode.ImageIndex;
             frontNode.Tag = node;
+            frontNode.ContextMenuStrip = BuildNodeContextMenu(node);
 
             if (node.HasUnexpandedChildren)
                 frontNode.Nodes.Add(new TreeNode());
 
             return frontNode;
+        }
+
+        private ContextMenuStrip BuildNodeContextMenu (DataNode node)
+        {
+            if (node == null)
+                return null;
+
+            ContextMenuStrip menu = new ContextMenuStrip();
+
+            if (node.CanReoderNode) {
+                ToolStripMenuItem itemUp = new ToolStripMenuItem("Move &Up", Properties.Resources.ArrowUp, _contextMoveUp_Click);
+                ToolStripMenuItem itemDn = new ToolStripMenuItem("Move &Down", Properties.Resources.ArrowDown, _contextMoveDown_Click);
+
+                itemUp.Enabled = node.CanMoveNodeUp;
+                itemDn.Enabled = node.CanMoveNodeDown;
+
+                menu.Items.Add(itemUp);
+                menu.Items.Add(itemDn);
+            }
+
+            return (menu.Items.Count > 0) ? menu : null;
+        }
+
+        private void _contextMoveUp_Click (object sender, EventArgs e)
+        {
+            TreeNode frontNode = _nodeTree.SelectedNode;
+            if (frontNode == null)
+                return;
+
+            DataNode node = frontNode.Tag as DataNode;
+            if (node == null || !node.CanMoveNodeUp)
+                return;
+
+            node.ChangeRelativePosition(-1);
+            RefreshChildNodes(frontNode.Parent, node.Parent);
+        }
+
+        private void _contextMoveDown_Click (object sender, EventArgs e)
+        {
+
         }
 
         private void ExpandNode (TreeNode node)
@@ -257,7 +299,18 @@ namespace NBTExplorer
                     currentNodes.Add(child.Tag as DataNode, child);
             }
 
+            node.Nodes.Clear();
             foreach (DataNode child in dataNode.Nodes) {
+                if (!currentNodes.ContainsKey(child))
+                    node.Nodes.Add(CreateUnexpandedNode(child));
+                else
+                    node.Nodes.Add(currentNodes[child]);
+            }
+
+            foreach (TreeNode child in node.Nodes)
+                child.ContextMenuStrip = BuildNodeContextMenu(child.Tag as DataNode);
+
+            /*foreach (DataNode child in dataNode.Nodes) {
                 if (!currentNodes.ContainsKey(child))
                     node.Nodes.Add(CreateUnexpandedNode(child));   
                 else
@@ -266,7 +319,7 @@ namespace NBTExplorer
 
             foreach (TreeNode child in currentNodes.Values) {
                 node.Nodes.Remove(child);
-            }
+            }*/
 
             if (node.Nodes.Count == 0 && dataNode.HasUnexpandedChildren) {
                 ExpandNode(node);
@@ -627,6 +680,12 @@ namespace NBTExplorer
         private void _nodeTree_NodeMouseDoubleClick (object sender, TreeNodeMouseClickEventArgs e)
         {
             EditNode(e.Node);
+        }
+
+        private void _nodeTree_NodeMouseClick (object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+                _nodeTree.SelectedNode = e.Node;
         }
 
         private void _nodeTree_DragDrop (object sender, DragEventArgs e)

@@ -14,5 +14,6 @@ namespace NBTExplorer.Model
         Delete = 0x20,
         CreateTag = 0x40,
         Search = 0x80,
+        Reorder = 0x100,
     }
 }

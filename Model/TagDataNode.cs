@@ -57,6 +57,7 @@ namespace NBTExplorer.Model
                         | NodeCapabilities.Delete
                         | NodeCapabilities.PasteInto
                         | (TagParent.IsNamedContainer ? NodeCapabilities.Rename : NodeCapabilities.None)
+                        | (TagParent.IsOrderedContainer ? NodeCapabilities.Reorder : NodeCapabilities.None)
                         | NodeCapabilities.Search;
                 }
             }
@@ -158,7 +159,28 @@ namespace NBTExplorer.Model
                     | NodeCapabilities.Cut
                     | NodeCapabilities.Delete
                     | NodeCapabilities.Edit
-                    | (TagParent.IsNamedContainer ? NodeCapabilities.Rename : NodeCapabilities.None);
+                    | (TagParent.IsNamedContainer ? NodeCapabilities.Rename : NodeCapabilities.None)
+                    | (TagParent.IsOrderedContainer ? NodeCapabilities.Reorder : NodeCapabilities.None);
+            }
+        }
+
+        public override bool CanMoveNodeUp
+        {
+            get
+            {
+                if (TagParent.IsOrderedContainer)
+                    return TagParent.OrderedTagContainer.GetTagIndex(Tag) > 0;
+                return false;
+            }
+        }
+
+        public override bool CanMoveNodeDown
+        {
+            get
+            {
+                if (TagParent.IsOrderedContainer)
+                    return TagParent.OrderedTagContainer.GetTagIndex(Tag) < (TagParent.TagCount - 1);
+                return false;
             }
         }
 
@@ -232,6 +254,27 @@ namespace NBTExplorer.Model
 
                 TagParent.DeleteTag(Tag);
                 Parent.Nodes.Remove(this);
+                return true;
+            }
+
+            return false;
+        }
+
+        public override bool ChangeRelativePosition (int offset)
+        {
+            if (CanReoderNode) {
+                int curIndex = TagParent.OrderedTagContainer.GetTagIndex(Tag);
+                int newIndex = curIndex + offset;
+
+                if (newIndex < 0 || newIndex >= TagParent.OrderedTagContainer.TagCount)
+                    return false;
+
+                TagParent.OrderedTagContainer.DeleteTag(Tag);
+                TagParent.OrderedTagContainer.InsertTag(Tag, newIndex);
+
+                DataNode parent = Parent;
+                parent.Nodes.Remove(this);
+                parent.Nodes.Insert(newIndex, this);
                 return true;
             }
 
