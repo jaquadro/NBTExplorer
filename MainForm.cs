@@ -119,6 +119,7 @@ namespace NBTExplorer
             _iconRegistry.Register(typeof(RegionChunkDataNode), 9);
             _iconRegistry.Register(typeof(DirectoryDataNode), 10);
             _iconRegistry.Register(typeof(RegionFileDataNode), 11);
+            _iconRegistry.Register(typeof(CubicRegionDataNode), 11);
             _iconRegistry.Register(typeof(NbtFileDataNode), 12);
             _iconRegistry.Register(typeof(TagIntArrayDataNode), 14);
         }
@@ -162,10 +163,16 @@ namespace NBTExplorer
                     AddPathToHistory(Settings.Default.RecentDirectories, path);
                 }
                 else if (File.Exists(path)) {
-                    NbtFileDataNode node = NbtFileDataNode.TryCreateFrom(path);
-                    _nodeTree.Nodes.Add(CreateUnexpandedNode(node));
+                    DataNode node = null;
+                    foreach (var item in FileTypeRegistry.RegisteredTypes) {
+                        if (item.Value.NamePatternTest(path))
+                            node = item.Value.NodeCreate(path);
+                    }
 
-                    AddPathToHistory(Settings.Default.RecentFiles, path);
+                    if (node != null) {
+                        _nodeTree.Nodes.Add(CreateUnexpandedNode(node));
+                        AddPathToHistory(Settings.Default.RecentFiles, path);
+                    }
                 }
             }
 

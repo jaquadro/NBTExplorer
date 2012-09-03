@@ -137,9 +137,12 @@
       <DependentUpon>EditHex.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\CompoundTagContainer.cs" />
+    <Compile Include="Model\CubicRegionDataNode.cs" />
+    <Compile Include="Model\CubicRegionFile.cs" />
     <Compile Include="Model\DataNode.cs" />
     <Compile Include="Model\DataNodeCollection.cs" />
     <Compile Include="Model\DirectoryDataNode.cs" />
+    <Compile Include="Model\FileTypeRegistry.cs" />
     <Compile Include="Model\ListTagContainer.cs" />
     <Compile Include="Model\NbtFileDataNode.cs" />
     <Compile Include="Model\NodeCapabilities.cs" />

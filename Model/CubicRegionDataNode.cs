@@ -1,25 +1,24 @@
 ﻿using System.IO;
-using System.Windows.Forms;
-using Substrate.Core;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace NBTExplorer.Model
 {
-    public class RegionFileDataNode : DataNode
+    public class CubicRegionDataNode : DataNode
     {
         private string _path;
-        private RegionFile _region;
+        private CubicRegionFile _region;
 
-        private static Regex _namePattern = new Regex(@"^r(\.-?\d+){2}\.(mcr|mca)$");
+        private static Regex _namePattern = new Regex(@"^r2(\.-?\d+){3}\.(mcr|mca)$");
 
-        private RegionFileDataNode (string path)
+        private CubicRegionDataNode (string path)
         {
             _path = path;
         }
 
-        public static RegionFileDataNode TryCreateFrom (string path)
+        public static CubicRegionDataNode TryCreateFrom (string path)
         {
-            return new RegionFileDataNode(path);
+            return new CubicRegionDataNode(path);
         }
 
         public static bool SupportedNamePattern (string path)
@@ -50,7 +49,7 @@ namespace NBTExplorer.Model
         {
             try {
                 if (_region == null)
-                    _region = new RegionFile(_path);
+                    _region = new CubicRegionFile(_path);
 
                 for (int x = 0; x < 32; x++) {
                     for (int z = 0; z < 32; z++) {
@@ -61,7 +60,7 @@ namespace NBTExplorer.Model
                 }
             }
             catch {
-                MessageBox.Show("Not a valid region file.", "Read Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Not a valid cubic region file.", "Read Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 

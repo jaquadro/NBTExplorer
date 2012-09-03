@@ -36,20 +36,10 @@ namespace NBTExplorer.Model
             }
 
             foreach (string filepath in Directory.GetFiles(_path)) {
-                string ext = Path.GetExtension(filepath);
                 DataNode node = null;
-
-                switch (ext) {
-                    case ".mcr":
-                    case ".mca":
-                        node = RegionFileDataNode.TryCreateFrom(filepath);
-                        break;
-
-                    case ".dat":
-                    case ".nbt":
-                    case ".schematic":
-                        node = NbtFileDataNode.TryCreateFrom(filepath);
-                        break;
+                foreach (var item in FileTypeRegistry.RegisteredTypes) {
+                    if (item.Value.NamePatternTest(filepath))
+                        node = item.Value.NodeCreate(filepath);
                 }
 
                 if (node != null)

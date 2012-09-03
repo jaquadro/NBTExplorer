@@ -5,7 +5,7 @@ namespace NBTExplorer
 {
     public class IconRegistry
     {
-        private static Dictionary<Type, int> _iconRegistry;
+        private Dictionary<Type, int> _iconRegistry;
 
         public IconRegistry ()
         {

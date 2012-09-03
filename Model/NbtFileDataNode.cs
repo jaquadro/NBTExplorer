@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Substrate.Core;
 using Substrate.Nbt;
+using System.Text.RegularExpressions;
 
 namespace NBTExplorer.Model
 {
@@ -11,6 +12,8 @@ namespace NBTExplorer.Model
         private CompressionType _compressionType;
 
         private CompoundTagContainer _container;
+
+        private static Regex _namePattern = new Regex(@"\.(dat|nbt|schematic)$");
 
         private NbtFileDataNode (string path, CompressionType compressionType)
         {
@@ -40,6 +43,12 @@ namespace NBTExplorer.Model
             catch {
                 return null;
             }
+        }
+
+        public static bool SupportedNamePattern (string path)
+        {
+            path = Path.GetFileName(path);
+            return _namePattern.IsMatch(path);
         }
 
         protected override NodeCapabilities Capabilities
