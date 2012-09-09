@@ -63,7 +63,7 @@ namespace Substrate.Core
         {
             int ydiv = y / _sections[0].YDim;
             int yrem = y - (ydiv * _sections[0].YDim);
-            return ydiv * _sections[ydiv].GetIndex(x, yrem, z);
+            return (ydiv * _sections[0].Length) + _sections[ydiv].GetIndex(x, yrem, z);
         }
 
         public void GetMultiIndex (int index, out int x, out int y, out int z)
@@ -71,6 +71,7 @@ namespace Substrate.Core
             int idiv = index / _sections[0].Length;
             int irem = index - (idiv * _sections[0].Length);
             _sections[idiv].GetMultiIndex(irem, out x, out y, out z);
+            y += idiv * _sections[0].YDim;
         }
 
         #endregion
