@@ -154,6 +154,14 @@ namespace Substrate
         public const int SPRUCE_WOOD_STAIRS = 134;
         public const int BIRCH_WOOD_STAIRS = 135;
         public const int JUNGLE_WOOD_STAIRS = 136;
+        public const int COMMAND_BLOCK = 137;
+        public const int BEACON_BLOCK = 138;
+        public const int COBBLESTONE_WALL = 139;
+        public const int FLOWER_POT = 140;
+        public const int CARROTS = 141;
+        public const int POTATOES = 142;
+        public const int WOOD_BUTTON = 143;
+        public const int HEADS = 144;
     }
 
     /// <summary>
@@ -661,6 +669,14 @@ namespace Substrate
         public static BlockInfo SpruceWoodStairs;
         public static BlockInfo BirchWoodStairs;
         public static BlockInfo JungleWoodStairs;
+        public static BlockInfoEx CommandBlock;
+        public static BlockInfoEx BeaconBlock;
+        public static BlockInfo CobblestoneWall;
+        public static BlockInfo FlowerPot;
+        public static BlockInfo Carrots;
+        public static BlockInfo Potatoes;
+        public static BlockInfo WoodButton;
+        public static BlockInfo Heads;
 
         static BlockInfo ()
         {
@@ -809,6 +825,14 @@ namespace Substrate
             SpruceWoodStairs = new BlockInfo(134, "Sprice Wood Stairs").SetOpacity(0);
             BirchWoodStairs = new BlockInfo(135, "Birch Wood Stairs").SetOpacity(0);
             JungleWoodStairs = new BlockInfo(136, "Jungle Wood Stairs").SetOpacity(0);
+            CommandBlock = (BlockInfoEx)new BlockInfoEx(137, "Command Block");
+            BeaconBlock = (BlockInfoEx)new BlockInfoEx(138, "Beacon Block").SetOpacity(0).SetLuminance(MAX_LUMINANCE);
+            CobblestoneWall = new BlockInfo(139, "Cobblestone Wall").SetOpacity(0);
+            FlowerPot = new BlockInfo(140, "Flower Pot").SetOpacity(0);
+            Carrots = new BlockInfo(141, "Carrots").SetOpacity(0).SetState(BlockState.NONSOLID).SetTick(10);
+            Potatoes = new BlockInfo(142, "Potatoes").SetOpacity(0).SetState(BlockState.NONSOLID).SetTick(10);
+            WoodButton = new BlockInfo(143, "Wooden Button").SetOpacity(0).SetState(BlockState.NONSOLID);
+            Heads = new BlockInfo(144, "Heads").SetOpacity(0);
 
             for (int i = 0; i < MAX_BLOCKS; i++) {
                 if (_blockTable[i] == null) {
@@ -854,6 +878,8 @@ namespace Substrate
             BrewingStand.SetTileEntity("Cauldron");
             EndPortal.SetTileEntity("Airportal");
             EnderChest.SetTileEntity("EnderChest");
+            CommandBlock.SetTileEntity("Control");
+            BeaconBlock.SetTileEntity("Beacon");
 
             // Set Data Limits
 

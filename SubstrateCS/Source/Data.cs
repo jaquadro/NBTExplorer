@@ -414,6 +414,21 @@ namespace Substrate
         EYE_OF_ENDER = 0x4,
     }
 
+    public enum CocoaPlantSize
+    {
+        SMALL = 0x0,
+        MEDIUM = 0x4,
+        LARGE = 0x8,
+    }
+
+    public enum CocoaPlantDirection
+    {
+        NORTH = 0,
+        EAST = 1,
+        SOUTH = 2,
+        WEST = 3,
+    }
+
     public enum TripwireHookDirection
     {
         SOUTH = 0,
@@ -434,6 +449,37 @@ namespace Substrate
     {
         UNDER_OBJECT = 0x01,
         ACTIVATED = 0x04,
+    }
+
+    public enum CobblestoneWallType
+    {
+        COBBLESTONE = 0,
+        MOSS_STONE = 1,
+    }
+
+    public enum FlowerPotType
+    {
+        EMPTY = 0,
+        ROSE = 1,
+        DANDELION = 2,
+        OAK_SAPLING = 3,
+        SPRUCE_SAPLING = 4,
+        BIRCH_SAPLING = 5,
+        JUNGLE_SAPLING = 6,
+        RED_MUSHROOM = 7,
+        BROWN_MUSHROOM = 8,
+        CACTUS = 9,
+        DEAD_BUSH = 10,
+        FERN = 11,
+    }
+
+    public enum HeadType
+    {
+        SKELETON = 0,
+        WITHER_SKELETON = 1,
+        ZOMBIE = 2,
+        HUMAN = 3,
+        CREEPER = 4,
     }
 
     // Item Data

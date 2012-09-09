@@ -91,8 +91,10 @@ namespace Substrate
         static TileEntityFactory ()
         {
             _registry[TileEntityEndPortal.TypeId] = typeof(TileEntityEndPortal);
+            _registry[TileEntityBeacon.TypeId] = typeof(TileEntityBeacon);
             _registry[TileEntityBrewingStand.TypeId] = typeof(TileEntityBrewingStand);
             _registry[TileEntityChest.TypeId] = typeof(TileEntityChest);
+            _registry[TileEntityControl.TypeId] = typeof(TileEntityControl);
             _registry[TileEntityEnchantmentTable.TypeId] = typeof(TileEntityEnchantmentTable);
             _registry[TileEntityFurnace.TypeId] = typeof(TileEntityFurnace);
             _registry[TileEntityMobSpawner.TypeId] = typeof(TileEntityMobSpawner);
