@@ -51,7 +51,7 @@ namespace Substrate.TileEntities
 
         public override TileEntity Copy ()
         {
-            return new TileEntityMusic(this);
+            return new TileEntityControl(this);
         }
 
         #endregion
