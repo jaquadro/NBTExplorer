@@ -56,8 +56,7 @@ namespace NBTExplorer.Model
                 return false;
 
             if (Tag.Count == 0) {
-                Tag = new TagNodeList(type);
-                _container = new ListTagContainer(Tag);
+                Tag.ChangeValueType(type);
             }
 
             AppendTag(TagDataNode.DefaultTag(type));
