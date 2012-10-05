@@ -22,18 +22,23 @@ namespace NBTExplorer
 
         static MainForm ()
         {
-            _tagIconIndex = new Dictionary<TagType, int>();
-            _tagIconIndex[TagType.TAG_BYTE] = 0;
-            _tagIconIndex[TagType.TAG_SHORT] = 1;
-            _tagIconIndex[TagType.TAG_INT] = 2;
-            _tagIconIndex[TagType.TAG_LONG] = 3;
-            _tagIconIndex[TagType.TAG_FLOAT] = 4;
-            _tagIconIndex[TagType.TAG_DOUBLE] = 5;
-            _tagIconIndex[TagType.TAG_BYTE_ARRAY] = 6;
-            _tagIconIndex[TagType.TAG_STRING] = 7;
-            _tagIconIndex[TagType.TAG_LIST] = 8;
-            _tagIconIndex[TagType.TAG_COMPOUND] = 9;
-            _tagIconIndex[TagType.TAG_INT_ARRAY] = 14;
+            try {
+                _tagIconIndex = new Dictionary<TagType, int>();
+                _tagIconIndex[TagType.TAG_BYTE] = 0;
+                _tagIconIndex[TagType.TAG_SHORT] = 1;
+                _tagIconIndex[TagType.TAG_INT] = 2;
+                _tagIconIndex[TagType.TAG_LONG] = 3;
+                _tagIconIndex[TagType.TAG_FLOAT] = 4;
+                _tagIconIndex[TagType.TAG_DOUBLE] = 5;
+                _tagIconIndex[TagType.TAG_BYTE_ARRAY] = 6;
+                _tagIconIndex[TagType.TAG_STRING] = 7;
+                _tagIconIndex[TagType.TAG_LIST] = 8;
+                _tagIconIndex[TagType.TAG_COMPOUND] = 9;
+                _tagIconIndex[TagType.TAG_INT_ARRAY] = 14;
+            }
+            catch (Exception e) {
+                Program.StaticInitFailure(e);
+            }
         }
 
         public MainForm ()

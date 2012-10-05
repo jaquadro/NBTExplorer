@@ -45,20 +45,25 @@ namespace NBTExplorer.Model
 
         static FileTypeRegistry ()
         {
-            Register<NbtFileDataNode>(new FileTypeRecord() {
-                NamePatternTest = NbtFileDataNode.SupportedNamePattern,
-                NodeCreate = NbtFileDataNode.TryCreateFrom,
-            });
+            try {
+                Register<NbtFileDataNode>(new FileTypeRecord() {
+                    NamePatternTest = NbtFileDataNode.SupportedNamePattern,
+                    NodeCreate = NbtFileDataNode.TryCreateFrom,
+                });
 
-            Register<RegionFileDataNode>(new FileTypeRecord() {
-                NamePatternTest = RegionFileDataNode.SupportedNamePattern,
-                NodeCreate = RegionFileDataNode.TryCreateFrom,
-            });
+                Register<RegionFileDataNode>(new FileTypeRecord() {
+                    NamePatternTest = RegionFileDataNode.SupportedNamePattern,
+                    NodeCreate = RegionFileDataNode.TryCreateFrom,
+                });
 
-            Register<CubicRegionDataNode>(new FileTypeRecord() {
-                NamePatternTest = CubicRegionDataNode.SupportedNamePattern,
-                NodeCreate = CubicRegionDataNode.TryCreateFrom,
-            });
+                Register<CubicRegionDataNode>(new FileTypeRecord() {
+                    NamePatternTest = CubicRegionDataNode.SupportedNamePattern,
+                    NodeCreate = CubicRegionDataNode.TryCreateFrom,
+                });
+            }
+            catch (Exception e) {
+                Program.StaticInitFailure(e);
+            }
         }
     }
 }

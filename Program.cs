@@ -16,5 +16,17 @@ namespace NBTExplorer
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
         }
+
+        public static void StaticInitFailure (Exception e)
+        {
+            Console.WriteLine("Static Initialization Failure:");
+            while (e != null) {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+                e = e.InnerException;
+            }
+
+            Application.Exit();
+        }
     }
 }
