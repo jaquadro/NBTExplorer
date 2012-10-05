@@ -197,13 +197,16 @@ namespace NBTExplorer
 
                 OpenPaths(new string[] { path });
             }
-            catch (Exception) {
+            catch (Exception e) {
                 MessageBox.Show("Could not open default Minecraft save directory");
+                Console.WriteLine(e.Message);
+
                 try {
                     OpenPaths(new string[] { Directory.GetCurrentDirectory() });
                 }
                 catch (Exception) {
                     MessageBox.Show("Could not open current directory, this tool is probably not compatible with your platform.");
+                    Console.WriteLine(e.Message);
                     Application.Exit();
                 }
             }
@@ -219,7 +222,7 @@ namespace NBTExplorer
             frontNode.Tag = node;
             frontNode.ContextMenuStrip = BuildNodeContextMenu(node);
 
-            if (node.HasUnexpandedChildren)
+            if (node.HasUnexpandedChildren || node.Nodes.Count > 0)
                 frontNode.Nodes.Add(new TreeNode());
 
             return frontNode;
