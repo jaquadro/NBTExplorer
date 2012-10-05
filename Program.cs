@@ -20,12 +20,15 @@ namespace NBTExplorer
         public static void StaticInitFailure (Exception e)
         {
             Console.WriteLine("Static Initialization Failure:");
+
+            Exception original = e;
             while (e != null) {
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
                 e = e.InnerException;
             }
 
+            MessageBox.Show("Application failed during static initialization: " + original.Message);
             Application.Exit();
         }
     }
