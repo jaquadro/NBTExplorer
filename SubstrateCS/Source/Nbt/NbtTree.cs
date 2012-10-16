@@ -351,7 +351,7 @@ namespace Substrate.Nbt
         {
             TagType type = (TagType)_stream.ReadByte();
             if (type == TagType.TAG_COMPOUND) {
-                ReadString(); // name
+                _rootName = ReadString().ToTagString().Data; // name
                 return ReadValue(type) as TagNodeCompound;
             }
 
