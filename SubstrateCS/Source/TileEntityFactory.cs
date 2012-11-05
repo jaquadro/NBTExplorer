@@ -36,16 +36,42 @@ namespace Substrate
         /// </summary>
         /// <param name="tree">A <see cref="TagNodeCompound"/> representing a single Tile Entity, containing an 'id' field of the Tile Entity's registered name.</param>
         /// <returns>A new instance of a concrete <see cref="TileEntity"/> type, or null if no type was registered with the given name.</returns>
-        public static TileEntity Create (TagNodeCompound tree)
+        public static TileEntity Create(TagNodeCompound tree)
         {
             string type = tree["id"].ToTagString();
 
             Type t;
-            if (!_registry.TryGetValue(type, out t)) {
+            if (!_registry.TryGetValue(type, out t))
+            {
                 return null;
             }
 
             TileEntity te = Activator.CreateInstance(t) as TileEntity;
+
+            return te.LoadTreeSafe(tree);
+        }
+
+        /// <summary>
+        /// Create a new instance of a <see cref="TileEntity"/> type by NBT node, or a blank TileEntity otherwise.
+        /// </summary>
+        /// <param name="tree">A <see cref="TagNodeCompound"/> representing a single Tile Entity, containing an 'id' field of the Tile Entity's registered name.</param>
+        /// <returns>A new instance of a concrete <see cref="TileEntity"/> type, or null if no type was registered with the given name.</returns>
+        public static TileEntity CreateAlways(TagNodeCompound tree)
+        {
+            string type = tree["id"].ToTagString();
+
+            Type t;
+
+            TileEntity te;
+
+            if (!_registry.TryGetValue(type, out t))
+            {
+                te = new TileEntity("");
+            }
+            else
+            {
+                te = Activator.CreateInstance(t) as TileEntity;
+            }
 
             return te.LoadTreeSafe(tree);
         }

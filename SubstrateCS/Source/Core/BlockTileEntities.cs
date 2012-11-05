@@ -31,7 +31,7 @@ namespace Substrate.Core
             BuildTileEntityCache();
         }
 
-        public TileEntity GetTileEntity (int x, int y, int z)
+        public TileEntity GetTileEntity (int x, int y, int z, bool unregistered)
         {
             BlockKey key = (TranslateCoordinates != null)
                 ? TranslateCoordinates(x, y, z)
@@ -43,7 +43,7 @@ namespace Substrate.Core
                 return null;
             }
 
-            return TileEntityFactory.Create(te);
+            return unregistered ? TileEntityFactory.CreateAlways(te) : TileEntityFactory.Create(te);
         }
 
         public void SetTileEntity (int x, int y, int z, TileEntity te)
