@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -121,37 +121,37 @@
     <Compile Include="Source\Core\BlockTileEntities.cs" />
     <Compile Include="Source\Level.cs" />
     <Compile Include="Source\NbtWorld.cs" />
-    <Compile Include="Source\NBT\INBTObject.cs">
+    <Compile Include="Source\Nbt\INbtObject.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\NBT\NbtIOException.cs" />
-    <Compile Include="Source\NBT\NbtTree.cs" />
-    <Compile Include="Source\NBT\NBTVerifier.cs">
+    <Compile Include="Source\Nbt\NbtIOException.cs" />
+    <Compile Include="Source\Nbt\NbtTree.cs" />
+    <Compile Include="Source\Nbt\NbtVerifier.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\NBT\SchemaNode.cs" />
-    <Compile Include="Source\NBT\SchemaNodeArray.cs" />
-    <Compile Include="Source\NBT\SchemaNodeCompound.cs" />
-    <Compile Include="Source\NBT\SchemaNodeIntArray.cs" />
-    <Compile Include="Source\NBT\SchemaNodeList.cs" />
-    <Compile Include="Source\NBT\SchemaNodeScaler.cs" />
-    <Compile Include="Source\NBT\SchemaNodeString.cs" />
-    <Compile Include="Source\NBT\SchemaOptions.cs" />
-    <Compile Include="Source\NBT\TagNode.cs" />
-    <Compile Include="Source\NBT\TagNodeByteArray.cs" />
-    <Compile Include="Source\NBT\TagNodeCompound.cs" />
-    <Compile Include="Source\NBT\TagNodeDouble.cs" />
-    <Compile Include="Source\NBT\TagNodeFloat.cs" />
-    <Compile Include="Source\NBT\TagNodeInt.cs" />
-    <Compile Include="Source\NBT\TagNodeIntArray.cs" />
-    <Compile Include="Source\NBT\TagNodeList.cs" />
-    <Compile Include="Source\NBT\TagNodeLong.cs" />
-    <Compile Include="Source\NBT\TagNodeShort.cs" />
-    <Compile Include="Source\NBT\TagNodeString.cs" />
-    <Compile Include="Source\NBT\TagType.cs" />
-    <Compile Include="Source\NBT\TagNodeByte.cs" />
-    <Compile Include="Source\NBT\TagNodeNull.cs" />
-    <Compile Include="Source\NBT\VerifierLogger.cs" />
+    <Compile Include="Source\Nbt\SchemaNode.cs" />
+    <Compile Include="Source\Nbt\SchemaNodeArray.cs" />
+    <Compile Include="Source\Nbt\SchemaNodeCompound.cs" />
+    <Compile Include="Source\Nbt\SchemaNodeIntArray.cs" />
+    <Compile Include="Source\Nbt\SchemaNodeList.cs" />
+    <Compile Include="Source\Nbt\SchemaNodeScaler.cs" />
+    <Compile Include="Source\Nbt\SchemaNodeString.cs" />
+    <Compile Include="Source\Nbt\SchemaOptions.cs" />
+    <Compile Include="Source\Nbt\TagNode.cs" />
+    <Compile Include="Source\Nbt\TagNodeByteArray.cs" />
+    <Compile Include="Source\Nbt\TagNodeCompound.cs" />
+    <Compile Include="Source\Nbt\TagNodeDouble.cs" />
+    <Compile Include="Source\Nbt\TagNodeFloat.cs" />
+    <Compile Include="Source\Nbt\TagNodeInt.cs" />
+    <Compile Include="Source\Nbt\TagNodeIntArray.cs" />
+    <Compile Include="Source\Nbt\TagNodeList.cs" />
+    <Compile Include="Source\Nbt\TagNodeLong.cs" />
+    <Compile Include="Source\Nbt\TagNodeShort.cs" />
+    <Compile Include="Source\Nbt\TagNodeString.cs" />
+    <Compile Include="Source\Nbt\TagType.cs" />
+    <Compile Include="Source\Nbt\TagNodeByte.cs" />
+    <Compile Include="Source\Nbt\TagNodeNull.cs" />
+    <Compile Include="Source\Nbt\VerifierLogger.cs" />
     <Compile Include="Source\Orientation.cs" />
     <Compile Include="Source\PlayerIOException.cs" />
     <Compile Include="Source\PlayerManager.cs" />
@@ -198,7 +198,7 @@
     <Compile Include="Source\EntityFactory.cs" />
     <Compile Include="Source\Item.cs" />
     <Compile Include="Source\Core\NBTFile.cs" />
-    <Compile Include="Source\NBT\JSONSerializer.cs" />
+    <Compile Include="Source\Nbt\JSONSerializer.cs" />
     <Compile Include="Source\Player.cs" />
     <Compile Include="Source\Core\Region.cs" />
     <Compile Include="Source\Core\RegionFile.cs" />
