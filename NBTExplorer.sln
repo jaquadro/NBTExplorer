@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBTExplorer", "NBTExplorer.csproj", "{8A458245-8176-4599-95CD-3CA39F2435CE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBTExplorerMac", "NBTExplorerMac\NBTExplorerMac.csproj", "{01F9A296-C477-4CBF-A0D0-41E697048257}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -11,8 +13,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|x86 = Release|x86
+		AppStore|Any CPU = AppStore|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{01F9A296-C477-4CBF-A0D0-41E697048257}.AppStore|Any CPU.ActiveCfg = AppStore|Any CPU
+		{01F9A296-C477-4CBF-A0D0-41E697048257}.AppStore|Any CPU.Build.0 = AppStore|Any CPU
+		{01F9A296-C477-4CBF-A0D0-41E697048257}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01F9A296-C477-4CBF-A0D0-41E697048257}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01F9A296-C477-4CBF-A0D0-41E697048257}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{01F9A296-C477-4CBF-A0D0-41E697048257}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{01F9A296-C477-4CBF-A0D0-41E697048257}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{01F9A296-C477-4CBF-A0D0-41E697048257}.Debug|x86.Build.0 = Debug|Any CPU
+		{01F9A296-C477-4CBF-A0D0-41E697048257}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01F9A296-C477-4CBF-A0D0-41E697048257}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01F9A296-C477-4CBF-A0D0-41E697048257}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{01F9A296-C477-4CBF-A0D0-41E697048257}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{01F9A296-C477-4CBF-A0D0-41E697048257}.Release|x86.ActiveCfg = Release|Any CPU
+		{01F9A296-C477-4CBF-A0D0-41E697048257}.Release|x86.Build.0 = Release|Any CPU
 		{8A458245-8176-4599-95CD-3CA39F2435CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8A458245-8176-4599-95CD-3CA39F2435CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A458245-8176-4599-95CD-3CA39F2435CE}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
@@ -25,6 +42,9 @@ Global
 		{8A458245-8176-4599-95CD-3CA39F2435CE}.Release|Mixed Platforms.Build.0 = Release|x86
 		{8A458245-8176-4599-95CD-3CA39F2435CE}.Release|x86.ActiveCfg = Release|x86
 		{8A458245-8176-4599-95CD-3CA39F2435CE}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = NBTExplorerMac\NBTExplorerMac.csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

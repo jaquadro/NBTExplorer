@@ -4,7 +4,7 @@ using MonoMac.Foundation;
 using MonoMac.AppKit;
 using MonoMac.ObjCRuntime;
 
-namespace Test
+namespace NBTExplorer
 {
 	public partial class AppDelegate : NSApplicationDelegate
 	{
@@ -18,6 +18,11 @@ namespace Test
 		{
 			mainWindowController = new MainWindowController ();
 			mainWindowController.Window.MakeKeyAndOrderFront (this);
+		}
+
+		partial void ActionRename (NSObject sender)
+		{
+			mainWindowController.Window.ActionEditValue();
 		}
 	}
 }

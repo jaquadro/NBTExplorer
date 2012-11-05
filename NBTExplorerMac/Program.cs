@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using MonoMac.Foundation;
+using MonoMac.AppKit;
+using MonoMac.ObjCRuntime;
 
 namespace NBTExplorer
 {
@@ -9,15 +12,18 @@ namespace NBTExplorer
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        [STAThread]
-        static void Main ()
+        //[STAThread]
+        static void Main (string[] args)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+			NSApplication.Init ();
+			NSApplication.Main (args);
+
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
+            ///Application.Run(new MainForm());
         }
 
-        public static void StaticInitFailure (Exception e)
+        /*public static void StaticInitFailure (Exception e)
         {
             Console.WriteLine("Static Initialization Failure:");
 
@@ -30,6 +36,6 @@ namespace NBTExplorer
 
             MessageBox.Show("Application failed during static initialization: " + original.Message);
             Application.Exit();
-        }
+        }*/
     }
 }

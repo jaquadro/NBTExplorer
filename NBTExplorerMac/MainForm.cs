@@ -37,7 +37,7 @@ namespace NBTExplorer
                 _tagIconIndex[TagType.TAG_INT_ARRAY] = 14;
             }
             catch (Exception e) {
-                Program.StaticInitFailure(e);
+                //Program.StaticInitFailure(e);
             }
         }
 
