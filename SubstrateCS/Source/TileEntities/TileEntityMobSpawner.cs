@@ -13,6 +13,10 @@ namespace Substrate.TileEntities
             new SchemaNodeString("id", TypeId),
             new SchemaNodeScaler("EntityId", TagType.TAG_STRING),
             new SchemaNodeScaler("Delay", TagType.TAG_SHORT),
+			new SchemaNodeScaler("MaxSpawnDelay", TagType.TAG_SHORT, SchemaOptions.CREATE_ON_MISSING),
+			new SchemaNodeScaler("MinSpawnDelay", TagType.TAG_SHORT, SchemaOptions.CREATE_ON_MISSING),
+			new SchemaNodeScaler("SpawnCount", TagType.TAG_SHORT),
+			Entity.Schema.MergeInto(new SchemaNodeCompound("SpawnData", SchemaOptions.OPTIONAL))
         });
 
         public static string TypeId
@@ -22,6 +26,10 @@ namespace Substrate.TileEntities
 
         private short _delay;
         private string _entityID;
+		private short _maxDelay;
+		private short _minDelay;
+		private short _spawnCount;
+		private Entity _spawnData;
 
         public int Delay
         {
@@ -29,11 +37,35 @@ namespace Substrate.TileEntities
             set { _delay = (short)value; }
         }
 
+		public Entity SpawnData
+		{
+			get { return _spawnData; }
+			set { _spawnData = value; }
+		}
+
         public string EntityID
         {
             get { return _entityID; }
             set { _entityID = value; }
         }
+
+		public short MaxSpawnDelay
+		{
+			get { return _maxDelay; }
+			set { _maxDelay = value; }
+		}
+
+		public short MinSpawnDelay
+		{
+			get { return _minDelay; }
+			set { _minDelay = value; }
+		}
+
+		public short SpawnCount
+		{
+			get { return _spawnCount; }
+			set { _spawnCount = value; }
+		}
 
         protected TileEntityMobSpawner (string id)
             : base(id)
@@ -77,6 +109,10 @@ namespace Substrate.TileEntities
 
             _delay = ctree["Delay"].ToTagShort();
             _entityID = ctree["EntityId"].ToTagString();
+			_maxDelay = ctree["MaxSpawnDelay"].ToTagShort();
+			_minDelay = ctree["MinSpawnDelay"].ToTagShort();
+			_spawnCount = ctree["SpawnCount"].ToTagShort();
+			_spawnData = new Entity().LoadTree(ctree["SpawnData"].ToTagCompound());
 
             return this;
         }
@@ -86,7 +122,10 @@ namespace Substrate.TileEntities
             TagNodeCompound tree = base.BuildTree() as TagNodeCompound;
             tree["EntityId"] = new TagNodeString(_entityID);
             tree["Delay"] = new TagNodeShort(_delay);
-
+			tree["MaxSpawnDelay"] = new TagNodeShort(_maxDelay);
+			tree["MinSpawnDelay"] = new TagNodeShort(_minDelay);
+			tree["SpawnCount"] = new TagNodeShort(_spawnCount);
+			tree["SpawnData"] = _spawnData.BuildTree();
             return tree;
         }
 
