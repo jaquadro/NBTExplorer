@@ -1,6 +1,6 @@
-﻿using Substrate.Core;
+﻿using System.IO;
+using Substrate.Core;
 using Substrate.Nbt;
-using System.IO;
 
 namespace NBTExplorer.Model
 {

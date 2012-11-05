@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using NBTExplorer.Windows;
 using Substrate.Nbt;
 
 namespace NBTExplorer.Model
@@ -50,12 +48,16 @@ namespace NBTExplorer.Model
             if (!CanCreateTag(type))
                 return false;
 
-            CreateNodeForm form = new CreateNodeForm(type, true);
-            form.InvalidNames.AddRange(_container.TagNamesInUse);
+            if (FormRegistry.CreateNode != null) {
+                CreateTagFormData data = new CreateTagFormData() {
+                    TagType = type, HasName = true,
+                };
+                data.RestrictedNames.AddRange(_container.TagNamesInUse);
 
-            if (form.ShowDialog() == DialogResult.OK) {
-                AddTag(form.TagNode, form.TagName);
-                return true;
+                if (FormRegistry.CreateNode(data)) {
+                    AddTag(data.TagNode, data.TagName);
+                    return true;
+                }
             }
 
             return false;

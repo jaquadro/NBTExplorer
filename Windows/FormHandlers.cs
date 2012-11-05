@@ -11,6 +11,14 @@ namespace NBTExplorer.Windows
             FormRegistry.EditString = EditStringHandler;
             FormRegistry.EditTagScalar = EditTagScalarValueHandler;
             FormRegistry.RenameTag = RenameTagHandler;
+            FormRegistry.CreateNode = CreateNodeHandler;
+
+            FormRegistry.MessageBox = MessageBoxHandler;
+        }
+
+        public static void MessageBoxHandler (string message)
+        {
+            MessageBox.Show(message);
         }
 
         public static bool EditStringHandler (StringFormData data)
@@ -51,6 +59,20 @@ namespace NBTExplorer.Windows
             HexEditor form = new HexEditor(data.NodeName, data.Data, data.BytesPerElement);
             if (form.ShowDialog() == DialogResult.OK && form.Modified) {
                 Array.Copy(form.Data, data.Data, data.Data.Length);
+                return true;
+            }
+            else
+                return false;
+        }
+
+        public static bool CreateNodeHandler (CreateTagFormData data)
+        {
+            CreateNodeForm form = new CreateNodeForm(data.TagType, data.HasName);
+            form.InvalidNames.AddRange(data.RestrictedNames);
+
+            if (form.ShowDialog() == DialogResult.OK) {
+                data.TagNode = form.TagNode;
+                data.TagName = form.TagName;
                 return true;
             }
             else
