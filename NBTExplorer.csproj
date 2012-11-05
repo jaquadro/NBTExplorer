@@ -58,6 +58,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>True</Optimize>
     <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisLogFile>bin\Release\NBTExplorer.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
@@ -79,60 +80,60 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Forms\CancelSearchForm.cs">
+    <Compile Include="FormRegistry.cs" />
+    <Compile Include="Windows\CancelSearchForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\CancelSearchForm.Designer.cs">
+    <Compile Include="Windows\CancelSearchForm.Designer.cs">
       <DependentUpon>CancelSearchForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="IconRegistry.cs" />
-    <Compile Include="MainForm.cs">
+    <Compile Include="Windows\IconRegistry.cs" />
+    <Compile Include="Windows\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
+    <Compile Include="Windows\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataNode.cs" />
-    <Compile Include="Forms\About.cs">
+    <Compile Include="Windows\About.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\About.Designer.cs">
+    <Compile Include="Windows\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\EditName.cs">
+    <Compile Include="Windows\EditName.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\EditName.Designer.cs">
+    <Compile Include="Windows\EditName.Designer.cs">
       <DependentUpon>EditName.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\EditString.cs">
+    <Compile Include="Windows\EditString.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\EditString.Designer.cs">
+    <Compile Include="Windows\EditString.Designer.cs">
       <DependentUpon>EditString.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\CreateNode.cs">
+    <Compile Include="Windows\CreateNode.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\CreateNode.Designer.cs">
+    <Compile Include="Windows\CreateNode.Designer.cs">
       <DependentUpon>CreateNode.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\EditValue.cs">
+    <Compile Include="Windows\EditValue.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\EditValue.Designer.cs">
+    <Compile Include="Windows\EditValue.Designer.cs">
       <DependentUpon>EditValue.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Find.cs">
+    <Compile Include="Windows\Find.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Find.Designer.cs">
+    <Compile Include="Windows\Find.Designer.cs">
       <DependentUpon>Find.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\EditHex.cs">
+    <Compile Include="Windows\EditHex.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\EditHex.Designer.cs">
+    <Compile Include="Windows\EditHex.Designer.cs">
       <DependentUpon>EditHex.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\CompoundTagContainer.cs" />
@@ -169,6 +170,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="SearchWorker.cs" />
+    <Compile Include="Model\TagKey.cs" />
     <Compile Include="Vendor\Be.Windows.Forms.HexBox\BuiltInContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -189,32 +191,33 @@
     <Compile Include="Vendor\Be.Windows.Forms.HexBox\MemoryDataBlock.cs" />
     <Compile Include="Vendor\Be.Windows.Forms.HexBox\NativeMethods.cs" />
     <Compile Include="Vendor\Be.Windows.Forms.HexBox\Util.cs" />
-    <EmbeddedResource Include="Forms\CancelSearchForm.resx">
+    <Compile Include="Windows\FormHandlers.cs" />
+    <EmbeddedResource Include="Windows\CancelSearchForm.resx">
       <DependentUpon>CancelSearchForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
+    <EmbeddedResource Include="Windows\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\About.resx">
+    <EmbeddedResource Include="Windows\About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\EditName.resx">
+    <EmbeddedResource Include="Windows\EditName.resx">
       <DependentUpon>EditName.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\EditString.resx">
+    <EmbeddedResource Include="Windows\EditString.resx">
       <DependentUpon>EditString.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\CreateNode.resx">
+    <EmbeddedResource Include="Windows\CreateNode.resx">
       <DependentUpon>CreateNode.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\EditValue.resx">
+    <EmbeddedResource Include="Windows\EditValue.resx">
       <DependentUpon>EditValue.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Find.resx">
+    <EmbeddedResource Include="Windows\Find.resx">
       <DependentUpon>Find.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\EditHex.resx">
+    <EmbeddedResource Include="Windows\EditHex.resx">
       <DependentUpon>EditHex.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -233,7 +236,6 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <Compile Include="TagKey.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="dead_bush.ico" />
@@ -245,6 +247,7 @@
     <None Include="Resources\arrow-270.png" />
     <Content Include="Vendor\Be.Windows.Forms.HexBox\HexBox.bmp" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
