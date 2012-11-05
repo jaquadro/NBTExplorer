@@ -1,4 +1,4 @@
-﻿namespace NBTExplorer.Forms
+﻿namespace NBTExplorer.Windows
 {
     partial class CancelSearchForm
     {

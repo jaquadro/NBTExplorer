@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using NBTExplorer.Forms;
 using NBTExplorer.Model;
-using Substrate.Nbt;
 using NBTExplorer.Properties;
-using System.Collections.Specialized;
+using Substrate.Nbt;
 
-namespace NBTExplorer
+namespace NBTExplorer.Windows
 {
     public partial class MainForm : Form
     {
@@ -45,6 +44,7 @@ namespace NBTExplorer
         {
             InitializeComponent();
             InitializeIconRegistry();
+            FormHandlers.Register();
 
             FormClosing += MainForm_Closing;
 

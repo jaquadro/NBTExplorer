@@ -1,4 +1,4 @@
-﻿namespace NBTExplorer
+﻿namespace NBTExplorer.Windows
 {
     partial class EditName
     {

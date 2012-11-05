@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NBTExplorer
+namespace NBTExplorer.Windows
 {
     public class IconRegistry
     {

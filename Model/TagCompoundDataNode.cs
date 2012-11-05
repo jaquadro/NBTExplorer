@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using NBTExplorer.Windows;
 using Substrate.Nbt;
 
 namespace NBTExplorer.Model

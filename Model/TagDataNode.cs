@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
+//susing System.Windows.Forms;
 using Substrate.Nbt;
 
 namespace NBTExplorer.Model
@@ -221,11 +221,12 @@ namespace NBTExplorer.Model
 
         public override bool RenameNode ()
         {
-            if (CanRenameNode && TagParent.IsNamedContainer) {
-                EditName form = new EditName(TagParent.NamedTagContainer.GetTagName(Tag));
-                form.InvalidNames.AddRange(TagParent.NamedTagContainer.TagNamesInUse);
-                if (form.ShowDialog() == DialogResult.OK && form.IsModified) {
-                    if (TagParent.NamedTagContainer.RenameTag(Tag, form.TagName)) {
+            if (CanRenameNode && TagParent.IsNamedContainer && FormRegistry.EditString != null) {
+                RestrictedStringFormData data = new RestrictedStringFormData(TagParent.NamedTagContainer.GetTagName(Tag));
+                data.RestrictedValues.AddRange(TagParent.NamedTagContainer.TagNamesInUse);
+
+                if (FormRegistry.RenameTag(data)) {
+                    if (TagParent.NamedTagContainer.RenameTag(Tag, data.Value)) {
                         IsModified = true;
                         return true;
                     }
@@ -284,61 +285,77 @@ namespace NBTExplorer.Model
 
         protected bool EditScalarValue (TagNode tag)
         {
-            EditValue form = new EditValue(tag);
-            if (form.ShowDialog() == DialogResult.OK) {
-                IsModified = true;
-                return true;
+            if (FormRegistry.EditTagScalar != null) {
+                if (FormRegistry.EditTagScalar(new TagScalarFormData(tag))) {
+                    IsModified = true;
+                    return true;
+                }
             }
-            else
-                return false;
+            return false;
         }
 
         protected bool EditStringValue (TagNode tag)
         {
-            EditString form = new EditString(tag.ToTagString().Data);
-            if (form.ShowDialog() == DialogResult.OK) {
-                tag.ToTagString().Data = form.StringValue;
-
-                IsModified = true;
-                return true;
+            if (FormRegistry.EditString != null) {
+                StringFormData data = new StringFormData(tag.ToTagString().Data);
+                if (FormRegistry.EditString(data)) {
+                    tag.ToTagString().Data = data.Value;
+                    IsModified = true;
+                    return true;
+                }
             }
-            else
-                return false;
+            return false;
         }
 
         protected bool EditByteHexValue (TagNode tag)
         {
-            HexEditor form = new HexEditor(NodeName, tag.ToTagByteArray().Data, 1);
-            if (form.ShowDialog() == DialogResult.OK && form.Modified) {
-                Array.Copy(form.Data, tag.ToTagByteArray().Data, tag.ToTagByteArray().Length);
+            if (FormRegistry.EditByteArray != null) {
+                byte[] byteData = new byte[tag.ToTagByteArray().Length];
+                Array.Copy(tag.ToTagByteArray().Data, byteData, byteData.Length);
 
-                IsModified = true;
-                return true;
+                ByteArrayFormData data = new ByteArrayFormData() {
+                    NodeName = NodeName,
+                    BytesPerElement = 1,
+                    Data = byteData,
+                };
+
+                if (FormRegistry.EditByteArray(data)) {
+                    Array.Copy(data.Data, tag.ToTagByteArray().Data, tag.ToTagByteArray().Length);
+                    IsModified = true;
+                    return true;
+                }
             }
-            else
-                return false;
+
+            return false;
         }
 
         protected bool EditIntHexValue (TagNode tag)
         {
-            TagNodeIntArray iatag = tag.ToTagIntArray();
-            byte[] data = new byte[iatag.Length * 4];
-            for (int i = 0; i < iatag.Length; i++) {
-                byte[] buf = BitConverter.GetBytes(iatag.Data[i]);
-                Array.Copy(buf, 0, data, 4 * i, 4);
-            }
-
-            HexEditor form = new HexEditor(NodeName, data, 4);
-            if (form.ShowDialog() == DialogResult.OK && form.Modified) {
+            if (FormRegistry.EditByteArray != null) {
+                TagNodeIntArray iatag = tag.ToTagIntArray();
+                byte[] byteData = new byte[iatag.Length * 4];
                 for (int i = 0; i < iatag.Length; i++) {
-                    iatag.Data[i] = BitConverter.ToInt32(form.Data, i * 4);
+                    byte[] buf = BitConverter.GetBytes(iatag.Data[i]);
+                    Array.Copy(buf, 0, byteData, 4 * i, 4);
                 }
 
-                IsModified = true;
-                return true;
+                ByteArrayFormData data = new ByteArrayFormData() {
+                    NodeName = NodeName,
+                    BytesPerElement = 4,
+                    Data = byteData,
+                };
+
+                if (FormRegistry.EditByteArray(data)) {
+                    for (int i = 0; i < iatag.Length; i++) {
+                        iatag.Data[i] = BitConverter.ToInt32(data.Data, i * 4);
+                    }
+
+                    IsModified = true;
+                    return true;
+                }
             }
-            else
-                return false;
+
+            return false;
         }
     }
 }
