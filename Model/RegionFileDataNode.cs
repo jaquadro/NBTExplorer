@@ -1,7 +1,6 @@
 ﻿using System.IO;
-using System.Windows.Forms;
-using Substrate.Core;
 using System.Text.RegularExpressions;
+using Substrate.Core;
 
 namespace NBTExplorer.Model
 {
@@ -61,7 +60,8 @@ namespace NBTExplorer.Model
                 }
             }
             catch {
-                MessageBox.Show("Not a valid region file.", "Read Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                if (FormRegistry.MessageBox != null)
+                    FormRegistry.MessageBox("Not a valid region file.");
             }
         }
 

@@ -10,11 +10,15 @@ namespace NBTExplorer
         public delegate bool EditRestrictedStringAction (RestrictedStringFormData data);
         public delegate bool EditTagScalarAction (TagScalarFormData data);
         public delegate bool EditByteArrayAction (ByteArrayFormData data);
+        public delegate bool CreateNodeAction (CreateTagFormData data);
 
         public static EditStringAction EditString { get; set; }
         public static EditRestrictedStringAction RenameTag { get; set; }
         public static EditTagScalarAction EditTagScalar { get; set; }
         public static EditByteArrayAction EditByteArray { get; set; }
+        public static CreateNodeAction CreateNode { get; set; }
+
+        public static Action<string> MessageBox { get; set; }
     }
 
     public class TagScalarFormData
@@ -50,6 +54,21 @@ namespace NBTExplorer
         {
             get { return _restricted; }
         }
+    }
+
+    public class CreateTagFormData
+    {
+        public CreateTagFormData ()
+        {
+            RestrictedNames = new List<string>();
+        }
+
+        public TagType TagType { get; set; }
+        public bool HasName { get; set; }
+        public List<String> RestrictedNames { get; private set; }
+
+        public TagNode TagNode { get; set; }
+        public string TagName { get; set; }
     }
 
     public class ByteArrayFormData

@@ -1,7 +1,7 @@
 ﻿using System.IO;
+using System.Text.RegularExpressions;
 using Substrate.Core;
 using Substrate.Nbt;
-using System.Text.RegularExpressions;
 
 namespace NBTExplorer.Model
 {

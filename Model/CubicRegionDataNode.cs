@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace NBTExplorer.Model
 {
@@ -60,7 +59,8 @@ namespace NBTExplorer.Model
                 }
             }
             catch {
-                MessageBox.Show("Not a valid cubic region file.", "Read Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                if (FormRegistry.MessageBox != null)
+                    FormRegistry.MessageBox("Not a valid cubic region file.");
             }
         }
 
