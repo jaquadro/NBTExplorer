@@ -239,6 +239,14 @@ namespace Substrate
         }
 
         /// <summary>
+        /// Gets the source <see cref="TagNodeCompound"/> used to create this <see cref="Level"/> if it exists.
+        /// </summary>
+        public TagNodeCompound Source
+        {
+            get { return _source; }
+        }
+
+        /// <summary>
         /// Gets a <see cref="SchemaNode"/> representing the schema of a level.
         /// </summary>
         public static SchemaNodeCompound Schema

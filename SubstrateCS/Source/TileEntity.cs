@@ -65,7 +65,7 @@ namespace Substrate
         /// <summary>
         /// Gets the source <see cref="TagNodeCompound"/> used to create this <see cref="TileEntity"/> if it exists.
         /// </summary>
-        protected TagNodeCompound Source
+        public TagNodeCompound Source
         {
             get { return _source; }
         }

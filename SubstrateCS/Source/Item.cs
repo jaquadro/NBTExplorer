@@ -96,6 +96,14 @@ namespace Substrate
         }
 
         /// <summary>
+        /// Gets the source <see cref="TagNodeCompound"/> used to create this <see cref="Item"/> if it exists.
+        /// </summary>
+        public TagNodeCompound Source
+        {
+            get { return _source; }
+        }
+
+        /// <summary>
         /// Gets a <see cref="SchemaNode"/> representing the schema of an item.
         /// </summary>
         public static SchemaNodeCompound Schema
