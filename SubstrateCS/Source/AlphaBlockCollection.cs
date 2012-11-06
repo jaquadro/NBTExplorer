@@ -677,15 +677,9 @@ namespace Substrate
         }
 
         /// <inheritdoc/>
-        public TileEntity GetTileEntity(int x, int y, int z)
+        public TileEntity GetTileEntity (int x, int y, int z)
         {
-            return GetTileEntity(x, y, z, false);
-        }
-
-        /// <inheritdoc/>
-        public TileEntity GetTileEntity(int x, int y, int z, bool unregistered)
-        {
-            return _tileEntityManager.GetTileEntity(x, y, z, unregistered);
+            return _tileEntityManager.GetTileEntity(x, y, z);
         }
 
         internal TileEntity GetTileEntity (int index)
@@ -693,7 +687,7 @@ namespace Substrate
             int x, y, z;
             _blocks.GetMultiIndex(index, out x, out y, out z);
 
-            return GetTileEntity(x, y, z, false);
+            return _tileEntityManager.GetTileEntity(x, y, z);
         }
 
         /// <inheritdoc/>

@@ -52,27 +52,23 @@ namespace Substrate
         }
 
         /// <summary>
-        /// Create a new instance of a <see cref="TileEntity"/> type by NBT node, or a blank TileEntity otherwise.
+        /// Create a new instance of a concrete <see cref="TileEntity"/> type by NBT node.
         /// </summary>
         /// <param name="tree">A <see cref="TagNodeCompound"/> representing a single Tile Entity, containing an 'id' field of the Tile Entity's registered name.</param>
         /// <returns>A new instance of a concrete <see cref="TileEntity"/> type, or null if no type was registered with the given name.</returns>
-        public static TileEntity CreateAlways(TagNodeCompound tree)
+        public static TileEntity CreateGeneric(TagNodeCompound tree)
         {
             string type = tree["id"].ToTagString();
 
             Type t;
 
-            TileEntity te;
-
             if (!_registry.TryGetValue(type, out t))
             {
-                te = new TileEntity("");
-            }
-            else
-            {
-                te = Activator.CreateInstance(t) as TileEntity;
+                t = typeof (TileEntity);
             }
 
+            TileEntity te = Activator.CreateInstance(t, true) as TileEntity;
+            
             return te.LoadTreeSafe(tree);
         }
 
