@@ -19,6 +19,7 @@ namespace NBTExplorer.Mac
 
 		public ImageAndTextCell ()
 		{
+			Initialize();
 		}
 
 		public ImageAndTextCell (IntPtr handle)
@@ -39,6 +40,8 @@ namespace NBTExplorer.Mac
 		{
 			LineBreakMode = NSLineBreakMode.TruncatingTail;
 			Selectable = true;
+
+			PeriodicCleanup();
 		}
 
 		protected override void Dispose (bool disposing)
@@ -53,6 +56,127 @@ namespace NBTExplorer.Mac
 			base.Dispose (disposing);
 		}
 
+		static List<ImageAndTextCell> _refPool = new List<ImageAndTextCell>();
+
+		// Method 1
+
+		/*static IntPtr selRetain = Selector.GetHandle ("retain");
+
+		[Export("copyWithZone:")]
+		public virtual NSObject CopyWithZone(IntPtr zone) {
+			ImageAndTextCell cell = new ImageAndTextCell() {
+				Title = Title,
+				Image = Image,
+			};
+
+			Messaging.void_objc_msgSend (cell.Handle, selRetain);
+
+			return cell;
+		}*/
+
+		// Method 2
+
+		/*[Export("copyWithZone:")]
+		public virtual NSObject CopyWithZone(IntPtr zone) {
+			ImageAndTextCell cell = new ImageAndTextCell() {
+				Title = Title,
+				Image = Image,
+			};
+
+			_refPool.Add(cell);
+			
+			return cell;
+		}
+
+		[Export("dealloc")]
+		public void Dealloc ()
+		{
+			_refPool.Remove(this);
+			this.Dispose();
+		}
+
+		// Method 3
+
+		static IntPtr selRetain = Selector.GetHandle ("retain");
+
+		[Export("copyWithZone:")]
+		public virtual NSObject CopyWithZone(IntPtr zone) {
+			ImageAndTextCell cell = new ImageAndTextCell() {
+				Title = Title,
+				Image = Image,
+			};
+
+			_refPool.Add(cell);
+			Messaging.void_objc_msgSend (cell.Handle, selRetain);
+			
+			return cell;
+		}
+
+		// Method 4
+
+		static IntPtr selRetain = Selector.GetHandle ("retain");
+		static IntPtr selRetainCount = Selector.GetHandle("retainCount");
+
+		[Export("copyWithZone:")]
+		public virtual NSObject CopyWithZone (IntPtr zone)
+		{
+			ImageAndTextCell cell = new ImageAndTextCell () {
+				Title = Title,
+				Image = Image,
+			};
+			
+			_refPool.Add (cell);
+			Messaging.void_objc_msgSend (cell.Handle, selRetain);
+
+			return cell;
+		}*/
+
+		static IntPtr selRetain = Selector.GetHandle ("retain");
+		static IntPtr selRetainCount = Selector.GetHandle("retainCount");
+
+		public void PeriodicCleanup ()
+		{
+			List<ImageAndTextCell> markedForDelete = new List<ImageAndTextCell> ();
+
+			foreach (ImageAndTextCell cell in _refPool) {
+				uint count = Messaging.UInt32_objc_msgSend (cell.Handle, selRetainCount);
+				if (count == 1)
+					markedForDelete.Add (cell);
+			}
+
+			foreach (ImageAndTextCell cell in markedForDelete) {
+				_refPool.Remove (cell);
+				cell.Dispose ();
+			}
+		}
+
+		// Method 5
+
+		static IntPtr selCopyWithZone = Selector.GetHandle("copyWithZone:");
+		static IntPtr selDealloc = Selector.GetHandle("dealloc");
+
+		[Export("copyWithZone:")]
+		public virtual NSObject CopyWithZone(IntPtr zone) {
+			IntPtr copyHandle = Messaging.IntPtr_objc_msgSendSuper_IntPtr(SuperHandle, selCopyWithZone, zone);
+			ImageAndTextCell cell = new ImageAndTextCell(copyHandle) {
+				Image = Image,
+			};
+
+			_refPool.Add(cell);
+			
+			return cell;
+		}
+
+		/*[Export("dealloc")]
+		public void Dealloc ()
+		{
+			//_refPool.Remove(this);
+			//Messaging.void_objc_msgSendSuper(SuperHandle, selDealloc);
+		}*/
+
+
+
+
 		/*[Export("copyWithZone:")]
 		public virtual NSObject CopyWithZone(IntPtr zone) {
 			ImageAndTextCell cell = new ImageAndTextCell() {
@@ -63,14 +187,14 @@ namespace NBTExplorer.Mac
 			return cell;
 		}*/
 
-		static List<ImageAndTextCell> _refPool = new List<ImageAndTextCell>();
+		//static List<ImageAndTextCell> _refPool = new List<ImageAndTextCell>();
 
 		//static IntPtr selRetain = Selector.GetHandle ("retain");
 		//static IntPtr selAutoRelease = Selector.GetHandle("autorelease");
 		//static IntPtr selRelease = Selector.GetHandle("release");
 		//static IntPtr selCopyWithZone = Selector.GetHandle("copyWithZone:");
 
-		[Export("copyWithZone:")]
+		/*[Export("copyWithZone:")]
 		public NSObject CopyWithZone (IntPtr zone)
 		{
 			//IntPtr copy = Messaging.IntPtr_objc_msgSendSuper_IntPtr(SuperHandle, selCopyWithZone, zone);
@@ -99,7 +223,7 @@ namespace NBTExplorer.Mac
 			_refPool.Remove(this);
 
 			//Messaging.void_objc_msgSendSuper(SuperHandle, selDealloc);
-		}
+		}*/
 
 		public new NSImage Image
 		{

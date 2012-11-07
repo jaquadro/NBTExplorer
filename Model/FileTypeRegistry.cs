@@ -62,7 +62,7 @@ namespace NBTExplorer.Model
                 });
             }
             catch (Exception e) {
-                Program.StaticInitFailure(e);
+                //Program.StaticInitFailure(e);
             }
         }
     }

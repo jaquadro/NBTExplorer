@@ -6,6 +6,8 @@ namespace NBTExplorer.Mac.Test
 	{
 		// ...
 
+
+
 		[Outlet]
 		MonoMac.AppKit.NSOutlineView _mainOutlineView { get; set; }
 		

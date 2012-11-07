@@ -270,7 +270,6 @@
 													</object>
 													<int key="NSResizingMask">3</int>
 													<bool key="NSIsResizeable">YES</bool>
-													<bool key="NSIsEditable">YES</bool>
 													<reference key="NSTableView" ref="26648463"/>
 												</object>
 											</object>
@@ -337,7 +336,6 @@
 									<string key="NSFrame">{{1, 544}, {776, 15}}</string>
 									<reference key="NSSuperview" ref="595155248"/>
 									<reference key="NSWindow"/>
-									<reference key="NSNextKeyView"/>
 									<string key="NSReuseIdentifierKey">_NS:60</string>
 									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 									<int key="NSsFlags">1</int>

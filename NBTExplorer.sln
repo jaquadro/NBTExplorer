@@ -46,7 +46,7 @@ Global
 		{8A458245-8176-4599-95CD-3CA39F2435CE}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = NBTExplorer.csproj
+		StartupItem = NBTExplorerMac.csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

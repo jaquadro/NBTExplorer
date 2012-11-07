@@ -7,6 +7,7 @@ using MonoMac.AppKit;
 using NBTExplorer.Mac;
 using System.IO;
 using NBTExplorer.Model;
+using Substrate.Nbt;
 
 namespace NBTExplorer
 {
@@ -31,7 +32,10 @@ namespace NBTExplorer
 		void Initialize ()
 		{
 			InitializeIconRegistry();
+			FormHandlers.Register();
 		}
+
+		private AppDelegate _appDelegate;
 
 		private NBTExplorer.Mac.IconRegistry _iconRegistry;
 
@@ -56,6 +60,12 @@ namespace NBTExplorer
 			_iconRegistry.Register(typeof(CubicRegionDataNode), NSImage.ImageNamed("block.png"));
 			_iconRegistry.Register(typeof(NbtFileDataNode), NSImage.ImageNamed("wooden-box.png"));
 			_iconRegistry.Register(typeof(TagIntArrayDataNode), NSImage.ImageNamed("edit-code-i.png"));
+		}
+
+		public AppDelegate AppDelegate
+		{
+			get { return _appDelegate; }
+			set { _appDelegate = value; }
 		}
 		
 		#endregion
@@ -162,7 +172,7 @@ namespace NBTExplorer
 				OpenPaths(new string[] { opanel.DirectoryUrl.Path });
 			}
 
-			//UpdateUI();
+			UpdateUI();
 		}
 
 		private void OpenMinecraftDirectory ()
@@ -192,7 +202,7 @@ namespace NBTExplorer
 				}
 			}
 			
-			//UpdateUI();
+			UpdateUI();
 		}
 
 		private void OpenPaths (string[] paths)
@@ -217,7 +227,7 @@ namespace NBTExplorer
 
 			_mainOutlineView.ReloadData();
 
-			// UpdateUI();
+			UpdateUI();
 			// UpdateOpenMenu();
 
 			/*_nodeTree.Nodes.Clear();
@@ -268,7 +278,7 @@ namespace NBTExplorer
 			
 			foreach (DataNode child in backNode.Nodes) {
 				if (child != null) {
-					node.Nodes.Add (new TreeDataNode (child));
+					node.AddNode (new TreeDataNode (child));
 				}
 			}
 		}
@@ -297,6 +307,20 @@ namespace NBTExplorer
 				EditNode(node);
 		}
 
+		public void ActionRenameValue ()
+		{
+			TreeDataNode node = _mainOutlineView.ItemAtRow(_mainOutlineView.SelectedRow) as TreeDataNode;
+			if (node != null)
+				RenameNode(node);
+		}
+
+		public void ActionDeleteValue ()
+		{
+			TreeDataNode node = _mainOutlineView.ItemAtRow(_mainOutlineView.SelectedRow) as TreeDataNode;
+			if (node != null)
+				DeleteNode(node);
+		}
+
 		private void EditNode (TreeDataNode node)
 		{
 			if (node == null)
@@ -305,13 +329,86 @@ namespace NBTExplorer
 			if (!node.Data.CanEditNode)
 				return;
 
-			//NBTExplorer.Mac.EditValue form = new NBTExplorer.Mac.EditValue(node.Data);
+			if (node.Data.EditNode()) {
+				//node.Text = node.Data.NodeDisplay;
+				UpdateUI(node.Data);
+			}
+		}
 
-			
-			//if (node.Data.EditNode()) {
+		private void RenameNode (TreeDataNode node)
+		{
+			if (node == null)
+				return;
+
+			if (!node.Data.CanRenameNode)
+				return;
+
+			if (node.Data.RenameNode()) {
 				//node.Text = dataNode.NodeDisplay;
-				//UpdateUI(dataNode);
-			//}
+				UpdateUI(node.Data);
+			}
+		}
+
+		private void DeleteNode (TreeDataNode node)
+		{
+			if (node == null)
+				return;
+
+			if (!node.Data.CanDeleteNode)
+				return;
+
+			if (node.Data.DeleteNode()) {
+				UpdateUI(node.Parent.Data);
+				//UpdateNodeText(node.Parent);
+				TreeDataNode parent = node.Parent;
+				node.Remove();
+
+				_mainOutlineView.ReloadItem(parent, true);
+			}
+		}
+
+		private void UpdateUI ()
+		{
+			if (_appDelegate == null)
+				return;
+
+			TreeDataNode selected = _mainOutlineView.ItemAtRow(_mainOutlineView.SelectedRow) as TreeDataNode;
+			if (selected != null) {
+				UpdateUI(selected.Data);
+			}
+			else {
+				//_appDelegate.MenuSave.Enabled = CheckModifications();
+				_appDelegate.MenuFind.Enabled = false;
+				//_appDelegate.MenuFindNext.Enabled = _searchState != null;
+			}
+		}
+
+		private void UpdateUI (DataNode node)
+		{
+			if (_appDelegate == null || node == null)
+				return;
+
+			_appDelegate.MenuInsertByte.Enabled = node.CanCreateTag(TagType.TAG_BYTE);
+			_appDelegate.MenuInsertShort.Enabled = node.CanCreateTag(TagType.TAG_SHORT);
+			_appDelegate.MenuInsertInt.Enabled = node.CanCreateTag(TagType.TAG_INT);
+			_appDelegate.MenuInsertLong.Enabled = node.CanCreateTag(TagType.TAG_LONG);
+			_appDelegate.MenuInsertFloat.Enabled = node.CanCreateTag(TagType.TAG_FLOAT);
+			_appDelegate.MenuInsertDouble.Enabled = node.CanCreateTag(TagType.TAG_DOUBLE);
+			_appDelegate.MenuInsertByteArray.Enabled = node.CanCreateTag(TagType.TAG_BYTE_ARRAY);
+			_appDelegate.MenuInsertIntArray.Enabled = node.CanCreateTag(TagType.TAG_INT_ARRAY);
+			_appDelegate.MenuInsertString.Enabled = node.CanCreateTag(TagType.TAG_STRING);
+			_appDelegate.MenuInsertList.Enabled = node.CanCreateTag(TagType.TAG_LIST);
+			_appDelegate.MenuInsertCompound.Enabled = node.CanCreateTag(TagType.TAG_COMPOUND);
+
+			//_appDelegate.MenuSave.Enabled = CheckModifications();
+			_appDelegate.MenuCopy.Enabled = node.CanCopyNode;
+			_appDelegate.MenuCut.Enabled = node.CanCutNode;
+			_appDelegate.MenuPaste.Enabled = node.CanPasteIntoNode;
+			_appDelegate.MenuDelete.Enabled = node.CanDeleteNode;
+			_appDelegate.MenuEditValue.Enabled = node.CanEditNode;
+			_appDelegate.MenuRename.Enabled = node.CanRenameNode;
+			_appDelegate.MenuFind.Enabled = node.CanSearchNode;
+			//_appDelegate.MenuFindNext.Enabled = _searchState != null;
 		}
 	}
 }

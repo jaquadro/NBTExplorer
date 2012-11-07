@@ -8,6 +8,7 @@ namespace NBTExplorer.Mac
 {
 	public class TreeDataNode : NSObject
 	{
+		private TreeDataNode _parent;
 		private DataNode _dataNode;
 		private List<TreeDataNode> _children;
 		private bool _expanded;
@@ -39,9 +40,34 @@ namespace NBTExplorer.Mac
 			set { _expanded = value; }
 		}
 
+		public void Remove ()
+		{
+			if (_parent != null)
+				_parent.RemoveNode(this);
+		}
+
+		public TreeDataNode Parent
+		{
+			get { return _parent; }
+		}
+
 		public bool HasChildren
 		{
 			get { return _children.Count > 0 || _dataNode.HasUnexpandedChildren; }
+		}
+
+		public void AddNode (TreeDataNode node)
+		{
+			node._parent = this;
+			_children.Add(node);
+		}
+
+		public void RemoveNode (TreeDataNode node)
+		{
+			if (_children.Contains (node)) {
+				_children.Remove(node);
+				node._parent = null;
+			}
 		}
 
 		public List<TreeDataNode> Nodes 

@@ -10,14 +10,7 @@ namespace NBTExplorer.Mac
 {
 	public partial class EditValue : MonoMac.AppKit.NSWindow
 	{
-		public enum DialogResult
-		{
-			OK,
-			Cancel,
-		}
-
 		private TagNode _tag;
-		private DialogResult _result;
 
 		#region Constructors
 		
@@ -41,17 +34,21 @@ namespace NBTExplorer.Mac
 			_tag = tag;
 
 			if (tag == null) {
-				_result = DialogResult.Cancel;
-				Close();
+				NSApplication.SharedApplication.StopModalWithCode((int)ModalResult.Cancel);
 				return;
 			}
-
-			_valueField.StringValue = _tag.ToString();
 		}
 		
 		// Shared initialization code
 		void Initialize ()
 		{
+		}
+
+		public override void AwakeFromNib ()
+		{
+			base.AwakeFromNib ();
+			if (_tag != null)
+				_valueField.StringValue = _tag.ToString();
 		}
 		
 		#endregion
@@ -61,9 +58,14 @@ namespace NBTExplorer.Mac
 			get { return _tag; }
 		}
 
-		public DialogResult Result
+		partial void ActionOK (MonoMac.Foundation.NSObject sender)
 		{
-			get { return _result; }
+			NSApplication.SharedApplication.StopModalWithCode((int)ModalResult.OK);
+		}
+
+		partial void ActionCancel (MonoMac.Foundation.NSObject sender)
+		{
+			NSApplication.SharedApplication.StopModalWithCode((int)ModalResult.Cancel);
 		}
 
 		/*private TagNode _tag;

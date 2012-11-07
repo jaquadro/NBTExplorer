@@ -164,6 +164,19 @@
     </Compile>
     <Compile Include="Model\TagKey.cs" />
     <Compile Include="ProgramMac.cs" />
+    <Compile Include="FormRegistry.cs" />
+    <Compile Include="Mac\FormHandlers.cs" />
+    <Compile Include="Mac\EditStringWindow.cs" />
+    <Compile Include="Mac\EditStringWindowController.cs" />
+    <Compile Include="Mac\EditStringWindow.designer.cs">
+      <DependentUpon>EditStringWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Mac\ModalResult.cs" />
+    <Compile Include="Mac\EditNameWindow.cs" />
+    <Compile Include="Mac\EditNameWindowController.cs" />
+    <Compile Include="Mac\EditNameWindow.designer.cs">
+      <DependentUpon>EditNameWindow.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Dead_Bush.png" />
@@ -190,22 +203,6 @@
     <BundleResource Include="Resources\question-white.png" />
     <BundleResource Include="Resources\scissors.png" />
     <BundleResource Include="Resources\selection-input.png" />
-    <BundleResource Include="Resources\24\cross.png" />
-    <BundleResource Include="Resources\24\document-b.png" />
-    <BundleResource Include="Resources\24\document-d.png" />
-    <BundleResource Include="Resources\24\document-f.png" />
-    <BundleResource Include="Resources\24\document-i.png" />
-    <BundleResource Include="Resources\24\document-l.png" />
-    <BundleResource Include="Resources\24\document-s.png" />
-    <BundleResource Include="Resources\24\document.png" />
-    <BundleResource Include="Resources\24\edit-code-i.png" />
-    <BundleResource Include="Resources\24\edit-code.png" />
-    <BundleResource Include="Resources\24\edit-list.png" />
-    <BundleResource Include="Resources\24\edit-smallcaps.png" />
-    <BundleResource Include="Resources\24\pencil.png" />
-    <BundleResource Include="Resources\24\scissors.png" />
-    <BundleResource Include="Resources\24\selection-input.png" />
-    <BundleResource Include="Resources\24\box-24.png" />
     <BundleResource Include="Resources\folder-open-24.png" />
     <BundleResource Include="Resources\disk-24.png" />
     <BundleResource Include="Resources\block.png" />
@@ -217,10 +214,27 @@
     <BundleResource Include="Resources\edit-list.png" />
     <BundleResource Include="Resources\edit-small-caps.png" />
     <BundleResource Include="Resources\wooden-box.png" />
+    <BundleResource Include="Resources\24\edit-code-24.png" />
+    <BundleResource Include="Resources\24\edit-code-i-24.png" />
+    <BundleResource Include="Resources\24\edit-list-24.png" />
+    <BundleResource Include="Resources\24\edit-small-caps-24.png" />
+    <BundleResource Include="Resources\24\pencil-24.png" />
+    <BundleResource Include="Resources\24\scissors-24.png" />
+    <BundleResource Include="Resources\24\selection-input-24.png" />
+    <BundleResource Include="Resources\24\document-s-24.png" />
+    <BundleResource Include="Resources\24\document-l-24.png" />
+    <BundleResource Include="Resources\24\document-i-24.png" />
+    <BundleResource Include="Resources\24\document-f-24.png" />
+    <BundleResource Include="Resources\24\document-d-24.png" />
+    <BundleResource Include="Resources\24\document-b-24.png" />
+    <BundleResource Include="Resources\24\document-24.png" />
+    <BundleResource Include="Resources\24\cross-24.png" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Mac\MainWindow.xib" />
     <InterfaceDefinition Include="Mac\MainMenu.xib" />
     <InterfaceDefinition Include="Mac\EditValue.xib" />
+    <InterfaceDefinition Include="Mac\EditStringWindow.xib" />
+    <InterfaceDefinition Include="Mac\EditNameWindow.xib" />
   </ItemGroup>
 </Project>
