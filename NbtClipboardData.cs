@@ -1,53 +1,51 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
 using Substrate.Nbt;
 
 namespace NBTExplorer
 {
-    [Serializable]
     public class NbtClipboardData
     {
-        public string Name;
+        private string _name;
+        private TagNode _node;
 
-        private byte[] _data;
-
-        [NonSerialized]
-        public TagNode Node;
-
-        public NbtClipboardData (String name, TagNode node)
+        public string Name
         {
-            Name = name;
+            get { return _name; }
+            set { _name = value; }
+        }
 
+        public TagNode Node
+        {
+            get { return _node; }
+            set { _node = value; }
+        }
+
+        public NbtClipboardData (string name, TagNode node)
+        {
+            _name = name;
+            _node = node;
+        }
+
+        public static byte[] SerializeNode (TagNode node)
+        {
             TagNodeCompound root = new TagNodeCompound();
             root.Add("root", node);
             NbtTree tree = new NbtTree(root);
 
             using (MemoryStream ms = new MemoryStream()) {
                 tree.WriteTo(ms);
-                _data = new byte[ms.Length];
-                Array.Copy(ms.GetBuffer(), _data, ms.Length);
+                byte[] data = new byte[ms.Length];
+                Array.Copy(ms.GetBuffer(), data, ms.Length);
+
+                return data;
             }
         }
 
-        public static bool ContainsData
+        public static TagNode DeserializeNode (byte[] data)
         {
-            get { return Clipboard.ContainsData(typeof(NbtClipboardData).FullName); }
-        }
-
-        public void CopyToClipboard ()
-        {
-            Clipboard.SetData(typeof(NbtClipboardData).FullName, this);
-        }
-
-        public static NbtClipboardData CopyFromClipboard ()
-        {
-            NbtClipboardData clip = Clipboard.GetData(typeof(NbtClipboardData).FullName) as NbtClipboardData;
-            if (clip == null)
-                return null;
-
             NbtTree tree = new NbtTree();
-            using (MemoryStream ms = new MemoryStream(clip._data)) {
+            using (MemoryStream ms = new MemoryStream(data)) {
                 tree.ReadFrom(ms);
             }
 
@@ -55,8 +53,7 @@ namespace NBTExplorer
             if (root == null || !root.ContainsKey("root"))
                 return null;
 
-            clip.Node = root["root"];
-            return clip;
+            return root["root"];
         }
     }
 }

@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FormRegistry.cs" />
+    <Compile Include="NbtClipboardController.cs" />
     <Compile Include="Windows\CancelSearchForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -192,6 +193,7 @@
     <Compile Include="Vendor\Be.Windows.Forms.HexBox\NativeMethods.cs" />
     <Compile Include="Vendor\Be.Windows.Forms.HexBox\Util.cs" />
     <Compile Include="Windows\FormHandlers.cs" />
+    <Compile Include="Windows\NbtClipboardControllerWin.cs" />
     <EmbeddedResource Include="Windows\CancelSearchForm.resx">
       <DependentUpon>CancelSearchForm.cs</DependentUpon>
     </EmbeddedResource>
