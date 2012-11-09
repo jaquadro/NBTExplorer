@@ -8,8 +8,8 @@ using MonoMac.Foundation;
 
 namespace NBTExplorer.Mac
 {
-	[Register ("EditValue")]
-	partial class EditValue
+	[Register ("EditValueWindowController")]
+	partial class EditValueWindowController
 	{
 		[Outlet]
 		MonoMac.AppKit.NSTextField _valueField { get; set; }
@@ -26,6 +26,15 @@ namespace NBTExplorer.Mac
 				_valueField.Dispose ();
 				_valueField = null;
 			}
+		}
+	}
+
+	[Register ("EditValueWindow")]
+	partial class EditValueWindow
+	{
+		
+		void ReleaseDesignerOutlets ()
+		{
 		}
 	}
 }

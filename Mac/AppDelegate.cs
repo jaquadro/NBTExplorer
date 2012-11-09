@@ -81,6 +81,16 @@ namespace NBTExplorer
 			get { return _menuDelete; }
 		}
 
+		public NSMenuItem MenuMoveUp
+		{
+			get { return _menuMoveUp; }
+		}
+
+		public NSMenuItem MenuMoveDown
+		{
+			get { return _menuMoveDown; }
+		}
+
 		public NSMenuItem MenuFind
 		{
 			get { return _menuFind; }
@@ -159,6 +169,71 @@ namespace NBTExplorer
 		partial void ActionDelete (NSObject sender)
 		{
 			mainWindowController.Window.ActionDeleteValue();
+		}
+
+		partial void ActionMoveUp (NSObject sender)
+		{
+			mainWindowController.Window.ActionMoveNodeUp();
+		}
+
+		partial void ActionMoveDown (NSObject sender)
+		{
+			mainWindowController.Window.ActionMoveNodeDown();
+		}
+
+		partial void ActionInsertByte (NSObject sender)
+		{
+			mainWindowController.Window.ActionInsertByteTag();
+		}
+
+		partial void ActionInsertShort (NSObject sender)
+		{
+			mainWindowController.Window.ActionInsertShortTag();
+		}
+
+		partial void ActionInsertInt (NSObject sender)
+		{
+			mainWindowController.Window.ActionInsertIntTag();
+		}
+
+		partial void ActionInsertLong (NSObject sender)
+		{
+			mainWindowController.Window.ActionInsertLongTag();
+		}
+
+		partial void ActionInsertFloat (NSObject sender)
+		{
+			mainWindowController.Window.ActionInsertFloatTag();
+		}
+
+		partial void ActionInsertDouble (NSObject sender)
+		{
+			mainWindowController.Window.ActionInsertDoubleTag();
+		}
+
+		partial void ActionInsertByteArray (NSObject sender)
+		{
+			mainWindowController.Window.ActionInsertByteArrayTag();
+		}
+
+		partial void ActionInsertIntArray (NSObject sender)
+		{
+			mainWindowController.Window.ActionInsertIntArrayTag();
+		}
+
+		partial void ActionInsertString (NSObject sender)
+		{
+			mainWindowController.Window.ActionInsertStringTag();
+		}
+
+		partial void ActionInsertList (NSObject sender)
+		{
+			mainWindowController.Window.ActionInsertListTag();
+		}
+
+		partial void ActionInsertCompound (NSObject sender)
+		{
+			mainWindowController.Window.ActionInsertCompoundTag();
 		}
 	}
 }

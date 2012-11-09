@@ -7,21 +7,21 @@ namespace NBTExplorer.Mac
 	{
 		public static void Register ()
 		{
-			//FormRegistry.EditByteArray = EditByteArrayHandler;
+			FormRegistry.EditByteArray = EditByteArrayHandler;
 			FormRegistry.EditString = EditStringHandler;
 			FormRegistry.EditTagScalar = EditTagScalarValueHandler;
 			FormRegistry.RenameTag = RenameTagHandler;
-			//FormRegistry.CreateNode = CreateNodeHandler;
+			FormRegistry.CreateNode = CreateNodeHandler;
 			
 			FormRegistry.MessageBox = MessageBoxHandler;
 		}
 
 		private static ModalResult RunWindow (NSWindowController controller)
 		{
-			NSApplication.SharedApplication.BeginSheet (controller.Window, NSApplication.SharedApplication.MainWindow);
+			//NSApplication.SharedApplication.BeginSheet (controller.Window, NSApplication.SharedApplication.MainWindow);
 			int response = NSApplication.SharedApplication.RunModalForWindow (controller.Window);
 			
-			NSApplication.SharedApplication.EndSheet(controller.Window);
+			//NSApplication.SharedApplication.EndSheet(controller.Window);
 			controller.Window.Close();
 			controller.Window.OrderOut(null);
 
@@ -33,7 +33,7 @@ namespace NBTExplorer.Mac
 		
 		public static void MessageBoxHandler (string message)
 		{
-			NSAlert.WithMessage(message, "OK", null, null, null).RunModal();
+			NSAlert.WithMessage(message, "OK", null, null, "").RunModal();
 		}
 		
 		public static bool EditStringHandler (StringFormData data)
@@ -65,45 +65,46 @@ namespace NBTExplorer.Mac
 		
 		public static bool EditTagScalarValueHandler (TagScalarFormData data)
 		{
-			EditValue form = new EditValue(data.Tag);
+			EditValueWindowController form = new EditValueWindowController () {
+				NodeTag = data.Tag,
+			};
 
-			NSApplication.SharedApplication.BeginSheet(form, NSApplication.SharedApplication.MainWindow);
-			NSApplication.SharedApplication.RunModalForWindow(form);
-			NSApplication.SharedApplication.EndSheet(form);
-
-			form.Close ();
-			form.OrderOut(null);
-
-			//if (form.ShowDialog() == DialogResult.OK)
-			//	return true;
-			//else
+			if (RunWindow (form) == ModalResult.OK)
+				return true;
+			else
 				return false;
 		}
 		
-		/*public static bool EditByteArrayHandler (ByteArrayFormData data)
+		public static bool EditByteArrayHandler (ByteArrayFormData data)
 		{
-			HexEditor form = new HexEditor(data.NodeName, data.Data, data.BytesPerElement);
+			NSAlert.WithMessage("Not supported.", "OK", null, null, "Array editing is currently not supported in the Mac version of NBTExplorer.").RunModal();
+			return false;
+
+			/*HexEditor form = new HexEditor(data.NodeName, data.Data, data.BytesPerElement);
 			if (form.ShowDialog() == DialogResult.OK && form.Modified) {
 				Array.Copy(form.Data, data.Data, data.Data.Length);
 				return true;
 			}
 			else
-				return false;
+				return false;*/
 		}
 		
 		public static bool CreateNodeHandler (CreateTagFormData data)
 		{
-			CreateNodeForm form = new CreateNodeForm(data.TagType, data.HasName);
-			form.InvalidNames.AddRange(data.RestrictedNames);
-			
-			if (form.ShowDialog() == DialogResult.OK) {
+			CreateNodeWindowController form = new CreateNodeWindowController () {
+				TagType = data.TagType,
+				HasName = data.HasName,
+			};
+			form.InvalidNames.AddRange (data.RestrictedNames);
+
+			if (RunWindow (form) == ModalResult.OK) {
 				data.TagNode = form.TagNode;
 				data.TagName = form.TagName;
 				return true;
 			}
 			else
 				return false;
-		}*/
+		}
 	}
 }
 

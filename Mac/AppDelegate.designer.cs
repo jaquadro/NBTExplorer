@@ -48,6 +48,12 @@ namespace NBTExplorer
 		MonoMac.AppKit.NSMenuItem _menuDelete { get; set; }
 
 		[Outlet]
+		MonoMac.AppKit.NSMenuItem _menuMoveUp { get; set; }
+
+		[Outlet]
+		MonoMac.AppKit.NSMenuItem _menuMoveDown { get; set; }
+
+		[Outlet]
 		MonoMac.AppKit.NSMenuItem _menuFind { get; set; }
 
 		[Outlet]
@@ -86,6 +92,27 @@ namespace NBTExplorer
 		[Outlet]
 		MonoMac.AppKit.NSMenuItem _menuInsertCompound { get; set; }
 
+		[Action ("ActionOpen:")]
+		partial void ActionOpen (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionOpenFolder:")]
+		partial void ActionOpenFolder (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionOpenMinecraft:")]
+		partial void ActionOpenMinecraft (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionSave:")]
+		partial void ActionSave (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionCut:")]
+		partial void ActionCut (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionCopy:")]
+		partial void ActionCopy (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionPaste:")]
+		partial void ActionPaste (MonoMac.Foundation.NSObject sender);
+
 		[Action ("ActionRename:")]
 		partial void ActionRename (MonoMac.Foundation.NSObject sender);
 
@@ -94,6 +121,51 @@ namespace NBTExplorer
 
 		[Action ("ActionDelete:")]
 		partial void ActionDelete (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionMoveUp:")]
+		partial void ActionMoveUp (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionMoveDown:")]
+		partial void ActionMoveDown (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionFind:")]
+		partial void ActionFind (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionFindNext:")]
+		partial void ActionFindNext (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionInsertByte:")]
+		partial void ActionInsertByte (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionInsertShort:")]
+		partial void ActionInsertShort (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionInsertInt:")]
+		partial void ActionInsertInt (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionInsertLong:")]
+		partial void ActionInsertLong (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionInsertFloat:")]
+		partial void ActionInsertFloat (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionInsertDouble:")]
+		partial void ActionInsertDouble (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionInsertByteArray:")]
+		partial void ActionInsertByteArray (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionInsertIntArray:")]
+		partial void ActionInsertIntArray (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionInsertString:")]
+		partial void ActionInsertString (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionInsertList:")]
+		partial void ActionInsertList (MonoMac.Foundation.NSObject sender);
+
+		[Action ("ActionInsertCompound:")]
+		partial void ActionInsertCompound (MonoMac.Foundation.NSObject sender);
 		
 		void ReleaseDesignerOutlets ()
 		{
@@ -155,6 +227,16 @@ namespace NBTExplorer
 			if (_menuDelete != null) {
 				_menuDelete.Dispose ();
 				_menuDelete = null;
+			}
+
+			if (_menuMoveUp != null) {
+				_menuMoveUp.Dispose ();
+				_menuMoveUp = null;
+			}
+
+			if (_menuMoveDown != null) {
+				_menuMoveDown.Dispose ();
+				_menuMoveDown = null;
 			}
 
 			if (_menuFind != null) {

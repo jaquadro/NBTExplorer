@@ -65,7 +65,11 @@ namespace NBTExplorer
 		public AppDelegate AppDelegate
 		{
 			get { return _appDelegate; }
-			set { _appDelegate = value; }
+			set 
+			{ 
+				_appDelegate = value;
+				UpdateUI ();
+			}
 		}
 		
 		#endregion
@@ -75,6 +79,8 @@ namespace NBTExplorer
 		public override void AwakeFromNib ()
 		{
 			base.AwakeFromNib ();
+
+			NSApplication.SharedApplication.MainMenu.AutoEnablesItems = false;
 
 			_dataSource = new TreeDataSource();
 			_mainOutlineView.DataSource = _dataSource;
@@ -98,6 +104,13 @@ namespace NBTExplorer
 			public MyDelegate (MainWindow main)
 			{
 				_main = main;
+			}
+
+			public override void SelectionDidChange (NSNotification notification)
+			{
+				TreeDataNode node = _main.SelectedNode;
+				if (node != null)
+					_main.UpdateUI(node.Data);
 			}
 
 			public override void ItemWillExpand (NSNotification notification)
@@ -300,25 +313,131 @@ namespace NBTExplorer
 			node.Nodes.Clear();*/
 		}
 
+		private void RefreshChildNodes (TreeDataNode node, DataNode dataNode)
+		{
+			Dictionary<DataNode, TreeDataNode> currentNodes = new Dictionary<DataNode, TreeDataNode>();
+			foreach (TreeDataNode child in node.Nodes) {
+				currentNodes.Add(child.Data, child);
+			}
+			
+			node.Nodes.Clear();
+			foreach (DataNode child in dataNode.Nodes) {
+				if (!currentNodes.ContainsKey(child))
+					node.Nodes.Add(new TreeDataNode(child));
+				else
+					node.Nodes.Add(currentNodes[child]);
+			}
+			
+			//foreach (TreeDataNode child in node.Nodes)
+			//	child.ContextMenuStrip = BuildNodeContextMenu(child.Tag as DataNode);
+			
+			if (node.Nodes.Count == 0 && dataNode.HasUnexpandedChildren) {
+				ExpandNode(node);
+				_mainOutlineView.ExpandItem(node);
+				//node.Expand();
+			}
+
+			_mainOutlineView.ReloadItem(node, true);
+		}
+
+		private void CreateNode (TreeDataNode node, TagType type)
+		{
+			if (node == null)
+				return;
+
+			if (!node.Data.CanCreateTag(type))
+				return;
+
+			if (node.Data.CreateNode(type)) {
+				//node.Text = dataNode.NodeDisplay;
+				RefreshChildNodes(node, node.Data);
+				UpdateUI(node.Data);
+			}
+		}
+
+		private TreeDataNode SelectedNode
+		{
+			get { return _mainOutlineView.ItemAtRow (_mainOutlineView.SelectedRow) as TreeDataNode; }
+		}
+
 		public void ActionEditValue ()
 		{
-			TreeDataNode node = _mainOutlineView.ItemAtRow(_mainOutlineView.SelectedRow) as TreeDataNode;
-			if (node != null)
-				EditNode(node);
+			EditNode(SelectedNode);
 		}
 
 		public void ActionRenameValue ()
 		{
-			TreeDataNode node = _mainOutlineView.ItemAtRow(_mainOutlineView.SelectedRow) as TreeDataNode;
-			if (node != null)
-				RenameNode(node);
+			RenameNode(SelectedNode);
 		}
 
 		public void ActionDeleteValue ()
 		{
-			TreeDataNode node = _mainOutlineView.ItemAtRow(_mainOutlineView.SelectedRow) as TreeDataNode;
-			if (node != null)
-				DeleteNode(node);
+			DeleteNode(SelectedNode);
+		}
+
+		public void ActionMoveNodeUp ()
+		{
+			MoveNodeUp(SelectedNode);
+		}
+
+		public void ActionMoveNodeDown ()
+		{
+			MoveNodeDown (SelectedNode);
+		}
+
+		public void ActionInsertByteTag ()
+		{
+			CreateNode (SelectedNode, TagType.TAG_BYTE);
+		}
+
+		public void ActionInsertShortTag ()
+		{
+			CreateNode (SelectedNode, TagType.TAG_SHORT);
+		}
+
+		public void ActionInsertIntTag ()
+		{
+			CreateNode (SelectedNode, TagType.TAG_INT);
+		}
+
+		public void ActionInsertLongTag ()
+		{
+			CreateNode (SelectedNode, TagType.TAG_LONG);
+		}
+
+		public void ActionInsertFloatTag ()
+		{
+			CreateNode (SelectedNode, TagType.TAG_FLOAT);
+		}
+
+		public void ActionInsertDoubleTag ()
+		{
+			CreateNode (SelectedNode, TagType.TAG_DOUBLE);
+		}
+
+		public void ActionInsertByteArrayTag ()
+		{
+			CreateNode (SelectedNode, TagType.TAG_BYTE_ARRAY);
+		}
+
+		public void ActionInsertIntArrayTag ()
+		{
+			CreateNode (SelectedNode, TagType.TAG_INT_ARRAY);
+		}
+
+		public void ActionInsertStringTag ()
+		{
+			CreateNode (SelectedNode, TagType.TAG_STRING);
+		}
+
+		public void ActionInsertListTag ()
+		{
+			CreateNode (SelectedNode, TagType.TAG_LIST);
+		}
+
+		public void ActionInsertCompoundTag ()
+		{
+			CreateNode (SelectedNode, TagType.TAG_COMPOUND);
 		}
 
 		private void EditNode (TreeDataNode node)
@@ -367,6 +486,104 @@ namespace NBTExplorer
 			}
 		}
 
+		private void MoveNodeUp (TreeDataNode node)
+		{
+			if (node == null)
+				return;
+
+			if (!node.Data.CanMoveNodeUp)
+				return;
+
+			node.Data.ChangeRelativePosition(-1);
+			RefreshChildNodes(node.Parent, node.Data.Parent);
+		}
+		
+		private void MoveNodeDown (TreeDataNode node)
+		{
+			if (node == null)
+				return;
+			
+			if (!node.Data.CanMoveNodeDown)
+				return;
+			
+			node.Data.ChangeRelativePosition(1);
+			RefreshChildNodes(node.Parent, node.Data.Parent);
+		}
+
+		/*private void CopyNode (TreeNode node)
+		{
+			if (node == null || !(node.Tag is DataNode))
+				return;
+			
+			DataNode dataNode = node.Tag as DataNode;
+			if (!dataNode.CanCopyNode)
+				return;
+			
+			dataNode.CopyNode();
+		}
+		
+		private void CutNode (TreeNode node)
+		{
+			if (node == null || !(node.Tag is DataNode))
+				return;
+			
+			DataNode dataNode = node.Tag as DataNode;
+			if (!dataNode.CanCutNode)
+				return;
+			
+			if (dataNode.CutNode()) {
+				UpdateUI(node.Parent.Tag as DataNode);
+				UpdateNodeText(node.Parent);
+				node.Remove();
+			}
+		}
+		
+		private void PasteNode (TreeNode node)
+		{
+			if (node == null || !(node.Tag is DataNode))
+				return;
+			
+			DataNode dataNode = node.Tag as DataNode;
+			if (!dataNode.CanPasteIntoNode)
+				return;
+			
+			if (dataNode.PasteNode()) {
+				node.Text = dataNode.NodeDisplay;
+				RefreshChildNodes(node, dataNode);
+				UpdateUI(dataNode);
+			}
+		}*/
+		
+		private void Save ()
+		{
+			foreach (TreeDataNode node in _dataSource.Nodes) {
+				if (node.Data != null)
+					node.Data.Save();
+			}
+			
+			UpdateUI();
+		}
+		
+		/*private bool ConfirmExit ()
+		{
+			if (CheckModifications()) {
+				if (MessageBox.Show("You currently have unsaved changes.  Close anyway?", "Unsaved Changes", MessageBoxButtons.OKCancel) != DialogResult.OK)
+					return false;
+			}
+			
+			return true;
+		}*/
+
+		private bool CheckModifications ()
+		{
+			foreach (TreeDataNode node in _dataSource.Nodes) {
+				if (node.Data != null && node.Data.IsModified)
+					return true;
+			}
+			
+			return false;
+		}
+
 		private void UpdateUI ()
 		{
 			if (_appDelegate == null)
@@ -377,9 +594,13 @@ namespace NBTExplorer
 				UpdateUI(selected.Data);
 			}
 			else {
-				//_appDelegate.MenuSave.Enabled = CheckModifications();
+				UpdateUI(new DataNode());
+
+				_appDelegate.MenuSave.Enabled = CheckModifications();
 				_appDelegate.MenuFind.Enabled = false;
 				//_appDelegate.MenuFindNext.Enabled = _searchState != null;
+
+				_toolbarSave.Enabled = _appDelegate.MenuSave.Enabled;
 			}
 		}
 
@@ -400,16 +621,68 @@ namespace NBTExplorer
 			_appDelegate.MenuInsertList.Enabled = node.CanCreateTag(TagType.TAG_LIST);
 			_appDelegate.MenuInsertCompound.Enabled = node.CanCreateTag(TagType.TAG_COMPOUND);
 
-			//_appDelegate.MenuSave.Enabled = CheckModifications();
+			_appDelegate.MenuSave.Enabled = CheckModifications();
 			_appDelegate.MenuCopy.Enabled = node.CanCopyNode;
 			_appDelegate.MenuCut.Enabled = node.CanCutNode;
 			_appDelegate.MenuPaste.Enabled = node.CanPasteIntoNode;
 			_appDelegate.MenuDelete.Enabled = node.CanDeleteNode;
 			_appDelegate.MenuEditValue.Enabled = node.CanEditNode;
 			_appDelegate.MenuRename.Enabled = node.CanRenameNode;
+			_appDelegate.MenuMoveUp.Enabled = node.CanMoveNodeUp;
+			_appDelegate.MenuMoveDown.Enabled = node.CanMoveNodeDown;
 			_appDelegate.MenuFind.Enabled = node.CanSearchNode;
 			//_appDelegate.MenuFindNext.Enabled = _searchState != null;
+
+			_toolbarSave.Enabled = _appDelegate.MenuSave.Enabled;
 		}
+
+		/*private void UpdateOpenMenu ()
+		{
+			try {
+				if (Settings.Default.RecentDirectories == null)
+					Settings.Default.RecentDirectories = new StringCollection();
+				if (Settings.Default.RecentFiles == null)
+					Settings.Default.RecentFiles = new StringCollection();
+			}
+			catch {
+				return;
+			}
+			
+			_menuItemRecentFolders.DropDown = BuildRecentEntriesDropDown(Settings.Default.RecentDirectories);
+			_menuItemRecentFiles.DropDown = BuildRecentEntriesDropDown(Settings.Default.RecentFiles);
+		}
+		
+		private ToolStripDropDown BuildRecentEntriesDropDown (StringCollection list)
+		{
+			if (list == null || list.Count == 0)
+				return new ToolStripDropDown();
+			
+			ToolStripDropDown menu = new ToolStripDropDown();
+			foreach (string entry in list) {
+				ToolStripMenuItem item = new ToolStripMenuItem("&" + (menu.Items.Count + 1) + " " + entry);
+				item.Tag = entry;
+				item.Click += _menuItemRecentPaths_Click;
+				
+				menu.Items.Add(item);
+			}
+			
+			return menu;
+		}
+		
+		private void AddPathToHistory (StringCollection list, string entry)
+		{
+			foreach (string item in list) {
+				if (item == entry) {
+					list.Remove(item);
+					break;
+				}
+			}
+			
+			while (list.Count >= 5)
+				list.RemoveAt(list.Count - 1);
+			
+			list.Insert(0, entry);
+		}*/
 	}
 }
 

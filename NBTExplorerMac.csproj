@@ -158,10 +158,6 @@
     <Compile Include="Mac\TreeDataSource.cs" />
     <Compile Include="Mac\ImageAndTextCell.cs" />
     <Compile Include="Mac\IconRegistry.cs" />
-    <Compile Include="Mac\EditValue.cs" />
-    <Compile Include="Mac\EditValue.designer.cs">
-      <DependentUpon>EditValue.cs</DependentUpon>
-    </Compile>
     <Compile Include="Model\TagKey.cs" />
     <Compile Include="ProgramMac.cs" />
     <Compile Include="FormRegistry.cs" />
@@ -176,6 +172,16 @@
     <Compile Include="Mac\EditNameWindowController.cs" />
     <Compile Include="Mac\EditNameWindow.designer.cs">
       <DependentUpon>EditNameWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Mac\CreateNodeWindow.cs" />
+    <Compile Include="Mac\CreateNodeWindowController.cs" />
+    <Compile Include="Mac\CreateNodeWindow.designer.cs">
+      <DependentUpon>CreateNodeWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Mac\EditValueWindow.cs" />
+    <Compile Include="Mac\EditValueWindowController.cs" />
+    <Compile Include="Mac\EditValueWindow.designer.cs">
+      <DependentUpon>EditValueWindow.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -233,8 +239,9 @@
   <ItemGroup>
     <InterfaceDefinition Include="Mac\MainWindow.xib" />
     <InterfaceDefinition Include="Mac\MainMenu.xib" />
-    <InterfaceDefinition Include="Mac\EditValue.xib" />
     <InterfaceDefinition Include="Mac\EditStringWindow.xib" />
     <InterfaceDefinition Include="Mac\EditNameWindow.xib" />
+    <InterfaceDefinition Include="Mac\CreateNodeWindow.xib" />
+    <InterfaceDefinition Include="Mac\EditValueWindow.xib" />
   </ItemGroup>
 </Project>

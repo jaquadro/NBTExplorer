@@ -88,6 +88,7 @@
 								</object>
 							</object>
 							<string key="NSName">_NSAppleMenu</string>
+							<bool key="NSNoAutoenable">YES</bool>
 						</object>
 					</object>
 					<object class="NSMenuItem" id="379814623">
@@ -191,6 +192,7 @@
 									</object>
 								</object>
 							</object>
+							<bool key="NSNoAutoenable">YES</bool>
 						</object>
 					</object>
 					<object class="NSMenuItem" id="952259628">
@@ -280,6 +282,34 @@
 									<reference key="NSOnImage" ref="35465992"/>
 									<reference key="NSMixedImage" ref="502551668"/>
 								</object>
+								<object class="NSMenuItem" id="990986030">
+									<reference key="NSMenu" ref="789758025"/>
+									<string key="NSTitle">Move Up</string>
+									<string key="NSKeyEquiv"></string>
+									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="35465992"/>
+									<reference key="NSMixedImage" ref="502551668"/>
+								</object>
+								<object class="NSMenuItem" id="678120417">
+									<reference key="NSMenu" ref="789758025"/>
+									<string key="NSTitle">Move Down</string>
+									<string key="NSKeyEquiv"></string>
+									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="35465992"/>
+									<reference key="NSMixedImage" ref="502551668"/>
+								</object>
+								<object class="NSMenuItem" id="355622212">
+									<reference key="NSMenu" ref="789758025"/>
+									<bool key="NSIsDisabled">YES</bool>
+									<bool key="NSIsSeparator">YES</bool>
+									<string key="NSTitle"/>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="35465992"/>
+									<reference key="NSMixedImage" ref="502551668"/>
+								</object>
 								<object class="NSMenuItem" id="713722761">
 									<reference key="NSMenu" ref="789758025"/>
 									<string key="NSTitle">Find...</string>
@@ -299,6 +329,7 @@
 									<reference key="NSMixedImage" ref="502551668"/>
 								</object>
 							</object>
+							<bool key="NSNoAutoenable">YES</bool>
 						</object>
 					</object>
 					<object class="NSMenuItem" id="586577488">
@@ -333,6 +364,7 @@
 									<reference key="NSMixedImage" ref="502551668"/>
 								</object>
 							</object>
+							<bool key="NSNoAutoenable">YES</bool>
 						</object>
 					</object>
 					<object class="NSMenuItem" id="48785913">
@@ -510,6 +542,7 @@
 									<reference key="NSMixedImage" ref="502551668"/>
 								</object>
 							</object>
+							<bool key="NSNoAutoenable">YES</bool>
 						</object>
 					</object>
 				</object>
@@ -551,38 +584,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">copy:</string>
-						<reference key="source" ref="1014"/>
-						<reference key="destination" ref="860595796"/>
-					</object>
-					<int key="connectionID">224</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">paste:</string>
-						<reference key="source" ref="1014"/>
-						<reference key="destination" ref="29853731"/>
-					</object>
-					<int key="connectionID">226</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">cut:</string>
-						<reference key="source" ref="1014"/>
-						<reference key="destination" ref="296257095"/>
-					</object>
-					<int key="connectionID">228</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">saveDocument:</string>
-						<reference key="source" ref="1014"/>
-						<reference key="destination" ref="1023925487"/>
-					</object>
-					<int key="connectionID">362</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">runToolbarCustomizationPalette:</string>
 						<reference key="source" ref="1014"/>
 						<reference key="destination" ref="237841660"/>
@@ -596,14 +597,6 @@
 						<reference key="destination" ref="102151532"/>
 					</object>
 					<int key="connectionID">366</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">openDocument:</string>
-						<reference key="source" ref="1014"/>
-						<reference key="destination" ref="722745758"/>
-					</object>
-					<int key="connectionID">374</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -823,11 +816,203 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
+						<string key="label">_menuMoveUp</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="990986030"/>
+					</object>
+					<int key="connectionID">599</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_menuMoveDown</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="678120417"/>
+					</object>
+					<int key="connectionID">600</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionMoveUp:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="990986030"/>
+					</object>
+					<int key="connectionID">601</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionMoveDown:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="678120417"/>
+					</object>
+					<int key="connectionID">602</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionFind:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="713722761"/>
+					</object>
+					<int key="connectionID">603</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionFindNext:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="406540956"/>
+					</object>
+					<int key="connectionID">604</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionPaste:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="29853731"/>
+					</object>
+					<int key="connectionID">605</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionCopy:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="860595796"/>
+					</object>
+					<int key="connectionID">606</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionCut:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="296257095"/>
+					</object>
+					<int key="connectionID">607</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionOpen:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="722745758"/>
+					</object>
+					<int key="connectionID">608</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionOpenFolder:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="827642748"/>
+					</object>
+					<int key="connectionID">609</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionOpenMinecraft:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="692639359"/>
+					</object>
+					<int key="connectionID">610</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionSave:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="1023925487"/>
+					</object>
+					<int key="connectionID">611</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionInsertByte:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="50922073"/>
+					</object>
+					<int key="connectionID">612</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionInsertShort:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="911496477"/>
+					</object>
+					<int key="connectionID">613</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionInsertInt:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="332264467"/>
+					</object>
+					<int key="connectionID">614</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionInsertLong:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="128440236"/>
+					</object>
+					<int key="connectionID">615</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionInsertFloat:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="961458250"/>
+					</object>
+					<int key="connectionID">616</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionInsertDouble:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="223962722"/>
+					</object>
+					<int key="connectionID">617</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionInsertByteArray:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="112366097"/>
+					</object>
+					<int key="connectionID">618</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionInsertIntArray:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="93765767"/>
+					</object>
+					<int key="connectionID">619</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionInsertString:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="152916859"/>
+					</object>
+					<int key="connectionID">620</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionInsertList:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="425841552"/>
+					</object>
+					<int key="connectionID">621</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">ActionInsertCompound:</string>
+						<reference key="source" ref="947627720"/>
+						<reference key="destination" ref="352409518"/>
+					</object>
+					<int key="connectionID">623</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
 						<string key="label">_menuInsertCompound</string>
 						<reference key="source" ref="947627720"/>
 						<reference key="destination" ref="352409518"/>
 					</object>
-					<int key="connectionID">595</int>
+					<int key="connectionID">624</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -962,6 +1147,9 @@
 							<reference ref="695807658"/>
 							<reference ref="713722761"/>
 							<reference ref="406540956"/>
+							<reference ref="355622212"/>
+							<reference ref="990986030"/>
+							<reference ref="678120417"/>
 						</object>
 						<reference key="parent" ref="952259628"/>
 					</object>
@@ -1213,6 +1401,21 @@
 						<reference key="object" ref="152916859"/>
 						<reference key="parent" ref="266196583"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">596</int>
+						<reference key="object" ref="355622212"/>
+						<reference key="parent" ref="789758025"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">597</int>
+						<reference key="object" ref="990986030"/>
+						<reference key="parent" ref="789758025"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">598</int>
+						<reference key="object" ref="678120417"/>
+						<reference key="parent" ref="789758025"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -1269,6 +1472,9 @@
 					<string>572.IBPluginDependency</string>
 					<string>573.IBPluginDependency</string>
 					<string>58.IBPluginDependency</string>
+					<string>596.IBPluginDependency</string>
+					<string>597.IBPluginDependency</string>
+					<string>598.IBPluginDependency</string>
 					<string>72.IBPluginDependency</string>
 					<string>75.IBPluginDependency</string>
 					<string>79.IBPluginDependency</string>
@@ -1277,6 +1483,9 @@
 				</object>
 				<object class="NSArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1346,7 +1555,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">595</int>
+			<int key="maxID">624</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1358,12 +1567,56 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>ActionCopy:</string>
+							<string>ActionCut:</string>
 							<string>ActionDelete:</string>
 							<string>ActionEditValue:</string>
+							<string>ActionFind:</string>
+							<string>ActionFindNext:</string>
+							<string>ActionInsertByte:</string>
+							<string>ActionInsertByteArray:</string>
+							<string>ActionInsertCompound:</string>
+							<string>ActionInsertDouble:</string>
+							<string>ActionInsertFloat:</string>
+							<string>ActionInsertInt:</string>
+							<string>ActionInsertIntArray:</string>
+							<string>ActionInsertList:</string>
+							<string>ActionInsertLong:</string>
+							<string>ActionInsertShort:</string>
+							<string>ActionInsertString:</string>
+							<string>ActionMoveDown:</string>
+							<string>ActionMoveUp:</string>
+							<string>ActionOpen:</string>
+							<string>ActionOpenFolder:</string>
+							<string>ActionOpenMinecraft:</string>
+							<string>ActionPaste:</string>
 							<string>ActionRename:</string>
+							<string>ActionSave:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -1373,12 +1626,42 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>ActionCopy:</string>
+							<string>ActionCut:</string>
 							<string>ActionDelete:</string>
 							<string>ActionEditValue:</string>
+							<string>ActionFind:</string>
+							<string>ActionFindNext:</string>
+							<string>ActionInsertByte:</string>
+							<string>ActionInsertByteArray:</string>
+							<string>ActionInsertCompound:</string>
+							<string>ActionInsertDouble:</string>
+							<string>ActionInsertFloat:</string>
+							<string>ActionInsertInt:</string>
+							<string>ActionInsertIntArray:</string>
+							<string>ActionInsertList:</string>
+							<string>ActionInsertLong:</string>
+							<string>ActionInsertShort:</string>
+							<string>ActionInsertString:</string>
+							<string>ActionMoveDown:</string>
+							<string>ActionMoveUp:</string>
+							<string>ActionOpen:</string>
+							<string>ActionOpenFolder:</string>
+							<string>ActionOpenMinecraft:</string>
+							<string>ActionPaste:</string>
 							<string>ActionRename:</string>
+							<string>ActionSave:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">ActionCopy:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionCut:</string>
+								<string key="candidateClassName">id</string>
+							</object>
 							<object class="IBActionInfo">
 								<string key="name">ActionDelete:</string>
 								<string key="candidateClassName">id</string>
@@ -1388,7 +1671,87 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">ActionFind:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionFindNext:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionInsertByte:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionInsertByteArray:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionInsertCompound:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionInsertDouble:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionInsertFloat:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionInsertInt:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionInsertIntArray:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionInsertList:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionInsertLong:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionInsertShort:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionInsertString:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionMoveDown:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionMoveUp:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionOpen:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionOpenFolder:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionOpenMinecraft:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionPaste:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">ActionRename:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">ActionSave:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 						</object>
@@ -1415,6 +1778,8 @@
 							<string>_menuInsertLong</string>
 							<string>_menuInsertShort</string>
 							<string>_menuInsertString</string>
+							<string>_menuMoveDown</string>
+							<string>_menuMoveUp</string>
 							<string>_menuOpen</string>
 							<string>_menuOpenFolder</string>
 							<string>_menuOpenMinecraft</string>
@@ -1425,6 +1790,8 @@
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSMenuItem</string>
+							<string>NSMenuItem</string>
 							<string>NSMenuItem</string>
 							<string>NSMenuItem</string>
 							<string>NSMenuItem</string>
@@ -1474,6 +1841,8 @@
 							<string>_menuInsertLong</string>
 							<string>_menuInsertShort</string>
 							<string>_menuInsertString</string>
+							<string>_menuMoveDown</string>
+							<string>_menuMoveUp</string>
 							<string>_menuOpen</string>
 							<string>_menuOpenFolder</string>
 							<string>_menuOpenMinecraft</string>
@@ -1554,6 +1923,14 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">_menuInsertString</string>
+								<string key="candidateClassName">NSMenuItem</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_menuMoveDown</string>
+								<string key="candidateClassName">NSMenuItem</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_menuMoveUp</string>
 								<string key="candidateClassName">NSMenuItem</string>
 							</object>
 							<object class="IBToOneOutletInfo">
