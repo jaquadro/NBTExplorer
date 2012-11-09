@@ -45,6 +45,7 @@ namespace NBTExplorer.Windows
             InitializeComponent();
             InitializeIconRegistry();
             FormHandlers.Register();
+            NbtClipboardController.Initialize(new NbtClipboardControllerWin());
 
             FormClosing += MainForm_Closing;
 
@@ -662,21 +663,21 @@ namespace NBTExplorer.Windows
             _buttonAddTagString.Enabled = node.CanCreateTag(TagType.TAG_STRING);
 
             _buttonSave.Enabled = CheckModifications();
-            _buttonCopy.Enabled = node.CanCopyNode;
-            _buttonCut.Enabled = node.CanCutNode;
+            _buttonCopy.Enabled = node.CanCopyNode && NbtClipboardController.IsInitialized;
+            _buttonCut.Enabled = node.CanCutNode && NbtClipboardController.IsInitialized;
             _buttonDelete.Enabled = node.CanDeleteNode;
             _buttonEdit.Enabled = node.CanEditNode;
             _buttonFindNext.Enabled = node.CanSearchNode || _searchState != null;
-            _buttonPaste.Enabled = node.CanPasteIntoNode;
+            _buttonPaste.Enabled = node.CanPasteIntoNode && NbtClipboardController.IsInitialized;
             _buttonRename.Enabled = node.CanRenameNode;
 
             _menuItemSave.Enabled = _buttonSave.Enabled;
-            _menuItemCopy.Enabled = node.CanCopyNode;
-            _menuItemCut.Enabled = node.CanCutNode;
+            _menuItemCopy.Enabled = node.CanCopyNode && NbtClipboardController.IsInitialized;
+            _menuItemCut.Enabled = node.CanCutNode && NbtClipboardController.IsInitialized;
             _menuItemDelete.Enabled = node.CanDeleteNode;
             _menuItemEditValue.Enabled = node.CanEditNode;
             _menuItemFind.Enabled = node.CanSearchNode;
-            _menuItemPaste.Enabled = node.CanPasteIntoNode;
+            _menuItemPaste.Enabled = node.CanPasteIntoNode && NbtClipboardController.IsInitialized;
             _menuItemRename.Enabled = node.CanRenameNode;
             _menuItemFind.Enabled = node.CanSearchNode;
             _menuItemFindNext.Enabled = _searchState != null;

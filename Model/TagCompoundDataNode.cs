@@ -40,7 +40,7 @@ namespace NBTExplorer.Model
 
         public override bool CanPasteIntoNode
         {
-            get { return NbtClipboardData.ContainsData; }
+            get { return NbtClipboardController.ContainsData; }
         }
 
         public override bool CreateNode (TagType type)
@@ -68,8 +68,8 @@ namespace NBTExplorer.Model
             if (!CanPasteIntoNode)
                 return false;
 
-            NbtClipboardData clipboard = NbtClipboardData.CopyFromClipboard();
-            if (clipboard.Node == null)
+            NbtClipboardData clipboard = NbtClipboardController.CopyFromClipboard();
+            if (clipboard == null || clipboard.Node == null)
                 return false;
 
             string name = clipboard.Name;

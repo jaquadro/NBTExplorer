@@ -238,8 +238,7 @@ namespace NBTExplorer.Model
         public override bool CopyNode ()
         {
             if (CanCopyNode) {
-                NbtClipboardData clip = new NbtClipboardData(NodeName, Tag);
-                clip.CopyToClipboard();
+                NbtClipboardController.CopyToClipboard(new NbtClipboardData(NodeName, Tag));
                 return true;
             }
 
@@ -249,8 +248,7 @@ namespace NBTExplorer.Model
         public override bool CutNode ()
         {
             if (CanCutNode) {
-                NbtClipboardData clip = new NbtClipboardData(NodeName, Tag);
-                clip.CopyToClipboard();
+                NbtClipboardController.CopyToClipboard(new NbtClipboardData(NodeName, Tag));
 
                 TagParent.DeleteTag(Tag);
                 Parent.Nodes.Remove(this);

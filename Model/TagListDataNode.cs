@@ -40,9 +40,12 @@ namespace NBTExplorer.Model
         {
             get
             {
-                if (NbtClipboardData.ContainsData) {
-                    TagNode node = NbtClipboardData.CopyFromClipboard().Node;
-                    if (node != null && node.GetTagType() == Tag.ValueType)
+                if (NbtClipboardController.ContainsData) {
+                    NbtClipboardData data = NbtClipboardController.CopyFromClipboard();
+                    if (data == null)
+                        return false;
+
+                    if (data.Node != null && data.Node.GetTagType() == Tag.ValueType)
                         return true;
                 }
 
@@ -68,8 +71,8 @@ namespace NBTExplorer.Model
             if (!CanPasteIntoNode)
                 return false;
 
-            NbtClipboardData clipboard = NbtClipboardData.CopyFromClipboard();
-            if (clipboard.Node == null)
+            NbtClipboardData clipboard = NbtClipboardController.CopyFromClipboard();
+            if (clipboard == null || clipboard.Node == null)
                 return false;
 
             AppendTag(clipboard.Node);
