@@ -43,7 +43,7 @@ namespace Substrate.Core
                 return null;
             }
 
-            return TileEntityFactory.Create(te);
+            return TileEntityFactory.CreateGeneric(te);
         }
 
         public void SetTileEntity (int x, int y, int z, TileEntity te)
