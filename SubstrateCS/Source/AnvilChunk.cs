@@ -304,6 +304,16 @@ namespace Substrate
             return LoadTree(tree);
         }
 
+        private bool ShouldIncludeSection (AnvilSection section)
+        {
+            int y = (section.Y + 1) * section.Blocks.YDim;
+            for (int i = 0; i < _heightMap.Length; i++)
+                if (_heightMap[i] > y)
+                    return true;
+
+            return !section.CheckEmpty();
+        }
+
         public TagNode BuildTree ()
         {
             TagNodeCompound level = _tree.Root["Level"] as TagNodeCompound;
@@ -313,7 +323,7 @@ namespace Substrate
 
             TagNodeList sections = new TagNodeList(TagType.TAG_COMPOUND);
             for (int i = 0; i < _sections.Length; i++)
-                if (!_sections[i].CheckEmpty())
+                if (ShouldIncludeSection(_sections[i]))
                     sections.Add(_sections[i].BuildTree());
 
             levelCopy["Sections"] = sections;
