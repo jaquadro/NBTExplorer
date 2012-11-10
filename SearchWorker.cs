@@ -1,35 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using NBTExplorer.Model;
 
 namespace NBTExplorer
 {
-    internal class SearchState
+    internal interface ISearchState
     {
-        public DataNode RootNode { get; set; }
-        public string SearchName { get; set; }
-        public string SearchValue { get; set; }
+        DataNode RootNode { get; set; }
+        string SearchName { get; set; }
+        string SearchValue { get; set; }
 
-        public IEnumerator<DataNode> State { get; set; }
+        IEnumerator<DataNode> State { get; set; }
 
-        public Action<DataNode> DiscoverCallback { get; set; }
-        public Action<DataNode> ProgressCallback { get; set; }
-        public Action<DataNode> CollapseCallback { get; set; }
-        public Action<DataNode> EndCallback { get; set; }
+        void InvokeDiscoverCallback (DataNode node);
+        void InvokeProgressCallback (DataNode node);
+        void InvokeCollapseCallback (DataNode node);
+        void InvokeEndCallback (DataNode node);
     }
 
     internal class SearchWorker
     {
-        private ContainerControl _sender;
-        private SearchState _state;
+        private ISearchState _state;
         private bool _cancel;
         private object _lock;
 
-        public SearchWorker (SearchState state, ContainerControl sender)
+        public SearchWorker (ISearchState state)
         {
             _state = state;
-            _sender = sender;
             _lock = new object();
         }
 
@@ -102,20 +99,17 @@ namespace NBTExplorer
 
         private void InvokeDiscoverCallback (DataNode node)
         {
-            if (_sender != null && _state.DiscoverCallback != null)
-                _sender.BeginInvoke(_state.DiscoverCallback, new object[] { node });
+            _state.InvokeDiscoverCallback(node);
         }
 
         private void InvokeCollapseCallback (DataNode node)
         {
-            if (_sender != null && _state.CollapseCallback != null)
-                _sender.BeginInvoke(_state.CollapseCallback, new object[] { node });
+            _state.InvokeCollapseCallback(node);
         }
 
         private void InvokeEndCallback ()
         {
-            if (_sender != null && _state.EndCallback != null)
-                _sender.BeginInvoke(_state.EndCallback, new object[] { null });
+            _state.InvokeEndCallback(null);
         }
     }
 }

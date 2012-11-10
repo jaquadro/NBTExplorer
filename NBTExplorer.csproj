@@ -194,6 +194,7 @@
     <Compile Include="Vendor\Be.Windows.Forms.HexBox\Util.cs" />
     <Compile Include="Windows\FormHandlers.cs" />
     <Compile Include="Windows\NbtClipboardControllerWin.cs" />
+    <Compile Include="Windows\SearchStateWin.cs" />
     <EmbeddedResource Include="Windows\CancelSearchForm.resx">
       <DependentUpon>CancelSearchForm.cs</DependentUpon>
     </EmbeddedResource>
