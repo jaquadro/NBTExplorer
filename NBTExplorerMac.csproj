@@ -69,8 +69,8 @@
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Data" />
-    <Reference Include="MonoMac, Version=0.0.0.0, Culture=neutral">
-      <Private>False</Private>
+    <Reference Include="MonoMac">
+      <HintPath>..\monomac\src\MonoMac.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -183,6 +183,8 @@
     <Compile Include="Mac\EditValueWindow.designer.cs">
       <DependentUpon>EditValueWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="NbtClipboardController.cs" />
+    <Compile Include="Mac\NbtClipboardControllerMac.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Dead_Bush.png" />
@@ -243,5 +245,9 @@
     <InterfaceDefinition Include="Mac\EditNameWindow.xib" />
     <InterfaceDefinition Include="Mac\CreateNodeWindow.xib" />
     <InterfaceDefinition Include="Mac\EditValueWindow.xib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\Dead_Bush_256.icns" />
+    <Content Include="nbte.icns" />
   </ItemGroup>
 </Project>

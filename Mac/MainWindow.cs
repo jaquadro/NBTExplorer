@@ -33,6 +33,7 @@ namespace NBTExplorer
 		{
 			InitializeIconRegistry();
 			FormHandlers.Register();
+			NbtClipboardController.Initialize(new NbtClipboardControllerMac());
 		}
 
 		private AppDelegate _appDelegate;
@@ -360,6 +361,21 @@ namespace NBTExplorer
 			get { return _mainOutlineView.ItemAtRow (_mainOutlineView.SelectedRow) as TreeDataNode; }
 		}
 
+		public void ActionCopy ()
+		{
+			CopyNode (SelectedNode);
+		}
+
+		public void ActionCut ()
+		{
+			CutNode (SelectedNode);
+		}
+
+		public void ActionPaste ()
+		{
+			PasteNode (SelectedNode);
+		}
+
 		public void ActionEditValue ()
 		{
 			EditNode(SelectedNode);
@@ -438,6 +454,48 @@ namespace NBTExplorer
 		public void ActionInsertCompoundTag ()
 		{
 			CreateNode (SelectedNode, TagType.TAG_COMPOUND);
+		}
+
+		private void CopyNode (TreeDataNode node)
+		{
+			if (node == null)
+				return;
+
+			if (!node.Data.CanCopyNode)
+				return;
+			
+			node.Data.CopyNode();
+		}
+		
+		private void CutNode (TreeDataNode node)
+		{
+			if (node == null)
+				return;
+
+			if (!node.Data.CanCutNode)
+				return;
+
+			if (node.Data.CutNode()) {
+				TreeDataNode parent = node.Parent;
+				UpdateUI(parent.Data);
+				node.Remove();
+				_mainOutlineView.ReloadItem(parent, true);
+			}
+		}
+		
+		private void PasteNode (TreeDataNode node)
+		{
+			if (node == null)
+				return;
+
+			if (!node.Data.CanPasteIntoNode)
+				return;
+
+			if (node.Data.PasteNode()) {
+				//node.Text = dataNode.NodeDisplay;
+				RefreshChildNodes(node, node.Data);
+				UpdateUI(node.Data);
+			}
 		}
 
 		private void EditNode (TreeDataNode node)
@@ -622,9 +680,9 @@ namespace NBTExplorer
 			_appDelegate.MenuInsertCompound.Enabled = node.CanCreateTag(TagType.TAG_COMPOUND);
 
 			_appDelegate.MenuSave.Enabled = CheckModifications();
-			_appDelegate.MenuCopy.Enabled = node.CanCopyNode;
-			_appDelegate.MenuCut.Enabled = node.CanCutNode;
-			_appDelegate.MenuPaste.Enabled = node.CanPasteIntoNode;
+			_appDelegate.MenuCopy.Enabled = node.CanCopyNode && NbtClipboardController.IsInitialized;
+			_appDelegate.MenuCut.Enabled = node.CanCutNode && NbtClipboardController.IsInitialized;
+			_appDelegate.MenuPaste.Enabled = node.CanPasteIntoNode && NbtClipboardController.IsInitialized;
 			_appDelegate.MenuDelete.Enabled = node.CanDeleteNode;
 			_appDelegate.MenuEditValue.Enabled = node.CanEditNode;
 			_appDelegate.MenuRename.Enabled = node.CanRenameNode;

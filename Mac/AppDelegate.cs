@@ -156,6 +156,21 @@ namespace NBTExplorer
 			get { return _menuInsertCompound; }
 		}
 
+		partial void ActionCut (MonoMac.Foundation.NSObject sender)
+		{
+			mainWindowController.Window.ActionCut();
+		}
+
+		partial void ActionCopy (MonoMac.Foundation.NSObject sender)
+		{
+			mainWindowController.Window.ActionCopy();
+		}
+
+		partial void ActionPaste (MonoMac.Foundation.NSObject sender)
+		{
+			mainWindowController.Window.ActionPaste();
+		}
+
 		partial void ActionRename (NSObject sender)
 		{
 			mainWindowController.Window.ActionRenameValue();
