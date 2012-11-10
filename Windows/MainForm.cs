@@ -470,7 +470,7 @@ namespace NBTExplorer.Windows
         }
 
         private CancelSearchForm _searchForm;
-        private SearchState _searchState;
+        private SearchStateWin _searchState;
 
         private void SearchNode (TreeNode node)
         {
@@ -485,7 +485,7 @@ namespace NBTExplorer.Windows
             if (form.ShowDialog() != DialogResult.OK)
                 return;
 
-            _searchState = new SearchState() {
+            _searchState = new SearchStateWin(this) {
                 RootNode = dataNode,
                 SearchName = form.NameToken,
                 SearchValue = form.ValueToken,
@@ -502,7 +502,7 @@ namespace NBTExplorer.Windows
             if (_searchState == null)
                 return;
 
-            SearchWorker worker = new SearchWorker(_searchState, this);
+            SearchWorker worker = new SearchWorker(_searchState);
 
             Thread t = new Thread(new ThreadStart(worker.Run));
             t.IsBackground = true;
