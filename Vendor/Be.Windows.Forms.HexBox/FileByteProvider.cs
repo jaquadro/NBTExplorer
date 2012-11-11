@@ -168,6 +168,16 @@ namespace Be.Windows.Forms
 		/// </summary>
         public event EventHandler LengthChanged;
 
+        /// <summary>
+        /// Never Used
+        /// </summary>
+        /// <param name="e">Event Args</param>
+        protected virtual void OnLengthChanged (EventArgs e)
+        {
+            if (LengthChanged != null)
+                LengthChanged(this, e);
+        }
+
 		/// <summary>
 		/// Reads a byte from the file.
 		/// </summary>
