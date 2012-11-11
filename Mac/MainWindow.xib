@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12B2080</string>
+		<string key="IBDocument.SystemVersion">12C2034</string>
 		<string key="IBDocument.InterfaceBuilderVersion">2844</string>
-		<string key="IBDocument.AppKitVersion">1187</string>
-		<string key="IBDocument.HIToolboxVersion">624.00</string>
+		<string key="IBDocument.AppKitVersion">1187.34</string>
+		<string key="IBDocument.HIToolboxVersion">625.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			<string key="NS.object.0">2844</string>
@@ -70,6 +70,7 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>0156226B-2E18-4406-BBE6-7C88F62B4E27</string>
+							<string>A7443D4A-610D-4239-8FC6-AD74A87D607E</string>
 							<string>B62CA8DD-7D49-4BF3-B4AB-417078852D8B</string>
 							<string>NSToolbarFlexibleSpaceItem</string>
 							<string>NSToolbarSpaceItem</string>
@@ -93,7 +94,29 @@
 								<string key="NSToolbarItemMinSize">{0, 0}</string>
 								<string key="NSToolbarItemMaxSize">{0, 0}</string>
 								<bool key="NSToolbarItemEnabled">YES</bool>
-								<bool key="NSToolbarItemAutovalidates">YES</bool>
+								<bool key="NSToolbarItemAutovalidates">NO</bool>
+								<int key="NSToolbarItemTag">-1</int>
+								<bool key="NSToolbarIsUserRemovable">YES</bool>
+								<int key="NSToolbarItemVisibilityPriority">0</int>
+							</object>
+							<object class="NSToolbarItem" id="128477937">
+								<object class="NSMutableString" key="NSToolbarItemIdentifier">
+									<characters key="NS.bytes">A7443D4A-610D-4239-8FC6-AD74A87D607E</characters>
+								</object>
+								<string key="NSToolbarItemLabel">Rename</string>
+								<string key="NSToolbarItemPaletteLabel">Rename</string>
+								<string key="NSToolbarItemToolTip"/>
+								<nil key="NSToolbarItemView"/>
+								<object class="NSCustomResource" key="NSToolbarItemImage">
+									<string key="NSClassName">NSImage</string>
+									<string key="NSResourceName">selection-input-24</string>
+								</object>
+								<nil key="NSToolbarItemTarget"/>
+								<nil key="NSToolbarItemAction"/>
+								<string key="NSToolbarItemMinSize">{0, 0}</string>
+								<string key="NSToolbarItemMaxSize">{0, 0}</string>
+								<bool key="NSToolbarItemEnabled">YES</bool>
+								<bool key="NSToolbarItemAutovalidates">NO</bool>
 								<int key="NSToolbarItemTag">-1</int>
 								<bool key="NSToolbarIsUserRemovable">YES</bool>
 								<int key="NSToolbarItemVisibilityPriority">0</int>
@@ -115,7 +138,7 @@
 								<string key="NSToolbarItemMinSize">{0, 0}</string>
 								<string key="NSToolbarItemMaxSize">{0, 0}</string>
 								<bool key="NSToolbarItemEnabled">YES</bool>
-								<bool key="NSToolbarItemAutovalidates">YES</bool>
+								<bool key="NSToolbarItemAutovalidates">NO</bool>
 								<int key="NSToolbarItemTag">-1</int>
 								<bool key="NSToolbarIsUserRemovable">YES</bool>
 								<int key="NSToolbarItemVisibilityPriority">0</int>
@@ -182,17 +205,20 @@
 							</object>
 						</object>
 					</object>
-					<object class="NSArray" key="NSToolbarIBAllowedItems">
+					<object class="NSMutableArray" key="NSToolbarIBAllowedItems">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<reference ref="367445820"/>
 						<reference ref="767736573"/>
 						<reference ref="994350550"/>
 						<reference ref="386220062"/>
+						<reference ref="128477937"/>
 					</object>
 					<object class="NSArray" key="NSToolbarIBDefaultItems">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<reference ref="994350550"/>
 						<reference ref="386220062"/>
+						<reference ref="367445820"/>
+						<reference ref="128477937"/>
 						<reference ref="767736573"/>
 					</object>
 					<object class="NSArray" key="NSToolbarIBSelectableItems" id="0">
@@ -338,6 +364,7 @@
 									<string key="NSFrame">{{1, 544}, {761, 15}}</string>
 									<reference key="NSSuperview" ref="595155248"/>
 									<reference key="NSWindow"/>
+									<reference key="NSNextKeyView"/>
 									<string key="NSReuseIdentifierKey">_NS:60</string>
 									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 									<int key="NSsFlags">1</int>
@@ -527,6 +554,7 @@
 							<reference ref="767736573"/>
 							<reference ref="994350550"/>
 							<reference ref="386220062"/>
+							<reference ref="128477937"/>
 						</object>
 						<reference key="parent" ref="748157544"/>
 					</object>
@@ -619,6 +647,11 @@
 						<reference key="object" ref="931793253"/>
 						<reference key="parent" ref="765672105"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">78</int>
+						<reference key="object" ref="128477937"/>
+						<reference key="parent" ref="919098349"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -650,6 +683,7 @@
 					<string>72.IBPluginDependency</string>
 					<string>73.IBPluginDependency</string>
 					<string>74.IBPluginDependency</string>
+					<string>78.IBPluginDependency</string>
 				</object>
 				<object class="NSArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -678,6 +712,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -692,7 +727,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">77</int>
+			<int key="maxID">78</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -824,11 +859,13 @@
 				<string>NSMenuMixedState</string>
 				<string>disk-24</string>
 				<string>folder-open-24</string>
+				<string>selection-input-24</string>
 			</object>
 			<object class="NSArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<string>{11, 11}</string>
 				<string>{10, 3}</string>
+				<string>{24, 24}</string>
 				<string>{24, 24}</string>
 				<string>{24, 24}</string>
 			</object>

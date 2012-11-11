@@ -53,7 +53,7 @@ namespace NBTExplorer.Mac
 
 		public bool HasChildren
 		{
-			get { return _children.Count > 0 || _dataNode.HasUnexpandedChildren; }
+			get { return _children.Count > 0 || _dataNode.Nodes.Count > 0 || _dataNode.HasUnexpandedChildren; }
 		}
 
 		public void AddNode (TreeDataNode node)

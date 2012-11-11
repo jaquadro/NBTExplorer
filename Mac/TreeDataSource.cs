@@ -51,8 +51,9 @@ namespace NBTExplorer.Mac
 		public override bool ItemExpandable (NSOutlineView outlineView, NSObject item)
 		{
 			TreeDataNode nodeItem = item as TreeDataNode;
-			if (nodeItem != null)
+			if (nodeItem != null) {
 				return nodeItem.HasChildren;
+			}
 
 			return false;
 		}

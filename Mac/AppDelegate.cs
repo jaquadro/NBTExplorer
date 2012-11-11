@@ -21,6 +21,11 @@ namespace NBTExplorer
 			mainWindowController.Window.AppDelegate = this;
 		}
 
+		public override bool ApplicationShouldTerminateAfterLastWindowClosed (NSApplication sender)
+		{
+			return true;
+		}
+
 		public NSMenuItem MenuAbout
 		{
 			get { return _menuAbout; }
@@ -156,17 +161,37 @@ namespace NBTExplorer
 			get { return _menuInsertCompound; }
 		}
 
-		partial void ActionCut (MonoMac.Foundation.NSObject sender)
+		partial void ActionOpen (NSObject sender)
+		{
+			mainWindowController.Window.ActionOpen();
+		}
+
+		partial void ActionOpenFolder (NSObject sender)
+		{
+			mainWindowController.Window.ActionOpenFolder();
+		}
+
+		partial void ActionOpenMinecraft (NSObject sender)
+		{
+			mainWindowController.Window.ActionOpenMinecraft();
+		}
+
+		partial void ActionSave (NSObject sender)
+		{
+			mainWindowController.Window.ActionSave();
+		}
+
+		partial void ActionCut (NSObject sender)
 		{
 			mainWindowController.Window.ActionCut();
 		}
 
-		partial void ActionCopy (MonoMac.Foundation.NSObject sender)
+		partial void ActionCopy (NSObject sender)
 		{
 			mainWindowController.Window.ActionCopy();
 		}
 
-		partial void ActionPaste (MonoMac.Foundation.NSObject sender)
+		partial void ActionPaste (NSObject sender)
 		{
 			mainWindowController.Window.ActionPaste();
 		}
@@ -194,6 +219,16 @@ namespace NBTExplorer
 		partial void ActionMoveDown (NSObject sender)
 		{
 			mainWindowController.Window.ActionMoveNodeDown();
+		}
+
+		partial void ActionFind (NSObject sender)
+		{
+			mainWindowController.Window.ActionFind();
+		}
+
+		partial void ActionFindNext (NSObject sender)
+		{
+			mainWindowController.Window.ActionFindNext();
 		}
 
 		partial void ActionInsertByte (NSObject sender)

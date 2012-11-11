@@ -185,6 +185,17 @@
     </Compile>
     <Compile Include="NbtClipboardController.cs" />
     <Compile Include="Mac\NbtClipboardControllerMac.cs" />
+    <Compile Include="Mac\SearchStateMac.cs" />
+    <Compile Include="Mac\FindWindow.cs" />
+    <Compile Include="Mac\FindWindowController.cs" />
+    <Compile Include="Mac\FindWindow.designer.cs">
+      <DependentUpon>FindWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Mac\CancelFindWindow.cs" />
+    <Compile Include="Mac\CancelFindWindowController.cs" />
+    <Compile Include="Mac\CancelFindWindow.designer.cs">
+      <DependentUpon>CancelFindWindow.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Dead_Bush.png" />
@@ -245,6 +256,8 @@
     <InterfaceDefinition Include="Mac\EditNameWindow.xib" />
     <InterfaceDefinition Include="Mac\CreateNodeWindow.xib" />
     <InterfaceDefinition Include="Mac\EditValueWindow.xib" />
+    <InterfaceDefinition Include="Mac\FindWindow.xib" />
+    <InterfaceDefinition Include="Mac\CancelFindWindow.xib" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Dead_Bush_256.icns" />

@@ -8,6 +8,7 @@ using NBTExplorer.Mac;
 using System.IO;
 using NBTExplorer.Model;
 using Substrate.Nbt;
+using System.Threading;
 
 namespace NBTExplorer
 {
@@ -31,6 +32,7 @@ namespace NBTExplorer
 		// Shared initialization code
 		void Initialize ()
 		{
+			Delegate = new WindowDelegate(this);
 			InitializeIconRegistry();
 			FormHandlers.Register();
 			NbtClipboardController.Initialize(new NbtClipboardControllerMac());
@@ -95,6 +97,22 @@ namespace NBTExplorer
 			}
 			else {
 				OpenMinecraftDirectory();
+			}
+		}
+
+		public class WindowDelegate : NSWindowDelegate
+		{
+			private MainWindow _main;
+
+			public WindowDelegate (MainWindow main) {
+				_main = main;
+			}
+
+			public override bool WindowShouldClose (NSObject sender)
+			{
+				//Settings.Default.RecentFiles = Settings.Default.RecentFiles;
+				//Settings.Default.Save();
+				return _main.ConfirmExit();
 			}
 		}
 
@@ -163,9 +181,14 @@ namespace NBTExplorer
 
 		#region Actions
 
-		partial void ActionOpenFolder (MonoMac.Foundation.NSObject sender)
+		partial void ActionOpenFolder (NSObject sender)
 		{
 			OpenFolder ();
+		}
+
+		partial void ActionSave (NSObject sender)
+		{
+			ActionSave ();
 		}
 
 		#endregion
@@ -189,6 +212,23 @@ namespace NBTExplorer
 			UpdateUI();
 		}
 
+		private void OpenFile ()
+		{
+			NSOpenPanel opanel = new NSOpenPanel ();
+			opanel.CanChooseDirectories = false;
+			opanel.CanChooseFiles = true;
+			//opanel.AllowsMultipleSelection = true;
+
+			if (opanel.RunModal() == (int)NSPanelButtonType.Ok) {
+				List<string> paths = new List<string>();
+				foreach (var url in opanel.Urls)
+					paths.Add(url.Path);
+				OpenPaths(paths);
+			}
+
+			UpdateUI();
+		}
+
 		private void OpenMinecraftDirectory ()
 		{
 			try {
@@ -203,7 +243,7 @@ namespace NBTExplorer
 				OpenPaths(new string[] { path });
 			}
 			catch (Exception e) {
-				//NSAlert.WithMessage("Could not open default Minecraft save directory", "OK", null, null, null).RunModal();
+				NSAlert.WithMessage("Operation Failed", "OK", null, null, "Could not open default Minecraft save directory").RunModal();
 				Console.WriteLine(e.Message);
 				
 				try {
@@ -219,7 +259,7 @@ namespace NBTExplorer
 			UpdateUI();
 		}
 
-		private void OpenPaths (string[] paths)
+		private void OpenPaths (IEnumerable<string> paths)
 		{
 			_dataSource.Nodes.Clear ();
 			_mainOutlineView.ReloadData ();
@@ -242,37 +282,6 @@ namespace NBTExplorer
 			_mainOutlineView.ReloadData();
 
 			UpdateUI();
-			// UpdateOpenMenu();
-
-			/*_nodeTree.Nodes.Clear();
-			
-			foreach (string path in paths) {
-				if (Directory.Exists(path)) {
-					DirectoryDataNode node = new DirectoryDataNode(path);
-					_nodeTree.Nodes.Add(CreateUnexpandedNode(node));
-					
-					AddPathToHistory(Settings.Default.RecentDirectories, path);
-				}
-				else if (File.Exists(path)) {
-					DataNode node = null;
-					foreach (var item in FileTypeRegistry.RegisteredTypes) {
-						if (item.Value.NamePatternTest(path))
-							node = item.Value.NodeCreate(path);
-					}
-					
-					if (node != null) {
-						_nodeTree.Nodes.Add(CreateUnexpandedNode(node));
-						AddPathToHistory(Settings.Default.RecentFiles, path);
-					}
-				}
-			}
-			
-			if (_nodeTree.Nodes.Count > 0) {
-				_nodeTree.Nodes[0].Expand();
-			}
-			
-			UpdateUI();
-			UpdateOpenMenu();*/
 		}
 
 		private void ExpandNode (TreeDataNode node)
@@ -302,7 +311,7 @@ namespace NBTExplorer
 			if (node == null || !node.IsExpanded)
 				return;
 
-			/*Console.WriteLine("Collapse Node: " + node.Data.NodeDisplay);
+			Console.WriteLine("Collapse Node: " + node.Data.NodeDisplay);
 			
 			DataNode backNode = node.Data;
 			if (backNode.IsModified)
@@ -311,7 +320,7 @@ namespace NBTExplorer
 			backNode.Collapse();
 
 			node.IsExpanded = false;
-			node.Nodes.Clear();*/
+			node.Nodes.Clear();
 		}
 
 		private void RefreshChildNodes (TreeDataNode node, DataNode dataNode)
@@ -361,6 +370,29 @@ namespace NBTExplorer
 			get { return _mainOutlineView.ItemAtRow (_mainOutlineView.SelectedRow) as TreeDataNode; }
 		}
 
+		public void ActionOpen ()
+		{
+			if (ConfirmOpen())
+				OpenFile();
+		}
+
+		public void ActionOpenFolder ()
+		{
+			if (ConfirmOpen ())
+				OpenFolder ();
+		}
+
+		public void ActionOpenMinecraft ()
+		{
+			if (ConfirmOpen ())
+				OpenMinecraftDirectory();
+		}
+
+		public void ActionSave ()
+		{
+			Save ();
+		}
+
 		public void ActionCopy ()
 		{
 			CopyNode (SelectedNode);
@@ -399,6 +431,16 @@ namespace NBTExplorer
 		public void ActionMoveNodeDown ()
 		{
 			MoveNodeDown (SelectedNode);
+		}
+
+		public void ActionFind ()
+		{
+			SearchNode (SelectedNode);
+		}
+
+		public void ActionFindNext ()
+		{
+			SearchNextNode();
 		}
 
 		public void ActionInsertByteTag ()
@@ -567,50 +609,6 @@ namespace NBTExplorer
 			node.Data.ChangeRelativePosition(1);
 			RefreshChildNodes(node.Parent, node.Data.Parent);
 		}
-
-		/*private void CopyNode (TreeNode node)
-		{
-			if (node == null || !(node.Tag is DataNode))
-				return;
-			
-			DataNode dataNode = node.Tag as DataNode;
-			if (!dataNode.CanCopyNode)
-				return;
-			
-			dataNode.CopyNode();
-		}
-		
-		private void CutNode (TreeNode node)
-		{
-			if (node == null || !(node.Tag is DataNode))
-				return;
-			
-			DataNode dataNode = node.Tag as DataNode;
-			if (!dataNode.CanCutNode)
-				return;
-			
-			if (dataNode.CutNode()) {
-				UpdateUI(node.Parent.Tag as DataNode);
-				UpdateNodeText(node.Parent);
-				node.Remove();
-			}
-		}
-		
-		private void PasteNode (TreeNode node)
-		{
-			if (node == null || !(node.Tag is DataNode))
-				return;
-			
-			DataNode dataNode = node.Tag as DataNode;
-			if (!dataNode.CanPasteIntoNode)
-				return;
-			
-			if (dataNode.PasteNode()) {
-				node.Text = dataNode.NodeDisplay;
-				RefreshChildNodes(node, dataNode);
-				UpdateUI(dataNode);
-			}
-		}*/
 		
 		private void Save ()
 		{
@@ -621,16 +619,186 @@ namespace NBTExplorer
 			
 			UpdateUI();
 		}
+
+		private static ModalResult RunWindow (NSWindowController controller)
+		{
+			int response = NSApplication.SharedApplication.RunModalForWindow (controller.Window);
+			controller.Window.Close();
+			controller.Window.OrderOut(null);
+			
+			if (!Enum.IsDefined(typeof(ModalResult), response))
+				response = 0;
+			
+			return (ModalResult)response;
+		}
+
+		private CancelFindWindowController _searchForm;
+		private SearchStateMac _searchState;
 		
-		/*private bool ConfirmExit ()
+		private void SearchNode (TreeDataNode node)
+		{
+			if (node == null)
+				return;
+
+			if (!node.Data.CanSearchNode)
+				return;
+
+			FindWindowController form = new FindWindowController();
+			if (RunWindow (form) != ModalResult.OK)
+				return;
+
+			_searchState = new SearchStateMac(this) {
+				RootNode = node.Data,
+				SearchName = form.NameToken,
+				SearchValue = form.ValueToken,
+				DiscoverCallback = SearchDiscoveryCallback,
+				CollapseCallback = SearchCollapseCallback,
+				EndCallback = SearchEndCallback,
+			};
+			
+			SearchNextNode();
+		}
+		
+		private void SearchNextNode ()
+		{
+			if (_searchState == null)
+				return;
+			
+			SearchWorker worker = new SearchWorker (_searchState);
+			
+			Thread t = new Thread (new ThreadStart (worker.Run));
+			t.IsBackground = true;
+			t.Start ();
+
+			_searchForm = new CancelFindWindowController ();
+			if (RunWindow (_searchForm) == ModalResult.Cancel) {
+				worker.Cancel();
+				_searchState = null;
+			}
+			
+			t.Join();
+		}
+		
+		private void SearchDiscoveryCallback (DataNode node)
+		{
+			Console.WriteLine ("Discovery: " + node.NodeDisplay);
+			TreeDataNode frontNode = FindFrontNode(node);
+			Console.WriteLine ("  Front Node: " + frontNode.Data.NodeDisplay);
+			_mainOutlineView.SelectRow (_mainOutlineView.RowForItem(frontNode), false);
+			_mainOutlineView.ScrollRowToVisible(_mainOutlineView.RowForItem(frontNode));
+			//_nodeTree.SelectedNode = FindFrontNode(node);
+			
+			if (_searchForm != null) {
+				_searchForm.Accept();
+				_searchForm = null;
+			}
+		}
+		
+		private void SearchCollapseCallback (DataNode node)
+		{
+			CollapseBelow(node);
+		}
+		
+		private void SearchEndCallback (DataNode node)
+		{
+			_searchForm.Cancel();
+			_searchForm = null;
+
+			NSAlert.WithMessage("End of Results", "OK", null, null, "").RunModal();
+		}
+		
+		private TreeDataNode GetRootFromDataNodePath (DataNode node, out Stack<DataNode> hierarchy)
+		{
+			hierarchy = new Stack<DataNode>();
+			while (node != null) {
+				hierarchy.Push(node);
+				node = node.Parent;
+			}
+			
+			DataNode rootDataNode = hierarchy.Pop();
+			TreeDataNode frontNode = null;
+			foreach (TreeDataNode child in _dataSource.Nodes) {
+				if (child.Data == rootDataNode)
+					frontNode = child;
+			}
+			
+			return frontNode;
+		}
+		
+		private TreeDataNode FindFrontNode (DataNode node)
+		{
+			Stack<DataNode> hierarchy;
+			TreeDataNode frontNode = GetRootFromDataNodePath(node, out hierarchy);
+			
+			if (frontNode == null)
+				return null;
+			
+			while (hierarchy.Count > 0) {
+				if (!frontNode.IsExpanded) {
+					_mainOutlineView.ExpandItem(frontNode);
+					_mainOutlineView.ReloadItem(frontNode);
+				}
+				
+				DataNode childData = hierarchy.Pop();
+				foreach (TreeDataNode childFront in frontNode.Nodes) {
+					if (childFront.Data == childData) {
+						frontNode = childFront;
+						break;
+					}
+				}
+			}
+			
+			return frontNode;
+		}
+		
+		private void CollapseBelow (DataNode node)
+		{
+			Stack<DataNode> hierarchy;
+			TreeDataNode frontNode = GetRootFromDataNodePath (node, out hierarchy);
+			
+			if (frontNode == null)
+				return;
+			
+			while (hierarchy.Count > 0) {
+				if (!frontNode.IsExpanded)
+					return;
+				
+				DataNode childData = hierarchy.Pop ();
+				foreach (TreeDataNode childFront in frontNode.Nodes) {
+					if (childFront.Data == childData) {
+						frontNode = childFront;
+						break;
+					}
+				}
+			}
+			
+			if (frontNode.IsExpanded) {
+				_mainOutlineView.CollapseItem (frontNode);
+				frontNode.IsExpanded = false;
+			}
+		}
+		
+		private bool ConfirmExit ()
 		{
 			if (CheckModifications()) {
-				if (MessageBox.Show("You currently have unsaved changes.  Close anyway?", "Unsaved Changes", MessageBoxButtons.OKCancel) != DialogResult.OK)
+				int id = NSAlert.WithMessage("Unsaved Changes", "OK", "Cancel", "", "You currently have unsaved changes.  Close anyway?").RunModal();
+				if (id != 1)
 					return false;
 			}
 			
 			return true;
-		}*/
+		}
+
+		private bool ConfirmOpen ()
+		{
+			if (CheckModifications()) {
+				int id = NSAlert.WithMessage("Unsaved Changes", "OK", "Cancel", "", "You currently have unsaved changes.  Open new location anyway?").RunModal();
+				if (id != 1)
+					return false;
+			}
+			
+			return true;
+		}
 
 		private bool CheckModifications ()
 		{
@@ -656,7 +824,7 @@ namespace NBTExplorer
 
 				_appDelegate.MenuSave.Enabled = CheckModifications();
 				_appDelegate.MenuFind.Enabled = false;
-				//_appDelegate.MenuFindNext.Enabled = _searchState != null;
+				_appDelegate.MenuFindNext.Enabled = _searchState != null;
 
 				_toolbarSave.Enabled = _appDelegate.MenuSave.Enabled;
 			}
@@ -689,7 +857,7 @@ namespace NBTExplorer
 			_appDelegate.MenuMoveUp.Enabled = node.CanMoveNodeUp;
 			_appDelegate.MenuMoveDown.Enabled = node.CanMoveNodeDown;
 			_appDelegate.MenuFind.Enabled = node.CanSearchNode;
-			//_appDelegate.MenuFindNext.Enabled = _searchState != null;
+			_appDelegate.MenuFindNext.Enabled = _searchState != null;
 
 			_toolbarSave.Enabled = _appDelegate.MenuSave.Enabled;
 		}
