@@ -226,7 +226,7 @@ namespace NBTExplorer.Model
 
                 if (FormRegistry.RenameTag(data)) {
                     if (TagParent.NamedTagContainer.RenameTag(Tag, data.Value)) {
-                        IsModified = true;
+                        IsDataModified = true;
                         return true;
                     }
                 }
@@ -273,7 +273,7 @@ namespace NBTExplorer.Model
                 DataNode parent = Parent;
                 parent.Nodes.Remove(this);
                 parent.Nodes.Insert(newIndex, this);
-                parent.IsModified = true;
+                IsParentModified = true;
                 return true;
             }
 
@@ -284,7 +284,7 @@ namespace NBTExplorer.Model
         {
             if (FormRegistry.EditTagScalar != null) {
                 if (FormRegistry.EditTagScalar(new TagScalarFormData(tag))) {
-                    IsModified = true;
+                    IsDataModified = true;
                     return true;
                 }
             }
@@ -297,7 +297,7 @@ namespace NBTExplorer.Model
                 StringFormData data = new StringFormData(tag.ToTagString().Data);
                 if (FormRegistry.EditString(data)) {
                     tag.ToTagString().Data = data.Value;
-                    IsModified = true;
+                    IsDataModified = true;
                     return true;
                 }
             }
@@ -318,7 +318,7 @@ namespace NBTExplorer.Model
 
                 if (FormRegistry.EditByteArray(data)) {
                     Array.Copy(data.Data, tag.ToTagByteArray().Data, tag.ToTagByteArray().Length);
-                    IsModified = true;
+                    IsDataModified = true;
                     return true;
                 }
             }
@@ -347,7 +347,7 @@ namespace NBTExplorer.Model
                         iatag.Data[i] = BitConverter.ToInt32(data.Data, i * 4);
                     }
 
-                    IsModified = true;
+                    IsDataModified = true;
                     return true;
                 }
             }

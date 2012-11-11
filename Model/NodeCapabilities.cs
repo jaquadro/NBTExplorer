@@ -15,5 +15,6 @@ namespace NBTExplorer.Model
         CreateTag = 0x40,
         Search = 0x80,
         Reorder = 0x100,
+        Refresh = 0x200,
     }
 }

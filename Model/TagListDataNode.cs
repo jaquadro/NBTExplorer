@@ -102,7 +102,7 @@ namespace NBTExplorer.Model
         private void AppendTag (TagNode tag)
         {
             _container.InsertTag(tag, _container.TagCount);
-            IsModified = true;
+            IsDataModified = true;
 
             if (IsExpanded) {
                 TagDataNode node = TagDataNode.CreateFromTag(tag);

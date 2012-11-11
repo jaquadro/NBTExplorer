@@ -1,4 +1,5 @@
 ﻿using Substrate.Nbt;
+using System.Collections.Generic;
 
 namespace NBTExplorer.Model
 {
@@ -8,7 +9,9 @@ namespace NBTExplorer.Model
         private DataNodeCollection _children;
 
         private bool _expanded;
-        private bool _modified;
+
+        private bool _dataModified;
+        private bool _childModified;
 
         public DataNode ()
         {
@@ -28,13 +31,48 @@ namespace NBTExplorer.Model
 
         public bool IsModified
         {
-            get { return _modified; }
+            get { return _dataModified || _childModified; }
+        }
+
+        protected bool IsDataModified
+        {
+            get { return _dataModified; }
             set
             {
-                if (value && Parent != null)
-                    Parent.IsModified = value;
-                _modified = value;
+                _dataModified = value;
+                CalculateChildModifiedState();
             }
+        }
+
+        protected bool IsChildModified
+        {
+            get { return _childModified; }
+            set
+            {
+                _childModified = value;
+                CalculateChildModifiedState();                
+            }
+        }
+
+        protected bool IsParentModified
+        {
+            get { return Parent != null && Parent.IsModified; }
+            set
+            {
+                if (Parent != null)
+                    Parent.IsDataModified = value;
+            }
+        }
+
+        private void CalculateChildModifiedState ()
+        {
+            _childModified = false;
+            foreach (DataNode child in Nodes)
+                if (child.IsModified)
+                    _childModified = true;
+
+            if (Parent != null)
+                Parent.CalculateChildModifiedState();
         }
 
         public bool IsExpanded
@@ -68,6 +106,7 @@ namespace NBTExplorer.Model
 
             ReleaseCore();
             IsExpanded = false;
+            IsDataModified = false;
         }
 
         protected virtual void ReleaseCore ()
@@ -82,7 +121,7 @@ namespace NBTExplorer.Model
                     node.Save();
 
             SaveCore();
-            IsModified = false;
+            IsDataModified = false;
         }
 
         protected virtual void SaveCore ()
@@ -102,6 +141,34 @@ namespace NBTExplorer.Model
         public virtual bool HasUnexpandedChildren
         {
             get { return false; }
+        }
+
+        protected Dictionary<string, object> BuildExpandSet (DataNode node)
+        {
+            if (node == null || !node.IsExpanded)
+                return null;
+
+            Dictionary<string, object> dict = new Dictionary<string, object>();
+            foreach (DataNode child in node.Nodes) {
+                Dictionary<string, object> childDict = BuildExpandSet(child);
+                if (childDict != null)
+                    dict[child.NodeDisplay] = childDict;
+            }
+
+            return dict;
+        }
+
+        protected void RestoreExpandSet (DataNode node, Dictionary<string, object> expandSet)
+        {
+            node.Expand();
+
+            foreach (DataNode child in node.Nodes) {
+                if (expandSet.ContainsKey(child.NodeDisplay)) {
+                    Dictionary<string, object> childDict = (Dictionary<string, object>)expandSet[child.NodeDisplay];
+                    if (childDict != null)
+                        RestoreExpandSet(child, childDict);
+                }
+            }
         }
 
         #region Capabilities
@@ -149,6 +216,11 @@ namespace NBTExplorer.Model
         public virtual bool CanReoderNode
         {
             get { return (Capabilities & NodeCapabilities.Reorder) != NodeCapabilities.None; }
+        }
+
+        public virtual bool CanRefreshNode
+        {
+            get { return (Capabilities & NodeCapabilities.Refresh) != NodeCapabilities.None; }
         }
 
         public virtual bool CanMoveNodeUp
@@ -206,6 +278,11 @@ namespace NBTExplorer.Model
         }
 
         public virtual bool ChangeRelativePosition (int offset)
+        {
+            return false;
+        }
+
+        public virtual bool RefreshNode ()
         {
             return false;
         }

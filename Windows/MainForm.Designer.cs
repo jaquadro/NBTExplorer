@@ -37,6 +37,9 @@
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this._menuItemSave = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this._menuItemRecentFiles = new System.Windows.Forms.ToolStripMenuItem();
+            this._menuItemRecentFolders = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this._menuItemExit = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this._menuItemCut = new System.Windows.Forms.ToolStripMenuItem();
@@ -86,9 +89,8 @@
             this.ContentPanel = new System.Windows.Forms.ToolStripContentPanel();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this._menuItemRecentFiles = new System.Windows.Forms.ToolStripMenuItem();
-            this._menuItemRecentFolders = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this._buttonRefresh = new System.Windows.Forms.ToolStripButton();
+            this._menuItemRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -115,6 +117,7 @@
             this._menuItemOpenMinecraftSaveFolder,
             this.toolStripSeparator3,
             this._menuItemSave,
+            this._menuItemRefresh,
             this.toolStripSeparator4,
             this._menuItemRecentFiles,
             this._menuItemRecentFolders,
@@ -164,6 +167,23 @@
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(220, 6);
+            // 
+            // _menuItemRecentFiles
+            // 
+            this._menuItemRecentFiles.Name = "_menuItemRecentFiles";
+            this._menuItemRecentFiles.Size = new System.Drawing.Size(223, 22);
+            this._menuItemRecentFiles.Text = "Recent Files";
+            // 
+            // _menuItemRecentFolders
+            // 
+            this._menuItemRecentFolders.Name = "_menuItemRecentFolders";
+            this._menuItemRecentFolders.Size = new System.Drawing.Size(223, 22);
+            this._menuItemRecentFolders.Text = "Recent Folders";
+            // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(220, 6);
             // 
             // _menuItemExit
             // 
@@ -254,7 +274,7 @@
             this._menuItemFind.Image = ((System.Drawing.Image)(resources.GetObject("_menuItemFind.Image")));
             this._menuItemFind.Name = "_menuItemFind";
             this._menuItemFind.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this._menuItemFind.Size = new System.Drawing.Size(146, 22);
+            this._menuItemFind.Size = new System.Drawing.Size(152, 22);
             this._menuItemFind.Text = "Find...";
             // 
             // _menuItemFindNext
@@ -262,7 +282,7 @@
             this._menuItemFindNext.Image = ((System.Drawing.Image)(resources.GetObject("_menuItemFindNext.Image")));
             this._menuItemFindNext.Name = "_menuItemFindNext";
             this._menuItemFindNext.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this._menuItemFindNext.Size = new System.Drawing.Size(146, 22);
+            this._menuItemFindNext.Size = new System.Drawing.Size(152, 22);
             this._menuItemFindNext.Text = "Find Next";
             // 
             // helpToolStripMenuItem
@@ -278,7 +298,7 @@
             this._menuItemAbout.Image = ((System.Drawing.Image)(resources.GetObject("_menuItemAbout.Image")));
             this._menuItemAbout.Name = "_menuItemAbout";
             this._menuItemAbout.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this._menuItemAbout.Size = new System.Drawing.Size(126, 22);
+            this._menuItemAbout.Size = new System.Drawing.Size(152, 22);
             this._menuItemAbout.Text = "&About";
             // 
             // _nodeTree
@@ -324,6 +344,7 @@
             this._buttonOpen,
             this._buttonOpenFolder,
             this._buttonSave,
+            this._buttonRefresh,
             this.toolStripSeparator1,
             this._buttonCut,
             this._buttonCopy,
@@ -611,22 +632,24 @@
             this.testToolStripMenuItem.Size = new System.Drawing.Size(96, 22);
             this.testToolStripMenuItem.Text = "Test";
             // 
-            // _menuItemRecentFiles
+            // _buttonRefresh
             // 
-            this._menuItemRecentFiles.Name = "_menuItemRecentFiles";
-            this._menuItemRecentFiles.Size = new System.Drawing.Size(223, 22);
-            this._menuItemRecentFiles.Text = "Recent Files";
+            this._buttonRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._buttonRefresh.Image = ((System.Drawing.Image)(resources.GetObject("_buttonRefresh.Image")));
+            this._buttonRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._buttonRefresh.Name = "_buttonRefresh";
+            this._buttonRefresh.Size = new System.Drawing.Size(23, 22);
+            this._buttonRefresh.Text = "Refresh Content From Disk";
+            this._buttonRefresh.Click += new System.EventHandler(this._buttonRefresh_Click);
             // 
-            // _menuItemRecentFolders
+            // _menuItemRefresh
             // 
-            this._menuItemRecentFolders.Name = "_menuItemRecentFolders";
-            this._menuItemRecentFolders.Size = new System.Drawing.Size(223, 22);
-            this._menuItemRecentFolders.Text = "Recent Folders";
-            // 
-            // toolStripSeparator8
-            // 
-            this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(220, 6);
+            this._menuItemRefresh.Image = ((System.Drawing.Image)(resources.GetObject("_menuItemRefresh.Image")));
+            this._menuItemRefresh.Name = "_menuItemRefresh";
+            this._menuItemRefresh.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this._menuItemRefresh.Size = new System.Drawing.Size(223, 22);
+            this._menuItemRefresh.Text = "Refresh";
+            this._menuItemRefresh.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -713,6 +736,8 @@
         private System.Windows.Forms.ToolStripMenuItem _menuItemRecentFiles;
         private System.Windows.Forms.ToolStripMenuItem _menuItemRecentFolders;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
+        private System.Windows.Forms.ToolStripButton _buttonRefresh;
+        private System.Windows.Forms.ToolStripMenuItem _menuItemRefresh;
     }
 }
 

@@ -132,6 +132,9 @@ namespace NBTExplorer.Windows
 
         private void OpenFile ()
         {
+            if (!ConfirmAction("Open new file anyway?"))
+                return;
+
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.RestoreDirectory = true;
             ofd.Multiselect = true;
@@ -145,6 +148,9 @@ namespace NBTExplorer.Windows
 
         private void OpenFolder ()
         {
+            if (!ConfirmAction("Open new folder anyway?"))
+                return;
+
             FolderBrowserDialog ofd = new FolderBrowserDialog();
             if (_openFolderPath != null)
                 ofd.SelectedPath = _openFolderPath;
@@ -192,6 +198,9 @@ namespace NBTExplorer.Windows
 
         private void OpenMinecraftDirectory ()
         {
+            if (!ConfirmAction("Open Minecraft save folder anyway?"))
+                return;
+
             try {
                 string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                 path = Path.Combine(path, ".minecraft");
@@ -448,6 +457,40 @@ namespace NBTExplorer.Windows
             }
         }
 
+        private void RefreshNode (TreeNode node)
+        {
+            if (node == null || !(node.Tag is DataNode))
+                return;
+
+            DataNode dataNode = node.Tag as DataNode;
+            if (!dataNode.CanRefreshNode)
+                return;
+
+            if (!ConfirmAction("Refresh data anyway?"))
+                return;
+
+            if (dataNode.RefreshNode()) {
+                RefreshChildNodes(node, dataNode);
+                UpdateUI(dataNode);
+                ExpandToEdge(node);
+            }
+        }
+
+        private void ExpandToEdge (TreeNode node)
+        {
+            if (node == null || !(node.Tag is DataNode))
+                return;
+
+            DataNode dataNode = node.Tag as DataNode;
+            if (dataNode.IsExpanded) {
+                if (!node.IsExpanded)
+                    node.Expand();
+
+                foreach (TreeNode child in node.Nodes)
+                    ExpandToEdge(child);
+            }
+        }
+
         private void Save ()
         {
             foreach (TreeNode node in _nodeTree.Nodes) {
@@ -463,6 +506,16 @@ namespace NBTExplorer.Windows
         {
             if (CheckModifications()) {
                 if (MessageBox.Show("You currently have unsaved changes.  Close anyway?", "Unsaved Changes", MessageBoxButtons.OKCancel) != DialogResult.OK)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private bool ConfirmAction (string actionMessage)
+        {
+            if (CheckModifications()) {
+                if (MessageBox.Show("You currently have unsaved changes.  " + actionMessage, "Unsaved Changes", MessageBoxButtons.OKCancel) != DialogResult.OK)
                     return false;
             }
 
@@ -670,6 +723,7 @@ namespace NBTExplorer.Windows
             _buttonFindNext.Enabled = node.CanSearchNode || _searchState != null;
             _buttonPaste.Enabled = node.CanPasteIntoNode && NbtClipboardController.IsInitialized;
             _buttonRename.Enabled = node.CanRenameNode;
+            _buttonRefresh.Enabled = node.CanRefreshNode;
 
             _menuItemSave.Enabled = _buttonSave.Enabled;
             _menuItemCopy.Enabled = node.CanCopyNode && NbtClipboardController.IsInitialized;
@@ -679,6 +733,7 @@ namespace NBTExplorer.Windows
             _menuItemFind.Enabled = node.CanSearchNode;
             _menuItemPaste.Enabled = node.CanPasteIntoNode && NbtClipboardController.IsInitialized;
             _menuItemRename.Enabled = node.CanRenameNode;
+            _menuItemRefresh.Enabled = node.CanRefreshNode;
             _menuItemFind.Enabled = node.CanSearchNode;
             _menuItemFindNext.Enabled = _searchState != null;
         }
@@ -893,6 +948,11 @@ namespace NBTExplorer.Windows
                 SearchNode(_nodeTree.SelectedNode);
         }
 
+        private void _buttonRefresh_Click (object sender, EventArgs e)
+        {
+            RefreshNode(_nodeTree.SelectedNode);
+        }
+
         #endregion
 
         #region Menu Event Handlers
@@ -975,6 +1035,11 @@ namespace NBTExplorer.Windows
                 return;
 
             OpenPaths(new string[] { item.Tag as string });
+        }
+
+        private void refreshToolStripMenuItem_Click (object sender, EventArgs e)
+        {
+            RefreshNode(_nodeTree.SelectedNode);
         }
 
         #endregion

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Collections.Generic;
 
 namespace NBTExplorer.Model
 {
@@ -15,7 +16,8 @@ namespace NBTExplorer.Model
         {
             get
             {
-                return NodeCapabilities.Search;
+                return NodeCapabilities.Search
+                    | NodeCapabilities.Refresh;
             }
         }
 
@@ -50,6 +52,15 @@ namespace NBTExplorer.Model
         protected override void ReleaseCore ()
         {
             Nodes.Clear();
+        }
+
+        public override bool RefreshNode ()
+        {
+            Dictionary<string, object> expandSet = BuildExpandSet(this);
+            Release();
+            RestoreExpandSet(this, expandSet);
+
+            return true;
         }
     }
 }

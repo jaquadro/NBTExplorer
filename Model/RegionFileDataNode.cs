@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text.RegularExpressions;
 using Substrate.Core;
+using System.Collections.Generic;
 
 namespace NBTExplorer.Model
 {
@@ -31,7 +32,8 @@ namespace NBTExplorer.Model
         {
             get
             {
-                return NodeCapabilities.Search;
+                return NodeCapabilities.Search
+                    | NodeCapabilities.Refresh;
             }
         }
 
@@ -71,6 +73,15 @@ namespace NBTExplorer.Model
                 _region.Close();
             _region = null;
             Nodes.Clear();
+        }
+
+        public override bool RefreshNode ()
+        {
+            Dictionary<string, object> expandSet = BuildExpandSet(this);
+            Release();
+            RestoreExpandSet(this, expandSet);
+
+            return true;
         }
     }
 }

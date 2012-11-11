@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using Substrate.Core;
 using Substrate.Nbt;
+using System.Collections.Generic;
 
 namespace NBTExplorer.Model
 {
@@ -57,7 +58,8 @@ namespace NBTExplorer.Model
             {
                 return NodeCapabilities.CreateTag
                     | NodeCapabilities.PasteInto
-                    | NodeCapabilities.Search;
+                    | NodeCapabilities.Search
+                    | NodeCapabilities.Refresh;
             }
         }
 
@@ -106,6 +108,15 @@ namespace NBTExplorer.Model
             using (Stream str = file.GetDataOutputStream(_compressionType)) {
                 _tree.WriteTo(str);
             }
+        }
+
+        public override bool RefreshNode ()
+        {
+            Dictionary<string, object> expandSet = BuildExpandSet(this);
+            Release();
+            RestoreExpandSet(this, expandSet);
+
+            return true;
         }
 
         public bool IsNamedContainer
