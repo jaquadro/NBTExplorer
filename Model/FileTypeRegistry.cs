@@ -61,7 +61,7 @@ namespace NBTExplorer.Model
                     NodeCreate = CubicRegionDataNode.TryCreateFrom,
                 });
             }
-            catch (Exception e) {
+            catch (Exception) {
                 //Program.StaticInitFailure(e);
             }
         }

@@ -36,7 +36,7 @@
     <WarningLevel>4</WarningLevel>
     <EnablePackageSigning>False</EnablePackageSigning>
     <IncludeMonoRuntime>True</IncludeMonoRuntime>
-    <LinkMode>Full</LinkMode>
+    <LinkMode>SdkOnly</LinkMode>
     <ConsolePause>False</ConsolePause>
     <EnableCodeSigning>False</EnableCodeSigning>
     <CreatePackage>False</CreatePackage>
@@ -69,8 +69,8 @@
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Data" />
-    <Reference Include="MonoMac">
-      <HintPath>..\monomac\src\MonoMac.dll</HintPath>
+    <Reference Include="MonoMac, Version=0.0.0.0, Culture=neutral">
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -79,10 +79,6 @@
     <None Include="Properties\Resources.resources" />
     <None Include="Properties\Resources.resx" />
     <None Include="Properties\Settings.settings" />
-    <None Include="Vendor\Be.Windows.Forms.HexBox\HexBox.bmp" />
-    <None Include="Vendor\Be.Windows.Forms.HexBox\HexBox.resources" />
-    <None Include="Vendor\Be.Windows.Forms.HexBox\HexBox.resx" />
-    <None Include="Vendor\Be.Windows.Forms.HexBox\Properties\Resources.resx" />
     <None Include="LICENSE.txt" />
     <None Include="dead_bush.icns" />
     <None Include="Mac\Scratch.cs" />
@@ -93,7 +89,6 @@
     <Folder Include="Model\" />
     <Folder Include="Properties\" />
     <Folder Include="Resources\" />
-    <Folder Include="Vendor\" />
     <Folder Include="Mac\" />
     <Folder Include="Resources\24\" />
   </ItemGroup>
@@ -126,23 +121,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs" />
     <Compile Include="Properties\Settings.Designer.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\BuiltInContextMenu.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\ByteCharConverters.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\ByteCollection.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\BytePositionInfo.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\DataBlock.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\DataMap.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\DynamicByteProvider.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\DynamicFileByteProvider.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\FileByteProvider.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\FileDataBlock.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\HexBox.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\HexCasing.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\IByteProvider.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\MemoryDataBlock.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\NativeMethods.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\Util.cs" />
-    <Compile Include="Vendor\Be.Windows.Forms.HexBox\Properties\Resources.Designer.cs" />
     <Compile Include="NbtClipboardData.cs" />
     <Compile Include="SearchWorker.cs" />
     <Compile Include="Mac\MainWindow.cs" />
@@ -233,21 +211,22 @@
     <BundleResource Include="Resources\edit-list.png" />
     <BundleResource Include="Resources\edit-small-caps.png" />
     <BundleResource Include="Resources\wooden-box.png" />
-    <BundleResource Include="Resources\24\edit-code-24.png" />
-    <BundleResource Include="Resources\24\edit-code-i-24.png" />
-    <BundleResource Include="Resources\24\edit-list-24.png" />
-    <BundleResource Include="Resources\24\edit-small-caps-24.png" />
-    <BundleResource Include="Resources\24\pencil-24.png" />
-    <BundleResource Include="Resources\24\scissors-24.png" />
-    <BundleResource Include="Resources\24\selection-input-24.png" />
-    <BundleResource Include="Resources\24\document-s-24.png" />
-    <BundleResource Include="Resources\24\document-l-24.png" />
-    <BundleResource Include="Resources\24\document-i-24.png" />
-    <BundleResource Include="Resources\24\document-f-24.png" />
-    <BundleResource Include="Resources\24\document-d-24.png" />
-    <BundleResource Include="Resources\24\document-b-24.png" />
-    <BundleResource Include="Resources\24\document-24.png" />
-    <BundleResource Include="Resources\24\cross-24.png" />
+    <BundleResource Include="Resources\box-24.png" />
+    <BundleResource Include="Resources\cross-24.png" />
+    <BundleResource Include="Resources\document-24.png" />
+    <BundleResource Include="Resources\document-b-24.png" />
+    <BundleResource Include="Resources\document-d-24.png" />
+    <BundleResource Include="Resources\document-f-24.png" />
+    <BundleResource Include="Resources\document-i-24.png" />
+    <BundleResource Include="Resources\document-l-24.png" />
+    <BundleResource Include="Resources\document-s-24.png" />
+    <BundleResource Include="Resources\edit-code-24.png" />
+    <BundleResource Include="Resources\edit-code-i-24.png" />
+    <BundleResource Include="Resources\edit-list-24.png" />
+    <BundleResource Include="Resources\edit-small-caps-24.png" />
+    <BundleResource Include="Resources\pencil-24.png" />
+    <BundleResource Include="Resources\scissors-24.png" />
+    <BundleResource Include="Resources\selection-input-24.png" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Mac\MainWindow.xib" />

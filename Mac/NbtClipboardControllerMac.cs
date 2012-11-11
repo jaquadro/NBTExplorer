@@ -163,6 +163,15 @@ namespace NBTExplorer.Mac
 				return 0;
 		}
 
+		public override NSObject InitWithPasteboardPropertyList (NSObject propertyList, string type)
+		{
+			if (type == _pasteboardItemName) {
+				return null;
+			}
+			else
+				return null;
+		}
+
 		// XXX: This is a hack.  Not sure how to properly implement, but it's required either by pasteboard reading,
 		// or is a side-effect of our protocol conformance hack.
 		[Export("isSubclassOfClass:")]

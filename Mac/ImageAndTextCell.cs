@@ -12,10 +12,6 @@ namespace NBTExplorer.Mac
 	public class ImageAndTextCell : NSTextFieldCell
 	{
 		private NSImage _image;
-		private bool _copyCalled;
-		private bool _disposeCalled;
-		private bool _deallocCalled;
-		private bool _drawCalled;
 
 		public ImageAndTextCell ()
 		{
@@ -51,7 +47,6 @@ namespace NBTExplorer.Mac
 
 			//if (_noDispose)
 			//	Handle = IntPtr.Zero;
-			_disposeCalled = true;
 
 			base.Dispose (disposing);
 		}
@@ -131,7 +126,6 @@ namespace NBTExplorer.Mac
 			return cell;
 		}*/
 
-		static IntPtr selRetain = Selector.GetHandle ("retain");
 		static IntPtr selRetainCount = Selector.GetHandle("retainCount");
 
 		public void PeriodicCleanup ()
@@ -153,7 +147,6 @@ namespace NBTExplorer.Mac
 		// Method 5
 
 		static IntPtr selCopyWithZone = Selector.GetHandle("copyWithZone:");
-		static IntPtr selDealloc = Selector.GetHandle("dealloc");
 
 		[Export("copyWithZone:")]
 		public virtual NSObject CopyWithZone(IntPtr zone) {
@@ -268,10 +261,9 @@ namespace NBTExplorer.Mac
 
 		public override void DrawWithFrame (RectangleF cellFrame, NSView inView)
 		{
-			Assert (!_deallocCalled, "DrawWithFrame: Dealloc was called on object");
-			Assert (!_disposeCalled, "DrawWithFrame: Dispose was called on object");
+			//Assert (!_deallocCalled, "DrawWithFrame: Dealloc was called on object");
+			//Assert (!_disposeCalled, "DrawWithFrame: Dispose was called on object");
 
-			_drawCalled = true;
 			if (_image != null) {
 				RectangleF imageFrame;
 				cellFrame.Divide (3 + _image.Size.Width, CGRectEdge.MinXEdge, out imageFrame, out cellFrame);

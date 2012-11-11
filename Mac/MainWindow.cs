@@ -136,7 +136,7 @@ namespace NBTExplorer
 			{
 				TreeDataNode node = notification.UserInfo ["NSObject"] as TreeDataNode;
 				if (node != null) {
-					Console.WriteLine ("Preparing to expand: " + node.Data.NodeDisplay);
+					//Console.WriteLine ("Preparing to expand: " + node.Data.NodeDisplay);
 					_main.ExpandNode(node);
 				}
 			}
@@ -145,7 +145,7 @@ namespace NBTExplorer
 			{
 				TreeDataNode node = notification.UserInfo ["NSObject"] as TreeDataNode;
 				if (node != null) {
-					Console.WriteLine("Finished Expanding: " + node.Data.NodeDisplay);
+					//Console.WriteLine("Finished Expanding: " + node.Data.NodeDisplay);
 				}
 			}
 
@@ -153,9 +153,9 @@ namespace NBTExplorer
 			{
 				TreeDataNode node = notification.UserInfo ["NSObject"] as TreeDataNode;
 				if (node != null) {
-					if (node.Data.NodeDisplay == "saves") // The root node
-						Console.WriteLine ("Uh-oh...");
-					Console.WriteLine("Preparing to collapse: " + node.Data.NodeDisplay);
+					//if (node.Data.NodeDisplay == "saves") // The root node
+						//Console.WriteLine ("Uh-oh...");
+					//Console.WriteLine("Preparing to collapse: " + node.Data.NodeDisplay);
 				}
 			}
 
@@ -189,6 +189,76 @@ namespace NBTExplorer
 		partial void ActionSave (NSObject sender)
 		{
 			ActionSave ();
+		}
+
+		partial void ActionRename (MonoMac.Foundation.NSObject sender)
+		{
+			ActionRenameValue();
+		}
+
+		partial void ActionEdit (MonoMac.Foundation.NSObject sender)
+		{
+			ActionEditValue();
+		}
+
+		partial void ActionDelete (MonoMac.Foundation.NSObject sender)
+		{
+			ActionDeleteValue();
+		}
+
+		partial void ActionInsertByte (MonoMac.Foundation.NSObject sender)
+		{
+			ActionInsertByteTag();
+		}
+
+		partial void ActionInsertShort (MonoMac.Foundation.NSObject sender)
+		{
+			ActionInsertShortTag();
+		}
+
+		partial void ActionInsertInt (MonoMac.Foundation.NSObject sender)
+		{
+			ActionInsertIntTag();
+		}
+
+		partial void ActionInsertLong (MonoMac.Foundation.NSObject sender)
+		{
+			ActionInsertLongTag();
+		}
+
+		partial void ActionInsertFloat (MonoMac.Foundation.NSObject sender)
+		{
+			ActionInsertFloatTag();
+		}
+
+		partial void ActionInsertDouble (MonoMac.Foundation.NSObject sender)
+		{
+			ActionInsertDoubleTag();
+		}
+
+		partial void ActionInsertByteArray (MonoMac.Foundation.NSObject sender)
+		{
+			ActionInsertByteArrayTag();
+		}
+
+		partial void ActionInsertIntArray (MonoMac.Foundation.NSObject sender)
+		{
+			ActionInsertIntArrayTag();
+		}
+
+		partial void ActionInsertString (MonoMac.Foundation.NSObject sender)
+		{
+			ActionInsertStringTag();
+		}
+
+		partial void ActionInsertList (MonoMac.Foundation.NSObject sender)
+		{
+			ActionInsertListTag();
+		}
+
+		partial void ActionInsertCompound (MonoMac.Foundation.NSObject sender)
+		{
+			ActionInsertCompoundTag();
 		}
 
 		#endregion
@@ -272,6 +342,16 @@ namespace NBTExplorer
 					// AddPathToHistory(Settings.Default.RecentDirectories, path);
 				} else if (File.Exists (path)) {
 					DataNode node = null;
+
+					foreach (var item in FileTypeRegistry.RegisteredTypes) {
+						if (item.Value.NamePatternTest(path))
+							node = item.Value.NodeCreate(path);
+					}
+					
+					if (node != null) {
+						_dataSource.Nodes.Add(new TreeDataNode(node));
+						//AddPathToHistory(Settings.Default.RecentFiles, path);
+					}
 				}
 			}
 
@@ -289,7 +369,7 @@ namespace NBTExplorer
 			if (node == null || node.IsExpanded)
 				return;
 
-			Console.WriteLine ("Expand Node: " + node.Data.NodeDisplay);
+			//Console.WriteLine ("Expand Node: " + node.Data.NodeDisplay);
 
 			node.IsExpanded = true;
 			node.Nodes.Clear ();
@@ -311,7 +391,7 @@ namespace NBTExplorer
 			if (node == null || !node.IsExpanded)
 				return;
 
-			Console.WriteLine("Collapse Node: " + node.Data.NodeDisplay);
+			//Console.WriteLine("Collapse Node: " + node.Data.NodeDisplay);
 			
 			DataNode backNode = node.Data;
 			if (backNode.IsModified)
@@ -859,7 +939,22 @@ namespace NBTExplorer
 			_appDelegate.MenuFind.Enabled = node.CanSearchNode;
 			_appDelegate.MenuFindNext.Enabled = _searchState != null;
 
+			_toolbarByte.Enabled = _appDelegate.MenuInsertByte.Enabled;
+			_toolbarShort.Enabled = _appDelegate.MenuInsertShort.Enabled;
+			_toolbarInt.Enabled = _appDelegate.MenuInsertInt.Enabled;
+			_toolbarLong.Enabled = _appDelegate.MenuInsertLong.Enabled;
+			_toolbarFloat.Enabled = _appDelegate.MenuInsertFloat.Enabled;
+			_toolbarDouble.Enabled = _appDelegate.MenuInsertDouble.Enabled;
+			_toolbarByteArray.Enabled = _appDelegate.MenuInsertByteArray.Enabled;
+			_toolbarIntArray.Enabled = _appDelegate.MenuInsertIntArray.Enabled;
+			_toolbarString.Enabled = _appDelegate.MenuInsertString.Enabled;
+			_toolbarList.Enabled = _appDelegate.MenuInsertList.Enabled;
+			_toolbarCompound.Enabled = _appDelegate.MenuInsertCompound.Enabled;
+
 			_toolbarSave.Enabled = _appDelegate.MenuSave.Enabled;
+			_toolbarDelete.Enabled = _appDelegate.MenuDelete.Enabled;
+			_toolbarEdit.Enabled = _appDelegate.MenuEditValue.Enabled;
+			_toolbarRename.Enabled = _appDelegate.MenuRename.Enabled;
 		}
 
 		/*private void UpdateOpenMenu ()
