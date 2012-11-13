@@ -162,6 +162,7 @@ namespace Substrate
         public const int POTATOES = 142;
         public const int WOOD_BUTTON = 143;
         public const int HEADS = 144;
+        public const int ANVIL = 145;
     }
 
     /// <summary>
@@ -197,7 +198,7 @@ namespace Substrate
         /// <summary>
         /// The maximum number of sequential blocks starting at 0 that can be registered.
         /// </summary>
-        public const int MAX_BLOCKS = 256;
+        public const int MAX_BLOCKS = 4096;
 
         /// <summary>
         /// The maximum opacity value that can be assigned to a block (fully opaque).
@@ -677,6 +678,7 @@ namespace Substrate
         public static BlockInfo Potatoes;
         public static BlockInfo WoodButton;
         public static BlockInfo Heads;
+        public static BlockInfo Anvil;
 
         static BlockInfo ()
         {
@@ -833,6 +835,7 @@ namespace Substrate
             Potatoes = new BlockInfo(142, "Potatoes").SetOpacity(0).SetState(BlockState.NONSOLID).SetTick(10);
             WoodButton = new BlockInfo(143, "Wooden Button").SetOpacity(0).SetState(BlockState.NONSOLID);
             Heads = new BlockInfo(144, "Heads").SetOpacity(0);
+            Anvil = new BlockInfo(145, "Anvil").SetOpacity(0);
 
             for (int i = 0; i < MAX_BLOCKS; i++) {
                 if (_blockTable[i] == null) {
@@ -940,6 +943,7 @@ namespace Substrate
             DoubleWoodSlab.SetDataLimits(0, 5, 0x8);
             TripwireHook.SetDataLimits(0, 3, 0xC);
             Tripwire.SetDataLimits(0, 0, 0x5);
+            Anvil.SetDataLimits(0, 0, 0xD);
         }
     }
 

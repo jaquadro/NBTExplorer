@@ -17,10 +17,6 @@ namespace Substrate
         private readonly int _ydim;
         private readonly int _zdim;
 
-        //private XZYByteArray _blocks;
-        //private XZYNibbleArray _data;
-        //private XZYNibbleArray _blockLight;
-        //private XZYNibbleArray _skyLight;
         private IDataArray3 _blocks;
         private IDataArray3 _data;
         private IDataArray3 _blockLight;
@@ -49,6 +45,7 @@ namespace Substrate
         /// <param name="xdim">The length of the X-dimension of the collection.</param>
         /// <param name="ydim">The length of the Y-dimension of the collection.</param>
         /// <param name="zdim">The length of the Z-dimension of the collection.</param>
+        [Obsolete]
         public AlphaBlockCollection (int xdim, int ydim, int zdim)
         {
             _blocks = new XZYByteArray(xdim, ydim, zdim);
@@ -338,7 +335,7 @@ namespace Substrate
 
             // Update value
 
-            _blocks[x, y, z] = (byte)id;
+            _blocks[x, y, z] = id;
 
             // Update tile entities
 

@@ -8,6 +8,7 @@ namespace Substrate.Core
     {
         int this[int i] { get; set; }
         int Length { get; }
+        int DataWidth { get; }
 
         void Clear ();
     }
@@ -55,6 +56,11 @@ namespace Substrate.Core
         public int Length
         {
             get { return dataArray.Length; }
+        }
+
+        public int DataWidth
+        {
+            get { return 8; }
         }
 
         public void Clear ()
@@ -332,6 +338,11 @@ namespace Substrate.Core
         public int Length
         {
             get { return dataArray.Length; }
+        }
+
+        public int DataWidth
+        {
+            get { return 32; }
         }
 
         public void Clear ()

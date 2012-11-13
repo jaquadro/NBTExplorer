@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Substrate.Core
 {
-    public class CompositeYZXByteArray : IDataArray3
+    public class CompositeDataArray3 : IDataArray3
     {
-        private YZXByteArray[] _sections;
+        private IDataArray3[] _sections;
 
-        public CompositeYZXByteArray (YZXByteArray[] sections)
+        public CompositeDataArray3 (IDataArray3[] sections)
         {
             for (int i = 0; i < sections.Length; i++)
                 if (sections[i] == null)
@@ -97,6 +97,11 @@ namespace Substrate.Core
         public int Length
         {
             get { return _sections[0].Length * _sections.Length; }
+        }
+
+        public int DataWidth
+        {
+            get { return _sections[0].DataWidth; }
         }
 
         public void Clear ()

@@ -230,7 +230,7 @@ namespace Substrate
                 _sections[anvilSection.Y] = anvilSection;
             }
 
-            YZXByteArray[] blocksBA = new YZXByteArray[_sections.Length];
+            FusedDataArray3[] blocksBA = new FusedDataArray3[_sections.Length];
             YZXNibbleArray[] dataBA = new YZXNibbleArray[_sections.Length];
             YZXNibbleArray[] skyLightBA = new YZXNibbleArray[_sections.Length];
             YZXNibbleArray[] blockLightBA = new YZXNibbleArray[_sections.Length];
@@ -239,16 +239,16 @@ namespace Substrate
                 if (_sections[i] == null)
                     _sections[i] = new AnvilSection(i);
 
-                blocksBA[i] = _sections[i].Blocks;
+                blocksBA[i] = new FusedDataArray3(_sections[i].AddBlocks, _sections[i].Blocks);
                 dataBA[i] = _sections[i].Data;
                 skyLightBA[i] = _sections[i].SkyLight;
                 blockLightBA[i] = _sections[i].BlockLight;
             }
 
-            _blocks = new CompositeYZXByteArray(blocksBA);
-            _data = new CompositeYZXNibbleArray(dataBA);
-            _skyLight = new CompositeYZXNibbleArray(skyLightBA);
-            _blockLight = new CompositeYZXNibbleArray(blockLightBA);
+            _blocks = new CompositeDataArray3(blocksBA);
+            _data = new CompositeDataArray3(dataBA);
+            _skyLight = new CompositeDataArray3(skyLightBA);
+            _blockLight = new CompositeDataArray3(blockLightBA);
             
             _heightMap = new ZXIntArray(XDIM, ZDIM, level["HeightMap"] as TagNodeIntArray);
 
@@ -372,22 +372,22 @@ namespace Substrate
                 sections.Add(_sections[i].BuildTree());
             }
 
-            YZXByteArray[] blocksBA = new YZXByteArray[_sections.Length];
+            FusedDataArray3[] blocksBA = new FusedDataArray3[_sections.Length];
             YZXNibbleArray[] dataBA = new YZXNibbleArray[_sections.Length];
             YZXNibbleArray[] skyLightBA = new YZXNibbleArray[_sections.Length];
             YZXNibbleArray[] blockLightBA = new YZXNibbleArray[_sections.Length];
 
             for (int i = 0; i < _sections.Length; i++) {
-                blocksBA[i] = _sections[i].Blocks;
+                blocksBA[i] = new FusedDataArray3(_sections[i].AddBlocks, _sections[i].Blocks);
                 dataBA[i] = _sections[i].Data;
                 skyLightBA[i] = _sections[i].SkyLight;
                 blockLightBA[i] = _sections[i].BlockLight;
             }
 
-            _blocks = new CompositeYZXByteArray(blocksBA);
-            _data = new CompositeYZXNibbleArray(dataBA);
-            _skyLight = new CompositeYZXNibbleArray(skyLightBA);
-            _blockLight = new CompositeYZXNibbleArray(blockLightBA);
+            _blocks = new CompositeDataArray3(blocksBA);
+            _data = new CompositeDataArray3(dataBA);
+            _skyLight = new CompositeDataArray3(skyLightBA);
+            _blockLight = new CompositeDataArray3(blockLightBA);
 
             TagNodeIntArray heightMap = new TagNodeIntArray(new int[elements2]);
             _heightMap = new ZXIntArray(XDIM, ZDIM, heightMap);

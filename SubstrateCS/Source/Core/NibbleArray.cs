@@ -50,10 +50,12 @@ namespace Substrate.Core
 
         public int Length
         {
-            get
-            {
-                return _data.Length << 1;
-            }
+            get { return _data.Length << 1; }
+        }
+
+        public int DataWidth
+        {
+            get { return 4; }
         }
 
         protected byte[] Data

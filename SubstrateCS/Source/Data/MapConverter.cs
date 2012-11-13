@@ -53,8 +53,8 @@ namespace Substrate.Data
             RefreshColorCache();
 
             // Setup default block index
-            _blockIndex = new ColorGroup[256];
-            for (int i = 0; i < 256; i++) {
+            _blockIndex = new ColorGroup[4096];
+            for (int i = 0; i < _blockIndex.Length; i++) {
                 _blockIndex[i] = ColorGroup.Other;
             }
 
@@ -140,7 +140,7 @@ namespace Substrate.Data
             if (level < 0 || level >= _groupSize) {
                 throw new ArgumentOutOfRangeException("level", level, "Argument 'level' must be in range [0, " + (_groupSize - 1) + "]");
             }
-            if (blockId < 0 || blockId >= 256) {
+            if (blockId < 0 || blockId >= 4096) {
                 throw new ArgumentOutOfRangeException("blockId");
             }
 

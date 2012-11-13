@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -72,8 +72,8 @@
     <Compile Include="Source\BiomeInfo.cs" />
     <Compile Include="Source\Core\BlockTileTicks.cs" />
     <Compile Include="Source\Core\BoundedBlockInterface.cs" />
-    <Compile Include="Source\Core\CompositeByteArray.cs" />
-    <Compile Include="Source\Core\CompositeNibbleArray.cs" />
+    <Compile Include="Source\Core\CompositeDataArray.cs" />
+    <Compile Include="Source\Core\FusedDataArray.cs" />
     <Compile Include="Source\Core\ItemInterface.cs" />
     <Compile Include="Source\Core\Region.cs" />
     <Compile Include="Source\Core\RegionManager.cs" />
