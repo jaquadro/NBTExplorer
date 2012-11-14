@@ -27,7 +27,7 @@ namespace Substrate.Core
 
         public int this[int x, int y, int z]
         {
-            get { return (_array0[x, y, z] << _array0.DataWidth) + _array1[x, y, z]; }
+            get { return (_array0[x, y, z] << _array1.DataWidth) + _array1[x, y, z]; }
             set
             {
                 if (value >= (1 << _array1.DataWidth)) {
@@ -66,7 +66,7 @@ namespace Substrate.Core
 
         public int this[int i]
         {
-            get { return (_array0[i] << _array0.DataWidth) + _array1[i]; }
+            get { return (_array0[i] << _array1.DataWidth) + _array1[i]; }
             set
             {
                 if (value >= (1 << _array1.DataWidth)) {
