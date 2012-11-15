@@ -55,8 +55,8 @@ namespace NBTExplorer.Model
                         | NodeCapabilities.Cut
                         | NodeCapabilities.Delete
                         | NodeCapabilities.PasteInto
-                        | (TagParent.IsNamedContainer ? NodeCapabilities.Rename : NodeCapabilities.None)
-                        | (TagParent.IsOrderedContainer ? NodeCapabilities.Reorder : NodeCapabilities.None)
+                        | ((TagParent != null && TagParent.IsNamedContainer) ? NodeCapabilities.Rename : NodeCapabilities.None)
+                        | ((TagParent != null && TagParent.IsOrderedContainer) ? NodeCapabilities.Reorder : NodeCapabilities.None)
                         | NodeCapabilities.Search;
                 }
             }
@@ -158,8 +158,8 @@ namespace NBTExplorer.Model
                     | NodeCapabilities.Cut
                     | NodeCapabilities.Delete
                     | NodeCapabilities.Edit
-                    | (TagParent.IsNamedContainer ? NodeCapabilities.Rename : NodeCapabilities.None)
-                    | (TagParent.IsOrderedContainer ? NodeCapabilities.Reorder : NodeCapabilities.None);
+                    | ((TagParent != null && TagParent.IsNamedContainer) ? NodeCapabilities.Rename : NodeCapabilities.None)
+                    | ((TagParent != null && TagParent.IsOrderedContainer) ? NodeCapabilities.Reorder : NodeCapabilities.None);
             }
         }
 
@@ -167,7 +167,7 @@ namespace NBTExplorer.Model
         {
             get
             {
-                if (TagParent.IsOrderedContainer)
+                if (TagParent != null && TagParent.IsOrderedContainer)
                     return TagParent.OrderedTagContainer.GetTagIndex(Tag) > 0;
                 return false;
             }
@@ -177,7 +177,7 @@ namespace NBTExplorer.Model
         {
             get
             {
-                if (TagParent.IsOrderedContainer)
+                if (TagParent != null && TagParent.IsOrderedContainer)
                     return TagParent.OrderedTagContainer.GetTagIndex(Tag) < (TagParent.TagCount - 1);
                 return false;
             }
@@ -210,7 +210,7 @@ namespace NBTExplorer.Model
 
         public override bool DeleteNode ()
         {
-            if (CanDeleteNode) {
+            if (CanDeleteNode && TagParent != null) {
                 TagParent.DeleteTag(Tag);
                 IsParentModified = true;
                 return Parent.Nodes.Remove(this);
@@ -221,7 +221,7 @@ namespace NBTExplorer.Model
 
         public override bool RenameNode ()
         {
-            if (CanRenameNode && TagParent.IsNamedContainer && FormRegistry.EditString != null) {
+            if (CanRenameNode && TagParent != null && TagParent.IsNamedContainer && FormRegistry.EditString != null) {
                 RestrictedStringFormData data = new RestrictedStringFormData(TagParent.NamedTagContainer.GetTagName(Tag));
                 data.RestrictedValues.AddRange(TagParent.NamedTagContainer.TagNamesInUse);
 
@@ -248,7 +248,7 @@ namespace NBTExplorer.Model
 
         public override bool CutNode ()
         {
-            if (CanCutNode) {
+            if (CanCutNode && TagParent != null) {
                 NbtClipboardController.CopyToClipboard(new NbtClipboardData(NodeName, Tag));
 
                 TagParent.DeleteTag(Tag);
@@ -262,7 +262,7 @@ namespace NBTExplorer.Model
 
         public override bool ChangeRelativePosition (int offset)
         {
-            if (CanReoderNode) {
+            if (CanReoderNode && TagParent != null) {
                 int curIndex = TagParent.OrderedTagContainer.GetTagIndex(Tag);
                 int newIndex = curIndex + offset;
 
