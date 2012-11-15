@@ -212,6 +212,7 @@ namespace NBTExplorer.Model
         {
             if (CanDeleteNode) {
                 TagParent.DeleteTag(Tag);
+                IsParentModified = true;
                 return Parent.Nodes.Remove(this);
             }
 
@@ -251,6 +252,7 @@ namespace NBTExplorer.Model
                 NbtClipboardController.CopyToClipboard(new NbtClipboardData(NodeName, Tag));
 
                 TagParent.DeleteTag(Tag);
+                IsParentModified = true;
                 Parent.Nodes.Remove(this);
                 return true;
             }
