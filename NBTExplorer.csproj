@@ -80,6 +80,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\NodeTreeController.cs" />
     <Compile Include="FormRegistry.cs" />
     <Compile Include="NbtClipboardController.cs" />
     <Compile Include="Windows\CancelSearchForm.cs">
@@ -87,6 +88,12 @@
     </Compile>
     <Compile Include="Windows\CancelSearchForm.Designer.cs">
       <DependentUpon>CancelSearchForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\FindReplace.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Windows\FindReplace.Designer.cs">
+      <DependentUpon>FindReplace.cs</DependentUpon>
     </Compile>
     <Compile Include="Windows\IconRegistry.cs" />
     <Compile Include="Windows\MainForm.cs">
@@ -197,6 +204,9 @@
     <Compile Include="Windows\SearchStateWin.cs" />
     <EmbeddedResource Include="Windows\CancelSearchForm.resx">
       <DependentUpon>CancelSearchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows\FindReplace.resx">
+      <DependentUpon>FindReplace.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

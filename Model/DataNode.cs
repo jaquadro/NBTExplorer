@@ -3,6 +3,28 @@ using System.Collections.Generic;
 
 namespace NBTExplorer.Model
 {
+    public class RootDataNode : DataNode
+    {
+        private string _name = "Root";
+        private string _display = "";
+
+        public override string NodeName
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
+
+        public override string NodeDisplay
+        {
+            get { return _display; }
+            set { _display = value; }
+        }
+    }
+
+    // FilterDataNode
+    // AndFilterDataNode
+    // OrFilterDataNode
+
     public class DataNode
     {
         private DataNode _parent;

@@ -1042,6 +1042,12 @@ namespace NBTExplorer.Windows
             RefreshNode(_nodeTree.SelectedNode);
         }
 
+        private void replaceToolStripMenuItem_Click (object sender, EventArgs e)
+        {
+            Form form = new FindReplace();
+            form.ShowDialog();
+        }
+
         #endregion
 
         #endregion
