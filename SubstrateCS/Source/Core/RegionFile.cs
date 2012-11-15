@@ -26,6 +26,7 @@ namespace Substrate.Core
         /// The file lock used so that we do not seek in different areas
         /// of the same file at the same time. All file access should lock this
         /// object before moving the file pointer.
+        /// The lock should also surround all access to the sectorFree free variable.
         /// </summary>
         private object fileLock = new object();
 
@@ -245,12 +246,13 @@ namespace Substrate.Core
                 int sectorNumber = offset >> 8;
                 int numSectors = offset & 0xFF;
 
-                if (sectorNumber + numSectors > sectorFree.Count) {
-                    Debugln("READ", x, z, "invalid sector");
-                    return null;
-                }
+                lock (this.fileLock)
+                {
+                    if (sectorNumber + numSectors > sectorFree.Count) {
+                        Debugln("READ", x, z, "invalid sector");
+                        return null;
+                    }
 
-                lock (this.fileLock) {
                     file.Seek(sectorNumber * SectorBytes, SeekOrigin.Begin);
                     byte[] lengthBytes = new byte[4];
                     file.Read(lengthBytes, 0, 4);
@@ -381,46 +383,46 @@ namespace Substrate.Core
                 else {
                     /* we need to allocate new sectors */
 
-                    /* mark the sectors previously used for this chunk as free */
-                    for (int i = 0; i < sectorsAllocated; ++i) {
-                        sectorFree[sectorNumber + i] = true;
-                    }
+                    lock (this.fileLock) {
+                        /* mark the sectors previously used for this chunk as free */
+                        for (int i = 0; i < sectorsAllocated; ++i) {
+                            sectorFree[sectorNumber + i] = true;
+                        }
 
-                    /* scan for a free space large enough to store this chunk */
-                    int runStart = sectorFree.FindIndex(b => b == true);
-                    int runLength = 0;
-                    if (runStart != -1) {
-                        for (int i = runStart; i < sectorFree.Count; ++i) {
-                            if (runLength != 0) {
-                                if (sectorFree[i]) runLength++;
-                                else runLength = 0;
-                            }
-                            else if (sectorFree[i]) {
-                                runStart = i;
-                                runLength = 1;
-                            }
-                            if (runLength >= sectorsNeeded) {
-                                break;
+                        /* scan for a free space large enough to store this chunk */
+                        int runStart = sectorFree.FindIndex(b => b == true);
+                        int runLength = 0;
+                        if (runStart != -1) {
+                            for (int i = runStart; i < sectorFree.Count; ++i) {
+                                if (runLength != 0) {
+                                    if (sectorFree[i]) runLength++;
+                                    else runLength = 0;
+                                }
+                                else if (sectorFree[i]) {
+                                    runStart = i;
+                                    runLength = 1;
+                                }
+                                if (runLength >= sectorsNeeded) {
+                                    break;
+                                }
                             }
                         }
-                    }
 
-                    if (runLength >= sectorsNeeded) {
-                        /* we found a free space large enough */
-                        Debug("SAVE", x, z, length, "reuse");
-                        sectorNumber = runStart;
-                        SetOffset(x, z, (sectorNumber << 8) | sectorsNeeded);
-                        for (int i = 0; i < sectorsNeeded; ++i) {
-                            sectorFree[sectorNumber + i] = false;
+                        if (runLength >= sectorsNeeded) {
+                            /* we found a free space large enough */
+                            Debug("SAVE", x, z, length, "reuse");
+                            sectorNumber = runStart;
+                            SetOffset(x, z, (sectorNumber << 8) | sectorsNeeded);
+                            for (int i = 0; i < sectorsNeeded; ++i) {
+                                sectorFree[sectorNumber + i] = false;
+                            }
+                            Write(sectorNumber, data, length);
                         }
-                        Write(sectorNumber, data, length);
-                    }
-                    else {
-                        /*
-                         * no free space large enough found -- we need to grow the
-                         * file
-                         */
-                        lock (this.fileLock) {
+                        else {
+                            /*
+                             * no free space large enough found -- we need to grow the
+                             * file
+                             */
                             Debug("SAVE", x, z, length, "grow");
                             file.Seek(0, SeekOrigin.End);
                             sectorNumber = sectorFree.Count;
