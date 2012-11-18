@@ -17,4 +17,16 @@ namespace NBTExplorer.Model
         Reorder = 0x100,
         Refresh = 0x200,
     }
+
+    [Flags]
+    public enum GroupCapabilities
+    {
+        Single = 0x0,
+        SiblingSameType = 0x1,
+        SiblingMixedType = 0x2 | SiblingSameType,
+        MultiSameType = 0x4 | SiblingSameType,
+        MultiMixedType = 0x8 | MultiSameType | SiblingMixedType,
+        ElideChildren = 0x10,
+        All = MultiMixedType | ElideChildren,
+    }
 }

@@ -41,7 +41,7 @@
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this._nodeTree = new System.Windows.Forms.TreeView();
+            this._nodeTree = new NBTExplorer.Vendor.MultiSelectTreeView.MultiSelectTreeView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -697,7 +697,7 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem searchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.TreeView _nodeTree;
+        private NBTExplorer.Vendor.MultiSelectTreeView.MultiSelectTreeView _nodeTree;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton _buttonOpen;
         private System.Windows.Forms.ToolStripButton _buttonSave;

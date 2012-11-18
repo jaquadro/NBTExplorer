@@ -83,6 +83,9 @@
     <Compile Include="Controllers\NodeTreeController.cs" />
     <Compile Include="FormRegistry.cs" />
     <Compile Include="NbtClipboardController.cs" />
+    <Compile Include="Vendor\MultiSelectTreeView\MultiSelectTreeview.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Windows\CancelSearchForm.cs">
       <SubType>Form</SubType>
     </Compile>

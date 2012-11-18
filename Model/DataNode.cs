@@ -193,7 +193,7 @@ namespace NBTExplorer.Model
             }
         }
 
-        #region Capabilities
+        #region Node Capabilities
 
         protected virtual NodeCapabilities Capabilities
         {
@@ -258,6 +258,55 @@ namespace NBTExplorer.Model
         public virtual bool CanCreateTag (TagType type)
         {
             return false;
+        }
+
+        #endregion
+
+        #region Group Capabilities
+
+        public virtual GroupCapabilities RenameNodeCapabilities
+        {
+            get { return GroupCapabilities.Single; }
+        }
+
+        public virtual GroupCapabilities EditNodeCapabilities
+        {
+            get { return GroupCapabilities.Single; }
+        }
+
+        public virtual GroupCapabilities DeleteNodeCapabilities
+        {
+            get { return GroupCapabilities.MultiMixedType | GroupCapabilities.ElideChildren; }
+        }
+
+        public virtual GroupCapabilities CutNodeCapabilities
+        {
+            get { return GroupCapabilities.Single; } //SiblingMixedType
+        }
+
+        public virtual GroupCapabilities CopyNodeCapabilities
+        {
+            get { return GroupCapabilities.Single; } //SiblingMixedType
+        }
+
+        public virtual GroupCapabilities PasteIntoNodeCapabilities
+        {
+            get { return GroupCapabilities.Single; }
+        }
+
+        public virtual GroupCapabilities SearchNodeCapabilites
+        {
+            get { return GroupCapabilities.Single; }
+        }
+
+        public virtual GroupCapabilities ReorderNodeCapabilities
+        {
+            get { return GroupCapabilities.Single; } //SiblingMixedType
+        }
+
+        public virtual GroupCapabilities RefreshNodeCapabilites
+        {
+            get { return GroupCapabilities.Single; } // MultiMixedType | ElideChildren
         }
 
         #endregion
