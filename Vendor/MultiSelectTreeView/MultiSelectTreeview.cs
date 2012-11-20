@@ -92,6 +92,8 @@ namespace NBTExplorer.Vendor.MultiSelectTreeView
 				if( node != null )
 				{
 					int leftBound = node.Bounds.X; // - 20; // Allow user to click on image
+                    if (node.TreeView.ImageList != null)
+                        leftBound -= 20;
 					int rightBound = node.Bounds.Right + 10; // Give a little extra room
 					if( e.Location.X > leftBound && e.Location.X < rightBound )
 					{

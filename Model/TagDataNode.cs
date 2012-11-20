@@ -140,10 +140,10 @@ namespace NBTExplorer.Model
             get { return base.Parent as IMetaTagContainer; }
         }
 
-        protected TagNode Tag
+        public TagNode Tag
         {
             get { return _tag; }
-            set
+            protected set
             {
                 if (_tag.GetTagType() == value.GetTagType())
                     _tag = value;
@@ -355,6 +355,10 @@ namespace NBTExplorer.Model
             }
 
             return false;
+        }
+
+        public virtual void SyncTag ()
+        {
         }
     }
 }

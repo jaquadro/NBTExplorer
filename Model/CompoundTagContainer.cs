@@ -32,6 +32,14 @@ namespace NBTExplorer.Model
             return null;
         }
 
+        public TagNode GetTagNode (string name)
+        {
+            TagNode tag;
+            if (_tag.TryGetValue(name, out tag))
+                return tag;
+            return null;
+        }
+
         public bool AddTag (TagNode tag, string name)
         {
             if (_tag.ContainsKey(name))
@@ -60,6 +68,19 @@ namespace NBTExplorer.Model
                     return _tag.Remove(name);
 
             return false;
+        }
+
+        public bool DeleteTag (string name)
+        {
+            if (!_tag.ContainsKey(name))
+                return false;
+
+            return DeleteTag(_tag[name]);
+        }
+
+        public bool ContainsTag (string name)
+        {
+            return _tag.ContainsKey(name);
         }
     }
 }

@@ -7,27 +7,40 @@ using System.Text;
 using System.Windows.Forms;
 using NBTExplorer.Controllers;
 using Substrate.Nbt;
+using NBTExplorer.Model;
+using System.Threading;
 
 namespace NBTExplorer.Windows
 {
     public partial class FindReplace : Form
     {
+        private MainForm _main;
+        private NodeTreeController _mainController;
+        private DataNode _mainSearchRoot;
+
         private NodeTreeController _findController;
         private NodeTreeController _replaceController;
 
-        public FindReplace ()
+        public FindReplace (MainForm main, NodeTreeController controller, DataNode searchRoot)
         {
             InitializeComponent();
 
+            _main = main;
+            _mainController = controller;
+            _mainSearchRoot = searchRoot;
+
             _findController = new NodeTreeController(treeView1);
+            _findController.VirtualRootDisplay = "Find Rules";
+
             _replaceController = new NodeTreeController(treeView2);
+            _replaceController.VirtualRootDisplay = "Replacement Tags";
         }
 
         #region Find Toolbar Buttons
 
         private void _tbFindDelete_Click (object sender, EventArgs e)
         {
-
+            _findController.DeleteSelection();
         }
 
         private void _tbFindAny_Click (object sender, EventArgs e)
@@ -37,37 +50,37 @@ namespace NBTExplorer.Windows
 
         private void _tbFindByte_Click (object sender, EventArgs e)
         {
-            _findController.CreateRootNode(TagType.TAG_BYTE);
+            _findController.CreateNode(TagType.TAG_BYTE);
         }
 
         private void _tbFindShort_Click (object sender, EventArgs e)
         {
-            _findController.CreateRootNode(TagType.TAG_SHORT);
+            _findController.CreateNode(TagType.TAG_SHORT);
         }
 
         private void _tbFindInt_Click (object sender, EventArgs e)
         {
-            _findController.CreateRootNode(TagType.TAG_INT);
+            _findController.CreateNode(TagType.TAG_INT);
         }
 
         private void _tbFindLong_Click (object sender, EventArgs e)
         {
-            _findController.CreateRootNode(TagType.TAG_LONG);
+            _findController.CreateNode(TagType.TAG_LONG);
         }
 
         private void _tbFindFloat_Click (object sender, EventArgs e)
         {
-            _findController.CreateRootNode(TagType.TAG_FLOAT);
+            _findController.CreateNode(TagType.TAG_FLOAT);
         }
 
         private void _tbFindDouble_Click (object sender, EventArgs e)
         {
-            _findController.CreateRootNode(TagType.TAG_DOUBLE);
+            _findController.CreateNode(TagType.TAG_DOUBLE);
         }
 
         private void _tbFindString_Click (object sender, EventArgs e)
         {
-            _findController.CreateRootNode(TagType.TAG_STRING);
+            _findController.CreateNode(TagType.TAG_STRING);
         }
 
         #endregion
@@ -76,64 +89,251 @@ namespace NBTExplorer.Windows
 
         private void _tbReplaceDelete_Click (object sender, EventArgs e)
         {
-            
+            _replaceController.DeleteSelection();
         }
 
         private void _tbReplaceByte_Click (object sender, EventArgs e)
         {
-            _replaceController.CreateRootNode(TagType.TAG_BYTE);
+            _replaceController.CreateNode(TagType.TAG_BYTE);
         }
 
         private void _tbReplaceShort_Click (object sender, EventArgs e)
         {
-            _replaceController.CreateRootNode(TagType.TAG_SHORT);
+            _replaceController.CreateNode(TagType.TAG_SHORT);
         }
 
         private void _tbReplaceInt_Click (object sender, EventArgs e)
         {
-
+            _replaceController.CreateNode(TagType.TAG_INT);
         }
 
         private void _tbReplaceLong_Click (object sender, EventArgs e)
         {
-
+            _replaceController.CreateNode(TagType.TAG_LONG);
         }
 
         private void _tbReplaceFloat_Click (object sender, EventArgs e)
         {
-
+            _replaceController.CreateNode(TagType.TAG_FLOAT);
         }
 
         private void _tbReplaceDouble_Click (object sender, EventArgs e)
         {
-
+            _replaceController.CreateNode(TagType.TAG_DOUBLE);
         }
 
         private void _tbReplaceByteArray_Click (object sender, EventArgs e)
         {
-
+            _replaceController.CreateNode(TagType.TAG_BYTE_ARRAY);
         }
 
         private void _tbReplaceIntArray_Click (object sender, EventArgs e)
         {
-
+            _replaceController.CreateNode(TagType.TAG_INT_ARRAY);
         }
 
         private void _tbReplaceString_Click (object sender, EventArgs e)
         {
-
+            _replaceController.CreateNode(TagType.TAG_STRING);
         }
 
         private void _tbReplaceList_Click (object sender, EventArgs e)
         {
-
+            _replaceController.CreateNode(TagType.TAG_LIST);
         }
 
         private void _tbReplaceCompound_Click (object sender, EventArgs e)
         {
-
+            _replaceController.CreateNode(TagType.TAG_COMPOUND);
         }
 
         #endregion
+
+        private CancelSearchForm _searchForm;
+        private ContainerRuleSearchStateWin _searchState;
+
+        private void _buttonFind_Click (object sender, EventArgs e)
+        {
+            if (_searchState == null) {
+                _searchState = new ContainerRuleSearchStateWin(_main) {
+                    RuleTags = _findController.Root,
+                    RootNode = _mainSearchRoot,
+                    DiscoverCallback = SearchDiscoveryCallback,
+                    CollapseCallback = SearchCollapseCallback,
+                    EndCallback = SearchEndCallback,
+                };
+            }
+
+            SearchNextNode();
+        }
+
+        private void SearchNextNode ()
+        {
+            if (_searchState == null)
+                return;
+
+            SearchWorker worker = new SearchWorker(_searchState);
+
+            Thread t = new Thread(new ThreadStart(worker.Run));
+            t.IsBackground = true;
+            t.Start();
+
+            _searchForm = new CancelSearchForm();
+            if (_searchForm.ShowDialog(this) == DialogResult.Cancel) {
+                worker.Cancel();
+                _searchState = null;
+            }
+
+            t.Join();
+        }
+
+        private void SearchDiscoveryCallback (DataNode node)
+        {
+            _mainController.SelectNode(node);
+            _mainController.ExpandSelectedNode();
+
+            if (_searchForm != null) {
+                _searchForm.DialogResult = DialogResult.OK;
+                _searchForm = null;
+            }
+
+            _currentFindNode = node;
+        }
+
+        private void SearchCollapseCallback (DataNode node)
+        {
+            _mainController.CollapseBelow(node);
+        }
+
+        private void SearchEndCallback (DataNode node)
+        {
+            if (_searchForm != null) {
+                _searchForm.DialogResult = DialogResult.OK;
+                _searchForm = null;
+            }
+
+            MessageBox.Show("End of Results");
+        }
+
+        private DataNode _currentFindNode;
+
+        private void _buttonReplace_Click (object sender, EventArgs e)
+        {
+            TagCompoundDataNode node = _currentFindNode as TagCompoundDataNode;
+            if (node == null)
+                return;
+
+            foreach (TagDataNode rule in _findController.Root.Nodes) {
+                if (rule == null)
+                    continue;
+
+                foreach (TagDataNode ruleCandidate in node.Nodes) {
+                    if (ruleCandidate == null)
+                        continue;
+
+                    if (ruleCandidate.NodeName == rule.NodeName) {
+                        ruleCandidate.DeleteNode();
+                        break;
+                    }
+                }
+            }
+
+            foreach (TagDataNode tag in _replaceController.Root.Nodes) {
+                if (tag == null)
+                    continue;
+
+                node.NamedTagContainer.AddTag(tag.Tag, tag.NodeName);
+                node.SyncTag();
+            }
+
+            _mainController.RefreshTreeNode(node);
+        }
+
+        private void _tbFindEdit_Click (object sender, EventArgs e)
+        {
+            _findController.EditSelection();
+        }
+
+        private void _tbReplaceEdit_Click (object sender, EventArgs e)
+        {
+            _replaceController.EditSelection();
+        }
+    }
+
+    public abstract class ContainerRuleSearchState : ISearchState
+    {
+        public TagCompoundDataNode RuleTags { get; set; }
+
+        public DataNode RootNode { get; set; }
+        public IEnumerator<DataNode> State { get; set; }
+
+        public abstract void InvokeDiscoverCallback (DataNode node);
+        public abstract void InvokeProgressCallback (DataNode node);
+        public abstract void InvokeCollapseCallback (DataNode node);
+        public abstract void InvokeEndCallback (DataNode node);
+
+        public bool TestNode (DataNode node)
+        {
+            if (RuleTags == null)
+                return false;
+
+            TagCompoundDataNode tagNode = node as TagCompoundDataNode;
+            if (tagNode == null)
+                return false;
+
+            foreach (TagDataNode rule in RuleTags.Nodes) {
+                TagNode matchTag = tagNode.NamedTagContainer.GetTagNode(rule.NodeName);
+                if (matchTag == null)
+                    return false;
+
+                TagNode ruleTag = rule.Tag;
+                if (ruleTag.GetTagType() != matchTag.GetTagType())
+                    return false;
+
+                if (ruleTag.ToString() != matchTag.ToString())
+                    return false;
+            }
+            
+            return true;
+        }
+    }
+
+    public class ContainerRuleSearchStateWin : ContainerRuleSearchState
+    {
+        private ContainerControl _sender;
+
+        public ContainerRuleSearchStateWin (ContainerControl sender)
+        {
+            _sender = sender;
+        }
+
+        public Action<DataNode> DiscoverCallback { get; set; }
+        public Action<DataNode> ProgressCallback { get; set; }
+        public Action<DataNode> CollapseCallback { get; set; }
+        public Action<DataNode> EndCallback { get; set; }
+
+        public override void InvokeDiscoverCallback (DataNode node)
+        {
+            if (_sender != null && DiscoverCallback != null)
+                _sender.BeginInvoke(DiscoverCallback, new object[] { node });
+        }
+
+        public override void InvokeProgressCallback (DataNode node)
+        {
+            if (_sender != null && ProgressCallback != null)
+                _sender.BeginInvoke(ProgressCallback, new object[] { node });
+        }
+
+        public override void InvokeCollapseCallback (DataNode node)
+        {
+            if (_sender != null && CollapseCallback != null)
+                _sender.BeginInvoke(CollapseCallback, new object[] { node });
+        }
+
+        public override void InvokeEndCallback (DataNode node)
+        {
+            if (_sender != null && EndCallback != null)
+                _sender.BeginInvoke(EndCallback, new object[] { node });
+        }
     }
 }

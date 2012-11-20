@@ -30,23 +30,17 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FindReplace));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
             this.treeView1 = new System.Windows.Forms.TreeView();
-            this.treeView2 = new System.Windows.Forms.TreeView();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this._tbFindEdit = new System.Windows.Forms.ToolStripButton();
             this._tbFindDelete = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this._tbReplaceDelete = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this._tbFindAny = new System.Windows.Forms.ToolStripButton();
+            this._tbFindGroupAnd = new System.Windows.Forms.ToolStripButton();
+            this._tbFindGroupOr = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this._tbFindAny = new System.Windows.Forms.ToolStripButton();
             this._tbFindByte = new System.Windows.Forms.ToolStripButton();
             this._tbFindShort = new System.Windows.Forms.ToolStripButton();
             this._tbFindInt = new System.Windows.Forms.ToolStripButton();
@@ -54,6 +48,13 @@
             this._tbFindFloat = new System.Windows.Forms.ToolStripButton();
             this._tbFindDouble = new System.Windows.Forms.ToolStripButton();
             this._tbFindString = new System.Windows.Forms.ToolStripButton();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.treeView2 = new System.Windows.Forms.TreeView();
+            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
+            this._tbReplaceEdit = new System.Windows.Forms.ToolStripButton();
+            this._tbReplaceDelete = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this._tbReplaceByte = new System.Windows.Forms.ToolStripButton();
             this._tbReplaceShort = new System.Windows.Forms.ToolStripButton();
             this._tbReplaceInt = new System.Windows.Forms.ToolStripButton();
@@ -65,13 +66,14 @@
             this._tbReplaceString = new System.Windows.Forms.ToolStripButton();
             this._tbReplaceList = new System.Windows.Forms.ToolStripButton();
             this._tbReplaceCompound = new System.Windows.Forms.ToolStripButton();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this._tbFindGroupAnd = new System.Windows.Forms.ToolStripButton();
-            this._tbFindGroupOr = new System.Windows.Forms.ToolStripButton();
+            this._buttonFind = new System.Windows.Forms.Button();
+            this._buttonReplace = new System.Windows.Forms.Button();
+            this._buttonReplaceAll = new System.Windows.Forms.Button();
+            this._buttonCancel = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.panel2.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.SuspendLayout();
@@ -88,19 +90,6 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Find";
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.panel2);
-            this.groupBox2.Location = new System.Drawing.Point(12, 198);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(439, 182);
-            this.groupBox2.TabIndex = 1;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Replace";
-            // 
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -112,9 +101,45 @@
             this.panel1.Size = new System.Drawing.Size(427, 155);
             this.panel1.TabIndex = 0;
             // 
+            // treeView1
+            // 
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.ImageIndex = 0;
+            this.treeView1.ImageList = this.imageList1;
+            this.treeView1.Location = new System.Drawing.Point(0, 25);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.SelectedImageIndex = 0;
+            this.treeView1.ShowPlusMinus = false;
+            this.treeView1.ShowRootLines = false;
+            this.treeView1.Size = new System.Drawing.Size(427, 130);
+            this.treeView1.TabIndex = 1;
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "document-attribute-b.png");
+            this.imageList1.Images.SetKeyName(1, "document-attribute-s.png");
+            this.imageList1.Images.SetKeyName(2, "document-attribute-i.png");
+            this.imageList1.Images.SetKeyName(3, "document-attribute-l.png");
+            this.imageList1.Images.SetKeyName(4, "document-attribute-f.png");
+            this.imageList1.Images.SetKeyName(5, "document-attribute-d.png");
+            this.imageList1.Images.SetKeyName(6, "edit-code.png");
+            this.imageList1.Images.SetKeyName(7, "edit-small-caps.png");
+            this.imageList1.Images.SetKeyName(8, "edit-list.png");
+            this.imageList1.Images.SetKeyName(9, "box.png");
+            this.imageList1.Images.SetKeyName(10, "folder.png");
+            this.imageList1.Images.SetKeyName(11, "block.png");
+            this.imageList1.Images.SetKeyName(12, "wooden-box.png");
+            this.imageList1.Images.SetKeyName(13, "map.png");
+            this.imageList1.Images.SetKeyName(14, "edit-code-i.png");
+            this.imageList1.Images.SetKeyName(15, "question-white.png");
+            this.imageList1.Images.SetKeyName(16, "arrow-315.png");
+            // 
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._tbFindEdit,
             this._tbFindDelete,
             this.toolStripSeparator1,
             this._tbFindGroupAnd,
@@ -134,65 +159,15 @@
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
-            // panel2
+            // _tbFindEdit
             // 
-            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel2.Controls.Add(this.treeView2);
-            this.panel2.Controls.Add(this.toolStrip2);
-            this.panel2.Location = new System.Drawing.Point(6, 19);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(427, 157);
-            this.panel2.TabIndex = 0;
-            // 
-            // toolStrip2
-            // 
-            this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._tbReplaceDelete,
-            this.toolStripSeparator2,
-            this._tbReplaceByte,
-            this._tbReplaceShort,
-            this._tbReplaceInt,
-            this._tbReplaceLong,
-            this._tbReplaceFloat,
-            this._tbReplaceDouble,
-            this._tbReplaceByteArray,
-            this._tbReplaceIntArray,
-            this._tbReplaceString,
-            this._tbReplaceList,
-            this._tbReplaceCompound});
-            this.toolStrip2.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(427, 25);
-            this.toolStrip2.TabIndex = 0;
-            this.toolStrip2.Text = "toolStrip2";
-            // 
-            // treeView1
-            // 
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.ImageIndex = 0;
-            this.treeView1.ImageList = this.imageList1;
-            this.treeView1.Location = new System.Drawing.Point(0, 25);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.SelectedImageIndex = 0;
-            this.treeView1.ShowPlusMinus = false;
-            this.treeView1.ShowRootLines = false;
-            this.treeView1.Size = new System.Drawing.Size(427, 130);
-            this.treeView1.TabIndex = 1;
-            // 
-            // treeView2
-            // 
-            this.treeView2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView2.ImageIndex = 0;
-            this.treeView2.ImageList = this.imageList1;
-            this.treeView2.Location = new System.Drawing.Point(0, 25);
-            this.treeView2.Name = "treeView2";
-            this.treeView2.SelectedImageIndex = 0;
-            this.treeView2.ShowPlusMinus = false;
-            this.treeView2.ShowRootLines = false;
-            this.treeView2.Size = new System.Drawing.Size(427, 132);
-            this.treeView2.TabIndex = 1;
+            this._tbFindEdit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._tbFindEdit.Image = ((System.Drawing.Image)(resources.GetObject("_tbFindEdit.Image")));
+            this._tbFindEdit.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._tbFindEdit.Name = "_tbFindEdit";
+            this._tbFindEdit.Size = new System.Drawing.Size(23, 22);
+            this._tbFindEdit.Text = "toolStripButton1";
+            this._tbFindEdit.Click += new System.EventHandler(this._tbFindEdit_Click);
             // 
             // _tbFindDelete
             // 
@@ -209,60 +184,28 @@
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
-            // _tbReplaceDelete
+            // _tbFindGroupAnd
             // 
-            this._tbReplaceDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._tbReplaceDelete.Image = ((System.Drawing.Image)(resources.GetObject("_tbReplaceDelete.Image")));
-            this._tbReplaceDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._tbReplaceDelete.Name = "_tbReplaceDelete";
-            this._tbReplaceDelete.Size = new System.Drawing.Size(23, 22);
-            this._tbReplaceDelete.Text = "toolStripButton2";
-            this._tbReplaceDelete.Click += new System.EventHandler(this._tbReplaceDelete_Click);
+            this._tbFindGroupAnd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._tbFindGroupAnd.Image = ((System.Drawing.Image)(resources.GetObject("_tbFindGroupAnd.Image")));
+            this._tbFindGroupAnd.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._tbFindGroupAnd.Name = "_tbFindGroupAnd";
+            this._tbFindGroupAnd.Size = new System.Drawing.Size(23, 22);
+            this._tbFindGroupAnd.Text = "toolStripButton1";
             // 
-            // toolStripSeparator2
+            // _tbFindGroupOr
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            this._tbFindGroupOr.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._tbFindGroupOr.Image = ((System.Drawing.Image)(resources.GetObject("_tbFindGroupOr.Image")));
+            this._tbFindGroupOr.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._tbFindGroupOr.Name = "_tbFindGroupOr";
+            this._tbFindGroupOr.Size = new System.Drawing.Size(23, 22);
+            this._tbFindGroupOr.Text = "toolStripButton2";
             // 
-            // button1
+            // toolStripSeparator3
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(295, 386);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Find Next";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(376, 386);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Replace";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // button3
-            // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(376, 415);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 4;
-            this.button3.Text = "Replace All";
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // button4
-            // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button4.Location = new System.Drawing.Point(12, 386);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
-            this.button4.TabIndex = 5;
-            this.button4.Text = "Cancel";
-            this.button4.UseVisualStyleBackColor = true;
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
             // _tbFindAny
             // 
@@ -273,11 +216,6 @@
             this._tbFindAny.Size = new System.Drawing.Size(23, 22);
             this._tbFindAny.Text = "toolStripButton3";
             this._tbFindAny.Click += new System.EventHandler(this._tbFindAny_Click);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
             // _tbFindByte
             // 
@@ -348,6 +286,92 @@
             this._tbFindString.Size = new System.Drawing.Size(23, 22);
             this._tbFindString.Text = "toolStripButton10";
             this._tbFindString.Click += new System.EventHandler(this._tbFindString_Click);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.panel2);
+            this.groupBox2.Location = new System.Drawing.Point(12, 198);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(439, 182);
+            this.groupBox2.TabIndex = 1;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Replace";
+            // 
+            // panel2
+            // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.Controls.Add(this.treeView2);
+            this.panel2.Controls.Add(this.toolStrip2);
+            this.panel2.Location = new System.Drawing.Point(6, 19);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(427, 157);
+            this.panel2.TabIndex = 0;
+            // 
+            // treeView2
+            // 
+            this.treeView2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView2.ImageIndex = 0;
+            this.treeView2.ImageList = this.imageList1;
+            this.treeView2.Location = new System.Drawing.Point(0, 25);
+            this.treeView2.Name = "treeView2";
+            this.treeView2.SelectedImageIndex = 0;
+            this.treeView2.ShowPlusMinus = false;
+            this.treeView2.ShowRootLines = false;
+            this.treeView2.Size = new System.Drawing.Size(427, 132);
+            this.treeView2.TabIndex = 1;
+            // 
+            // toolStrip2
+            // 
+            this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._tbReplaceEdit,
+            this._tbReplaceDelete,
+            this.toolStripSeparator2,
+            this._tbReplaceByte,
+            this._tbReplaceShort,
+            this._tbReplaceInt,
+            this._tbReplaceLong,
+            this._tbReplaceFloat,
+            this._tbReplaceDouble,
+            this._tbReplaceByteArray,
+            this._tbReplaceIntArray,
+            this._tbReplaceString,
+            this._tbReplaceList,
+            this._tbReplaceCompound});
+            this.toolStrip2.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip2.Name = "toolStrip2";
+            this.toolStrip2.Size = new System.Drawing.Size(427, 25);
+            this.toolStrip2.TabIndex = 0;
+            this.toolStrip2.Text = "toolStrip2";
+            // 
+            // _tbReplaceEdit
+            // 
+            this._tbReplaceEdit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._tbReplaceEdit.Image = ((System.Drawing.Image)(resources.GetObject("_tbReplaceEdit.Image")));
+            this._tbReplaceEdit.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._tbReplaceEdit.Name = "_tbReplaceEdit";
+            this._tbReplaceEdit.Size = new System.Drawing.Size(23, 22);
+            this._tbReplaceEdit.Text = "toolStripButton1";
+            this._tbReplaceEdit.Click += new System.EventHandler(this._tbReplaceEdit_Click);
+            // 
+            // _tbReplaceDelete
+            // 
+            this._tbReplaceDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._tbReplaceDelete.Image = ((System.Drawing.Image)(resources.GetObject("_tbReplaceDelete.Image")));
+            this._tbReplaceDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._tbReplaceDelete.Name = "_tbReplaceDelete";
+            this._tbReplaceDelete.Size = new System.Drawing.Size(23, 22);
+            this._tbReplaceDelete.Text = "toolStripButton2";
+            this._tbReplaceDelete.Click += new System.EventHandler(this._tbReplaceDelete_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // _tbReplaceByte
             // 
@@ -459,65 +483,67 @@
             this._tbReplaceCompound.Text = "toolStripButton21";
             this._tbReplaceCompound.Click += new System.EventHandler(this._tbReplaceCompound_Click);
             // 
-            // imageList1
+            // _buttonFind
             // 
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "document-attribute-b.png");
-            this.imageList1.Images.SetKeyName(1, "document-attribute-s.png");
-            this.imageList1.Images.SetKeyName(2, "document-attribute-i.png");
-            this.imageList1.Images.SetKeyName(3, "document-attribute-l.png");
-            this.imageList1.Images.SetKeyName(4, "document-attribute-f.png");
-            this.imageList1.Images.SetKeyName(5, "document-attribute-d.png");
-            this.imageList1.Images.SetKeyName(6, "edit-code.png");
-            this.imageList1.Images.SetKeyName(7, "edit-small-caps.png");
-            this.imageList1.Images.SetKeyName(8, "edit-list.png");
-            this.imageList1.Images.SetKeyName(9, "box.png");
-            this.imageList1.Images.SetKeyName(10, "folder.png");
-            this.imageList1.Images.SetKeyName(11, "block.png");
-            this.imageList1.Images.SetKeyName(12, "wooden-box.png");
-            this.imageList1.Images.SetKeyName(13, "map.png");
-            this.imageList1.Images.SetKeyName(14, "edit-code-i.png");
-            this.imageList1.Images.SetKeyName(15, "question-white.png");
-            this.imageList1.Images.SetKeyName(16, "arrow-315.png");
+            this._buttonFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this._buttonFind.Location = new System.Drawing.Point(295, 386);
+            this._buttonFind.Name = "_buttonFind";
+            this._buttonFind.Size = new System.Drawing.Size(75, 23);
+            this._buttonFind.TabIndex = 2;
+            this._buttonFind.Text = "Find Next";
+            this._buttonFind.UseVisualStyleBackColor = true;
+            this._buttonFind.Click += new System.EventHandler(this._buttonFind_Click);
             // 
-            // _tbFindGroupAnd
+            // _buttonReplace
             // 
-            this._tbFindGroupAnd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._tbFindGroupAnd.Image = ((System.Drawing.Image)(resources.GetObject("_tbFindGroupAnd.Image")));
-            this._tbFindGroupAnd.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._tbFindGroupAnd.Name = "_tbFindGroupAnd";
-            this._tbFindGroupAnd.Size = new System.Drawing.Size(23, 22);
-            this._tbFindGroupAnd.Text = "toolStripButton1";
+            this._buttonReplace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this._buttonReplace.Location = new System.Drawing.Point(376, 386);
+            this._buttonReplace.Name = "_buttonReplace";
+            this._buttonReplace.Size = new System.Drawing.Size(75, 23);
+            this._buttonReplace.TabIndex = 3;
+            this._buttonReplace.Text = "Replace";
+            this._buttonReplace.UseVisualStyleBackColor = true;
+            this._buttonReplace.Click += new System.EventHandler(this._buttonReplace_Click);
             // 
-            // _tbFindGroupOr
+            // _buttonReplaceAll
             // 
-            this._tbFindGroupOr.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._tbFindGroupOr.Image = ((System.Drawing.Image)(resources.GetObject("_tbFindGroupOr.Image")));
-            this._tbFindGroupOr.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._tbFindGroupOr.Name = "_tbFindGroupOr";
-            this._tbFindGroupOr.Size = new System.Drawing.Size(23, 22);
-            this._tbFindGroupOr.Text = "toolStripButton2";
+            this._buttonReplaceAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this._buttonReplaceAll.Location = new System.Drawing.Point(376, 415);
+            this._buttonReplaceAll.Name = "_buttonReplaceAll";
+            this._buttonReplaceAll.Size = new System.Drawing.Size(75, 23);
+            this._buttonReplaceAll.TabIndex = 4;
+            this._buttonReplaceAll.Text = "Replace All";
+            this._buttonReplaceAll.UseVisualStyleBackColor = true;
+            // 
+            // _buttonCancel
+            // 
+            this._buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this._buttonCancel.Location = new System.Drawing.Point(12, 386);
+            this._buttonCancel.Name = "_buttonCancel";
+            this._buttonCancel.Size = new System.Drawing.Size(75, 23);
+            this._buttonCancel.TabIndex = 5;
+            this._buttonCancel.Text = "Cancel";
+            this._buttonCancel.UseVisualStyleBackColor = true;
             // 
             // FindReplace
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(463, 449);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this._buttonCancel);
+            this.Controls.Add(this._buttonReplaceAll);
+            this.Controls.Add(this._buttonReplace);
+            this.Controls.Add(this._buttonFind);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "FindReplace";
             this.Text = "Replace";
             this.groupBox1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.toolStrip2.ResumeLayout(false);
@@ -540,10 +566,10 @@
         private System.Windows.Forms.ToolStrip toolStrip2;
         private System.Windows.Forms.ToolStripButton _tbReplaceDelete;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button _buttonFind;
+        private System.Windows.Forms.Button _buttonReplace;
+        private System.Windows.Forms.Button _buttonReplaceAll;
+        private System.Windows.Forms.Button _buttonCancel;
         private System.Windows.Forms.ToolStripButton _tbFindAny;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton _tbFindByte;
@@ -567,5 +593,7 @@
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.ToolStripButton _tbFindGroupAnd;
         private System.Windows.Forms.ToolStripButton _tbFindGroupOr;
+        private System.Windows.Forms.ToolStripButton _tbFindEdit;
+        private System.Windows.Forms.ToolStripButton _tbReplaceEdit;
     }
 }

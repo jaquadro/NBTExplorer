@@ -100,6 +100,36 @@ namespace NBTExplorer.Model
             return _container.DeleteTag(tag);
         }
 
+        public bool ContainsTag (string name)
+        {
+            return _container.ContainsTag(name);
+        }
+
+        public override void SyncTag ()
+        {
+            Dictionary<TagNode, TagDataNode> lookup = new Dictionary<TagNode, TagDataNode>();
+            foreach (TagDataNode node in Nodes)
+                lookup[node.Tag] = node;
+
+            foreach (var kvp in lookup) {
+                if (!Tag.Values.Contains(kvp.Key))
+                    Nodes.Remove(kvp.Value);
+            }
+
+            foreach (TagNode tag in Tag.Values) {
+                if (!lookup.ContainsKey(tag)) {
+                    TagDataNode newnode = TagDataNode.CreateFromTag(tag);
+                    if (newnode != null) {
+                        Nodes.Add(newnode);
+                        newnode.Expand();
+                    }
+                }
+            }
+
+            foreach (TagDataNode node in Nodes)
+                node.SyncTag();
+        }
+
         private void AddTag (TagNode tag, string name)
         {
             _container.AddTag(tag, name);

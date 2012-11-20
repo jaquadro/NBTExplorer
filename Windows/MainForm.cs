@@ -8,13 +8,17 @@ using System.Windows.Forms;
 using NBTExplorer.Model;
 using NBTExplorer.Properties;
 using Substrate.Nbt;
+using NBTExplorer.Controllers;
 
 namespace NBTExplorer.Windows
 {
+    using Predicates = NodeTreeController.Predicates;
+
     public partial class MainForm : Form
     {
         private static Dictionary<TagType, int> _tagIconIndex;
 
+        private NodeTreeController _controller;
         private IconRegistry _iconRegistry;
 
         private string _openFolderPath = null;
@@ -46,6 +50,10 @@ namespace NBTExplorer.Windows
             InitializeIconRegistry();
             FormHandlers.Register();
             NbtClipboardController.Initialize(new NbtClipboardControllerWin());
+
+            _controller = new NodeTreeController(_nodeTree);
+            _controller.ConfirmAction += _controller_ConfirmAction;
+            _controller.SelectionInvalidated += _controller_SelectionInvalidated;
 
             FormClosing += MainForm_Closing;
 
@@ -165,31 +173,13 @@ namespace NBTExplorer.Windows
 
         private void OpenPaths (string[] paths)
         {
-            _nodeTree.Nodes.Clear();
+            _controller.OpenPaths(paths);
 
             foreach (string path in paths) {
-                if (Directory.Exists(path)) {
-                    DirectoryDataNode node = new DirectoryDataNode(path);
-                    _nodeTree.Nodes.Add(CreateUnexpandedNode(node));
-
+                if (Directory.Exists(path))
                     AddPathToHistory(Settings.Default.RecentDirectories, path);
-                }
-                else if (File.Exists(path)) {
-                    DataNode node = null;
-                    foreach (var item in FileTypeRegistry.RegisteredTypes) {
-                        if (item.Value.NamePatternTest(path))
-                            node = item.Value.NodeCreate(path);
-                    }
-
-                    if (node != null) {
-                        _nodeTree.Nodes.Add(CreateUnexpandedNode(node));
-                        AddPathToHistory(Settings.Default.RecentFiles, path);
-                    }
-                }
-            }
-
-            if (_nodeTree.Nodes.Count > 0) {
-                _nodeTree.Nodes[0].Expand();
+                else if (File.Exists(path))
+                    AddPathToHistory(Settings.Default.RecentFiles, path);
             }
 
             UpdateUI();
@@ -266,533 +256,27 @@ namespace NBTExplorer.Windows
 
         private void _contextMoveUp_Click (object sender, EventArgs e)
         {
-            TreeNode frontNode = _nodeTree.SelectedNode;
-            if (frontNode == null)
-                return;
-
-            DataNode node = frontNode.Tag as DataNode;
-            if (node == null || !node.CanMoveNodeUp)
-                return;
-
-            node.ChangeRelativePosition(-1);
-            RefreshChildNodes(frontNode.Parent, node.Parent);
+            _controller.MoveSelectionUp();
         }
 
         private void _contextMoveDown_Click (object sender, EventArgs e)
         {
-            TreeNode frontNode = _nodeTree.SelectedNode;
-            if (frontNode == null)
-                return;
-
-            DataNode node = frontNode.Tag as DataNode;
-            if (node == null || !node.CanMoveNodeDown)
-                return;
-
-            node.ChangeRelativePosition(1);
-            RefreshChildNodes(frontNode.Parent, node.Parent);
+            _controller.MoveSelectionDown();
         }
 
         private void ExpandNode (TreeNode node)
         {
-            if (node == null || !(node.Tag is DataNode))
-                return;
-
-            if (node.IsExpanded)
-                return;
-
-            node.Nodes.Clear();
-
-            DataNode backNode = node.Tag as DataNode;
-            if (!backNode.IsExpanded)
-                backNode.Expand();
-
-            foreach (DataNode child in backNode.Nodes)
-                node.Nodes.Add(CreateUnexpandedNode(child));
+            _controller.ExpandNode(node);
         }
 
         private void CollapseNode (TreeNode node)
         {
-            if (node == null || !(node.Tag is DataNode))
-                return;
-
-            DataNode backNode = node.Tag as DataNode;
-            if (backNode.IsModified)
-                return;
-
-            backNode.Collapse();
-
-            node.Nodes.Clear();
-            if (backNode.HasUnexpandedChildren)
-                node.Nodes.Add(new TreeNode());
-        }
-
-        private void CreateNode (TreeNode node, TagType type)
-        {
-            if (node == null || !(node.Tag is DataNode))
-                return;
-
-            DataNode dataNode = node.Tag as DataNode;
-            if (!dataNode.CanCreateTag(type))
-                return;
-
-            if (dataNode.CreateNode(type)) {
-                node.Text = dataNode.NodeDisplay;
-                RefreshChildNodes(node, dataNode);
-                UpdateUI(dataNode);
-            }
-        }
-
-        private void RefreshChildNodes (TreeNode node, DataNode dataNode)
-        {
-            Dictionary<DataNode, TreeNode> currentNodes = new Dictionary<DataNode, TreeNode>();
-            foreach (TreeNode child in node.Nodes) {
-                if (child.Tag is DataNode)
-                    currentNodes.Add(child.Tag as DataNode, child);
-            }
-
-            node.Nodes.Clear();
-            foreach (DataNode child in dataNode.Nodes) {
-                if (!currentNodes.ContainsKey(child))
-                    node.Nodes.Add(CreateUnexpandedNode(child));
-                else
-                    node.Nodes.Add(currentNodes[child]);
-            }
-
-            foreach (TreeNode child in node.Nodes)
-                child.ContextMenuStrip = BuildNodeContextMenu(child.Tag as DataNode);
-
-            if (node.Nodes.Count == 0 && dataNode.HasUnexpandedChildren) {
-                ExpandNode(node);
-                node.Expand();
-            }
-        }
-
-        private void EditNode (TreeNode node)
-        {
-            if (node == null || !(node.Tag is DataNode))
-                return;
-
-            DataNode dataNode = node.Tag as DataNode;
-            if (!dataNode.CanEditNode)
-                return;
-
-            if (dataNode.EditNode()) {
-                node.Text = dataNode.NodeDisplay;
-                UpdateUI(dataNode);
-            }
-        }
-
-        private void RenameNode (TreeNode node)
-        {
-            if (node == null || !(node.Tag is DataNode))
-                return;
-
-            DataNode dataNode = node.Tag as DataNode;
-            if (!dataNode.CanRenameNode)
-                return;
-
-            if (dataNode.RenameNode()) {
-                node.Text = dataNode.NodeDisplay;
-                UpdateUI(dataNode);
-            }
-        }
-
-        private void DeleteNode (TreeNode node)
-        {
-            if (node == null || !(node.Tag is DataNode))
-                return;
-
-            DataNode dataNode = node.Tag as DataNode;
-            if (!dataNode.CanDeleteNode)
-                return;
-
-            if (dataNode.DeleteNode()) {
-                UpdateUI(node.Parent.Tag as DataNode);
-                UpdateNodeText(node.Parent);
-                node.Remove();
-            }
-        }
-
-        private void DeleteNode (IList<TreeNode> nodes)
-        {
-            bool? elideChildren = null;
-            if (!CanOperateOnNodesEx(nodes, DeleteNodePred, out elideChildren))
-                return;
-
-            if (elideChildren == true)
-                nodes = ElideChildren(nodes);
-
-            foreach (TreeNode node in nodes) {
-                DataNode dataNode = node.Tag as DataNode;
-                if (dataNode.DeleteNode()) {
-                    UpdateNodeText(node.Parent);
-                    node.Remove();
-                }
-            }
-
-            UpdateUI();
-        }
-
-        /*private bool CanDeleteNodes (IList<TreeNode> nodes)
-        {
-            bool? elideChildren = null;
-            return CanDeleteNodesEx(nodes, out elideChildren);
-        }
-
-        private bool CanDeleteNodesEx (IList<TreeNode> nodes, out bool? elideChildren)
-        {
-            GroupCapabilities caps = GroupCapabilities.All;
-            elideChildren = null;
-
-            foreach (TreeNode node in nodes) {
-                if (node == null || !(node.Tag is DataNode))
-                    return false;
-
-                DataNode dataNode = node.Tag as DataNode;
-                if (!dataNode.CanDeleteNode)
-                    return false;
-
-                caps &= dataNode.DeleteNodeCapabilities;
-
-                bool elideChildrenFlag = (dataNode.DeleteNodeCapabilities & GroupCapabilities.ElideChildren) == GroupCapabilities.ElideChildren;
-                if (elideChildren == null)
-                    elideChildren = elideChildrenFlag;
-                if (elideChildren != elideChildrenFlag)
-                    return false;
-            }
-
-            if (nodes.Count > 1 && !SufficientCapabilities(nodes, caps))
-                return false;
-
-            return true;
-        }*/
-
-        delegate bool DataNodePredicate (DataNode dataNode, out GroupCapabilities caps);
-
-        private bool CreateByteNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = GroupCapabilities.Single;
-            return (dataNode != null) && dataNode.CanCreateTag(TagType.TAG_BYTE);
-        }
-
-        private bool CreateShortNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = GroupCapabilities.Single;
-            return (dataNode != null) && dataNode.CanCreateTag(TagType.TAG_SHORT);
-        }
-
-        private bool CreateIntNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = GroupCapabilities.Single;
-            return (dataNode != null) && dataNode.CanCreateTag(TagType.TAG_INT);
-        }
-
-        private bool CreateLongNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = GroupCapabilities.Single;
-            return (dataNode != null) && dataNode.CanCreateTag(TagType.TAG_LONG);
-        }
-
-        private bool CreateFloatNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = GroupCapabilities.Single;
-            return (dataNode != null) && dataNode.CanCreateTag(TagType.TAG_FLOAT);
-        }
-
-        private bool CreateDoubleNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = GroupCapabilities.Single;
-            return (dataNode != null) && dataNode.CanCreateTag(TagType.TAG_DOUBLE);
-        }
-
-        private bool CreateByteArrayNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = GroupCapabilities.Single;
-            return (dataNode != null) && dataNode.CanCreateTag(TagType.TAG_BYTE_ARRAY);
-        }
-
-        private bool CreateIntArrayNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = GroupCapabilities.Single;
-            return (dataNode != null) && dataNode.CanCreateTag(TagType.TAG_INT_ARRAY);
-        }
-
-        private bool CreateStringNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = GroupCapabilities.Single;
-            return (dataNode != null) && dataNode.CanCreateTag(TagType.TAG_STRING);
-        }
-
-        private bool CreateListNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = GroupCapabilities.Single;
-            return (dataNode != null) && dataNode.CanCreateTag(TagType.TAG_LIST);
-        }
-
-        private bool CreateCompoundNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = GroupCapabilities.Single;
-            return (dataNode != null) && dataNode.CanCreateTag(TagType.TAG_COMPOUND);
-        }
-
-        private bool RenameNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = dataNode.RenameNodeCapabilities;
-            return (dataNode != null) && dataNode.CanRenameNode;
-        }
-
-        private bool EditNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = dataNode.EditNodeCapabilities;
-            return (dataNode != null) && dataNode.CanEditNode;
-        }
-
-        private bool DeleteNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = dataNode.DeleteNodeCapabilities;
-            return (dataNode != null) && dataNode.CanDeleteNode;
-        }
-
-        private bool CutNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = dataNode.CutNodeCapabilities;
-            return (dataNode != null) && dataNode.CanCutNode;
-        }
-
-        private bool CopyNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = dataNode.CopyNodeCapabilities;
-            return (dataNode != null) && dataNode.CanCopyNode;
-        }
-
-        private bool PasteIntoNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = dataNode.PasteIntoNodeCapabilities;
-            return (dataNode != null) && dataNode.CanPasteIntoNode;
-        }
-
-        private bool SearchNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = dataNode.SearchNodeCapabilites;
-            return (dataNode != null) && dataNode.CanSearchNode;
-        }
-
-        private bool ReorderNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = dataNode.ReorderNodeCapabilities;
-            return (dataNode != null) && dataNode.CanReoderNode;
-        }
-
-        private bool RefreshNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = dataNode.RefreshNodeCapabilites;
-            return (dataNode != null) && dataNode.CanRefreshNode;
-        }
-
-        /*private bool CreateTagNodePred (DataNode dataNode, out GroupCapabilities caps)
-        {
-            caps = GroupCapabilities.Single;
-            return (dataNode != null) && dataNode.CanCreateTag
-        }*/
-
-        private bool CanOperateOnNodes (IList<TreeNode> nodes, DataNodePredicate pred)
-        {
-            bool? elideChildren = null;
-            return CanOperateOnNodesEx(nodes, pred, out elideChildren);
-        }
-
-        private bool CanOperateOnNodesEx (IList<TreeNode> nodes, DataNodePredicate pred, out bool? elideChildren)
-        {
-            GroupCapabilities caps = GroupCapabilities.All;
-            elideChildren = null;
-
-            foreach (TreeNode node in nodes) {
-                if (node == null || !(node.Tag is DataNode))
-                    return false;
-
-                DataNode dataNode = node.Tag as DataNode;
-                GroupCapabilities dataCaps;
-                if (!pred(dataNode, out dataCaps))
-                    return false;
-
-                caps &= dataCaps;
-
-                bool elideChildrenFlag = (dataNode.DeleteNodeCapabilities & GroupCapabilities.ElideChildren) == GroupCapabilities.ElideChildren;
-                if (elideChildren == null)
-                    elideChildren = elideChildrenFlag;
-                if (elideChildren != elideChildrenFlag)
-                    return false;
-            }
-
-            if (nodes.Count > 1 && !SufficientCapabilities(nodes, caps))
-                return false;
-
-            return true;
-        }
-
-        private IList<TreeNode> ElideChildren (IList<TreeNode> nodes)
-        {
-            List<TreeNode> filtered = new List<TreeNode>();
-
-            foreach (TreeNode node in nodes) {
-                TreeNode parent = node.Parent;
-                bool foundParent = false;
-
-                while (parent != null) {
-                    if (nodes.Contains(parent)) {
-                        foundParent = true;
-                        break;
-                    }
-                    parent = parent.Parent;
-                }
-
-                if (!foundParent)
-                    filtered.Add(node);
-            }
-
-            return filtered;
-        }
-
-        private bool CommonContainer (IEnumerable<TreeNode> nodes)
-        {
-            object container = null;
-            foreach (TreeNode node in nodes) {
-                DataNode dataNode = node.Tag as DataNode;
-                if (container == null)
-                    container = dataNode.Parent;
-
-                if (container != dataNode.Parent)
-                    return false;
-            }
-
-            return true;
-        }
-
-        private bool CommonType (IEnumerable<TreeNode> nodes)
-        {
-            Type datatype = null;
-            foreach (TreeNode node in nodes) {
-                DataNode dataNode = node.Tag as DataNode;
-                if (datatype == null)
-                    datatype = dataNode.GetType();
-
-                if (datatype != dataNode.GetType())
-                    return false;
-            }
-
-            return true;
-        }
-
-        private bool SufficientCapabilities (IEnumerable<TreeNode> nodes, GroupCapabilities commonCaps)
-        {
-            bool commonContainer = CommonContainer(nodes);
-            bool commonType = CommonType(nodes);
-
-            bool pass = true;
-            if (commonContainer && commonType)
-                pass &= ((commonCaps & GroupCapabilities.SiblingSameType) == GroupCapabilities.SiblingSameType);
-            else if (commonContainer && !commonType)
-                pass &= ((commonCaps & GroupCapabilities.SiblingMixedType) == GroupCapabilities.SiblingMixedType);
-            else if (!commonContainer && commonType)
-                pass &= ((commonCaps & GroupCapabilities.MultiSameType) == GroupCapabilities.MultiSameType);
-            else if (!commonContainer && !commonType)
-                pass &= ((commonCaps & GroupCapabilities.MultiMixedType) == GroupCapabilities.MultiMixedType);
-
-            return pass;
-        }
-
-        private void CopyNode (TreeNode node)
-        {
-            if (node == null || !(node.Tag is DataNode))
-                return;
-
-            DataNode dataNode = node.Tag as DataNode;
-            if (!dataNode.CanCopyNode)
-                return;
-
-            dataNode.CopyNode();
-        }
-
-        private void CutNode (TreeNode node)
-        {
-            if (node == null || !(node.Tag is DataNode))
-                return;
-
-            DataNode dataNode = node.Tag as DataNode;
-            if (!dataNode.CanCutNode)
-                return;
-
-            if (dataNode.CutNode()) {
-                UpdateUI(node.Parent.Tag as DataNode);
-                UpdateNodeText(node.Parent);
-                node.Remove();
-            }
-        }
-
-        private void PasteNode (TreeNode node)
-        {
-            if (node == null || !(node.Tag is DataNode))
-                return;
-
-            DataNode dataNode = node.Tag as DataNode;
-            if (!dataNode.CanPasteIntoNode)
-                return;
-
-            if (dataNode.PasteNode()) {
-                node.Text = dataNode.NodeDisplay;
-                RefreshChildNodes(node, dataNode);
-                UpdateUI(dataNode);
-            }
-        }
-
-        private void RefreshNode (TreeNode node)
-        {
-            if (node == null || !(node.Tag is DataNode))
-                return;
-
-            DataNode dataNode = node.Tag as DataNode;
-            if (!dataNode.CanRefreshNode)
-                return;
-
-            if (!ConfirmAction("Refresh data anyway?"))
-                return;
-
-            if (dataNode.RefreshNode()) {
-                RefreshChildNodes(node, dataNode);
-                UpdateUI(dataNode);
-                ExpandToEdge(node);
-            }
-        }
-
-        private void ExpandToEdge (TreeNode node)
-        {
-            if (node == null || !(node.Tag is DataNode))
-                return;
-
-            DataNode dataNode = node.Tag as DataNode;
-            if (dataNode.IsExpanded) {
-                if (!node.IsExpanded)
-                    node.Expand();
-
-                foreach (TreeNode child in node.Nodes)
-                    ExpandToEdge(child);
-            }
-        }
-
-        private void Save ()
-        {
-            foreach (TreeNode node in _nodeTree.Nodes) {
-                DataNode dataNode = node.Tag as DataNode;
-                if (dataNode != null)
-                    dataNode.Save();
-            }
-
-            UpdateUI();
+            _controller.CollapseNode(node);
         }
 
         private bool ConfirmExit ()
         {
-            if (CheckModifications()) {
+            if (_controller.CheckModifications()) {
                 if (MessageBox.Show("You currently have unsaved changes.  Close anyway?", "Unsaved Changes", MessageBoxButtons.OKCancel) != DialogResult.OK)
                     return false;
             }
@@ -802,12 +286,20 @@ namespace NBTExplorer.Windows
 
         private bool ConfirmAction (string actionMessage)
         {
-            if (CheckModifications()) {
+            if (_controller.CheckModifications()) {
                 if (MessageBox.Show("You currently have unsaved changes.  " + actionMessage, "Unsaved Changes", MessageBoxButtons.OKCancel) != DialogResult.OK)
                     return false;
             }
 
             return true;
+        }
+
+        private void _controller_ConfirmAction (object sender, MessageBoxEventArgs e)
+        {
+            if (_controller.CheckModifications()) {
+                if (MessageBox.Show("You currently have unsaved changes.  " + e.Message, "Unsaved Changes", MessageBoxButtons.OKCancel) != DialogResult.OK)
+                    e.Cancel = true;
+            }
         }
 
         private CancelSearchForm _searchForm;
@@ -858,9 +350,9 @@ namespace NBTExplorer.Windows
             t.Join();
         }
 
-        private void SearchDiscoveryCallback (DataNode node)
+        public void SearchDiscoveryCallback (DataNode node)
         {
-            _nodeTree.SelectedNode = FindFrontNode(node);
+            _controller.SelectNode(node);
 
             if (_searchForm != null) {
                 _searchForm.DialogResult = DialogResult.OK;
@@ -868,106 +360,19 @@ namespace NBTExplorer.Windows
             }
         }
 
-        private void SearchCollapseCallback (DataNode node)
+        public void SearchCollapseCallback (DataNode node)
         {
-            CollapseBelow(node);
+            _controller.CollapseBelow(node);
         }
 
-        private void SearchEndCallback (DataNode node)
+        public void SearchEndCallback (DataNode node)
         {
-            _searchForm.DialogResult = DialogResult.OK;
-            _searchForm = null;
+            if (_searchForm != null) {
+                _searchForm.DialogResult = DialogResult.OK;
+                _searchForm = null;
+            }
 
             MessageBox.Show("End of results");
-        }
-
-        private TreeNode GetRootFromDataNodePath (DataNode node, out Stack<DataNode> hierarchy)
-        {
-            hierarchy = new Stack<DataNode>();
-            while (node != null) {
-                hierarchy.Push(node);
-                node = node.Parent;
-            }
-
-            DataNode rootDataNode = hierarchy.Pop();
-            TreeNode frontNode = null;
-            foreach (TreeNode child in _nodeTree.Nodes) {
-                if (child.Tag == rootDataNode)
-                    frontNode = child;
-            }
-
-            return frontNode;
-        }
-
-        private TreeNode FindFrontNode (DataNode node)
-        {
-            Stack<DataNode> hierarchy;
-            TreeNode frontNode = GetRootFromDataNodePath(node, out hierarchy);
-
-            if (frontNode == null)
-                return null;
-
-            while (hierarchy.Count > 0) {
-                if (!frontNode.IsExpanded) {
-                    frontNode.Nodes.Add(new TreeNode());
-                    frontNode.Expand();
-                }
-
-                DataNode childData = hierarchy.Pop();
-                foreach (TreeNode childFront in frontNode.Nodes) {
-                    if (childFront.Tag == childData) {
-                        frontNode = childFront;
-                        break;
-                    }
-                }
-            }
-
-            return frontNode;
-        }
-
-        private void CollapseBelow (DataNode node)
-        {
-            Stack<DataNode> hierarchy;
-            TreeNode frontNode = GetRootFromDataNodePath(node, out hierarchy);
-
-            if (frontNode == null)
-                return;
-
-            while (hierarchy.Count > 0) {
-                if (!frontNode.IsExpanded)
-                    return;
-
-                DataNode childData = hierarchy.Pop();
-                foreach (TreeNode childFront in frontNode.Nodes) {
-                    if (childFront.Tag == childData) {
-                        frontNode = childFront;
-                        break;
-                    }
-                }
-            }
-
-            if (frontNode.IsExpanded)
-                frontNode.Collapse();
-        }
-
-        private void UpdateNodeText (TreeNode node)
-        {
-            if (node == null || !(node.Tag is DataNode))
-                return;
-
-            DataNode dataNode = node.Tag as DataNode;
-            node.Text = dataNode.NodeDisplay;
-        }
-
-        private bool CheckModifications ()
-        {
-            foreach (TreeNode node in _nodeTree.Nodes) {
-                DataNode dataNode = node.Tag as DataNode;
-                if (dataNode != null && dataNode.IsModified)
-                    return true;
-            }
-
-            return false;
         }
 
         private void UpdateUI ()
@@ -985,11 +390,11 @@ namespace NBTExplorer.Windows
                     _buttonAddTagString, _buttonCopy, _buttonCut, _buttonDelete, _buttonEdit, _buttonPaste, _buttonRefresh,
                     _buttonRename);
 
-                _buttonSave.Enabled = CheckModifications();
+                _buttonSave.Enabled = _controller.CheckModifications();
                 _buttonFindNext.Enabled = false;
 
                 DisableMenuItems(_menuItemCopy, _menuItemCut, _menuItemDelete, _menuItemEditValue, _menuItemPaste, _menuItemRefresh,
-                    _menuItemRename);
+                    _menuItemRename, _menuItemMoveUp, _menuItemMoveDown);
 
                 _menuItemSave.Enabled = _buttonSave.Enabled;
                 _menuItemFind.Enabled = false;
@@ -1026,7 +431,7 @@ namespace NBTExplorer.Windows
             _buttonAddTagShort.Enabled = node.CanCreateTag(TagType.TAG_SHORT);
             _buttonAddTagString.Enabled = node.CanCreateTag(TagType.TAG_STRING);
 
-            _buttonSave.Enabled = CheckModifications();
+            _buttonSave.Enabled = _controller.CheckModifications();
             _buttonCopy.Enabled = node.CanCopyNode && NbtClipboardController.IsInitialized;
             _buttonCut.Enabled = node.CanCutNode && NbtClipboardController.IsInitialized;
             _buttonDelete.Enabled = node.CanDeleteNode;
@@ -1047,45 +452,50 @@ namespace NBTExplorer.Windows
             _menuItemRefresh.Enabled = node.CanRefreshNode;
             _menuItemFind.Enabled = node.CanSearchNode;
             _menuItemFindNext.Enabled = _searchState != null;
+            _menuItemMoveUp.Enabled = node.CanMoveNodeUp;
+            _menuItemMoveDown.Enabled = node.CanMoveNodeDown;
 
             UpdateUI(_nodeTree.SelectedNodes);
         }
 
         private void UpdateUI (IList<TreeNode> nodes)
         {
+            
             if (nodes == null)
                 return;
 
-            _buttonAddTagByte.Enabled = CanOperateOnNodes(nodes, CreateByteNodePred);
-            _buttonAddTagShort.Enabled = CanOperateOnNodes(nodes, CreateShortNodePred);
-            _buttonAddTagInt.Enabled = CanOperateOnNodes(nodes, CreateIntNodePred);
-            _buttonAddTagLong.Enabled = CanOperateOnNodes(nodes, CreateLongNodePred);
-            _buttonAddTagFloat.Enabled = CanOperateOnNodes(nodes, CreateFloatNodePred);
-            _buttonAddTagDouble.Enabled = CanOperateOnNodes(nodes, CreateDoubleNodePred);
-            _buttonAddTagByteArray.Enabled = CanOperateOnNodes(nodes, CreateByteArrayNodePred);
-            _buttonAddTagIntArray.Enabled = CanOperateOnNodes(nodes, CreateIntArrayNodePred);
-            _buttonAddTagString.Enabled = CanOperateOnNodes(nodes, CreateStringNodePred);
-            _buttonAddTagList.Enabled = CanOperateOnNodes(nodes, CreateListNodePred);
-            _buttonAddTagCompound.Enabled = CanOperateOnNodes(nodes, CreateCompoundNodePred);
+            _buttonAddTagByte.Enabled = _controller.CanOperateOnSelection(Predicates.CreateByteNodePred);
+            _buttonAddTagShort.Enabled = _controller.CanOperateOnSelection(Predicates.CreateShortNodePred);
+            _buttonAddTagInt.Enabled = _controller.CanOperateOnSelection(Predicates.CreateIntNodePred);
+            _buttonAddTagLong.Enabled = _controller.CanOperateOnSelection(Predicates.CreateLongNodePred);
+            _buttonAddTagFloat.Enabled = _controller.CanOperateOnSelection(Predicates.CreateFloatNodePred);
+            _buttonAddTagDouble.Enabled = _controller.CanOperateOnSelection(Predicates.CreateDoubleNodePred);
+            _buttonAddTagByteArray.Enabled = _controller.CanOperateOnSelection(Predicates.CreateByteArrayNodePred);
+            _buttonAddTagIntArray.Enabled = _controller.CanOperateOnSelection(Predicates.CreateIntArrayNodePred);
+            _buttonAddTagString.Enabled = _controller.CanOperateOnSelection(Predicates.CreateStringNodePred);
+            _buttonAddTagList.Enabled = _controller.CanOperateOnSelection(Predicates.CreateListNodePred);
+            _buttonAddTagCompound.Enabled = _controller.CanOperateOnSelection(Predicates.CreateCompoundNodePred);
 
-            _buttonSave.Enabled = CheckModifications();
-            _buttonRename.Enabled = CanOperateOnNodes(nodes, RenameNodePred);
-            _buttonEdit.Enabled = CanOperateOnNodes(nodes, EditNodePred);
-            _buttonDelete.Enabled = CanOperateOnNodes(nodes, DeleteNodePred);
-            _buttonCut.Enabled = CanOperateOnNodes(nodes, CutNodePred) && NbtClipboardController.IsInitialized; ;
-            _buttonCopy.Enabled = CanOperateOnNodes(nodes, CopyNodePred) && NbtClipboardController.IsInitialized; ;
-            _buttonPaste.Enabled = CanOperateOnNodes(nodes, PasteIntoNodePred) && NbtClipboardController.IsInitialized; ;
-            _buttonFindNext.Enabled = CanOperateOnNodes(nodes, SearchNodePred) || _searchState != null;
-            _buttonRefresh.Enabled = CanOperateOnNodes(nodes, RefreshNodePred);
+            _buttonSave.Enabled = _controller.CheckModifications();
+            _buttonRename.Enabled = _controller.CanOperateOnSelection(Predicates.RenameNodePred);
+            _buttonEdit.Enabled = _controller.CanOperateOnSelection(Predicates.EditNodePred);
+            _buttonDelete.Enabled = _controller.CanOperateOnSelection(Predicates.DeleteNodePred);
+            _buttonCut.Enabled = _controller.CanOperateOnSelection(Predicates.CutNodePred) && NbtClipboardController.IsInitialized; ;
+            _buttonCopy.Enabled = _controller.CanOperateOnSelection(Predicates.CopyNodePred) && NbtClipboardController.IsInitialized; ;
+            _buttonPaste.Enabled = _controller.CanOperateOnSelection(Predicates.PasteIntoNodePred) && NbtClipboardController.IsInitialized; ;
+            _buttonFindNext.Enabled = _controller.CanOperateOnSelection(Predicates.SearchNodePred) || _searchState != null;
+            _buttonRefresh.Enabled = _controller.CanOperateOnSelection(Predicates.RefreshNodePred);
 
             _menuItemSave.Enabled = _buttonSave.Enabled;
             _menuItemRename.Enabled = _buttonRename.Enabled;
             _menuItemEditValue.Enabled = _buttonEdit.Enabled;
             _menuItemDelete.Enabled = _buttonDelete.Enabled;
+            _menuItemMoveUp.Enabled = _controller.CanOperateOnSelection(Predicates.MoveNodeUpPred);
+            _menuItemMoveDown.Enabled = _controller.CanOperateOnSelection(Predicates.MoveNodeDownPred);
             _menuItemCut.Enabled = _buttonCut.Enabled;
             _menuItemCopy.Enabled = _buttonCopy.Enabled;
             _menuItemPaste.Enabled = _buttonPaste.Enabled;
-            _menuItemFind.Enabled = CanOperateOnNodes(nodes, SearchNodePred);
+            _menuItemFind.Enabled = _controller.CanOperateOnSelection(Predicates.SearchNodePred);
             _menuItemRefresh.Enabled = _buttonRefresh.Enabled;
             _menuItemFindNext.Enabled = _searchState != null;
         }
@@ -1104,6 +514,11 @@ namespace NBTExplorer.Windows
 
             _menuItemRecentFolders.DropDown = BuildRecentEntriesDropDown(Settings.Default.RecentDirectories);
             _menuItemRecentFiles.DropDown = BuildRecentEntriesDropDown(Settings.Default.RecentFiles);
+        }
+
+        private void _controller_SelectionInvalidated (object sender, EventArgs e)
+        {
+            UpdateUI();
         }
 
         private ToolStripDropDown BuildRecentEntriesDropDown (StringCollection list)
@@ -1146,15 +561,6 @@ namespace NBTExplorer.Windows
             return caps;
         }
 
-        public void ActionDeleteNode ()
-        {
-            DeleteNode(_nodeTree.SelectedNodes);
-
-            _nodeTree.SelectedNodes.Clear();
-            _nodeTree.SelectedNode = null;
-            UpdateUI();
-        }
-
         #region Event Handlers
 
         private void MainForm_Closing (object sender, CancelEventArgs e)
@@ -1185,7 +591,7 @@ namespace NBTExplorer.Windows
 
         private void _nodeTree_NodeMouseDoubleClick (object sender, TreeNodeMouseClickEventArgs e)
         {
-            EditNode(e.Node);
+            _controller.EditNode(e.Node);
         }
 
         private void _nodeTree_NodeMouseClick (object sender, TreeNodeMouseClickEventArgs e)
@@ -1221,92 +627,92 @@ namespace NBTExplorer.Windows
 
         private void _buttonSave_Click (object sender, EventArgs e)
         {
-            Save();
+            _controller.Save();
         }
 
         private void _buttonEdit_Click (object sender, EventArgs e)
         {
-            EditNode(_nodeTree.SelectedNode);
+            _controller.EditSelection();
         }
 
         private void _buttonRename_Click (object sender, EventArgs e)
         {
-            RenameNode(_nodeTree.SelectedNode);
+            _controller.RenameSelection();
         }
 
         private void _buttonDelete_Click (object sender, EventArgs e)
         {
-            ActionDeleteNode();
+            _controller.DeleteSelection();
         }
 
         private void _buttonCopy_Click (object sernder, EventArgs e)
         {
-            CopyNode(_nodeTree.SelectedNode);
+            _controller.CopySelection();
         }
 
         private void _buttonCut_Click (object sernder, EventArgs e)
         {
-            CutNode(_nodeTree.SelectedNode);
+            _controller.CutSelection();
         }
 
         private void _buttonPaste_Click (object sernder, EventArgs e)
         {
-            PasteNode(_nodeTree.SelectedNode);
+            _controller.PasteIntoSelection();
         }
 
         private void _buttonAddTagByteArray_Click (object sender, EventArgs e)
         {
-            CreateNode(_nodeTree.SelectedNode, TagType.TAG_BYTE_ARRAY);
+            _controller.CreateNode(TagType.TAG_BYTE_ARRAY);
         }
 
         private void _buttonAddTagByte_Click (object sender, EventArgs e)
         {
-            CreateNode(_nodeTree.SelectedNode, TagType.TAG_BYTE);
+            _controller.CreateNode(TagType.TAG_BYTE);
         }
 
         private void _buttonAddTagCompound_Click (object sender, EventArgs e)
         {
-            CreateNode(_nodeTree.SelectedNode, TagType.TAG_COMPOUND);
+            _controller.CreateNode(TagType.TAG_COMPOUND);
         }
 
         private void _buttonAddTagDouble_Click (object sender, EventArgs e)
         {
-            CreateNode(_nodeTree.SelectedNode, TagType.TAG_DOUBLE);
+            _controller.CreateNode(TagType.TAG_DOUBLE);
         }
 
         private void _buttonAddTagFloat_Click (object sender, EventArgs e)
         {
-            CreateNode(_nodeTree.SelectedNode, TagType.TAG_FLOAT);
+            _controller.CreateNode(TagType.TAG_FLOAT);
         }
 
         private void _buttonAddTagInt_Click (object sender, EventArgs e)
         {
-            CreateNode(_nodeTree.SelectedNode, TagType.TAG_INT);
+            _controller.CreateNode(TagType.TAG_INT);
         }
 
         private void _buttonAddTagIntArray_Click (object sender, EventArgs e)
         {
-            CreateNode(_nodeTree.SelectedNode, TagType.TAG_INT_ARRAY);
+            _controller.CreateNode(TagType.TAG_INT_ARRAY);
         }
 
         private void _buttonAddTagList_Click (object sender, EventArgs e)
         {
-            CreateNode(_nodeTree.SelectedNode, TagType.TAG_LIST);
+            _controller.CreateNode(TagType.TAG_LIST);
         }
 
         private void _buttonAddTagLong_Click (object sender, EventArgs e)
         {
-            CreateNode(_nodeTree.SelectedNode, TagType.TAG_LONG);
+            _controller.CreateNode(TagType.TAG_LONG);
         }
 
         private void _buttonAddTagShort_Click (object sender, EventArgs e)
         {
-            CreateNode(_nodeTree.SelectedNode, TagType.TAG_SHORT);
+            _controller.CreateNode(TagType.TAG_SHORT);
         }
 
         private void _buttonAddTagString_Click (object sender, EventArgs e)
         {
-            CreateNode(_nodeTree.SelectedNode, TagType.TAG_STRING);
+            _controller.CreateNode(TagType.TAG_STRING);
         }
 
         private void _buttonFindNext_Click (object sender, EventArgs e)
@@ -1319,7 +725,7 @@ namespace NBTExplorer.Windows
 
         private void _buttonRefresh_Click (object sender, EventArgs e)
         {
-            RefreshNode(_nodeTree.SelectedNode);
+            _controller.RefreshSelection();
         }
 
         #endregion
@@ -1343,7 +749,7 @@ namespace NBTExplorer.Windows
 
         private void _menuItemSave_Click (object sender, EventArgs e)
         {
-            Save();
+            _controller.Save();
         }
 
         private void _menuItemExit_Click (object sender, EventArgs e)
@@ -1354,32 +760,32 @@ namespace NBTExplorer.Windows
 
         private void _menuItemEditValue_Click (object sender, EventArgs e)
         {
-            EditNode(_nodeTree.SelectedNode);
+            _controller.EditSelection();
         }
 
         private void _menuItemRename_Click (object sender, EventArgs e)
         {
-            RenameNode(_nodeTree.SelectedNode);
+            _controller.RenameSelection();
         }
 
         private void _menuItemDelete_Click (object sender, EventArgs e)
         {
-            ActionDeleteNode();
+            _controller.DeleteSelection();
         }
 
         private void _menuItemCopy_Click (object sender, EventArgs e)
         {
-            CopyNode(_nodeTree.SelectedNode);
+            _controller.CopySelection();
         }
 
         private void _menuItemCut_Click (object sender, EventArgs e)
         {
-            CutNode(_nodeTree.SelectedNode);
+            _controller.CutSelection();
         }
 
         private void _menuItemPaste_Click (object sender, EventArgs e)
         {
-            PasteNode(_nodeTree.SelectedNode); 
+            _controller.PasteIntoSelection();
         }
 
         private void _menuItemFind_Click (object sender, EventArgs e)
@@ -1408,13 +814,23 @@ namespace NBTExplorer.Windows
 
         private void refreshToolStripMenuItem_Click (object sender, EventArgs e)
         {
-            RefreshNode(_nodeTree.SelectedNode);
+            _controller.RefreshSelection();
         }
 
         private void replaceToolStripMenuItem_Click (object sender, EventArgs e)
         {
-            Form form = new FindReplace();
-            form.ShowDialog();
+            Form form = new FindReplace(this, _controller, _nodeTree.SelectedNode.Tag as DataNode);
+            form.Show();
+        }
+
+        private void _menuItemMoveUp_Click (object sender, EventArgs e)
+        {
+            _controller.MoveSelectionUp();
+        }
+
+        private void _menuItemMoveDown_Click (object sender, EventArgs e)
+        {
+            _controller.MoveSelectionDown();
         }
 
         #endregion

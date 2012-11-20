@@ -7,8 +7,6 @@ namespace NBTExplorer
     internal interface ISearchState
     {
         DataNode RootNode { get; set; }
-        string SearchName { get; set; }
-        string SearchValue { get; set; }
 
         IEnumerator<DataNode> State { get; set; }
 
@@ -16,6 +14,45 @@ namespace NBTExplorer
         void InvokeProgressCallback (DataNode node);
         void InvokeCollapseCallback (DataNode node);
         void InvokeEndCallback (DataNode node);
+
+        bool TestNode (DataNode node);
+    }
+
+    internal abstract class NameValueSearchState : ISearchState
+    {
+        public virtual string SearchName { get; set; }
+        public virtual string SearchValue { get; set; }
+
+        public DataNode RootNode { get; set; }
+        public IEnumerator<DataNode> State { get; set; }
+
+        public abstract void InvokeDiscoverCallback (DataNode node);
+        public abstract void InvokeProgressCallback (DataNode node);
+        public abstract void InvokeCollapseCallback (DataNode node);
+        public abstract void InvokeEndCallback (DataNode node);
+
+        public bool TestNode (DataNode node)
+        {
+            bool mName = SearchName == null;
+            bool mValue = SearchValue == null;
+
+            if (SearchName != null) {
+                string tagName = node.NodeName;
+                if (tagName != null)
+                    mName = tagName.Contains(SearchName);
+            }
+            if (SearchValue != null) {
+                string tagValue = node.NodeDisplay;
+                if (tagValue != null)
+                    mValue = tagValue.Contains(SearchValue);
+            }
+
+            if (mName && mValue) {
+                return true;
+            }
+
+            return false;
+        }
     }
 
     internal class SearchWorker
@@ -64,7 +101,12 @@ namespace NBTExplorer
 
             TagDataNode tagNode = node as TagDataNode;
             if (tagNode != null) {
-                bool mName = _state.SearchName == null;
+                if (_state.TestNode(tagNode)) {
+                    InvokeDiscoverCallback(node);
+                    yield return node;
+                }
+
+                /*bool mName = _state.SearchName == null;
                 bool mValue = _state.SearchValue == null;
 
                 if (_state.SearchName != null) {
@@ -81,7 +123,7 @@ namespace NBTExplorer
                 if (mName && mValue) {
                     InvokeDiscoverCallback(node);
                     yield return node;
-                }
+                }*/
             }
 
             foreach (DataNode sub in node.Nodes) {

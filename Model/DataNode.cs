@@ -1,24 +1,43 @@
 ﻿using Substrate.Nbt;
 using System.Collections.Generic;
+using System;
 
 namespace NBTExplorer.Model
 {
-    public class RootDataNode : DataNode
+    public class RootDataNode : TagCompoundDataNode
     {
         private string _name = "Root";
         private string _display = "";
 
+        public RootDataNode ()
+            : base(new TagNodeCompound())
+        {
+        }
+
         public override string NodeName
         {
             get { return _name; }
-            set { _name = value; }
         }
 
         public override string NodeDisplay
         {
             get { return _display; }
-            set { _display = value; }
         }
+
+        public void SetNodeName (string name)
+        {
+            _name = name;
+        }
+
+        public void SetDisplayName (string name)
+        {
+            _display = name;
+        }
+
+        /*public override bool CanCreateTag (TagType type)
+        {
+            return Enum.IsDefined(typeof(TagType), type) && type != TagType.TAG_END;
+        }*/
     }
 
     // FilterDataNode
@@ -173,8 +192,12 @@ namespace NBTExplorer.Model
             Dictionary<string, object> dict = new Dictionary<string, object>();
             foreach (DataNode child in node.Nodes) {
                 Dictionary<string, object> childDict = BuildExpandSet(child);
-                if (childDict != null)
-                    dict[child.NodeDisplay] = childDict;
+                if (childDict != null) {
+                    if (!String.IsNullOrEmpty(child.NodeName))
+                        dict[child.NodeName] = childDict;
+                    else
+                        dict[child.NodeDisplay] = childDict;
+                }
             }
 
             return dict;
@@ -185,7 +208,12 @@ namespace NBTExplorer.Model
             node.Expand();
 
             foreach (DataNode child in node.Nodes) {
-                if (expandSet.ContainsKey(child.NodeDisplay)) {
+                if (expandSet.ContainsKey(child.NodeName)) {
+                    Dictionary<string, object> childDict = (Dictionary<string, object>)expandSet[child.NodeName];
+                    if (childDict != null)
+                        RestoreExpandSet(child, childDict);
+                }
+                else if (expandSet.ContainsKey(child.NodeDisplay)) {
                     Dictionary<string, object> childDict = (Dictionary<string, object>)expandSet[child.NodeDisplay];
                     if (childDict != null)
                         RestoreExpandSet(child, childDict);
