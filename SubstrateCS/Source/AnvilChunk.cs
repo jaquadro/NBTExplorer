@@ -19,7 +19,7 @@ namespace Substrate
                     new SchemaNodeArray("SkyLight", 2048),
                     new SchemaNodeArray("BlockLight", 2048),
                     new SchemaNodeScaler("Y", TagType.TAG_BYTE),
-                    new SchemaNodeArray("AddBlocks", 2048, SchemaOptions.OPTIONAL),
+                    new SchemaNodeArray("Add", 2048, SchemaOptions.OPTIONAL),
                 }),
                 new SchemaNodeArray("Biomes", 256, SchemaOptions.OPTIONAL),
                 new SchemaNodeIntArray("HeightMap", 256),

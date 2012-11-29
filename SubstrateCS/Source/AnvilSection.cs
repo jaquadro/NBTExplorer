@@ -15,7 +15,7 @@ namespace Substrate
             new SchemaNodeArray("SkyLight", 2048),
             new SchemaNodeArray("BlockLight", 2048),
             new SchemaNodeScaler("Y", TagType.TAG_BYTE),
-            new SchemaNodeArray("AddBlocks", 2048, SchemaOptions.OPTIONAL),
+            new SchemaNodeArray("Add", 2048, SchemaOptions.OPTIONAL),
         };
 
         private const int XDIM = 16;
@@ -128,9 +128,9 @@ namespace Substrate
             _skyLight = new YZXNibbleArray(XDIM, YDIM, ZDIM, ctree["SkyLight"] as TagNodeByteArray);
             _blockLight = new YZXNibbleArray(XDIM, YDIM, ZDIM, ctree["BlockLight"] as TagNodeByteArray);
 
-            if (!ctree.ContainsKey("AddBlocks"))
-                ctree["AddBlocks"] = new TagNodeByteArray(new byte[2048]);
-            _addBlocks = new YZXNibbleArray(XDIM, YDIM, ZDIM, ctree["AddBlocks"] as TagNodeByteArray);
+            if (!ctree.ContainsKey("Add"))
+                ctree["Add"] = new TagNodeByteArray(new byte[2048]);
+            _addBlocks = new YZXNibbleArray(XDIM, YDIM, ZDIM, ctree["Add"] as TagNodeByteArray);
 
             _tree = ctree;
 
@@ -154,7 +154,7 @@ namespace Substrate
             }
 
             if (CheckAddBlocksEmpty())
-                copy.Remove("AddBlocks");
+                copy.Remove("Add");
 
             return copy;
         }
@@ -198,7 +198,7 @@ namespace Substrate
             tree.Add("Data", data);
             tree.Add("SkyLight", skyLight);
             tree.Add("BlockLight", blockLight);
-            tree.Add("AddBlocks", addBlocks);
+            tree.Add("Add", addBlocks);
 
             _tree = tree;
         }
