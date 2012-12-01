@@ -146,6 +146,8 @@ namespace Substrate
                 return null;
             }
 
+            _enchantments.Clear();
+
             _id = ctree["id"].ToTagShort();
             _count = ctree["Count"].ToTagByte();
             _damage = ctree["Damage"].ToTagShort();
