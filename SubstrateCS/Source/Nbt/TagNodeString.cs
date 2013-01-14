@@ -56,6 +56,8 @@ namespace Substrate.Nbt
         public TagNodeString (string d)
         {
             _data = d;
+            if (_data == null)
+                _data = "";
         }
 
         /// <summary>
