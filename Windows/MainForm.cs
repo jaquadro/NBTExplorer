@@ -172,7 +172,7 @@ namespace NBTExplorer.Windows
                     DirectoryDataNode node = new DirectoryDataNode(path);
                     _nodeTree.Nodes.Add(CreateUnexpandedNode(node));
 
-                    AddPathToHistory(Settings.Default.RecentDirectories, path);
+                    AddPathToHistory(GetRecentDirectories(), path);
                 }
                 else if (File.Exists(path)) {
                     DataNode node = null;
@@ -183,7 +183,7 @@ namespace NBTExplorer.Windows
 
                     if (node != null) {
                         _nodeTree.Nodes.Add(CreateUnexpandedNode(node));
-                        AddPathToHistory(Settings.Default.RecentFiles, path);
+                        AddPathToHistory(GetRecentFiles(), path);
                     }
                 }
             }
@@ -227,6 +227,26 @@ namespace NBTExplorer.Windows
             }
 
             UpdateUI();
+        }
+
+        private StringCollection GetRecentFiles ()
+        {
+            try {
+                return Settings.Default.RecentFiles;
+            }
+            catch {
+                return null;
+            }
+        }
+
+        private StringCollection GetRecentDirectories ()
+        {
+            try {
+                return Settings.Default.RecentDirectories;
+            }
+            catch {
+                return null;
+            }
         }
 
         private TreeNode CreateUnexpandedNode (DataNode node)
@@ -1125,6 +1145,9 @@ namespace NBTExplorer.Windows
 
         private void AddPathToHistory (StringCollection list, string entry)
         {
+            if (list == null)
+                return;
+
             foreach (string item in list) {
                 if (item == entry) {
                     list.Remove(item);
