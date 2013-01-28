@@ -141,7 +141,7 @@ namespace Substrate
             new SchemaNodeScaler("XpLevel", TagType.TAG_INT, SchemaOptions.OPTIONAL),
             new SchemaNodeScaler("XpTotal", TagType.TAG_INT, SchemaOptions.OPTIONAL),
             new SchemaNodeScaler("Score", TagType.TAG_INT, SchemaOptions.OPTIONAL),
-            new SchemaNodeScaler("PlayerGameType", TagType.TAG_INT, SchemaOptions.OPTIONAL),
+            new SchemaNodeScaler("playerGameType", TagType.TAG_INT, SchemaOptions.OPTIONAL),
             new SchemaNodeCompound("abilities", new SchemaNodeCompound("") {
                 new SchemaNodeScaler("flying", TagType.TAG_BYTE),
                 new SchemaNodeScaler("instabuild", TagType.TAG_BYTE),
@@ -603,7 +603,7 @@ namespace Substrate
                 tree["Score"] = new TagNodeInt(_score ?? 0);
 
             if (_gameType != null)
-                tree["PlayerGameType"] = new TagNodeInt((int)(_gameType ?? PlayerGameType.Survival));
+                tree["playerGameType"] = new TagNodeInt((int)(_gameType ?? PlayerGameType.Survival));
 
             if (AbilitiesSet()) {
                 TagNodeCompound pb = new TagNodeCompound();
