@@ -112,6 +112,8 @@ namespace Substrate
             _pos = new Vector3();
             _motion = new Vector3();
             _rotation = new Orientation();
+
+            _source = new TagNodeCompound();
         }
 
         /// <summary>

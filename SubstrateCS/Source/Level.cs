@@ -277,6 +277,8 @@ namespace Substrate
 
             GameType = GameType.SURVIVAL;
             UseMapFeatures = true;
+
+            _source = new TagNodeCompound();
         }
 
         /// <summary>

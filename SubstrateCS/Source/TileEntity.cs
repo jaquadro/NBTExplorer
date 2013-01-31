@@ -75,6 +75,7 @@ namespace Substrate
         /// </summary>
         protected TileEntity ()
         {
+            _source = new TagNodeCompound();
         }
 
         /// <summary>
@@ -84,6 +85,7 @@ namespace Substrate
         public TileEntity (string id)
         {
             _id = id;
+            _source = new TagNodeCompound();
         }
 
         /// <summary>

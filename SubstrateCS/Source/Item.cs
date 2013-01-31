@@ -37,6 +37,7 @@ namespace Substrate
         public Item ()
         {
             _enchantments = new List<Enchantment>();
+            _source = new TagNodeCompound();
         }
 
         /// <summary>
