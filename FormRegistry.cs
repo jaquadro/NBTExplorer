@@ -39,6 +39,7 @@ namespace NBTExplorer
         }
 
         public String Value { get; set; }
+        public bool AllowEmpty { get; set; }
     }
 
     public class RestrictedStringFormData : StringFormData

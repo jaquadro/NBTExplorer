@@ -34,7 +34,9 @@ namespace NBTExplorer.Windows
 
         public static bool RenameTagHandler (RestrictedStringFormData data)
         {
-            EditName form = new EditName(data.Value);
+            EditName form = new EditName(data.Value) {
+                AllowEmpty = data.AllowEmpty,
+            };
             form.InvalidNames.AddRange(data.RestrictedValues);
 
             if (form.ShowDialog() == DialogResult.OK && form.IsModified) {

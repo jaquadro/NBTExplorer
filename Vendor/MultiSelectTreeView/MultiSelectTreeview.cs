@@ -91,7 +91,7 @@ namespace NBTExplorer.Vendor.MultiSelectTreeView
 				TreeNode node = this.GetNodeAt( e.Location );
 				if( node != null )
 				{
-					int leftBound = node.Bounds.X; // - 20; // Allow user to click on image
+					int leftBound = node.Bounds.X - 20; // Allow user to click on image
 					int rightBound = node.Bounds.Right + 10; // Give a little extra room
 					if( e.Location.X > leftBound && e.Location.X < rightBound )
 					{

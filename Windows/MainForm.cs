@@ -323,8 +323,11 @@ namespace NBTExplorer.Windows
             node.Nodes.Clear();
 
             DataNode backNode = node.Tag as DataNode;
-            if (!backNode.IsExpanded)
+            if (!backNode.IsExpanded) {
                 backNode.Expand();
+                node.Text = backNode.NodeDisplay;
+                UpdateUI(backNode);
+            }
 
             foreach (DataNode child in backNode.Nodes)
                 node.Nodes.Add(CreateUnexpandedNode(child));
@@ -340,6 +343,8 @@ namespace NBTExplorer.Windows
                 return;
 
             backNode.Collapse();
+            node.Text = backNode.NodeDisplay;
+            UpdateUI(backNode);
 
             node.Nodes.Clear();
             if (backNode.HasUnexpandedChildren)

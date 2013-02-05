@@ -31,6 +31,8 @@ namespace NBTExplorer.Windows
             get { return _invalidNames; }
         }
 
+        public bool AllowEmpty { get; set; }
+
         public bool IsModified
         {
             get { return _name != _originalName; }
@@ -52,7 +54,7 @@ namespace NBTExplorer.Windows
         private bool ValidateNameInput ()
         {
             string text = _nameField.Text.Trim();
-            if (String.IsNullOrEmpty(text)) {
+            if (String.IsNullOrEmpty(text) && !AllowEmpty) {
                 MessageBox.Show("You must provide a nonempty name.");
                 return false;
             }
