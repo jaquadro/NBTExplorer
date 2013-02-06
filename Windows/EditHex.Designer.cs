@@ -30,9 +30,11 @@
             this.hexBox1 = new Be.Windows.Forms.HexBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this._curPositionLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this._curElementLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this._buttonCancel = new System.Windows.Forms.Button();
             this._buttonOK = new System.Windows.Forms.Button();
-            this._curElementLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this._space = new System.Windows.Forms.ToolStripStatusLabel();
+            this._insertStateLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,7 +58,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._curPositionLabel,
-            this._curElementLabel});
+            this._curElementLabel,
+            this._space,
+            this._insertStateLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 333);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(516, 22);
@@ -69,6 +73,13 @@
             this._curPositionLabel.Name = "_curPositionLabel";
             this._curPositionLabel.Size = new System.Drawing.Size(100, 17);
             this._curPositionLabel.Text = "0000";
+            // 
+            // _curElementLabel
+            // 
+            this._curElementLabel.Name = "_curElementLabel";
+            this._curElementLabel.Size = new System.Drawing.Size(59, 17);
+            this._curElementLabel.Text = "Element 0";
+            this._curElementLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // _buttonCancel
             // 
@@ -92,12 +103,17 @@
             this._buttonOK.UseVisualStyleBackColor = true;
             this._buttonOK.Click += new System.EventHandler(this._buttonOK_Click);
             // 
-            // _curElementLabel
+            // _space
             // 
-            this._curElementLabel.Name = "_curElementLabel";
-            this._curElementLabel.Size = new System.Drawing.Size(59, 17);
-            this._curElementLabel.Text = "Element 0";
-            this._curElementLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._space.Name = "_space";
+            this._space.Size = new System.Drawing.Size(253, 17);
+            this._space.Spring = true;
+            // 
+            // _insertStateLabel
+            // 
+            this._insertStateLabel.Name = "_insertStateLabel";
+            this._insertStateLabel.Size = new System.Drawing.Size(58, 17);
+            this._insertStateLabel.Text = "Overwrite";
             // 
             // HexEditor
             // 
@@ -126,5 +142,7 @@
         private System.Windows.Forms.Button _buttonCancel;
         private System.Windows.Forms.Button _buttonOK;
         private System.Windows.Forms.ToolStripStatusLabel _curElementLabel;
+        private System.Windows.Forms.ToolStripStatusLabel _space;
+        private System.Windows.Forms.ToolStripStatusLabel _insertStateLabel;
     }
 }

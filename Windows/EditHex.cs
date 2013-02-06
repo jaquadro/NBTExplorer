@@ -36,7 +36,7 @@ namespace NBTExplorer.Windows
             _data = new byte[data.Length];
             Array.Copy(data, _data, data.Length);
 
-            _byteProvider = new FixedByteProvider(_data);
+            _byteProvider = new DynamicByteProvider(_data);
             _byteProvider.Changed += (o, e) => { _modified = true; };
 
             hexBox1.ByteProvider = _byteProvider;
@@ -44,6 +44,7 @@ namespace NBTExplorer.Windows
             hexBox1.HorizontalByteCountChanged += HexBox_HorizontalByteCountChanged;
             hexBox1.CurrentLineChanged += HexBox_CurrentLineChanged;
             hexBox1.CurrentPositionInLineChanged += HexBox_CurrentPositionInLineChanged;
+            hexBox1.InsertActiveChanged += HexBox_InsertActiveChanged;
 
             hexBox1.ReadOnly = false;
         }
@@ -73,6 +74,14 @@ namespace NBTExplorer.Windows
             UpdatePosition();
         }
 
+        private void HexBox_InsertActiveChanged (object sender, EventArgs e)
+        {
+            if (hexBox1.InsertActive)
+                _insertStateLabel.Text = "Insert";
+            else
+                _insertStateLabel.Text = "Overwrite";
+        }
+
         private void UpdatePosition ()
         {
             long pos = (hexBox1.CurrentLine - 1) * hexBox1.HorizontalByteCount + hexBox1.CurrentPositionInLine - 1;
@@ -83,9 +92,10 @@ namespace NBTExplorer.Windows
 
         private void Apply ()
         {
-            long len = Math.Min(_data.Length, _byteProvider.Length);
+            if (_data.Length != _byteProvider.Length)
+                _data = new byte[_byteProvider.Length];
 
-            for (int i = 0; i < len; i++) {
+            for (int i = 0; i < _data.Length; i++) {
                 _data[i] = _byteProvider.Bytes[i];
             }
 

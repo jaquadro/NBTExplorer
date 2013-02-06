@@ -60,6 +60,7 @@ namespace NBTExplorer.Windows
         {
             HexEditor form = new HexEditor(data.NodeName, data.Data, data.BytesPerElement);
             if (form.ShowDialog() == DialogResult.OK && form.Modified) {
+                data.Data = new byte[form.Data.Length];
                 Array.Copy(form.Data, data.Data, data.Data.Length);
                 return true;
             }
