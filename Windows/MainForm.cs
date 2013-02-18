@@ -202,7 +202,11 @@ namespace NBTExplorer.Windows
                 return;
 
             try {
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                string path = Environment.ExpandEnvironmentVariables("%APPDATA%");
+                if (!Directory.Exists(path)) {
+                    path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                }
+
                 path = Path.Combine(path, ".minecraft");
                 path = Path.Combine(path, "saves");
 
