@@ -127,6 +127,7 @@ namespace Substrate.Core
 
                     if ((file.Length & 0xfff) != 0) {
                         /* the file size is not a multiple of 4KB, grow it */
+                        file.Seek(0, SeekOrigin.End);
                         for (int i = 0; i < (file.Length & 0xfff); ++i) {
                             file.WriteByte(0);
                         }
