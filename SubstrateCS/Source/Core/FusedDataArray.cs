@@ -30,12 +30,8 @@ namespace Substrate.Core
             get { return (_array0[x, y, z] << _array1.DataWidth) + _array1[x, y, z]; }
             set
             {
-                if (value >= (1 << _array1.DataWidth)) {
-                    _array0[x, y, z] = value >> _array1.DataWidth;
-                    _array1[x, y, z] = value & _mask1;
-                }
-                else
-                    _array1[x, y, z] = value;
+                _array0[x, y, z] = value >> _array1.DataWidth;
+                _array1[x, y, z] = value & _mask1;
             }
         }
 
@@ -69,12 +65,8 @@ namespace Substrate.Core
             get { return (_array0[i] << _array1.DataWidth) + _array1[i]; }
             set
             {
-                if (value >= (1 << _array1.DataWidth)) {
-                    _array0[i] = value >> _array1.DataWidth;
-                    _array1[i] = value & _mask1;
-                }
-                else
-                    _array1[i] = value;
+                _array0[i] = value >> _array1.DataWidth;
+                _array1[i] = value & _mask1;
             }
         }
 
