@@ -84,7 +84,7 @@ namespace Ionic.Zlib
 #if !NETCF    
     [Interop.ClassInterface(Interop.ClassInterfaceType.AutoDispatch)]
 #endif
-    sealed public class ZlibCodec
+    sealed internal class ZlibCodec
     {
         /// <summary>
         /// The buffer from which data is taken.

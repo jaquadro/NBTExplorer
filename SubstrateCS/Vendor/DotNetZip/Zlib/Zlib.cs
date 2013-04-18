@@ -73,7 +73,7 @@ namespace Ionic.Zlib
     /// <summary>
     /// The compression level to be used when using a DeflateStream or ZlibStream with CompressionMode.Compress.
     /// </summary>
-    public enum CompressionLevel
+    internal enum CompressionLevel
     {
         /// <summary>
         /// None means that the data will be simply stored, with no change at all.
@@ -152,7 +152,7 @@ namespace Ionic.Zlib
     /// work better on different sorts of data.  The strategy parameter can affect the compression
     /// ratio and the speed of compression but not the correctness of the compresssion.
     /// </summary>
-    public enum CompressionStrategy
+    internal enum CompressionStrategy
     {
         /// <summary>
         /// The default strategy is probably the best for normal data. 
@@ -179,7 +179,7 @@ namespace Ionic.Zlib
     /// <summary>
     /// An enum to specify the direction of transcoding - whether to compress or decompress.
     /// </summary>
-    public enum CompressionMode
+    internal enum CompressionMode
     {
         /// <summary>
         /// Used to specify that the stream should compress the data.
@@ -196,7 +196,7 @@ namespace Ionic.Zlib
     /// A general purpose exception class for exceptions in the Zlib library.
     /// </summary>
     [Interop.GuidAttribute("ebc25cf6-9120-4283-b972-0e5520d0000E")]
-    public class ZlibException : System.Exception
+    internal class ZlibException : System.Exception
     {
         /// <summary>
         /// The ZlibException class captures exception information generated
