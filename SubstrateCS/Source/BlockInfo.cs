@@ -163,6 +163,23 @@ namespace Substrate
         public const int WOOD_BUTTON = 143;
         public const int HEADS = 144;
         public const int ANVIL = 145;
+        public const int TRAPPED_CHEST = 146;
+        public const int WEIGHTED_PRESSURE_PLATE_LIGHT = 147;
+        public const int WEIGHTED_PRESSURE_PLATE_HEAVY = 148;
+        public const int REDSTONE_COMPARATOR_INACTIVE = 149;
+        public const int REDSTONE_COMPARATOR_ACTIVE = 150;
+        public const int DAYLIGHT_SENSOR = 151;
+        public const int REDSTONE_BLOCK = 152;
+        public const int NETHER_QUARTZ_ORE = 153;
+        public const int HOPPER = 154;
+        public const int QUARTZ_BLOCK = 155;
+        public const int QUARTZ_STAIRS = 156;
+        public const int ACTIVATOR_RAIL = 157;
+        public const int DROPPER = 158;
+        public const int HAY_BLOCK = 170;
+        public const int CARPET = 171;
+        public const int HARDENED_CLAY = 172;
+        public const int COAL_BLOCK = 173;
     }
 
     /// <summary>
@@ -679,6 +696,23 @@ namespace Substrate
         public static BlockInfo WoodButton;
         public static BlockInfo Heads;
         public static BlockInfo Anvil;
+        public static BlockInfoEx TrappedChest;
+        public static BlockInfo WeightedPressurePlateLight;
+        public static BlockInfo WeightedPressurePlateHeavy;
+        public static BlockInfo RedstoneComparatorInactive;
+        public static BlockInfo RedstoneComparatorActive;
+        public static BlockInfo DaylightSensor;
+        public static BlockInfo RedstoneBlock;
+        public static BlockInfo NetherQuartzOre;
+        public static BlockInfoEx Hopper;
+        public static BlockInfo QuartzBlock;
+        public static BlockInfo QuartzStairs;
+        public static BlockInfo ActivatorRail;
+        public static BlockInfoEx Dropper;
+        public static BlockInfo HayBlock;
+        public static BlockInfo Carpet;
+        public static BlockInfo HardenedClay;
+        public static BlockInfo CoalBlock;
 
         static BlockInfo ()
         {
@@ -836,6 +870,23 @@ namespace Substrate
             WoodButton = new BlockInfo(143, "Wooden Button").SetOpacity(0).SetState(BlockState.NONSOLID);
             Heads = new BlockInfo(144, "Heads").SetOpacity(0);
             Anvil = new BlockInfo(145, "Anvil").SetOpacity(0);
+            TrappedChest = (BlockInfoEx)new BlockInfoEx(146, "Trapped Chest").SetOpacity(0).SetTick(10);
+            WeightedPressurePlateLight = new BlockInfo(147, "Weighted Pressure Plate (Light)").SetOpacity(0).SetState(BlockState.NONSOLID).SetTick(20);
+            WeightedPressurePlateHeavy = new BlockInfo(148, "Weighted Pressure Plate (Heavy)").SetOpacity(0).SetState(BlockState.NONSOLID).SetTick(20);
+            RedstoneComparatorInactive = new BlockInfo(149, "Redstone Comparator (Inactive)").SetOpacity(0).SetTick(10);
+            RedstoneComparatorActive = new BlockInfo(150, "Redstone Comparator (Active)").SetOpacity(0).SetLuminance(9).SetTick(10);
+            DaylightSensor = new BlockInfo(151, "Daylight Sensor").SetOpacity(0).SetTick(10);
+            RedstoneBlock = new BlockInfo(152, "Block of Redstone").SetTick(10);
+            NetherQuartzOre = new BlockInfo(153, "Neither Quartz Ore");
+            Hopper = (BlockInfoEx)new BlockInfoEx(154, "Hopper").SetOpacity(0).SetTick(10);
+            QuartzBlock = new BlockInfo(155, "Block of Quartz");
+            QuartzStairs = new BlockInfo(156, "Quartz Stairs").SetOpacity(0);
+            ActivatorRail = new BlockInfo(157, "Activator Rail").SetOpacity(0).SetState(BlockState.NONSOLID).SetTick(10);
+            Dropper = (BlockInfoEx)new BlockInfoEx(158, "Dropper").SetTick(10);
+            HayBlock = new BlockInfo(170, "Hay Block");
+            Carpet = new BlockInfo(171, "Carpet").SetOpacity(0);
+            HardenedClay = new BlockInfo(172, "Hardened Clay");
+            CoalBlock = new BlockInfo(173, "Block of Coal");
 
             for (int i = 0; i < MAX_BLOCKS; i++) {
                 if (_blockTable[i] == null) {
@@ -859,6 +910,8 @@ namespace Substrate
             SpruceWoodStairs.SetLightTransmission(false);
             BirchWoodStairs.SetLightTransmission(false);
             JungleWoodStairs.SetLightTransmission(false);
+            QuartzStairs.SetLightTransmission(false);
+            Carpet.SetLightTransmission(false);
 
             // Override default fluid blocking rules
 
@@ -883,6 +936,9 @@ namespace Substrate
             EnderChest.SetTileEntity("EnderChest");
             CommandBlock.SetTileEntity("Control");
             BeaconBlock.SetTileEntity("Beacon");
+            TrappedChest.SetTileEntity("Chest");
+            Hopper.SetTileEntity("Hopper");
+            Dropper.SetTileEntity("Dropper");
 
             // Set Data Limits
 
@@ -944,6 +1000,11 @@ namespace Substrate
             TripwireHook.SetDataLimits(0, 3, 0xC);
             Tripwire.SetDataLimits(0, 0, 0x5);
             Anvil.SetDataLimits(0, 0, 0xD);
+            QuartzBlock.SetDataLimits(0, 4, 0);
+            QuartzStairs.SetDataLimits(0, 3, 0x4);
+            Carpet.SetDataLimits(0, 15, 0);
+            Dropper.SetDataLimits(0, 5, 0);
+            Hopper.SetDataLimits(0, 5, 0);
         }
     }
 
