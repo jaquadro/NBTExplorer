@@ -50,6 +50,7 @@ namespace Substrate
                 new SchemaNodeScaler("RandomSeed", TagType.TAG_LONG),
                 new SchemaNodeScaler("version", TagType.TAG_INT, SchemaOptions.OPTIONAL),
                 new SchemaNodeScaler("LevelName", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("generatorName", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
                 new SchemaNodeScaler("raining", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
                 new SchemaNodeScaler("thundering", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
                 new SchemaNodeScaler("rainTime", TagType.TAG_INT, SchemaOptions.OPTIONAL),
@@ -77,6 +78,7 @@ namespace Substrate
         private long _randomSeed;
         private int? _version;
         private string _name;
+        private string _generator;
 
         private byte? _raining;
         private byte? _thundering;
@@ -173,6 +175,16 @@ namespace Substrate
                     _player.World = value;
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets or sets the name of the world generator.
+        /// </summary>
+        /// <remarks>This should be 'default', 'flat', or 'largeBiomes'.</remarks>
+        public string GeneratorName
+        {
+            get { return _generator; }
+            set { _generator = value; }
         }
 
         /// <summary>
@@ -273,6 +285,7 @@ namespace Substrate
             //_version = 19132;
             _version = 19133;
             _name = "Untitled";
+            _generator = "default";
             _hardcore = 0;
 
             GameType = GameType.SURVIVAL;
@@ -298,6 +311,7 @@ namespace Substrate
             _randomSeed = p._randomSeed;
             _version = p._version;
             _name = p._name;
+            _generator = p._generator;
 
             _raining = p._raining;
             _thundering = p._thundering;
@@ -408,6 +422,10 @@ namespace Substrate
                 _name = ctree["LevelName"].ToTagString();
             }
 
+            if (ctree.ContainsKey("generatorName")) {
+                _generator = ctree["generatorName"].ToTagString();
+            }
+
             if (ctree.ContainsKey("raining")) {
                 _raining = ctree["raining"].ToTagByte();
             }
@@ -476,6 +494,10 @@ namespace Substrate
 
             if (_name != null) {
                 data["LevelName"] = new TagNodeString(_name);
+            }
+
+            if (_generator != null) {
+                data["generatorName"] = new TagNodeString(_generator);
             }
 
             if (_raining != null) {
