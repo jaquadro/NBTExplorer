@@ -73,6 +73,11 @@ namespace Substrate
             return GetBlockManagerVirt(dim);
         }
 
+        public IBlockManager GetBlockManager (string dim)
+        {
+            return GetBlockManagerVirt(dim);
+        }
+
         /// <summary>
         /// Gets an <see cref="IChunkManager"/> for the default dimension.
         /// </summary>
@@ -88,6 +93,11 @@ namespace Substrate
         /// <param name="dim">The id of the dimension to look up.</param>
         /// <returns>An <see cref="IChunkManager"/> tied to the given dimension in this world.</returns>
         public IChunkManager GetChunkManager (int dim)
+        {
+            return GetChunkManagerVirt(dim);
+        }
+
+        public IChunkManager GetChunkManager (string dim)
         {
             return GetChunkManagerVirt(dim);
         }
@@ -161,6 +171,16 @@ namespace Substrate
         /// <param name="dim">The given dimension to fetch an <see cref="IChunkManager"/> for.</param>
         /// <returns>An <see cref="IChunkManager"/> for the given dimension in the world.</returns>
         protected abstract IChunkManager GetChunkManagerVirt (int dim);
+
+        protected virtual IBlockManager GetBlockManagerVirt (string dim)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected virtual IChunkManager GetChunkManagerVirt (string dim)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Virtual implementor of <see cref="GetPlayerManager"/>.

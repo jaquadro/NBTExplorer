@@ -22,11 +22,11 @@ namespace Substrate
 
         private Level _level;
 
-        private Dictionary<int, BetaRegionManager> _regionMgrs;
-        private Dictionary<int, RegionChunkManager> _chunkMgrs;
-        private Dictionary<int, BlockManager> _blockMgrs;
+        private Dictionary<string, BetaRegionManager> _regionMgrs;
+        private Dictionary<string, RegionChunkManager> _chunkMgrs;
+        private Dictionary<string, BlockManager> _blockMgrs;
 
-        private Dictionary<int, ChunkCache> _caches;
+        private Dictionary<string, ChunkCache> _caches;
 
         private PlayerManager _playerMan;
         private BetaDataManager _dataMan;
@@ -35,11 +35,11 @@ namespace Substrate
 
         private BetaWorld ()
         {
-            _regionMgrs = new Dictionary<int, BetaRegionManager>();
-            _chunkMgrs = new Dictionary<int, RegionChunkManager>();
-            _blockMgrs = new Dictionary<int, BlockManager>();
+            _regionMgrs = new Dictionary<string, BetaRegionManager>();
+            _chunkMgrs = new Dictionary<string, RegionChunkManager>();
+            _blockMgrs = new Dictionary<string, BlockManager>();
 
-            _caches = new Dictionary<int, ChunkCache>();
+            _caches = new Dictionary<string, ChunkCache>();
         }
 
         /// <summary>
@@ -75,6 +75,11 @@ namespace Substrate
             return GetBlockManagerVirt(dim) as BlockManager;
         }
 
+        public new BlockManager GetBlockManager (string dim)
+        {
+            return GetBlockManagerVirt(dim) as BlockManager;
+        }
+
         /// <summary>
         /// Gets a <see cref="RegionChunkManager"/> for the default dimension.
         /// </summary>
@@ -92,6 +97,11 @@ namespace Substrate
         /// <returns>A <see cref="RegionChunkManager"/> tied to the given dimension in this world.</returns>
         /// <remarks>Get a <see cref="RegionChunkManager"/> if you you need to work with easily-digestible, bounded chunks of blocks.</remarks>
         public new RegionChunkManager GetChunkManager (int dim)
+        {
+            return GetChunkManagerVirt(dim) as RegionChunkManager;
+        }
+
+        public new RegionChunkManager GetChunkManager (string dim)
         {
             return GetChunkManagerVirt(dim) as RegionChunkManager;
         }
@@ -115,6 +125,11 @@ namespace Substrate
         /// <remarks>Regions are a higher-level unit of organization for blocks unique to worlds created in Beta 1.3 and beyond.
         /// Consider using the <see cref="RegionChunkManager"/> if you are interested in working with blocks.</remarks>
         public BetaRegionManager GetRegionManager (int dim)
+        {
+            return GetRegionManager(DimensionFromInt(dim));
+        }
+
+        public BetaRegionManager GetRegionManager (string dim)
         {
             BetaRegionManager rm;
             if (_regionMgrs.TryGetValue(dim, out rm)) {
@@ -149,7 +164,7 @@ namespace Substrate
         {
             _level.Save();
 
-            foreach (KeyValuePair<int, RegionChunkManager> cm in _chunkMgrs) {
+            foreach (KeyValuePair<string, RegionChunkManager> cm in _chunkMgrs) {
                 cm.Value.Save();
             }
         }
@@ -169,6 +184,11 @@ namespace Substrate
         /// <param name="dim">The id of a dimension to look up.</param>
         /// <returns>The <see cref="ChunkCache"/> for the given dimension, or null if the dimension was not found.</returns>
         public ChunkCache GetChunkCache (int dim)
+        {
+            return GetChunkCache(DimensionFromInt(dim));
+        }
+
+        public ChunkCache GetChunkCache (string dim)
         {
             if (_caches.ContainsKey(dim)) {
                 return _caches[dim];
@@ -231,6 +251,11 @@ namespace Substrate
         /// <exclude/>
         protected override IBlockManager GetBlockManagerVirt (int dim)
         {
+            return GetBlockManagerVirt(DimensionFromInt(dim));
+        }
+
+        protected override IBlockManager GetBlockManagerVirt (string dim)
+        {
             BlockManager rm;
             if (_blockMgrs.TryGetValue(dim, out rm)) {
                 return rm;
@@ -242,6 +267,11 @@ namespace Substrate
 
         /// <exclude/>
         protected override IChunkManager GetChunkManagerVirt (int dim)
+        {
+            return GetChunkManagerVirt(DimensionFromInt(dim));
+        }
+
+        protected override IChunkManager GetChunkManagerVirt (string dim)
         {
             RegionChunkManager rm;
             if (_chunkMgrs.TryGetValue(dim, out rm)) {
@@ -276,14 +306,22 @@ namespace Substrate
             return _dataMan;
         }
 
-        private void OpenDimension (int dim)
+        private string DimensionFromInt (int dim)
+        {
+            if (dim == Dimension.DEFAULT)
+                return "";
+            else
+                return "DIM" + dim;
+        }
+
+        private void OpenDimension (string dim)
         {
             string path = Path;
-            if (dim == Dimension.DEFAULT) {
+            if (String.IsNullOrEmpty(dim)) {
                 path = IO.Path.Combine(path, _REGION_DIR);
             }
             else {
-                path = IO.Path.Combine(path, "DIM" + dim);
+                path = IO.Path.Combine(path, dim);
                 path = IO.Path.Combine(path, _REGION_DIR);
             }
 

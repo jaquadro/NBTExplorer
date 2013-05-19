@@ -19,15 +19,15 @@ namespace Substrate
 
         private Level _level;
 
-        private Dictionary<int, AlphaChunkManager> _chunkMgrs;
-        private Dictionary<int, BlockManager> _blockMgrs;
+        private Dictionary<string, AlphaChunkManager> _chunkMgrs;
+        private Dictionary<string, BlockManager> _blockMgrs;
 
         private PlayerManager _playerMan;
 
         private AlphaWorld ()
         {
-            _chunkMgrs = new Dictionary<int, AlphaChunkManager>();
-            _blockMgrs = new Dictionary<int, BlockManager>();
+            _chunkMgrs = new Dictionary<string, AlphaChunkManager>();
+            _blockMgrs = new Dictionary<string, BlockManager>();
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Substrate
         {
             _level.Save();
 
-            foreach (KeyValuePair<int, AlphaChunkManager> cm in _chunkMgrs) {
+            foreach (KeyValuePair<string, AlphaChunkManager> cm in _chunkMgrs) {
                 cm.Value.Save();
             }
         }
@@ -129,6 +129,11 @@ namespace Substrate
         /// <exclude/>
         protected override IBlockManager GetBlockManagerVirt (int dim)
         {
+            return GetBlockManagerVirt(DimensionFromInt(dim));
+        }
+
+        protected override IBlockManager GetBlockManagerVirt (string dim)
+        {
             BlockManager rm;
             if (_blockMgrs.TryGetValue(dim, out rm)) {
                 return rm;
@@ -140,6 +145,11 @@ namespace Substrate
 
         /// <exclude/>
         protected override IChunkManager GetChunkManagerVirt (int dim)
+        {
+            return GetChunkManagerVirt(DimensionFromInt(dim));
+        }
+
+        protected override IChunkManager GetChunkManagerVirt (string dim)
         {
             AlphaChunkManager rm;
             if (_chunkMgrs.TryGetValue(dim, out rm)) {
@@ -163,11 +173,19 @@ namespace Substrate
             return _playerMan;
         }
 
-        private void OpenDimension (int dim)
+        private string DimensionFromInt (int dim)
+        {
+            if (dim == Dimension.DEFAULT)
+                return "";
+            else
+                return "DIM" + dim;
+        }
+
+        private void OpenDimension (string dim)
         {
             string path = Path;
-            if (dim != Dimension.DEFAULT) {
-                path = IO.Path.Combine(path, "DIM" + dim);
+            if (!String.IsNullOrEmpty(dim)) {
+                path = IO.Path.Combine(path, dim);
             }
 
             if (!Directory.Exists(path)) {
