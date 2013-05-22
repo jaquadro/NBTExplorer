@@ -49,12 +49,9 @@ namespace Substrate.Core
         public void SetTileEntity (int x, int y, int z, TileEntity te)
         {
             BlockInfoEx info = BlockInfo.BlockTable[_blocks[x, y, z]] as BlockInfoEx;
-            if (info == null) {
-                throw new InvalidOperationException("The given block is of a type that does not support TileEntities.");
-            }
-
-            if (te.GetType() != TileEntityFactory.Lookup(info.TileEntityName)) {
-                throw new ArgumentException("The TileEntity type is not valid for this block.", "te");
+            if (info != null) {
+                if (te.GetType() != TileEntityFactory.Lookup(info.TileEntityName))
+                    throw new ArgumentException("The TileEntity type is not valid for this block.", "te");
             }
 
             BlockKey key = (TranslateCoordinates != null)
