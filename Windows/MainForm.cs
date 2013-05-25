@@ -138,6 +138,8 @@ namespace NBTExplorer.Windows
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.RestoreDirectory = true;
             ofd.Multiselect = true;
+            ofd.Filter = "All Files|*|NBT Files (*.dat, *.schematic)|*.dat;*.nbt;*.schematic|Region Files (*.mca, *.mcr)|*.mca;*.mcr";
+            ofd.FilterIndex = 0;
 
             if (ofd.ShowDialog() == DialogResult.OK) {
                 OpenPaths(ofd.FileNames);
@@ -167,6 +169,8 @@ namespace NBTExplorer.Windows
         {
             _nodeTree.Nodes.Clear();
 
+            int failCount = 0;
+
             foreach (string path in paths) {
                 if (Directory.Exists(path)) {
                     DirectoryDataNode node = new DirectoryDataNode(path);
@@ -185,6 +189,8 @@ namespace NBTExplorer.Windows
                         _nodeTree.Nodes.Add(CreateUnexpandedNode(node));
                         AddPathToHistory(GetRecentFiles(), path);
                     }
+                    else
+                        failCount++;
                 }
             }
 
@@ -194,6 +200,10 @@ namespace NBTExplorer.Windows
 
             UpdateUI();
             UpdateOpenMenu();
+
+            if (failCount > 0) {
+                MessageBox.Show("One or more selected files failed to open.");
+            }
         }
 
         private void OpenMinecraftDirectory ()
