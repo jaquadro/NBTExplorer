@@ -27,32 +27,18 @@
         /// </summary>
         private void InitializeComponent ()
         {
-            this.hexBox1 = new Be.Windows.Forms.HexBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this._curPositionLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this._curElementLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this._buttonCancel = new System.Windows.Forms.Button();
-            this._buttonOK = new System.Windows.Forms.Button();
             this._space = new System.Windows.Forms.ToolStripStatusLabel();
             this._insertStateLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this._buttonCancel = new System.Windows.Forms.Button();
+            this._buttonOK = new System.Windows.Forms.Button();
+            this.hexBox1 = new Be.Windows.Forms.HexBox();
+            this._buttonImport = new System.Windows.Forms.Button();
+            this._buttonExport = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // hexBox1
-            // 
-            this.hexBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.hexBox1.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.hexBox1.LineInfoForeColor = System.Drawing.Color.Empty;
-            this.hexBox1.LineInfoVisible = true;
-            this.hexBox1.Location = new System.Drawing.Point(12, 12);
-            this.hexBox1.Name = "hexBox1";
-            this.hexBox1.ReadOnly = true;
-            this.hexBox1.ShadowSelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
-            this.hexBox1.Size = new System.Drawing.Size(492, 289);
-            this.hexBox1.TabIndex = 0;
-            this.hexBox1.VScrollBarVisible = true;
             // 
             // statusStrip1
             // 
@@ -81,6 +67,18 @@
             this._curElementLabel.Text = "Element 0";
             this._curElementLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // _space
+            // 
+            this._space.Name = "_space";
+            this._space.Size = new System.Drawing.Size(284, 17);
+            this._space.Spring = true;
+            // 
+            // _insertStateLabel
+            // 
+            this._insertStateLabel.Name = "_insertStateLabel";
+            this._insertStateLabel.Size = new System.Drawing.Size(58, 17);
+            this._insertStateLabel.Text = "Overwrite";
+            // 
             // _buttonCancel
             // 
             this._buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -103,17 +101,41 @@
             this._buttonOK.UseVisualStyleBackColor = true;
             this._buttonOK.Click += new System.EventHandler(this._buttonOK_Click);
             // 
-            // _space
+            // hexBox1
             // 
-            this._space.Name = "_space";
-            this._space.Size = new System.Drawing.Size(253, 17);
-            this._space.Spring = true;
+            this.hexBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.hexBox1.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.hexBox1.LineInfoForeColor = System.Drawing.Color.Empty;
+            this.hexBox1.LineInfoVisible = true;
+            this.hexBox1.Location = new System.Drawing.Point(12, 12);
+            this.hexBox1.Name = "hexBox1";
+            this.hexBox1.ReadOnly = true;
+            this.hexBox1.ShadowSelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
+            this.hexBox1.Size = new System.Drawing.Size(492, 289);
+            this.hexBox1.TabIndex = 0;
+            this.hexBox1.VScrollBarVisible = true;
             // 
-            // _insertStateLabel
+            // _buttonImport
             // 
-            this._insertStateLabel.Name = "_insertStateLabel";
-            this._insertStateLabel.Size = new System.Drawing.Size(58, 17);
-            this._insertStateLabel.Text = "Overwrite";
+            this._buttonImport.Location = new System.Drawing.Point(12, 307);
+            this._buttonImport.Name = "_buttonImport";
+            this._buttonImport.Size = new System.Drawing.Size(75, 23);
+            this._buttonImport.TabIndex = 14;
+            this._buttonImport.Text = "Import";
+            this._buttonImport.UseVisualStyleBackColor = true;
+            this._buttonImport.Click += new System.EventHandler(this._buttonImport_Click);
+            // 
+            // _buttonExport
+            // 
+            this._buttonExport.Location = new System.Drawing.Point(93, 307);
+            this._buttonExport.Name = "_buttonExport";
+            this._buttonExport.Size = new System.Drawing.Size(75, 23);
+            this._buttonExport.TabIndex = 15;
+            this._buttonExport.Text = "Export";
+            this._buttonExport.UseVisualStyleBackColor = true;
+            this._buttonExport.Click += new System.EventHandler(this._buttonExport_Click);
             // 
             // HexEditor
             // 
@@ -121,6 +143,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this._buttonCancel;
             this.ClientSize = new System.Drawing.Size(516, 355);
+            this.Controls.Add(this._buttonExport);
+            this.Controls.Add(this._buttonImport);
             this.Controls.Add(this._buttonCancel);
             this.Controls.Add(this._buttonOK);
             this.Controls.Add(this.statusStrip1);
@@ -144,5 +168,7 @@
         private System.Windows.Forms.ToolStripStatusLabel _curElementLabel;
         private System.Windows.Forms.ToolStripStatusLabel _space;
         private System.Windows.Forms.ToolStripStatusLabel _insertStateLabel;
+        private System.Windows.Forms.Button _buttonImport;
+        private System.Windows.Forms.Button _buttonExport;
     }
 }

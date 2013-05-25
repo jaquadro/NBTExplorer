@@ -135,16 +135,17 @@ namespace NBTExplorer.Windows
             if (!ConfirmAction("Open new file anyway?"))
                 return;
 
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.RestoreDirectory = true;
-            ofd.Multiselect = true;
-            ofd.Filter = "All Files|*|NBT Files (*.dat, *.schematic)|*.dat;*.nbt;*.schematic|Region Files (*.mca, *.mcr)|*.mca;*.mcr";
-            ofd.FilterIndex = 0;
+            using (OpenFileDialog ofd = new OpenFileDialog()) {
+                ofd.RestoreDirectory = true;
+                ofd.Multiselect = true;
+                ofd.Filter = "All Files|*|NBT Files (*.dat, *.schematic)|*.dat;*.nbt;*.schematic|Region Files (*.mca, *.mcr)|*.mca;*.mcr";
+                ofd.FilterIndex = 0;
 
-            if (ofd.ShowDialog() == DialogResult.OK) {
-                OpenPaths(ofd.FileNames);
+                if (ofd.ShowDialog() == DialogResult.OK) {
+                    OpenPaths(ofd.FileNames);
+                }
             }
-
+            
             UpdateUI();
         }
 
@@ -153,13 +154,14 @@ namespace NBTExplorer.Windows
             if (!ConfirmAction("Open new folder anyway?"))
                 return;
 
-            FolderBrowserDialog ofd = new FolderBrowserDialog();
-            if (_openFolderPath != null)
-                ofd.SelectedPath = _openFolderPath;
+            using (FolderBrowserDialog ofd = new FolderBrowserDialog()) {
+                if (_openFolderPath != null)
+                    ofd.SelectedPath = _openFolderPath;
 
-            if (ofd.ShowDialog() == DialogResult.OK) {
-                _openFolderPath = ofd.SelectedPath;
-                OpenPaths(new string[] { ofd.SelectedPath });
+                if (ofd.ShowDialog() == DialogResult.OK) {
+                    _openFolderPath = ofd.SelectedPath;
+                    OpenPaths(new string[] { ofd.SelectedPath });
+                }
             }
 
             UpdateUI();

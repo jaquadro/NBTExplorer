@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 using Be.Windows.Forms;
+using System.IO;
+using System.Collections.Generic;
 
 namespace NBTExplorer.Windows
 {
@@ -103,9 +105,75 @@ namespace NBTExplorer.Windows
             Close();
         }
 
+        private void ImportRaw (string path)
+        {
+            try {
+                using (FileStream fstr = File.OpenRead(path)) {
+                    _data = new byte[fstr.Length];
+                    fstr.Read(_data, 0, (int)fstr.Length);
+
+                    _byteProvider = new DynamicByteProvider(_data);
+                    _byteProvider.Changed += (o, e) => { _modified = true; };
+
+                    hexBox1.ByteProvider = _byteProvider;
+                    _modified = true;
+                }
+            }
+            catch (Exception e) {
+                MessageBox.Show("Failed to import data from \"" + path + "\"\n\nException: " + e.Message);
+            }
+        }
+
+        private void ExportRaw (string path)
+        {
+            try {
+                using (FileStream fstr = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None)) {
+                    byte[] data = _byteProvider.Bytes.ToArray();
+                    fstr.Write(data, 0, data.Length);
+                }
+            }
+            catch (Exception e) {
+                MessageBox.Show("Failed to export data to \"" + path + "\"\n\nException: " + e.Message);
+            }
+        }
+
         private void _buttonOK_Click (object sender, EventArgs e)
         {
             Apply();
+        }
+
+        private void _buttonImport_Click (object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog()) {
+                ofd.RestoreDirectory = true;
+                ofd.Multiselect = false;
+                ofd.Filter = "Binary Data|*|Text List (*.txt)|*.txt";
+                ofd.FilterIndex = 0;
+
+                if (ofd.ShowDialog() == DialogResult.OK) {
+                    if (Path.GetExtension(ofd.FileName) == "txt")
+                        return;
+                    else
+                        ImportRaw(ofd.FileName);
+                }
+            }
+        }
+
+        private void _buttonExport_Click (object sender, EventArgs e)
+        {
+            using (SaveFileDialog sfd = new SaveFileDialog()) {
+                sfd.RestoreDirectory = true;
+                sfd.Filter = "Binary Data|*|Text List (*.txt)|*.txt";
+                sfd.FilterIndex = 0;
+                sfd.OverwritePrompt = true;
+
+                if (sfd.ShowDialog() == DialogResult.OK) {
+                    if (Path.GetExtension(sfd.FileName) == "txt")
+                        return;
+                    else
+                        ExportRaw(sfd.FileName);
+                }
+            }
         }
     }
 }
