@@ -72,7 +72,7 @@
   <ItemGroup>
     <Reference Include="Substrate, Version=1.3.8.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Substrate\SubstrateCS\bin\Debug\Substrate.dll</HintPath>
+      <HintPath>References\Substrate.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
