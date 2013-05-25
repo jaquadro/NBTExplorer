@@ -269,7 +269,6 @@ namespace NBTExplorer.Windows
             frontNode.ImageIndex = _iconRegistry.Lookup(node.GetType());
             frontNode.SelectedImageIndex = frontNode.ImageIndex;
             frontNode.Tag = node;
-            frontNode.ContextMenuStrip = BuildNodeContextMenu(node);
 
             if (node.HasUnexpandedChildren || node.Nodes.Count > 0)
                 frontNode.Nodes.Add(new TreeNode());
@@ -277,12 +276,32 @@ namespace NBTExplorer.Windows
             return frontNode;
         }
 
-        private ContextMenuStrip BuildNodeContextMenu (DataNode node)
+        private ContextMenuStrip BuildNodeContextMenu (TreeNode frontNode, DataNode node)
         {
             if (node == null)
                 return null;
 
             ContextMenuStrip menu = new ContextMenuStrip();
+
+            if (node.HasUnexpandedChildren || node.Nodes.Count > 0) {
+                if (frontNode.IsExpanded) {
+                    ToolStripMenuItem itemCollapse = new ToolStripMenuItem("&Collapse", null, _contextCollapse_Click);
+                    itemCollapse.Font = new System.Drawing.Font(itemCollapse.Font, System.Drawing.FontStyle.Bold);
+
+                    ToolStripMenuItem itemExpandChildren = new ToolStripMenuItem("Expand C&hildren", null, _contextExpandChildren_Click);
+                    ToolStripMenuItem itemExpandTree = new ToolStripMenuItem("Expand &Tree", null, _contextExpandTree_Click);
+
+                    menu.Items.AddRange(new ToolStripItem[] {
+                    itemCollapse, new ToolStripSeparator(), itemExpandChildren, itemExpandTree,
+                });
+                }
+                else {
+                    ToolStripMenuItem itemExpand = new ToolStripMenuItem("&Expand", null, _contextExpand_Click);
+                    itemExpand.Font = new System.Drawing.Font(itemExpand.Font, System.Drawing.FontStyle.Bold);
+
+                    menu.Items.Add(itemExpand);
+                }
+            }
 
             if (node.CanReoderNode) {
                 ToolStripMenuItem itemUp = new ToolStripMenuItem("Move &Up", Properties.Resources.ArrowUp, _contextMoveUp_Click);
@@ -296,6 +315,33 @@ namespace NBTExplorer.Windows
             }
 
             return (menu.Items.Count > 0) ? menu : null;
+        }
+
+        private void _contextCollapse_Click (object sender, EventArgs e)
+        {
+            if (_nodeTree.SelectedNode != null)
+                _nodeTree.SelectedNode.Collapse();
+        }
+
+        private void _contextExpand_Click (object sender, EventArgs e)
+        {
+            if (_nodeTree.SelectedNode != null)
+                _nodeTree.SelectedNode.Expand();
+        }
+
+        private void _contextExpandChildren_Click (object sender, EventArgs e)
+        {
+            if (_nodeTree.SelectedNode != null) {
+                foreach (TreeNode node in _nodeTree.SelectedNode.Nodes)
+                    node.Expand();
+            }
+        }
+
+        private void _contextExpandTree_Click (object sender, EventArgs e)
+        {
+            if (_nodeTree.SelectedNode != null) {
+                _nodeTree.SelectedNode.ExpandAll();
+            }
         }
 
         private void _contextMoveUp_Click (object sender, EventArgs e)
@@ -398,7 +444,7 @@ namespace NBTExplorer.Windows
             }
 
             foreach (TreeNode child in node.Nodes)
-                child.ContextMenuStrip = BuildNodeContextMenu(child.Tag as DataNode);
+                child.ContextMenuStrip = BuildNodeContextMenu(child, child.Tag as DataNode);
 
             if (node.Nodes.Count == 0 && dataNode.HasUnexpandedChildren) {
                 ExpandNode(node);
@@ -1232,8 +1278,10 @@ namespace NBTExplorer.Windows
 
         private void _nodeTree_NodeMouseClick (object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right) {
+                e.Node.ContextMenuStrip = BuildNodeContextMenu(e.Node, e.Node.Tag as DataNode);
                 _nodeTree.SelectedNode = e.Node;
+            }
         }
 
         private void _nodeTree_DragDrop (object sender, DragEventArgs e)
