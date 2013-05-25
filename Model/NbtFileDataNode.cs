@@ -90,8 +90,6 @@ namespace NBTExplorer.Model
             get { return !IsExpanded; }
         }
 
-        //private TagNodeCompound _metaRoot;
-
         protected override void ExpandCore ()
         {
             if (_tree == null) {
@@ -99,21 +97,17 @@ namespace NBTExplorer.Model
                 _tree = new NbtTree();
                 _tree.ReadFrom(file.GetDataInputStream(_compressionType));
 
-                //_metaRoot = new TagNodeCompound();
-
                 if (_tree.Root != null) {
-                    //_metaRoot.Add(_tree.Name, _tree.Root);
                     _container = new CompoundTagContainer(_tree.Root);
                 }
             }
 
-            /*foreach (TagNode tag in _metaRoot.Values) {
-                TagDataNode node = TagDataNode.CreateFromTag(tag);
-                if (node != null)
-                    Nodes.Add(node);
-            }*/
+            var list = new SortedList<TagKey, TagNode>();
+            foreach (var item in _tree.Root) {
+                list.Add(new TagKey(item.Key, item.Value.GetTagType()), item.Value);
+            }
 
-            foreach (TagNode tag in _tree.Root.Values) {
+            foreach (TagNode tag in list.Values) {
                 TagDataNode node = TagDataNode.CreateFromTag(tag);
                 if (node != null)
                     Nodes.Add(node);
