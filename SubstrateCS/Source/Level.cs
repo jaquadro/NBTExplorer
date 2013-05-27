@@ -161,13 +161,13 @@ namespace Substrate
                 new SchemaNodeScaler("DayTime", TagType.TAG_LONG, SchemaOptions.OPTIONAL),
                 new	SchemaNodeCompound("GameRules")
 			    {			
-				    new	SchemaNodeScaler("commandBlockOutput", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
-				    new	SchemaNodeScaler("doFireTick", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
-				    new	SchemaNodeScaler("doMobLoot", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
-				    new	SchemaNodeScaler("doMobSpawning", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
-				    new	SchemaNodeScaler("doTileDrops", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
-				    new	SchemaNodeScaler("keepInventory", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
-				    new	SchemaNodeScaler("mobGriefing", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
+				    new	SchemaNodeScaler("commandBlockOutput", TagType.TAG_STRING),
+				    new	SchemaNodeScaler("doFireTick", TagType.TAG_STRING),
+				    new	SchemaNodeScaler("doMobLoot", TagType.TAG_STRING),
+				    new	SchemaNodeScaler("doMobSpawning", TagType.TAG_STRING),
+				    new	SchemaNodeScaler("doTileDrops", TagType.TAG_STRING),
+				    new	SchemaNodeScaler("keepInventory", TagType.TAG_STRING),
+				    new	SchemaNodeScaler("mobGriefing", TagType.TAG_STRING),
 			    },
             },
         };
