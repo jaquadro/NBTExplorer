@@ -176,6 +176,7 @@ namespace Substrate
         public const int QUARTZ_STAIRS = 156;
         public const int ACTIVATOR_RAIL = 157;
         public const int DROPPER = 158;
+        public const int STAINED_CLAY = 159;
         public const int HAY_BLOCK = 170;
         public const int CARPET = 171;
         public const int HARDENED_CLAY = 172;
@@ -709,6 +710,7 @@ namespace Substrate
         public static BlockInfo QuartzStairs;
         public static BlockInfo ActivatorRail;
         public static BlockInfoEx Dropper;
+        public static BlockInfo StainedClay;
         public static BlockInfo HayBlock;
         public static BlockInfo Carpet;
         public static BlockInfo HardenedClay;
@@ -883,6 +885,7 @@ namespace Substrate
             QuartzStairs = new BlockInfo(156, "Quartz Stairs").SetOpacity(0);
             ActivatorRail = new BlockInfo(157, "Activator Rail").SetOpacity(0).SetState(BlockState.NONSOLID).SetTick(10);
             Dropper = (BlockInfoEx)new BlockInfoEx(158, "Dropper").SetTick(10);
+            StainedClay = new BlockInfo(159, "Stained Clay");
             HayBlock = new BlockInfo(170, "Hay Block");
             Carpet = new BlockInfo(171, "Carpet").SetOpacity(0);
             HardenedClay = new BlockInfo(172, "Hardened Clay");
