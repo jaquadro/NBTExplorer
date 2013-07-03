@@ -159,7 +159,7 @@ namespace Substrate
                 new SchemaNodeScaler("initialized", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
                 new SchemaNodeScaler("allowCommands", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
                 new SchemaNodeScaler("DayTime", TagType.TAG_LONG, SchemaOptions.OPTIONAL),
-                new	SchemaNodeCompound("GameRules")
+                new	SchemaNodeCompound("GameRules", SchemaOptions.OPTIONAL)
 			    {			
 				    new	SchemaNodeScaler("commandBlockOutput", TagType.TAG_STRING),
 				    new	SchemaNodeScaler("doFireTick", TagType.TAG_STRING),
