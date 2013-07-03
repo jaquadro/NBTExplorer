@@ -10,21 +10,21 @@ namespace Substrate
     /// </summary>
     public class GameRules : ICopyable<GameRules>
     {
-        private string _commandBlockOutput = "true";
-        private string _doFireTick = "true";
-        private string _doMobLoot = "true";
-        private string _doMobSpawning = "true";
-        private string _doTileDrops = "true";
-        private string _keepInventory = "false";
-        private string _mobGriefing = "true";
+        private bool _commandBlockOutput = true;
+        private bool _doFireTick = true;
+        private bool _doMobLoot = true;
+        private bool _doMobSpawning = true;
+        private bool _doTileDrops = true;
+        private bool _keepInventory = false;
+        private bool _mobGriefing = true;
 
         /// <summary>
         /// Gets or sets whether or not actions performed by command blocks are displayed in the chat.
         /// </summary>
         public bool CommandBlockOutput
         {
-            get { return _commandBlockOutput == "true"; }
-            set { _commandBlockOutput = value ? "true" : "false"; }
+            get { return _commandBlockOutput; }
+            set { _commandBlockOutput = value; }
         }
 
         /// <summary>
@@ -32,8 +32,8 @@ namespace Substrate
         /// </summary>
         public bool DoFireTick
         {
-            get { return _doFireTick == "true"; }
-            set { _doFireTick = value ? "true" : "false"; ; }
+            get { return _doFireTick; }
+            set { _doFireTick = value; }
         }
 
         /// <summary>
@@ -41,8 +41,8 @@ namespace Substrate
         /// </summary>
         public bool DoMobLoot
         {
-            get { return _doMobLoot == "true"; }
-            set { _doMobLoot = value ? "true" : "false"; ; }
+            get { return _doMobLoot; }
+            set { _doMobLoot = value; }
         }
 
         /// <summary>
@@ -50,8 +50,8 @@ namespace Substrate
         /// </summary>
         public bool DoMobSpawning
         {
-            get { return _doMobSpawning == "true"; }
-            set { _doMobSpawning = value ? "true" : "false"; ; }
+            get { return _doMobSpawning; }
+            set { _doMobSpawning = value; }
         }
 
         /// <summary>
@@ -59,8 +59,8 @@ namespace Substrate
         /// </summary>
         public bool DoTileDrops
         {
-            get { return _doTileDrops == "true"; }
-            set { _doTileDrops = value ? "true" : "false"; ; }
+            get { return _doTileDrops; }
+            set { _doTileDrops = value; }
         }
 
         /// <summary>
@@ -68,8 +68,8 @@ namespace Substrate
         /// </summary>
         public bool KeepInventory
         {
-            get { return _keepInventory == "true"; }
-            set { _keepInventory = value ? "true" : "false"; ; }
+            get { return _keepInventory; }
+            set { _keepInventory = value; }
         }
 
         /// <summary>
@@ -77,8 +77,8 @@ namespace Substrate
         /// </summary>
         public bool MobGriefing
         {
-            get { return _mobGriefing == "true"; }
-            set { _mobGriefing = value ? "true" : "false"; ; }
+            get { return _mobGriefing; }
+            set { _mobGriefing = value; }
         }
 
         #region ICopyable<GameRules> Members
