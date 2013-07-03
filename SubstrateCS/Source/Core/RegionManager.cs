@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Substrate.Core;
+using System.Text.RegularExpressions;
 
 namespace Substrate.Core
 {
@@ -158,8 +159,10 @@ namespace Substrate.Core
                     throw new DirectoryNotFoundException();
                 }
 
-                string[] files = Directory.GetFiles(rm.GetRegionPath());
-                _regions.Capacity = files.Length;
+                List<string> files = new List<string>(Directory.GetFiles(rm.GetRegionPath()));
+                _regions.Capacity = files.Count;
+
+                files.Sort(RegionSort);
 
                 foreach (string file in files) {
                     try {
@@ -212,6 +215,35 @@ namespace Substrate.Core
                         throw new InvalidOperationException();
                     }
                 }
+            }
+
+            private int RegionSort (string A, string B)
+            {
+                Regex R = new Regex(".+r\\.(?<x>-?\\d+)\\.(?<y>-?\\d+)\\.(mca|mcr)", RegexOptions.None);
+                Match MC = R.Match(A);
+                if (!MC.Success)
+                    return 0;
+
+                int AX = int.Parse(MC.Groups["x"].Value);
+                int AZ = int.Parse(MC.Groups["y"].Value);
+
+                MC = R.Match(B);
+                if (!MC.Success)
+                    return 0;
+
+                int BX = int.Parse(MC.Groups["x"].Value);
+                int BZ = int.Parse(MC.Groups["y"].Value);
+
+                if (AZ < BZ)
+                    return -1;
+                if (AZ > BZ)
+                    return 1;
+                if (AX < BX)
+                    return -1;
+                if (AX > BX)
+                    return 1;
+
+                return 0;
             }
         }
 
