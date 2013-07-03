@@ -303,7 +303,7 @@ namespace Substrate.Nbt
             }
 
             if (val.ValueType == TagType.TAG_END)
-                return val;
+                return new TagNodeList(TagType.TAG_BYTE);
 
             for (int i = 0; i < length; i++) {
                 val.Add(ReadValue(val.ValueType));
