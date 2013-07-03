@@ -6,6 +6,102 @@ using Substrate.Nbt;
 namespace Substrate
 {
     /// <summary>
+    /// Encompases data to specify game rules.
+    /// </summary>
+    public class GameRules : ICopyable<GameRules>
+    {
+        private string _commandBlockOutput = "true";
+        private string _doFireTick = "true";
+        private string _doMobLoot = "true";
+        private string _doMobSpawning = "true";
+        private string _doTileDrops = "true";
+        private string _keepInventory = "false";
+        private string _mobGriefing = "true";
+
+        /// <summary>
+        /// Gets or sets whether or not actions performed by command blocks are displayed in the chat.
+        /// </summary>
+        public bool CommandBlockOutput
+        {
+            get { return _commandBlockOutput == "true"; }
+            set { _commandBlockOutput = value ? "true" : "false"; }
+        }
+
+        /// <summary>
+        /// Gets or sets whether to spread or remove fire.
+        /// </summary>
+        public bool DoFireTick
+        {
+            get { return _doFireTick == "true"; }
+            set { _doFireTick = value ? "true" : "false"; ; }
+        }
+
+        /// <summary>
+        /// Gets or sets whether mobs should drop loot when killed.
+        /// </summary>
+        public bool DoMobLoot
+        {
+            get { return _doMobLoot == "true"; }
+            set { _doMobLoot = value ? "true" : "false"; ; }
+        }
+
+        /// <summary>
+        /// Gets or sets whether mobs should spawn naturally.
+        /// </summary>
+        public bool DoMobSpawning
+        {
+            get { return _doMobSpawning == "true"; }
+            set { _doMobSpawning = value ? "true" : "false"; ; }
+        }
+
+        /// <summary>
+        /// Gets or sets whether breaking blocks should drop the block's item drop.
+        /// </summary>
+        public bool DoTileDrops
+        {
+            get { return _doTileDrops == "true"; }
+            set { _doTileDrops = value ? "true" : "false"; ; }
+        }
+
+        /// <summary>
+        /// Gets or sets whether players keep their inventory after they die.
+        /// </summary>
+        public bool KeepInventory
+        {
+            get { return _keepInventory == "true"; }
+            set { _keepInventory = value ? "true" : "false"; ; }
+        }
+
+        /// <summary>
+        /// Gets or sets whether mobs can destroy blocks (creeper explosions, zombies breaking doors, etc.).
+        /// </summary>
+        public bool MobGriefing
+        {
+            get { return _mobGriefing == "true"; }
+            set { _mobGriefing = value ? "true" : "false"; ; }
+        }
+
+        #region ICopyable<GameRules> Members
+
+        /// <inheritdoc />
+        public GameRules Copy ()
+        {
+            GameRules gr = new GameRules();
+            gr._commandBlockOutput = _commandBlockOutput;
+            gr._doFireTick = _doFireTick;
+            gr._doMobLoot = _doMobLoot;
+            gr._doMobSpawning = _doMobSpawning;
+            gr._doTileDrops = _doTileDrops;
+            gr._keepInventory = _keepInventory;
+            gr._mobGriefing = _mobGriefing;
+
+            return gr;
+        }
+
+        #endregion
+    }
+
+    /// <summary>
     /// Specifies the type of gameplay associated with a world.
     /// </summary>
     public enum GameType
@@ -58,6 +154,21 @@ namespace Substrate
                 new SchemaNodeScaler("GameType", TagType.TAG_INT, SchemaOptions.OPTIONAL),
                 new SchemaNodeScaler("MapFeatures", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
                 new SchemaNodeScaler("hardcore", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("generatorVersion", TagType.TAG_INT, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("generatorOptions", TagType.TAG_STRING, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("initialized", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("allowCommands", TagType.TAG_BYTE, SchemaOptions.OPTIONAL),
+                new SchemaNodeScaler("DayTime", TagType.TAG_LONG, SchemaOptions.OPTIONAL),
+                new	SchemaNodeCompound("GameRules")
+			    {			
+				    new	SchemaNodeScaler("commandBlockOutput", TagType.TAG_STRING),
+				    new	SchemaNodeScaler("doFireTick", TagType.TAG_STRING),
+				    new	SchemaNodeScaler("doMobLoot", TagType.TAG_STRING),
+				    new	SchemaNodeScaler("doMobSpawning", TagType.TAG_STRING),
+				    new	SchemaNodeScaler("doTileDrops", TagType.TAG_STRING),
+				    new	SchemaNodeScaler("keepInventory", TagType.TAG_STRING),
+				    new	SchemaNodeScaler("mobGriefing", TagType.TAG_STRING),
+			    },
             },
         };
 
@@ -88,6 +199,14 @@ namespace Substrate
         private int? _gameType;
         private byte? _mapFeatures;
         private byte? _hardcore;
+
+        private int? _generatorVersion;
+        private string _generatorOptions;
+        private byte? _initialized;
+        private byte? _allowCommands;
+        private long? _DayTime;
+
+        private GameRules _gameRules;
 
         /// <summary>
         /// Gets or sets the creation time of the world as a long timestamp.
@@ -251,6 +370,68 @@ namespace Substrate
         }
 
         /// <summary>
+        /// Gets or sets a value indicating the version of the level generator
+        /// </summary>
+        public int GeneratorVersion
+        {
+            get { return _generatorVersion ?? 0; }
+            set { _generatorVersion = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating controls options for the generator, 
+        /// currently only the Superflat generator. The format is a comma separated 
+        /// list of block IDs from the bottom of the map up, and each block ID may 
+        /// optionally be preceded by the number of layers and an x. 
+        /// Damage values are not supported.
+        /// </summary>
+        public string GeneratorOptions
+        {
+            get { return _generatorOptions ?? ""; }
+            set { _generatorOptions = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value, normally true, indicating whether a world has been 
+        /// initialized properly after creation. If the initial simulation was canceled 
+        /// somehow, this can be false and the world will be re-initialized on next load.
+        /// </summary>
+        public bool Initialized
+        {
+            get { return (_generatorVersion ?? 0) == 1; }
+            set { _generatorVersion = value ? (byte)1 : (byte)0; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating if cheats are enabled.
+        /// </summary>
+        public bool AllowCommands
+        {
+            get { return (_allowCommands ?? 0) == 1; }
+            set { _allowCommands = value ? (byte)1 : (byte)0; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating the time of day. 
+        /// 0 is sunrise, 6000 is midday, 12000 is sunset, 
+        /// 18000 is midnight, 24000 is the next day's 0. 
+        /// This value keeps counting past 24000 and does not reset to 0
+        /// </summary>
+        public long DayTime
+        {
+            get { return _DayTime ?? 0; }
+            set { _DayTime = value; }
+        }
+
+        /// <summary>
+        /// Gets the level's game rules.
+        /// </summary>
+        public GameRules GameRules
+        {
+            get { return _gameRules; }
+        }
+
+        /// <summary>
         /// Gets the source <see cref="TagNodeCompound"/> used to create this <see cref="Level"/> if it exists.
         /// </summary>
         public TagNodeCompound Source
@@ -288,6 +469,13 @@ namespace Substrate
             _generator = "default";
             _hardcore = 0;
 
+            _generatorOptions = "";
+            _generatorVersion = 1;
+            _initialized = 0;
+            _allowCommands = 0;
+            _DayTime = 0;
+            _gameRules = new GameRules();
+
             GameType = GameType.SURVIVAL;
             UseMapFeatures = true;
 
@@ -321,6 +509,13 @@ namespace Substrate
             _gameType = p._gameType;
             _mapFeatures = p._mapFeatures;
             _hardcore = p._hardcore;
+
+            _generatorVersion = p._generatorVersion;
+            _generatorOptions = p._generatorOptions;
+            _initialized = p._initialized;
+            _allowCommands = p._allowCommands;
+            _DayTime = p._DayTime;
+            _gameRules = p._gameRules.Copy();
 
             if (p._player != null) {
                 _player = p._player.Copy();
@@ -398,6 +593,11 @@ namespace Substrate
             _thunderTime = null;
             _gameType = null;
             _mapFeatures = null;
+            _generatorOptions = null;
+            _generatorVersion = null;
+            _allowCommands = null;
+            _initialized = null;
+            _DayTime = null;
 
             TagNodeCompound ctree = dtree["Data"].ToTagCompound();
 
@@ -447,6 +647,35 @@ namespace Substrate
             }
             if (ctree.ContainsKey("hardcore")) {
                 _hardcore = ctree["hardcore"].ToTagByte();
+            }
+
+            if (ctree.ContainsKey("generatorVersion")) {
+                _generatorVersion = ctree["generatorVersion"].ToTagInt();
+            }
+            if (ctree.ContainsKey("generatorOptions")) {
+                _generatorOptions = ctree["generatorOptions"].ToTagString();
+            }
+            if (ctree.ContainsKey("allowCommands")) {
+                _allowCommands = ctree["allowCommands"].ToTagByte();
+            }
+            if (ctree.ContainsKey("initialized")) {
+                _initialized = ctree["initialized"].ToTagByte();
+            }
+            if (ctree.ContainsKey("DayTime")) {
+                _DayTime = ctree["DayTime"].ToTagLong();
+            }
+            if (ctree.ContainsKey("GameRules"))
+            {
+                TagNodeCompound gr = ctree["GameRules"].ToTagCompound();
+
+                _gameRules = new GameRules();
+                _gameRules.CommandBlockOutput = gr["commandBlockOutput"].ToTagString().Data == "true";
+                _gameRules.DoFireTick = gr["doFireTick"].ToTagString().Data == "true";
+                _gameRules.DoMobLoot = gr["doMobLoot"].ToTagString().Data == "true";
+                _gameRules.DoMobSpawning = gr["doMobSpawning"].ToTagString().Data == "true";
+                _gameRules.DoTileDrops = gr["doTileDrops"].ToTagString().Data == "true";
+                _gameRules.KeepInventory = gr["keepInventory"].ToTagString().Data == "true";
+                _gameRules.MobGriefing = gr["mobGriefing"].ToTagString().Data == "true";
             }
 
             _source = ctree.Copy() as TagNodeCompound;
@@ -522,6 +751,31 @@ namespace Substrate
             if (_hardcore != null) {
                 data["hardcore"] = new TagNodeByte(_hardcore ?? 0);
             }
+
+            if (_generatorOptions != null) {
+                data["generatorOptions"] = new TagNodeString(_generatorOptions);
+            }
+            if (_generatorVersion != null) {
+                data["generatorVersion"] = new TagNodeInt(_generatorVersion ?? 0);
+            }
+            if (_allowCommands != null) {
+                data["allowCommands"] = new TagNodeByte(_allowCommands ?? 0);
+            }
+            if (_initialized != null) {
+                data["initialized"] = new TagNodeByte(_initialized ?? 0);
+            }
+            if (_DayTime != null) {
+                data["DayTime"] = new TagNodeLong(_DayTime ?? 0);
+            }
+            TagNodeCompound gr = new TagNodeCompound();
+            gr["commandBlockOutput"] = new TagNodeString(_gameRules.CommandBlockOutput ? "true" : "false");
+            gr["doFireTick"] = new TagNodeString(_gameRules.DoFireTick ? "true" : "false");
+            gr["doMobLoot"] = new TagNodeString(_gameRules.DoMobLoot ? "true" : "false");
+            gr["doMobSpawning"] = new TagNodeString(_gameRules.DoMobSpawning ? "true" : "false");
+            gr["doTileDrops"] = new TagNodeString(_gameRules.DoTileDrops ? "true" : "false");
+            gr["keepInventory"] = new TagNodeString(_gameRules.KeepInventory ? "true" : "false");
+            gr["mobGriefing"] = new TagNodeString(_gameRules.MobGriefing ? "true" : "false");
+            data["GameRules"] = gr;
 
             if (_source != null) {
                 data.MergeFrom(_source);
