@@ -214,7 +214,7 @@
             this._tbFindAny.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbFindAny.Name = "_tbFindAny";
             this._tbFindAny.Size = new System.Drawing.Size(23, 22);
-            this._tbFindAny.Text = "toolStripButton3";
+            this._tbFindAny.Text = "Add Any-Type Tag Rule";
             this._tbFindAny.Click += new System.EventHandler(this._tbFindAny_Click);
             // 
             // _tbFindByte
@@ -234,7 +234,7 @@
             this._tbFindShort.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbFindShort.Name = "_tbFindShort";
             this._tbFindShort.Size = new System.Drawing.Size(23, 22);
-            this._tbFindShort.Text = "toolStripButton5";
+            this._tbFindShort.Text = "Add Short Tag Rule";
             this._tbFindShort.Click += new System.EventHandler(this._tbFindShort_Click);
             // 
             // _tbFindInt
@@ -244,7 +244,7 @@
             this._tbFindInt.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbFindInt.Name = "_tbFindInt";
             this._tbFindInt.Size = new System.Drawing.Size(23, 22);
-            this._tbFindInt.Text = "toolStripButton6";
+            this._tbFindInt.Text = "Add Int Tag Rule";
             this._tbFindInt.Click += new System.EventHandler(this._tbFindInt_Click);
             // 
             // _tbFindLong
@@ -254,7 +254,7 @@
             this._tbFindLong.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbFindLong.Name = "_tbFindLong";
             this._tbFindLong.Size = new System.Drawing.Size(23, 22);
-            this._tbFindLong.Text = "toolStripButton7";
+            this._tbFindLong.Text = "Add Long Tag Rule";
             this._tbFindLong.Click += new System.EventHandler(this._tbFindLong_Click);
             // 
             // _tbFindFloat
@@ -264,7 +264,7 @@
             this._tbFindFloat.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbFindFloat.Name = "_tbFindFloat";
             this._tbFindFloat.Size = new System.Drawing.Size(23, 22);
-            this._tbFindFloat.Text = "toolStripButton8";
+            this._tbFindFloat.Text = "Add Float Tag Rule";
             this._tbFindFloat.Click += new System.EventHandler(this._tbFindFloat_Click);
             // 
             // _tbFindDouble
@@ -274,7 +274,7 @@
             this._tbFindDouble.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbFindDouble.Name = "_tbFindDouble";
             this._tbFindDouble.Size = new System.Drawing.Size(23, 22);
-            this._tbFindDouble.Text = "toolStripButton9";
+            this._tbFindDouble.Text = "Add Double Tag Rule";
             this._tbFindDouble.Click += new System.EventHandler(this._tbFindDouble_Click);
             // 
             // _tbFindString
@@ -284,7 +284,7 @@
             this._tbFindString.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbFindString.Name = "_tbFindString";
             this._tbFindString.Size = new System.Drawing.Size(23, 22);
-            this._tbFindString.Text = "toolStripButton10";
+            this._tbFindString.Text = "Add Text Tag Rule";
             this._tbFindString.Click += new System.EventHandler(this._tbFindString_Click);
             // 
             // groupBox2
