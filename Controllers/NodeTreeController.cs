@@ -120,9 +120,11 @@ namespace NBTExplorer.Controllers
             OnSelectionInvalidated();
         }
 
-        public void OpenPaths (string[] paths)
+        public int OpenPaths (string[] paths)
         {
             _nodeTree.Nodes.Clear();
+
+            int failCount = 0;
 
             foreach (string path in paths) {
                 if (Directory.Exists(path)) {
@@ -136,9 +138,10 @@ namespace NBTExplorer.Controllers
                             node = item.Value.NodeCreate(path);
                     }
 
-                    if (node != null) {
+                    if (node != null)
                         _nodeTree.Nodes.Add(CreateUnexpandedNode(node));
-                    }
+                    else
+                        failCount++;
                 }
             }
 
@@ -147,6 +150,8 @@ namespace NBTExplorer.Controllers
             }
 
             OnSelectionInvalidated();
+
+            return failCount;
         }
 
         #endregion
@@ -452,8 +457,10 @@ namespace NBTExplorer.Controllers
             node.Nodes.Clear();
 
             DataNode backNode = node.Tag as DataNode;
-            if (!backNode.IsExpanded)
+            if (!backNode.IsExpanded) {
                 backNode.Expand();
+                node.Text = backNode.NodeDisplay;
+            }
 
             foreach (DataNode child in backNode.Nodes)
                 node.Nodes.Add(CreateUnexpandedNode(child));
@@ -476,6 +483,7 @@ namespace NBTExplorer.Controllers
                 return;
 
             backNode.Collapse();
+            node.Name = backNode.NodeDisplay;
 
             node.Nodes.Clear();
             if (backNode.HasUnexpandedChildren)
@@ -613,8 +621,8 @@ namespace NBTExplorer.Controllers
                     node.Nodes.Add(currentNodes[child]);
             }
 
-            //foreach (TreeNode child in node.Nodes)
-            //    child.ContextMenuStrip = BuildNodeContextMenu(child.Tag as DataNode);
+            foreach (TreeNode child in node.Nodes)
+                child.ContextMenuStrip = BuildNodeContextMenu(child, child.Tag as DataNode);
 
             if (node.Nodes.Count == 0 && dataNode.HasUnexpandedChildren) {
                 ExpandNode(node);
@@ -684,6 +692,84 @@ namespace NBTExplorer.Controllers
                 frontNode.Nodes.Add(new TreeNode());
 
             return frontNode;
+        }
+
+        public ContextMenuStrip BuildNodeContextMenu (TreeNode frontNode, DataNode node)
+        {
+            if (node == null)
+                return null;
+
+            ContextMenuStrip menu = new ContextMenuStrip();
+
+            if (node.HasUnexpandedChildren || node.Nodes.Count > 0) {
+                if (frontNode.IsExpanded) {
+                    ToolStripMenuItem itemCollapse = new ToolStripMenuItem("&Collapse", null, _contextCollapse_Click);
+                    itemCollapse.Font = new System.Drawing.Font(itemCollapse.Font, System.Drawing.FontStyle.Bold);
+
+                    ToolStripMenuItem itemExpandChildren = new ToolStripMenuItem("Expand C&hildren", null, _contextExpandChildren_Click);
+                    ToolStripMenuItem itemExpandTree = new ToolStripMenuItem("Expand &Tree", null, _contextExpandTree_Click);
+
+                    menu.Items.AddRange(new ToolStripItem[] {
+                    itemCollapse, new ToolStripSeparator(), itemExpandChildren, itemExpandTree,
+                });
+                }
+                else {
+                    ToolStripMenuItem itemExpand = new ToolStripMenuItem("&Expand", null, _contextExpand_Click);
+                    itemExpand.Font = new System.Drawing.Font(itemExpand.Font, System.Drawing.FontStyle.Bold);
+
+                    menu.Items.Add(itemExpand);
+                }
+            }
+
+            if (node.CanReoderNode) {
+                ToolStripMenuItem itemUp = new ToolStripMenuItem("Move &Up", Properties.Resources.ArrowUp, _contextMoveUp_Click);
+                ToolStripMenuItem itemDn = new ToolStripMenuItem("Move &Down", Properties.Resources.ArrowDown, _contextMoveDown_Click);
+
+                itemUp.Enabled = node.CanMoveNodeUp;
+                itemDn.Enabled = node.CanMoveNodeDown;
+
+                menu.Items.Add(itemUp);
+                menu.Items.Add(itemDn);
+            }
+
+            return (menu.Items.Count > 0) ? menu : null;
+        }
+
+        private void _contextCollapse_Click (object sender, EventArgs e)
+        {
+            if (_multiTree.SelectedNode != null)
+                _multiTree.SelectedNode.Collapse();
+        }
+
+        private void _contextExpand_Click (object sender, EventArgs e)
+        {
+            if (_multiTree.SelectedNode != null)
+                _multiTree.SelectedNode.Expand();
+        }
+
+        private void _contextExpandChildren_Click (object sender, EventArgs e)
+        {
+            if (_multiTree.SelectedNode != null) {
+                foreach (TreeNode node in _multiTree.SelectedNode.Nodes)
+                    node.Expand();
+            }
+        }
+
+        private void _contextExpandTree_Click (object sender, EventArgs e)
+        {
+            if (_multiTree.SelectedNode != null) {
+                _multiTree.SelectedNode.ExpandAll();
+            }
+        }
+
+        private void _contextMoveUp_Click (object sender, EventArgs e)
+        {
+            MoveSelectionUp();
+        }
+
+        private void _contextMoveDown_Click (object sender, EventArgs e)
+        {
+            MoveSelectionDown();
         }
 
         #region Capability Checking

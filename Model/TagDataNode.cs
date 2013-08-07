@@ -319,7 +319,8 @@ namespace NBTExplorer.Model
                 };
 
                 if (FormRegistry.EditByteArray(data)) {
-                    Array.Copy(data.Data, tag.ToTagByteArray().Data, tag.ToTagByteArray().Length);
+                    tag.ToTagByteArray().Data = data.Data;
+                    //Array.Copy(data.Data, tag.ToTagByteArray().Data, tag.ToTagByteArray().Length);
                     IsDataModified = true;
                     return true;
                 }
@@ -345,6 +346,7 @@ namespace NBTExplorer.Model
                 };
 
                 if (FormRegistry.EditByteArray(data)) {
+                    iatag.Data = new int[data.Data.Length / 4];
                     for (int i = 0; i < iatag.Length; i++) {
                         iatag.Data[i] = BitConverter.ToInt32(data.Data, i * 4);
                     }

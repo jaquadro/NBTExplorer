@@ -143,12 +143,15 @@ namespace NBTExplorer.Windows
             if (!ConfirmAction("Open new file anyway?"))
                 return;
 
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.RestoreDirectory = true;
-            ofd.Multiselect = true;
-
-            if (ofd.ShowDialog() == DialogResult.OK) {
-                OpenPaths(ofd.FileNames);
+            using (OpenFileDialog ofd = new OpenFileDialog() {
+                RestoreDirectory = true,
+                Multiselect = true,
+                Filter = "All Files|*|NBT Files (*.dat, *.schematic)|*.dat;*.nbt;*.schematic|Region Files (*.mca, *.mcr)|*.mca;*.mcr",
+                FilterIndex = 0,
+            }) {
+                if (ofd.ShowDialog() == DialogResult.OK) {
+                    OpenPaths(ofd.FileNames);
+                }
             }
 
             UpdateUI();
@@ -159,13 +162,14 @@ namespace NBTExplorer.Windows
             if (!ConfirmAction("Open new folder anyway?"))
                 return;
 
-            FolderBrowserDialog ofd = new FolderBrowserDialog();
-            if (_openFolderPath != null)
-                ofd.SelectedPath = _openFolderPath;
+            using (FolderBrowserDialog ofd = new FolderBrowserDialog()) {
+                if (_openFolderPath != null)
+                    ofd.SelectedPath = _openFolderPath;
 
-            if (ofd.ShowDialog() == DialogResult.OK) {
-                _openFolderPath = ofd.SelectedPath;
-                OpenPaths(new string[] { ofd.SelectedPath });
+                if (ofd.ShowDialog() == DialogResult.OK) {
+                    _openFolderPath = ofd.SelectedPath;
+                    OpenPaths(new string[] { ofd.SelectedPath });
+                }
             }
 
             UpdateUI();
@@ -173,17 +177,41 @@ namespace NBTExplorer.Windows
 
         private void OpenPaths (string[] paths)
         {
-            _controller.OpenPaths(paths);
+            int failCount = _controller.OpenPaths(paths);
 
             foreach (string path in paths) {
                 if (Directory.Exists(path))
-                    AddPathToHistory(Settings.Default.RecentDirectories, path);
+                    AddPathToHistory(GetRecentDirectories(), path);
                 else if (File.Exists(path))
-                    AddPathToHistory(Settings.Default.RecentFiles, path);
+                    AddPathToHistory(GetRecentFiles(), path);
             }
 
             UpdateUI();
             UpdateOpenMenu();
+
+            if (failCount > 0) {
+                MessageBox.Show("One or more selected files failed to open.");
+            }
+        }
+
+        private StringCollection GetRecentFiles ()
+        {
+            try {
+                return Settings.Default.RecentFiles;
+            }
+            catch {
+                return null;
+            }
+        }
+
+        private StringCollection GetRecentDirectories ()
+        {
+            try {
+                return Settings.Default.RecentDirectories;
+            }
+            catch {
+                return null;
+            }
         }
 
         private void OpenMinecraftDirectory ()
@@ -192,7 +220,11 @@ namespace NBTExplorer.Windows
                 return;
 
             try {
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                string path = Environment.ExpandEnvironmentVariables("%APPDATA%");
+                if (!Directory.Exists(path)) {
+                    path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                }
+
                 path = Path.Combine(path, ".minecraft");
                 path = Path.Combine(path, "saves");
 
@@ -225,7 +257,7 @@ namespace NBTExplorer.Windows
             frontNode.ImageIndex = _iconRegistry.Lookup(node.GetType());
             frontNode.SelectedImageIndex = frontNode.ImageIndex;
             frontNode.Tag = node;
-            frontNode.ContextMenuStrip = BuildNodeContextMenu(node);
+            //frontNode.ContextMenuStrip = BuildNodeContextMenu(node);
 
             if (node.HasUnexpandedChildren || node.Nodes.Count > 0)
                 frontNode.Nodes.Add(new TreeNode());
@@ -233,45 +265,16 @@ namespace NBTExplorer.Windows
             return frontNode;
         }
 
-        private ContextMenuStrip BuildNodeContextMenu (DataNode node)
-        {
-            if (node == null)
-                return null;
-
-            ContextMenuStrip menu = new ContextMenuStrip();
-
-            if (node.CanReoderNode) {
-                ToolStripMenuItem itemUp = new ToolStripMenuItem("Move &Up", Properties.Resources.ArrowUp, _contextMoveUp_Click);
-                ToolStripMenuItem itemDn = new ToolStripMenuItem("Move &Down", Properties.Resources.ArrowDown, _contextMoveDown_Click);
-
-                itemUp.Enabled = node.CanMoveNodeUp;
-                itemDn.Enabled = node.CanMoveNodeDown;
-
-                menu.Items.Add(itemUp);
-                menu.Items.Add(itemDn);
-            }
-
-            return (menu.Items.Count > 0) ? menu : null;
-        }
-
-        private void _contextMoveUp_Click (object sender, EventArgs e)
-        {
-            _controller.MoveSelectionUp();
-        }
-
-        private void _contextMoveDown_Click (object sender, EventArgs e)
-        {
-            _controller.MoveSelectionDown();
-        }
-
         private void ExpandNode (TreeNode node)
         {
             _controller.ExpandNode(node);
+            UpdateUI(node.Tag as DataNode);
         }
 
         private void CollapseNode (TreeNode node)
         {
             _controller.CollapseNode(node);
+            UpdateUI(node.Tag as DataNode);
         }
 
         private bool ConfirmExit ()
@@ -540,6 +543,9 @@ namespace NBTExplorer.Windows
 
         private void AddPathToHistory (StringCollection list, string entry)
         {
+            if (list == null)
+                return;
+
             foreach (string item in list) {
                 if (item == entry) {
                     list.Remove(item);
@@ -596,8 +602,10 @@ namespace NBTExplorer.Windows
 
         private void _nodeTree_NodeMouseClick (object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right) {
+                e.Node.ContextMenuStrip = _controller.BuildNodeContextMenu(e.Node, e.Node.Tag as DataNode);
                 _nodeTree.SelectedNode = e.Node;
+            }
         }
 
         private void _nodeTree_DragDrop (object sender, DragEventArgs e)

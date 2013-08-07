@@ -23,6 +23,8 @@ namespace NBTExplorer.Vendor.MultiSelectTreeView
 			}
 			set
 			{
+                BeginUpdate();
+
 				ClearSelectedNodes();
 				if( value != null )
 				{
@@ -31,6 +33,8 @@ namespace NBTExplorer.Vendor.MultiSelectTreeView
 						ToggleNode( node, true );
 					}
 				}
+
+                EndUpdate();
 			}
 		}
 
@@ -53,6 +57,8 @@ namespace NBTExplorer.Vendor.MultiSelectTreeView
 
 		public MultiSelectTreeView()
 		{
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+
 			m_SelectedNodes = new List<TreeNode>();
 			base.SelectedNode = null;
 		}
@@ -583,5 +589,17 @@ namespace NBTExplorer.Vendor.MultiSelectTreeView
 		}
 
 		#endregion
+
+        private const int WM_ERASEBKGND = 0x14;
+
+        protected override void WndProc (ref Message m)
+        {
+            if (m.Msg == WM_ERASEBKGND) //if message is is erase background
+            {
+                return;
+            }
+
+            base.WndProc(ref m);
+        }
 	}
 }
