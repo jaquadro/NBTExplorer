@@ -9,6 +9,7 @@ using NBTExplorer.Controllers;
 using Substrate.Nbt;
 using NBTExplorer.Model;
 using System.Threading;
+using NBTExplorer.Model.Search;
 
 namespace NBTExplorer.Windows
 {
@@ -18,7 +19,7 @@ namespace NBTExplorer.Windows
         private NodeTreeController _mainController;
         private DataNode _mainSearchRoot;
 
-        private NodeTreeController _findController;
+        private RuleTreeController _findController;
         private NodeTreeController _replaceController;
 
         public FindReplace (MainForm main, NodeTreeController controller, DataNode searchRoot)
@@ -29,8 +30,9 @@ namespace NBTExplorer.Windows
             _mainController = controller;
             _mainSearchRoot = searchRoot;
 
-            _findController = new NodeTreeController(treeView1);
-            _findController.VirtualRootDisplay = "Find Rules";
+            _findController = new RuleTreeController(treeView1);
+
+            //_findController.VirtualRootDisplay = "Find Rules";
 
             _replaceController = new NodeTreeController(treeView2);
             _replaceController.VirtualRootDisplay = "Replacement Tags";
@@ -43,9 +45,19 @@ namespace NBTExplorer.Windows
             _findController.DeleteSelection();
         }
 
+        private void _tbFindGroupAnd_Click (object sender, EventArgs e)
+        {
+            _findController.CreateIntersectNode();
+        }
+
+        private void _tbFindGroupOr_Click (object sender, EventArgs e)
+        {
+            _findController.CreateUnionNode();
+        }
+
         private void _tbFindAny_Click (object sender, EventArgs e)
         {
-
+            _findController.CreateWildcardNode();
         }
 
         private void _tbFindByte_Click (object sender, EventArgs e)
@@ -223,19 +235,11 @@ namespace NBTExplorer.Windows
             if (node == null)
                 return;
 
-            foreach (TagDataNode rule in _findController.Root.Nodes) {
-                if (rule == null)
-                    continue;
+            List<TagDataNode> matches = new List<TagDataNode>();
+            _findController.Root.Matches(node, matches);
 
-                foreach (TagDataNode ruleCandidate in node.Nodes) {
-                    if (ruleCandidate == null)
-                        continue;
-
-                    if (ruleCandidate.NodeName == rule.NodeName) {
-                        ruleCandidate.DeleteNode();
-                        break;
-                    }
-                }
+            foreach (var replNode in matches) {
+                replNode.DeleteNode();
             }
 
             foreach (TagDataNode tag in _replaceController.Root.Nodes) {
@@ -251,18 +255,20 @@ namespace NBTExplorer.Windows
 
         private void _tbFindEdit_Click (object sender, EventArgs e)
         {
-            _findController.EditSelection();
+            //_findController.EditSelection();
         }
 
         private void _tbReplaceEdit_Click (object sender, EventArgs e)
         {
             _replaceController.EditSelection();
         }
+
+        
     }
 
     public abstract class ContainerRuleSearchState : ISearchState
     {
-        public TagCompoundDataNode RuleTags { get; set; }
+        public GroupRule RuleTags { get; set; }
 
         public DataNode RootNode { get; set; }
         public IEnumerator<DataNode> State { get; set; }
@@ -281,19 +287,10 @@ namespace NBTExplorer.Windows
             if (tagNode == null)
                 return false;
 
-            foreach (TagDataNode rule in RuleTags.Nodes) {
-                TagNode matchTag = tagNode.NamedTagContainer.GetTagNode(rule.NodeName);
-                if (matchTag == null)
-                    return false;
+            List<TagDataNode> matches = new List<TagDataNode>();
+            if (!RuleTags.Matches(tagNode, matches))
+                return false;
 
-                TagNode ruleTag = rule.Tag;
-                if (ruleTag.GetTagType() != matchTag.GetTagType())
-                    return false;
-
-                if (ruleTag.ToString() != matchTag.ToString())
-                    return false;
-            }
-            
             return true;
         }
     }

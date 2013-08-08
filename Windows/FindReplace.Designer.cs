@@ -106,6 +106,7 @@
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.ImageIndex = 0;
             this.treeView1.ImageList = this.imageList1;
+            this.treeView1.ItemHeight = 18;
             this.treeView1.Location = new System.Drawing.Point(0, 25);
             this.treeView1.Name = "treeView1";
             this.treeView1.SelectedImageIndex = 0;
@@ -135,9 +136,13 @@
             this.imageList1.Images.SetKeyName(14, "edit-code-i.png");
             this.imageList1.Images.SetKeyName(15, "question-white.png");
             this.imageList1.Images.SetKeyName(16, "arrow-315.png");
+            this.imageList1.Images.SetKeyName(17, "asterisk-yellow.png");
+            this.imageList1.Images.SetKeyName(18, "sql-join-inner.png");
+            this.imageList1.Images.SetKeyName(19, "sql-join-outer.png");
             // 
             // toolStrip1
             // 
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._tbFindEdit,
             this._tbFindDelete,
@@ -191,7 +196,8 @@
             this._tbFindGroupAnd.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbFindGroupAnd.Name = "_tbFindGroupAnd";
             this._tbFindGroupAnd.Size = new System.Drawing.Size(23, 22);
-            this._tbFindGroupAnd.Text = "toolStripButton1";
+            this._tbFindGroupAnd.Text = "Add Match-All Group";
+            this._tbFindGroupAnd.Click += new System.EventHandler(this._tbFindGroupAnd_Click);
             // 
             // _tbFindGroupOr
             // 
@@ -200,7 +206,8 @@
             this._tbFindGroupOr.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbFindGroupOr.Name = "_tbFindGroupOr";
             this._tbFindGroupOr.Size = new System.Drawing.Size(23, 22);
-            this._tbFindGroupOr.Text = "toolStripButton2";
+            this._tbFindGroupOr.Text = "Add Match-Any Group";
+            this._tbFindGroupOr.Click += new System.EventHandler(this._tbFindGroupOr_Click);
             // 
             // toolStripSeparator3
             // 
@@ -317,6 +324,7 @@
             this.treeView2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView2.ImageIndex = 0;
             this.treeView2.ImageList = this.imageList1;
+            this.treeView2.ItemHeight = 18;
             this.treeView2.Location = new System.Drawing.Point(0, 25);
             this.treeView2.Name = "treeView2";
             this.treeView2.SelectedImageIndex = 0;
@@ -327,6 +335,7 @@
             // 
             // toolStrip2
             // 
+            this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._tbReplaceEdit,
             this._tbReplaceDelete,

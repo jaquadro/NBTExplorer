@@ -5,19 +5,96 @@ using Substrate.Nbt;
 
 namespace NBTExplorer.Model.Search
 {
+    public enum NumericOperator
+    {
+        Equals,
+        NotEquals,
+        GreaterThan,
+        LessThan,
+        Any,
+    }
+
+    public enum StringOperator
+    {
+        Equals,
+        NotEquals,
+        Contains,
+        NotContains,
+        StartsWith,
+        EndsWith,
+        Any,
+    }
+
+    public enum WildcardOperator
+    {
+        Equals,
+        NotEquals,
+        Any,
+    }
+
     public abstract class SearchRule
     {
-        public virtual string NodeDisplay { get; }
+        protected static readonly Dictionary<NumericOperator, string> NumericOpStrings = new Dictionary<NumericOperator, string>() {
+            { NumericOperator.Equals, "=" },
+            { NumericOperator.NotEquals, "!=" },
+            { NumericOperator.GreaterThan, ">" },
+            { NumericOperator.LessThan, "<" },
+            { NumericOperator.Any, "ANY" },
+        };
+
+        protected static readonly Dictionary<StringOperator, string> StringOpStrings = new Dictionary<StringOperator, string>() {
+            { StringOperator.Equals, "=" },
+            { StringOperator.NotEquals, "!=" },
+            { StringOperator.Contains, "Contains" },
+            { StringOperator.NotContains, "Does not Contain" },
+            { StringOperator.StartsWith, "Begins With" },
+            { StringOperator.EndsWith, "Ends With" },
+            { StringOperator.Any, "ANY" },
+        };
+
+        protected static readonly Dictionary<WildcardOperator, string> WildcardOpStrings = new Dictionary<WildcardOperator, string>() {
+            { WildcardOperator.Equals, "=" },
+            { WildcardOperator.NotEquals, "!=" },
+            { WildcardOperator.Any, "ANY" },
+        };
+
+        public abstract string NodeDisplay { get; }
 
         public virtual bool Matches (TagCompoundDataNode container, List<TagDataNode> matchedNodes)
         {
             return false;
         }
+
+        public virtual bool CanAddRules
+        {
+            get { return false; }
+        }
+
+        protected static TagDataNode GetChild (TagCompoundDataNode container, string name)
+        {
+            foreach (var child in container.Nodes) {
+                TagDataNode tagChild = child as TagDataNode;
+                if (tagChild != null && tagChild.NodeName == name)
+                    return tagChild;
+            }
+
+            return null;
+        }
     }
 
     public abstract class GroupRule : SearchRule
     {
+        protected GroupRule ()
+        {
+            Rules = new List<SearchRule>();
+        }
+
         public List<SearchRule> Rules { get; set; }
+
+        public override bool CanAddRules
+        {
+            get { return true; }
+        }
     }
 
     public class UnionRule : GroupRule
@@ -81,15 +158,25 @@ namespace NBTExplorer.Model.Search
     {
         public long Value { get; set; }
 
+        public NumericOperator Operator { get; set; }
+
         public override string NodeDisplay
         {
-            get { return string.Format("{0}: {1}", Name, Value); }
+            get { return string.Format("{0} {1} {2}", Name, NumericOpStrings[Operator], Operator != NumericOperator.Any ? Value.ToString() : ""); }
         }
 
         public override bool Matches (TagCompoundDataNode container, List<TagDataNode> matchedNodes)
         {
+            TagDataNode childNode = GetChild(container, Name);
             T data = LookupTag<T>(container, Name);
-            return (data != null && data.ToTagLong() == Value);
+
+            if (data != null && data.ToTagLong() == Value) {
+                if (!matchedNodes.Contains(childNode))
+                    matchedNodes.Add(childNode);
+                return true;
+            }
+
+            return false;
         }
     }
 
@@ -110,15 +197,25 @@ namespace NBTExplorer.Model.Search
     {
         public double Value { get; set; }
 
+        public NumericOperator Operator { get; set; }
+
         public override string NodeDisplay
         {
-            get { return string.Format("{0}: {1}", Name, Value); }
+            get { return string.Format("{0} {1} {2}", Name, NumericOpStrings[Operator], Operator != NumericOperator.Any ? Value.ToString() : ""); }
         }
 
         public override bool Matches (TagCompoundDataNode container, List<TagDataNode> matchedNodes)
         {
+            TagDataNode childNode = GetChild(container, Name);
             T data = LookupTag<T>(container, Name);
-            return (data != null && data.ToTagDouble() == Value);
+
+            if (data != null && data.ToTagDouble() == Value) {
+                if (!matchedNodes.Contains(childNode))
+                    matchedNodes.Add(childNode);
+                return true;
+            }
+
+            return false;
         }
     }
 
@@ -132,15 +229,25 @@ namespace NBTExplorer.Model.Search
     {
         public string Value { get; set; }
 
+        public StringOperator Operator { get; set; }
+
         public override string NodeDisplay
         {
-            get { return string.Format("{0}: {1}", Name, Value); }
+            get { return string.Format("{0} {1} {2}", Name, StringOpStrings[Operator], Operator != StringOperator.Any ? '"' + Value + '"' : ""); }
         }
 
         public override bool Matches (TagCompoundDataNode container, List<TagDataNode> matchedNodes)
         {
+            TagDataNode childNode = GetChild(container, Name);
             TagNodeString data = LookupTag<TagNodeString>(container, Name);
-            return (data != null && data.ToTagString() == Value);
+
+            if (data != null && data.ToTagString() == Value) {
+                if (!matchedNodes.Contains(childNode))
+                    matchedNodes.Add(childNode);
+                return true;
+            }
+
+            return false;
         }
     }
 
@@ -149,9 +256,11 @@ namespace NBTExplorer.Model.Search
         public string Name { get; set; }
         public string Value { get; set; }
 
+        public WildcardOperator Operator { get; set; }
+
         public override string NodeDisplay
         {
-            get { return string.Format("{0}: {1}", Name, Value); }
+            get { return string.Format("{0} {1} {2}", Name, WildcardOpStrings[Operator], Operator != WildcardOperator.Any ? Value : ""); }
         }
 
         public override bool Matches (TagCompoundDataNode container, List<TagDataNode> matchedNodes)
@@ -190,20 +299,9 @@ namespace NBTExplorer.Model.Search
             }
             catch { }
 
-            
-
             return false;
         }
 
-        private TagDataNode GetChild (TagCompoundDataNode container, string name)
-        {
-            foreach (var child in container.Nodes) {
-                TagDataNode tagChild = child as TagDataNode;
-                if (tagChild != null && tagChild.NodeName == name)
-                    return tagChild;
-            }
-
-            return null;
-        }
+        
     }
 }
