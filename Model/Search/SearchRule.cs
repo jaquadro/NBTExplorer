@@ -287,12 +287,14 @@ namespace NBTExplorer.Model.Search
                         if (double.Parse(Value) == tag.ToTagDouble()) {
                             if (!matchedNodes.Contains(childNode))
                                 matchedNodes.Add(childNode);
+                            return true;
                         }
                         break;
                     case TagType.TAG_STRING:
                         if (Value == tag.ToTagString()) {
                             if (!matchedNodes.Contains(childNode))
                                 matchedNodes.Add(childNode);
+                            return true;
                         }
                         break;
                 }

@@ -517,12 +517,14 @@
             // _buttonReplaceAll
             // 
             this._buttonReplaceAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this._buttonReplaceAll.Enabled = false;
             this._buttonReplaceAll.Location = new System.Drawing.Point(376, 415);
             this._buttonReplaceAll.Name = "_buttonReplaceAll";
             this._buttonReplaceAll.Size = new System.Drawing.Size(75, 23);
             this._buttonReplaceAll.TabIndex = 4;
             this._buttonReplaceAll.Text = "Replace All";
             this._buttonReplaceAll.UseVisualStyleBackColor = true;
+            this._buttonReplaceAll.Click += new System.EventHandler(this._buttonReplaceAll_Click);
             // 
             // _buttonCancel
             // 
@@ -533,6 +535,7 @@
             this._buttonCancel.TabIndex = 5;
             this._buttonCancel.Text = "Cancel";
             this._buttonCancel.UseVisualStyleBackColor = true;
+            this._buttonCancel.Click += new System.EventHandler(this._buttonCancel_Click);
             // 
             // FindReplace
             // 

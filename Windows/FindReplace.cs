@@ -172,9 +172,24 @@ namespace NBTExplorer.Windows
                     RootNode = _mainSearchRoot,
                     DiscoverCallback = SearchDiscoveryCallback,
                     CollapseCallback = SearchCollapseCallback,
+                    ProgressCallback = SearchProgressCallback,
                     EndCallback = SearchEndCallback,
                 };
             }
+
+            SearchNextNode();
+        }
+
+        private void _buttonReplaceAll_Click (object sender, EventArgs e)
+        {
+            _searchState = new ContainerRuleSearchStateWin(_main) {
+                RuleTags = _findController.Root,
+                RootNode = _mainSearchRoot,
+                DiscoverCallback = SearchDiscoveryReplaceAllCallback,
+                CollapseCallback = SearchCollapseCallback,
+                EndCallback = SearchEndCallback,
+                TerminateOnDiscover = false,
+            };
 
             SearchNextNode();
         }
@@ -212,6 +227,22 @@ namespace NBTExplorer.Windows
             _currentFindNode = node;
         }
 
+        private void SearchDiscoveryReplaceAllCallback (DataNode node)
+        {
+            _mainController.SelectNode(node);
+            _mainController.ExpandSelectedNode();
+
+            _currentFindNode = node;
+
+            ReplaceCurrent();
+        }
+
+        private void SearchProgressCallback (DataNode node)
+        {
+            if (node is TagCompoundDataNode && !string.IsNullOrEmpty(node.NodeName) && node.NodeName != _searchForm.SearchPathLabel)
+                _searchForm.SearchPathLabel = node.NodeName;
+        }
+
         private void SearchCollapseCallback (DataNode node)
         {
             _mainController.CollapseBelow(node);
@@ -230,6 +261,11 @@ namespace NBTExplorer.Windows
         private DataNode _currentFindNode;
 
         private void _buttonReplace_Click (object sender, EventArgs e)
+        {
+            ReplaceCurrent();
+        }
+
+        private void ReplaceCurrent ()
         {
             TagCompoundDataNode node = _currentFindNode as TagCompoundDataNode;
             if (node == null)
@@ -253,6 +289,11 @@ namespace NBTExplorer.Windows
             _mainController.RefreshTreeNode(node);
         }
 
+        private void _buttonCancel_Click (object sender, EventArgs e)
+        {
+            Close();
+        }
+
         private void _tbFindEdit_Click (object sender, EventArgs e)
         {
             //_findController.EditSelection();
@@ -262,8 +303,6 @@ namespace NBTExplorer.Windows
         {
             _replaceController.EditSelection();
         }
-
-        
     }
 
     public abstract class ContainerRuleSearchState : ISearchState
@@ -272,11 +311,17 @@ namespace NBTExplorer.Windows
 
         public DataNode RootNode { get; set; }
         public IEnumerator<DataNode> State { get; set; }
+        public bool TerminateOnDiscover { get; set; }
 
         public abstract void InvokeDiscoverCallback (DataNode node);
         public abstract void InvokeProgressCallback (DataNode node);
         public abstract void InvokeCollapseCallback (DataNode node);
         public abstract void InvokeEndCallback (DataNode node);
+
+        protected ContainerRuleSearchState ()
+        {
+            TerminateOnDiscover = true;
+        }
 
         public bool TestNode (DataNode node)
         {

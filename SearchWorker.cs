@@ -9,6 +9,7 @@ namespace NBTExplorer
         DataNode RootNode { get; set; }
 
         IEnumerator<DataNode> State { get; set; }
+        bool TerminateOnDiscover { get; set; }
 
         void InvokeDiscoverCallback (DataNode node);
         void InvokeProgressCallback (DataNode node);
@@ -25,11 +26,17 @@ namespace NBTExplorer
 
         public DataNode RootNode { get; set; }
         public IEnumerator<DataNode> State { get; set; }
+        public bool TerminateOnDiscover { get; set; }
 
         public abstract void InvokeDiscoverCallback (DataNode node);
         public abstract void InvokeProgressCallback (DataNode node);
         public abstract void InvokeCollapseCallback (DataNode node);
         public abstract void InvokeEndCallback (DataNode node);
+
+        protected NameValueSearchState ()
+        {
+            TerminateOnDiscover = true;
+        }
 
         public bool TestNode (DataNode node)
         {
@@ -101,9 +108,12 @@ namespace NBTExplorer
 
             TagDataNode tagNode = node as TagDataNode;
             if (tagNode != null) {
+                InvokeProgressCallback(node);
+
                 if (_state.TestNode(tagNode)) {
                     InvokeDiscoverCallback(node);
-                    yield return node;
+                    if (_state.TerminateOnDiscover)
+                        yield return node;
                 }
 
                 /*bool mName = _state.SearchName == null;
@@ -137,6 +147,11 @@ namespace NBTExplorer
                     InvokeCollapseCallback(node);
                 }
             }
+        }
+
+        private void InvokeProgressCallback (DataNode node)
+        {
+            _state.InvokeProgressCallback(node);
         }
 
         private void InvokeDiscoverCallback (DataNode node)

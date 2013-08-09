@@ -28,24 +28,35 @@
         private void InitializeComponent ()
         {
             this._buttonCancel = new System.Windows.Forms.Button();
+            this._searchPathLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // _buttonCancel
             // 
             this._buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this._buttonCancel.Location = new System.Drawing.Point(124, 57);
+            this._buttonCancel.Location = new System.Drawing.Point(167, 57);
             this._buttonCancel.Name = "_buttonCancel";
             this._buttonCancel.Size = new System.Drawing.Size(75, 23);
             this._buttonCancel.TabIndex = 0;
             this._buttonCancel.Text = "Cancel";
             this._buttonCancel.UseVisualStyleBackColor = true;
             // 
+            // _searchPathLabel
+            // 
+            this._searchPathLabel.Location = new System.Drawing.Point(12, 19);
+            this._searchPathLabel.Name = "_searchPathLabel";
+            this._searchPathLabel.Size = new System.Drawing.Size(385, 23);
+            this._searchPathLabel.TabIndex = 1;
+            this._searchPathLabel.Text = "...";
+            this._searchPathLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // CancelSearchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this._buttonCancel;
-            this.ClientSize = new System.Drawing.Size(322, 92);
+            this.ClientSize = new System.Drawing.Size(409, 92);
+            this.Controls.Add(this._searchPathLabel);
             this.Controls.Add(this._buttonCancel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -59,5 +70,6 @@
         #endregion
 
         private System.Windows.Forms.Button _buttonCancel;
+        private System.Windows.Forms.Label _searchPathLabel;
     }
 }

@@ -8,5 +8,11 @@ namespace NBTExplorer.Windows
         {
             InitializeComponent();
         }
+
+        public string SearchPathLabel
+        {
+            get { return _searchPathLabel.Text; }
+            set { _searchPathLabel.Text = value; }
+        }
     }
 }
