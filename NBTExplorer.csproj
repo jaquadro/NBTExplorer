@@ -208,6 +208,24 @@
     <Compile Include="Windows\FormHandlers.cs" />
     <Compile Include="Windows\NbtClipboardControllerWin.cs" />
     <Compile Include="Windows\SearchStateWin.cs" />
+    <Compile Include="Windows\Search\WildcardRuleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Windows\Search\WildcardRuleForm.Designer.cs">
+      <DependentUpon>WildcardRuleForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Search\StringRuleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Windows\Search\StringRuleForm.Designer.cs">
+      <DependentUpon>StringRuleForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Search\ValueRuleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Windows\Search\ValueRuleForm.Designer.cs">
+      <DependentUpon>ValueRuleForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Windows\CancelSearchForm.resx">
       <DependentUpon>CancelSearchForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -251,6 +269,15 @@
     </Compile>
     <EmbeddedResource Include="Vendor\Be.Windows.Forms.HexBox\HexBox.resx">
       <DependentUpon>HexBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows\Search\WildcardRuleForm.resx">
+      <DependentUpon>WildcardRuleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows\Search\StringRuleForm.resx">
+      <DependentUpon>StringRuleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows\Search\ValueRuleForm.resx">
+      <DependentUpon>ValueRuleForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config">
       <SubType>Designer</SubType>

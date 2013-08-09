@@ -34,7 +34,7 @@ namespace NBTExplorer.Model.Search
 
     public abstract class SearchRule
     {
-        protected static readonly Dictionary<NumericOperator, string> NumericOpStrings = new Dictionary<NumericOperator, string>() {
+        public static readonly Dictionary<NumericOperator, string> NumericOpStrings = new Dictionary<NumericOperator, string>() {
             { NumericOperator.Equals, "=" },
             { NumericOperator.NotEquals, "!=" },
             { NumericOperator.GreaterThan, ">" },
@@ -42,7 +42,7 @@ namespace NBTExplorer.Model.Search
             { NumericOperator.Any, "ANY" },
         };
 
-        protected static readonly Dictionary<StringOperator, string> StringOpStrings = new Dictionary<StringOperator, string>() {
+        public static readonly Dictionary<StringOperator, string> StringOpStrings = new Dictionary<StringOperator, string>() {
             { StringOperator.Equals, "=" },
             { StringOperator.NotEquals, "!=" },
             { StringOperator.Contains, "Contains" },
@@ -52,7 +52,7 @@ namespace NBTExplorer.Model.Search
             { StringOperator.Any, "ANY" },
         };
 
-        protected static readonly Dictionary<WildcardOperator, string> WildcardOpStrings = new Dictionary<WildcardOperator, string>() {
+        public static readonly Dictionary<WildcardOperator, string> WildcardOpStrings = new Dictionary<WildcardOperator, string>() {
             { WildcardOperator.Equals, "=" },
             { WildcardOperator.NotEquals, "!=" },
             { WildcardOperator.Any, "ANY" },
@@ -189,7 +189,7 @@ namespace NBTExplorer.Model.Search
     public class IntTagRule : IntegralTagRule<TagNodeInt>
     { }
 
-    public class LongTagRule : IntegralTagRule<TagNodeInt>
+    public class LongTagRule : IntegralTagRule<TagNodeLong>
     { }
 
     public abstract class FloatTagRule<T> : TagRule

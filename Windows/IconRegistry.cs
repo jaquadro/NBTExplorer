@@ -22,6 +22,11 @@ namespace NBTExplorer.Windows
                 return DefaultIcon;
         }
 
+        public int Lookup<T> ()
+        {
+            return Lookup(typeof(T));
+        }
+
         public void Register (Type type, int iconIndex)
         {
             _iconRegistry[type] = iconIndex;

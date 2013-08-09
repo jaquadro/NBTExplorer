@@ -5,6 +5,8 @@ using System.Windows.Forms;
 using NBTExplorer.Windows;
 using NBTExplorer.Model.Search;
 using Substrate.Nbt;
+using NBTExplorer.Windows.Search;
+using System.Drawing;
 
 namespace NBTExplorer.Controllers
 {
@@ -99,40 +101,127 @@ namespace NBTExplorer.Controllers
             }
         }
 
+        private TreeNode CreateIntegralNode<T, K> (string typeName)
+            where K : TagNode
+            where T : IntegralTagRule<K>, new()
+        {
+            T rule = new T();
+
+            using (ValueRuleForm form = new ValueRuleForm(SearchRule.NumericOpStrings) {
+                Text = "Edit " + typeName + " Tag Rule",
+            }) {
+                if (form.ShowDialog() == DialogResult.OK) {
+                    rule.Name = form.TagName;
+                    rule.Value = form.TagValueAsLong;
+                    rule.Operator = form.Operator;
+                }
+                else
+                    return null;
+            }
+
+            TreeNode node = CreateNode(rule);
+            node.Text = rule.NodeDisplay;
+
+            return node;
+        }
+
+        private TreeNode CreateFloatNode<T, K> (string typeName)
+            where K : TagNode
+            where T : FloatTagRule<K>, new()
+        {
+            T rule = new T();
+
+            using (ValueRuleForm form = new ValueRuleForm(SearchRule.NumericOpStrings) {
+                Text = "Edit " + typeName + " Tag Rule",
+            }) {
+                if (form.ShowDialog() == DialogResult.OK) {
+                    rule.Name = form.TagName;
+                    rule.Value = form.TagValueAsDouble;
+                    rule.Operator = form.Operator;
+                }
+                else
+                    return null;
+            }
+
+            TreeNode node = CreateNode(rule);
+            node.Text = rule.NodeDisplay;
+
+            return node;
+        }
+
+        private TreeNode CreateStringNode (string typeName)
+        {
+            StringTagRule rule = new StringTagRule();
+
+            using (StringRuleForm form = new StringRuleForm(SearchRule.StringOpStrings) {
+                Text = "Edit " + typeName + " Tag Rule",
+            }) {
+                if (form.ShowDialog() == DialogResult.OK) {
+                    rule.Name = form.TagName;
+                    rule.Value = form.TagValue;
+                    rule.Operator = form.Operator;
+                }
+                else
+                    return null;
+            }
+
+            TreeNode node = CreateNode(rule);
+            node.Text = rule.NodeDisplay;
+
+            return node;
+        }
+
+        private TreeNode CreateWildcardNode (string typeName)
+        {
+            WildcardRule rule = new WildcardRule();
+
+            using (WildcardRuleForm form = new WildcardRuleForm(SearchRule.WildcardOpStrings) {
+                Text = "Edit " + typeName + " Rule",
+            }) {
+                if (form.ShowDialog() == DialogResult.OK) {
+                    rule.Name = form.TagName;
+                    rule.Value = form.TagValue;
+                    rule.Operator = form.Operator;
+                }
+                else
+                    return null;
+            }
+
+            TreeNode node = CreateNode(rule);
+            node.Text = rule.NodeDisplay;
+
+            return node;
+        }
+
         public void CreateNode (TreeNode node, TagType type)
         {
             if (node == null || !(node.Tag is GroupRule))
                 return;
 
             GroupRule dataNode = node.Tag as GroupRule;
-            //if (!dataNode.CanCreateTag(type))
-            //    return;
-
             TreeNode newNode = null;
 
             switch (type) {
                 case TagType.TAG_BYTE:
-                    newNode = CreateNode(new ByteTagRule());
-                    (newNode.Tag as ByteTagRule).Name = "raining";
-                    newNode.Text = (newNode.Tag as SearchRule).NodeDisplay;
+                    newNode = CreateIntegralNode<ByteTagRule, TagNodeByte>("Byte");
                     break;
                 case TagType.TAG_SHORT:
-                    newNode = CreateNode(new ShortTagRule());
+                    newNode = CreateIntegralNode<ShortTagRule, TagNodeShort>("Short");
                     break;
                 case TagType.TAG_INT:
-                    newNode = CreateNode(new IntTagRule());
+                    newNode = CreateIntegralNode<IntTagRule, TagNodeInt>("Int");
                     break;
                 case TagType.TAG_LONG:
-                    newNode = CreateNode(new LongTagRule());
+                    newNode = CreateIntegralNode<LongTagRule, TagNodeLong>("Long");
                     break;
                 case TagType.TAG_FLOAT:
-                    newNode = CreateNode(new FloatTagRule());
+                    newNode = CreateFloatNode<FloatTagRule, TagNodeFloat>("Float");
                     break;
                 case TagType.TAG_DOUBLE:
-                    newNode = CreateNode(new DoubleTagRule());
+                    newNode = CreateFloatNode<DoubleTagRule, TagNodeDouble>("Double");
                     break;
                 case TagType.TAG_STRING:
-                    newNode = CreateNode(new StringTagRule());
+                    newNode = CreateStringNode("String");
                     break;
             }
 
@@ -157,11 +246,14 @@ namespace NBTExplorer.Controllers
 
             GroupRule dataNode = node.Tag as GroupRule;
 
-            TreeNode newNode = CreateNode(new WildcardRule());
-            node.Nodes.Add(newNode);
-            dataNode.Rules.Add(newNode.Tag as SearchRule);
+            TreeNode newNode = CreateWildcardNode("Wildcard");
 
-            node.Expand();
+            if (newNode != null) {
+                node.Nodes.Add(newNode);
+                dataNode.Rules.Add(newNode.Tag as SearchRule);
+
+                node.Expand();
+            }
         }
 
         public void CreateWildcardNode ()
