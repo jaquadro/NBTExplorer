@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NBTExplorer.Model;
+using System.Diagnostics;
 
 namespace NBTExplorer
 {
@@ -10,6 +11,8 @@ namespace NBTExplorer
 
         IEnumerator<DataNode> State { get; set; }
         bool TerminateOnDiscover { get; set; }
+
+        float ProgressRate { get; set; }
 
         void InvokeDiscoverCallback (DataNode node);
         void InvokeProgressCallback (DataNode node);
@@ -27,6 +30,7 @@ namespace NBTExplorer
         public DataNode RootNode { get; set; }
         public IEnumerator<DataNode> State { get; set; }
         public bool TerminateOnDiscover { get; set; }
+        public float ProgressRate { get; set; }
 
         public abstract void InvokeDiscoverCallback (DataNode node);
         public abstract void InvokeProgressCallback (DataNode node);
@@ -36,6 +40,7 @@ namespace NBTExplorer
         protected NameValueSearchState ()
         {
             TerminateOnDiscover = true;
+            ProgressRate = .5f;
         }
 
         public bool TestNode (DataNode node)
@@ -68,6 +73,10 @@ namespace NBTExplorer
         private bool _cancel;
         private object _lock;
 
+        private Stopwatch _progressWatch;
+        private float _progressTime;
+        private float _lastSampleTime;
+
         public SearchWorker (ISearchState state)
         {
             _state = state;
@@ -83,11 +92,16 @@ namespace NBTExplorer
 
         public void Run ()
         {
+            _progressWatch = new Stopwatch();
+            _progressWatch.Start();
+
             if (_state.State == null)
                 _state.State = FindNode(_state.RootNode).GetEnumerator();
 
             if (!_state.State.MoveNext())
                 InvokeEndCallback();
+
+            _progressWatch.Stop();
         }
 
         private IEnumerable<DataNode> FindNode (DataNode node)
@@ -108,7 +122,14 @@ namespace NBTExplorer
 
             TagDataNode tagNode = node as TagDataNode;
             if (tagNode != null) {
-                InvokeProgressCallback(node);
+                float currentSampleTime = (float)_progressWatch.Elapsed.TotalSeconds;
+                _progressTime += (currentSampleTime - _lastSampleTime);
+                _lastSampleTime = currentSampleTime;
+
+                if (_progressTime > _state.ProgressRate) {
+                    InvokeProgressCallback(node);
+                    _progressTime -= _state.ProgressRate;
+                }
 
                 if (_state.TestNode(tagNode)) {
                     InvokeDiscoverCallback(node);

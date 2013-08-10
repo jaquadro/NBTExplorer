@@ -36,6 +36,11 @@ namespace NBTExplorer.Model
             get { return !IsExpanded; }
         }
 
+        public override string NodePathName
+        {
+            get { return _x + "." + _z; }
+        }
+
         public override string NodeDisplay
         {
             get { return "Chunk [" + _x + ", " + _z + "]"; }

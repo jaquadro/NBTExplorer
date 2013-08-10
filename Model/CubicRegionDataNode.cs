@@ -41,6 +41,11 @@ namespace NBTExplorer.Model
             get { return !IsExpanded; }
         }
 
+        public override string NodePathName
+        {
+            get { return Path.GetFileName(_path); }
+        }
+
         public override string NodeDisplay
         {
             get { return Path.GetFileName(_path); }

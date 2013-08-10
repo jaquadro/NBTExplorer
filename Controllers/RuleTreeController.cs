@@ -62,12 +62,6 @@ namespace NBTExplorer.Controllers
         public string VirtualRootDisplay
         {
             get { return _rootData.NodeDisplay; }
-            /*set
-            {
-                _rootData.SetDisplayName(value);
-                if (ShowVirtualRoot && _nodeTree.Nodes.Count > 0)
-                    UpdateNodeText(_nodeTree.Nodes[0]);
-            }*/
         }
 
         public void DeleteSelection ()
@@ -80,25 +74,20 @@ namespace NBTExplorer.Controllers
             if (node == null || !(node.Tag is SearchRule))
                 return;
 
-            SearchRule dataNode = node.Tag as SearchRule;
-            //if (!dataNode.CanDeleteNode)
-            //    return;
+            TreeNode parent = node.Parent;
+            if (parent == null || !(parent.Tag is GroupRule))
+                return;
 
-            /*if (dataNode.DeleteNode()) {
-                UpdateNodeText(node.Parent);
-                node.Remove();
+            GroupRule parentData = parent.Tag as GroupRule;
+            SearchRule nodeData = node.Tag as SearchRule;
 
-                RemoveNodeFromSelection(node);
-                OnSelectionInvalidated();
-            }*/
+            parentData.Rules.Remove(nodeData);
+            parent.Nodes.Remove(node);
         }
 
         private TreeNode SelectedNode
         {
-            get
-            {
-                return _nodeTree.SelectedNode;
-            }
+            get { return _nodeTree.SelectedNode; }
         }
 
         private TreeNode CreateIntegralNode<T, K> (string typeName)
@@ -125,6 +114,26 @@ namespace NBTExplorer.Controllers
             return node;
         }
 
+        private void EditIntegralNode<T, K> (TreeNode node, T rule, string typeName)
+            where K : TagNode
+            where T : IntegralTagRule<K>
+        {
+            using (ValueRuleForm form = new ValueRuleForm(SearchRule.NumericOpStrings) {
+                Text = "Edit " + typeName + " Tag Rule",
+                TagName = rule.Name,
+                TagValue = rule.Value.ToString(),
+                Operator = rule.Operator,
+            }) {
+                if (form.ShowDialog() == DialogResult.OK) {
+                    rule.Name = form.TagName;
+                    rule.Value = form.TagValueAsLong;
+                    rule.Operator = form.Operator;
+                }
+            }
+
+            node.Text = rule.NodeDisplay;
+        }
+
         private TreeNode CreateFloatNode<T, K> (string typeName)
             where K : TagNode
             where T : FloatTagRule<K>, new()
@@ -149,6 +158,26 @@ namespace NBTExplorer.Controllers
             return node;
         }
 
+        private void EditFloatNode<T, K> (TreeNode node, T rule, string typeName)
+            where K : TagNode
+            where T : FloatTagRule<K>
+        {
+            using (ValueRuleForm form = new ValueRuleForm(SearchRule.NumericOpStrings) {
+                Text = "Edit " + typeName + " Tag Rule",
+                TagName = rule.Name,
+                TagValue = rule.Value.ToString(),
+                Operator = rule.Operator,
+            }) {
+                if (form.ShowDialog() == DialogResult.OK) {
+                    rule.Name = form.TagName;
+                    rule.Value = form.TagValueAsDouble;
+                    rule.Operator = form.Operator;
+                }
+            }
+
+            node.Text = rule.NodeDisplay;
+        }
+
         private TreeNode CreateStringNode (string typeName)
         {
             StringTagRule rule = new StringTagRule();
@@ -171,6 +200,24 @@ namespace NBTExplorer.Controllers
             return node;
         }
 
+        private void EditStringNode (TreeNode node, StringTagRule rule, string typeName)
+        {
+            using (StringRuleForm form = new StringRuleForm(SearchRule.StringOpStrings) {
+                Text = "Edit " + typeName + " Tag Rule",
+                TagName = rule.Name,
+                TagValue = rule.Value,
+                Operator = rule.Operator,
+            }) {
+                if (form.ShowDialog() == DialogResult.OK) {
+                    rule.Name = form.TagName;
+                    rule.Value = form.TagValue;
+                    rule.Operator = form.Operator;
+                }
+            }
+
+            node.Text = rule.NodeDisplay;
+        }
+
         private TreeNode CreateWildcardNode (string typeName)
         {
             WildcardRule rule = new WildcardRule();
@@ -191,6 +238,24 @@ namespace NBTExplorer.Controllers
             node.Text = rule.NodeDisplay;
 
             return node;
+        }
+
+        private void EditWildcardNode (TreeNode node, WildcardRule rule, string typeName)
+        {
+            using (WildcardRuleForm form = new WildcardRuleForm(SearchRule.WildcardOpStrings) {
+                Text = "Edit " + typeName + " Rule",
+                TagName = rule.Name,
+                TagValue = rule.Value,
+                Operator = rule.Operator,
+            }) {
+                if (form.ShowDialog() == DialogResult.OK) {
+                    rule.Name = form.TagName;
+                    rule.Value = form.TagValue;
+                    rule.Operator = form.Operator;
+                }
+            }
+
+            node.Text = rule.NodeDisplay;
         }
 
         public void CreateNode (TreeNode node, TagType type)
@@ -231,12 +296,39 @@ namespace NBTExplorer.Controllers
 
                 node.Expand();
             }
+        }
 
-            /*if (dataNode.CreateNode(type)) {
-                node.Text = dataNode.NodeDisplay;
-                RefreshChildNodes(node, dataNode);
-                OnSelectionInvalidated();
-            }*/
+        public void EditNode (TreeNode node)
+        {
+            if (node == null || !(node.Tag is SearchRule))
+                return;
+
+            SearchRule rule = node.Tag as SearchRule;
+
+            if (rule is ByteTagRule)
+                EditIntegralNode<ByteTagRule, TagNodeByte>(node, rule as ByteTagRule, "Byte");
+            else if (rule is ShortTagRule)
+                EditIntegralNode<ShortTagRule, TagNodeShort>(node, rule as ShortTagRule, "Short");
+            else if (rule is IntTagRule)
+                EditIntegralNode<IntTagRule, TagNodeInt>(node, rule as IntTagRule, "Int");
+            else if (rule is LongTagRule)
+                EditIntegralNode<LongTagRule, TagNodeLong>(node, rule as LongTagRule, "Long");
+            else if (rule is FloatTagRule)
+                EditFloatNode<FloatTagRule, TagNodeFloat>(node, rule as FloatTagRule, "Float");
+            else if (rule is DoubleTagRule)
+                EditFloatNode<DoubleTagRule, TagNodeDouble>(node, rule as DoubleTagRule, "Double");
+            else if (rule is StringTagRule)
+                EditStringNode(node, rule as StringTagRule, "String");
+            else if (rule is WildcardRule)
+                EditWildcardNode(node, rule as WildcardRule, "Wildcard");
+        }
+
+        public void EditSelection ()
+        {
+            if (_nodeTree.SelectedNode == null)
+                return;
+
+            EditNode(_nodeTree.SelectedNode);
         }
 
         public void CreateWildcardNode (TreeNode node)

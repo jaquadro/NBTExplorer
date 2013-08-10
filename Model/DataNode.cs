@@ -174,6 +174,22 @@ namespace NBTExplorer.Model
             get { return ""; }
         }
 
+        public string NodePath
+        {
+            get {
+                string name = NodePathName;
+                if (string.IsNullOrEmpty(name))
+                    name = "*";
+
+                return (Parent != null) ? Parent.NodePath + '/' + name : '/' + name;
+            }
+        }
+
+        public virtual string NodePathName
+        {
+            get { return NodeName; }
+        }
+
         public virtual string NodeDisplay
         {
             get { return ""; }

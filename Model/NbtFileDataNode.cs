@@ -70,6 +70,11 @@ namespace NBTExplorer.Model
             get { return Path.GetFileName(_path); }
         }
 
+        public override string NodePathName
+        {
+            get { return Path.GetFileName(_path); }
+        }
+
         public override string NodeDisplay
         {
             get

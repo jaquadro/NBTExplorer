@@ -171,7 +171,7 @@
             this._tbFindEdit.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbFindEdit.Name = "_tbFindEdit";
             this._tbFindEdit.Size = new System.Drawing.Size(23, 22);
-            this._tbFindEdit.Text = "toolStripButton1";
+            this._tbFindEdit.Text = "Edit Selected Rule";
             this._tbFindEdit.Click += new System.EventHandler(this._tbFindEdit_Click);
             // 
             // _tbFindDelete
@@ -181,7 +181,7 @@
             this._tbFindDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbFindDelete.Name = "_tbFindDelete";
             this._tbFindDelete.Size = new System.Drawing.Size(23, 22);
-            this._tbFindDelete.Text = "toolStripButton1";
+            this._tbFindDelete.Text = "Delete Selected Rule";
             this._tbFindDelete.Click += new System.EventHandler(this._tbFindDelete_Click);
             // 
             // toolStripSeparator1
@@ -364,7 +364,7 @@
             this._tbReplaceEdit.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbReplaceEdit.Name = "_tbReplaceEdit";
             this._tbReplaceEdit.Size = new System.Drawing.Size(23, 22);
-            this._tbReplaceEdit.Text = "toolStripButton1";
+            this._tbReplaceEdit.Text = "Edit Selected Tag";
             this._tbReplaceEdit.Click += new System.EventHandler(this._tbReplaceEdit_Click);
             // 
             // _tbReplaceDelete
@@ -374,7 +374,7 @@
             this._tbReplaceDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbReplaceDelete.Name = "_tbReplaceDelete";
             this._tbReplaceDelete.Size = new System.Drawing.Size(23, 22);
-            this._tbReplaceDelete.Text = "toolStripButton2";
+            this._tbReplaceDelete.Text = "Delete Selected Tag";
             this._tbReplaceDelete.Click += new System.EventHandler(this._tbReplaceDelete_Click);
             // 
             // toolStripSeparator2
@@ -389,7 +389,7 @@
             this._tbReplaceByte.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbReplaceByte.Name = "_tbReplaceByte";
             this._tbReplaceByte.Size = new System.Drawing.Size(23, 22);
-            this._tbReplaceByte.Text = "toolStripButton11";
+            this._tbReplaceByte.Text = "Add Byte Tag";
             this._tbReplaceByte.Click += new System.EventHandler(this._tbReplaceByte_Click);
             // 
             // _tbReplaceShort
@@ -399,7 +399,7 @@
             this._tbReplaceShort.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbReplaceShort.Name = "_tbReplaceShort";
             this._tbReplaceShort.Size = new System.Drawing.Size(23, 22);
-            this._tbReplaceShort.Text = "toolStripButton12";
+            this._tbReplaceShort.Text = "Add Short Tag";
             this._tbReplaceShort.Click += new System.EventHandler(this._tbReplaceShort_Click);
             // 
             // _tbReplaceInt
@@ -409,7 +409,7 @@
             this._tbReplaceInt.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbReplaceInt.Name = "_tbReplaceInt";
             this._tbReplaceInt.Size = new System.Drawing.Size(23, 22);
-            this._tbReplaceInt.Text = "toolStripButton13";
+            this._tbReplaceInt.Text = "Add Int Tag";
             this._tbReplaceInt.Click += new System.EventHandler(this._tbReplaceInt_Click);
             // 
             // _tbReplaceLong
@@ -419,7 +419,7 @@
             this._tbReplaceLong.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbReplaceLong.Name = "_tbReplaceLong";
             this._tbReplaceLong.Size = new System.Drawing.Size(23, 22);
-            this._tbReplaceLong.Text = "toolStripButton14";
+            this._tbReplaceLong.Text = "Add Long Tag";
             this._tbReplaceLong.Click += new System.EventHandler(this._tbReplaceLong_Click);
             // 
             // _tbReplaceFloat
@@ -429,7 +429,7 @@
             this._tbReplaceFloat.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbReplaceFloat.Name = "_tbReplaceFloat";
             this._tbReplaceFloat.Size = new System.Drawing.Size(23, 22);
-            this._tbReplaceFloat.Text = "toolStripButton15";
+            this._tbReplaceFloat.Text = "Add Float Tag";
             this._tbReplaceFloat.Click += new System.EventHandler(this._tbReplaceFloat_Click);
             // 
             // _tbReplaceDouble
@@ -439,7 +439,7 @@
             this._tbReplaceDouble.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbReplaceDouble.Name = "_tbReplaceDouble";
             this._tbReplaceDouble.Size = new System.Drawing.Size(23, 22);
-            this._tbReplaceDouble.Text = "toolStripButton16";
+            this._tbReplaceDouble.Text = "Add Double Tag";
             this._tbReplaceDouble.Click += new System.EventHandler(this._tbReplaceDouble_Click);
             // 
             // _tbReplaceByteArray
@@ -449,7 +449,7 @@
             this._tbReplaceByteArray.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbReplaceByteArray.Name = "_tbReplaceByteArray";
             this._tbReplaceByteArray.Size = new System.Drawing.Size(23, 22);
-            this._tbReplaceByteArray.Text = "toolStripButton17";
+            this._tbReplaceByteArray.Text = "Add Byte Array Tag";
             this._tbReplaceByteArray.Click += new System.EventHandler(this._tbReplaceByteArray_Click);
             // 
             // _tbReplaceIntArray
@@ -459,7 +459,7 @@
             this._tbReplaceIntArray.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbReplaceIntArray.Name = "_tbReplaceIntArray";
             this._tbReplaceIntArray.Size = new System.Drawing.Size(23, 22);
-            this._tbReplaceIntArray.Text = "toolStripButton18";
+            this._tbReplaceIntArray.Text = "Add Int Array Tag";
             this._tbReplaceIntArray.Click += new System.EventHandler(this._tbReplaceIntArray_Click);
             // 
             // _tbReplaceString
@@ -469,7 +469,7 @@
             this._tbReplaceString.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbReplaceString.Name = "_tbReplaceString";
             this._tbReplaceString.Size = new System.Drawing.Size(23, 22);
-            this._tbReplaceString.Text = "toolStripButton19";
+            this._tbReplaceString.Text = "Add String Tag";
             this._tbReplaceString.Click += new System.EventHandler(this._tbReplaceString_Click);
             // 
             // _tbReplaceList
@@ -479,7 +479,7 @@
             this._tbReplaceList.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbReplaceList.Name = "_tbReplaceList";
             this._tbReplaceList.Size = new System.Drawing.Size(23, 22);
-            this._tbReplaceList.Text = "toolStripButton20";
+            this._tbReplaceList.Text = "Add List Tag";
             this._tbReplaceList.Click += new System.EventHandler(this._tbReplaceList_Click);
             // 
             // _tbReplaceCompound
@@ -489,7 +489,7 @@
             this._tbReplaceCompound.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._tbReplaceCompound.Name = "_tbReplaceCompound";
             this._tbReplaceCompound.Size = new System.Drawing.Size(23, 22);
-            this._tbReplaceCompound.Text = "toolStripButton21";
+            this._tbReplaceCompound.Text = "Add Compound Tag";
             this._tbReplaceCompound.Click += new System.EventHandler(this._tbReplaceCompound_Click);
             // 
             // _buttonFind
@@ -549,7 +549,7 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "FindReplace";
-            this.Text = "Replace";
+            this.Text = "Find and Replace";
             this.groupBox1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

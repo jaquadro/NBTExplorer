@@ -170,13 +170,31 @@ namespace NBTExplorer.Model.Search
             TagDataNode childNode = GetChild(container, Name);
             T data = LookupTag<T>(container, Name);
 
-            if (data != null && data.ToTagLong() == Value) {
-                if (!matchedNodes.Contains(childNode))
-                    matchedNodes.Add(childNode);
-                return true;
+            if (data != null) {
+                switch (Operator) {
+                    case NumericOperator.Equals:
+                        if (data.ToTagLong() != Value)
+                            return false;
+                        break;
+                    case NumericOperator.NotEquals:
+                        if (data.ToTagLong() == Value)
+                            return false;
+                        break;
+                    case NumericOperator.GreaterThan:
+                        if (data.ToTagLong() <= Value)
+                            return false;
+                        break;
+                    case NumericOperator.LessThan:
+                        if (data.ToTagLong() >= Value)
+                            return false;
+                        break;
+                }
             }
 
-            return false;
+            if (!matchedNodes.Contains(childNode))
+                matchedNodes.Add(childNode);
+
+            return true;
         }
     }
 
@@ -209,13 +227,31 @@ namespace NBTExplorer.Model.Search
             TagDataNode childNode = GetChild(container, Name);
             T data = LookupTag<T>(container, Name);
 
-            if (data != null && data.ToTagDouble() == Value) {
-                if (!matchedNodes.Contains(childNode))
-                    matchedNodes.Add(childNode);
-                return true;
+            if (data != null) {
+                switch (Operator) {
+                    case NumericOperator.Equals:
+                        if (data.ToTagDouble() != Value)
+                            return false;
+                        break;
+                    case NumericOperator.NotEquals:
+                        if (data.ToTagDouble() == Value)
+                            return false;
+                        break;
+                    case NumericOperator.GreaterThan:
+                        if (data.ToTagDouble() <= Value)
+                            return false;
+                        break;
+                    case NumericOperator.LessThan:
+                        if (data.ToTagDouble() >= Value)
+                            return false;
+                        break;
+                }
             }
+            
+            if (!matchedNodes.Contains(childNode))
+                matchedNodes.Add(childNode);
 
-            return false;
+            return true;
         }
     }
 
@@ -241,13 +277,39 @@ namespace NBTExplorer.Model.Search
             TagDataNode childNode = GetChild(container, Name);
             TagNodeString data = LookupTag<TagNodeString>(container, Name);
 
-            if (data != null && data.ToTagString() == Value) {
-                if (!matchedNodes.Contains(childNode))
-                    matchedNodes.Add(childNode);
-                return true;
+            if (data != null) {
+                switch (Operator) {
+                    case StringOperator.Equals:
+                        if (data.ToTagString().Data != Value)
+                            return false;
+                        break;
+                    case StringOperator.NotEquals:
+                        if (data.ToTagString().Data == Value)
+                            return false;
+                        break;
+                    case StringOperator.Contains:
+                        if (!data.ToTagString().Data.Contains(Value))
+                            return false;
+                        break;
+                    case StringOperator.NotContains:
+                        if (data.ToTagString().Data.Contains(Value))
+                            return false;
+                        break;
+                    case StringOperator.StartsWith:
+                        if (!data.ToTagString().Data.StartsWith(Value))
+                            return false;
+                        break;
+                    case StringOperator.EndsWith:
+                        if (!data.ToTagString().Data.EndsWith(Value))
+                            return false;
+                        break;
+                }
             }
 
-            return false;
+            if (!matchedNodes.Contains(childNode))
+                matchedNodes.Add(childNode);
+
+            return true;
         }
     }
 
@@ -276,27 +338,51 @@ namespace NBTExplorer.Model.Search
                     case TagType.TAG_INT:
                     case TagType.TAG_LONG:
                     case TagType.TAG_SHORT:
-                        if (long.Parse(Value) == tag.ToTagLong()) {
-                            if (!matchedNodes.Contains(childNode))
-                                matchedNodes.Add(childNode);
-                            return true;
+                        switch (Operator) {
+                            case WildcardOperator.Equals:
+                                if (long.Parse(Value) != tag.ToTagLong())
+                                    return false;
+                                break;
+                            case WildcardOperator.NotEquals:
+                                if (long.Parse(Value) == tag.ToTagLong())
+                                    return false;
+                                break;
                         }
-                        break;
+
+                        if (!matchedNodes.Contains(childNode))
+                            matchedNodes.Add(childNode);
+                        return true;
                     case TagType.TAG_FLOAT:
                     case TagType.TAG_DOUBLE:
-                        if (double.Parse(Value) == tag.ToTagDouble()) {
-                            if (!matchedNodes.Contains(childNode))
-                                matchedNodes.Add(childNode);
-                            return true;
+                        switch (Operator) {
+                            case WildcardOperator.Equals:
+                                if (double.Parse(Value) != tag.ToTagDouble())
+                                    return false;
+                                break;
+                            case WildcardOperator.NotEquals:
+                                if (double.Parse(Value) == tag.ToTagDouble())
+                                    return false;
+                                break;
                         }
-                        break;
+                        
+                        if (!matchedNodes.Contains(childNode))
+                            matchedNodes.Add(childNode);
+                        return true;
                     case TagType.TAG_STRING:
-                        if (Value == tag.ToTagString()) {
-                            if (!matchedNodes.Contains(childNode))
-                                matchedNodes.Add(childNode);
-                            return true;
+                        switch (Operator) {
+                            case WildcardOperator.Equals:
+                                if (Value != tag.ToTagString().Data)
+                                    return false;
+                                break;
+                            case WildcardOperator.NotEquals:
+                                if (Value == tag.ToTagString().Data)
+                                    return false;
+                                break;
                         }
-                        break;
+
+                        if (!matchedNodes.Contains(childNode))
+                            matchedNodes.Add(childNode);
+                        return true;
                 }
             }
             catch { }

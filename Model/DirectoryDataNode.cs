@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Collections.Generic;
+using System;
 
 namespace NBTExplorer.Model
 {
@@ -18,6 +19,17 @@ namespace NBTExplorer.Model
             {
                 return NodeCapabilities.Search
                     | NodeCapabilities.Refresh;
+            }
+        }
+
+        public override string NodePathName
+        {
+            get
+            {
+                string name = Path.GetDirectoryName(_path);
+                int sepIndex = Math.Max(name.LastIndexOf('/'), name.LastIndexOf('\\'));
+
+                return (sepIndex > 0) ? name.Substring(sepIndex + 1) : name;
             }
         }
 

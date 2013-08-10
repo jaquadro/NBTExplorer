@@ -239,8 +239,10 @@ namespace NBTExplorer.Windows
 
         private void SearchProgressCallback (DataNode node)
         {
-            if (node is TagCompoundDataNode && !string.IsNullOrEmpty(node.NodeName) && node.NodeName != _searchForm.SearchPathLabel)
-                _searchForm.SearchPathLabel = node.NodeName;
+            try {
+                _searchForm.SearchPathLabel = node.NodePath;
+            }
+            catch { }
         }
 
         private void SearchCollapseCallback (DataNode node)
@@ -296,7 +298,7 @@ namespace NBTExplorer.Windows
 
         private void _tbFindEdit_Click (object sender, EventArgs e)
         {
-            //_findController.EditSelection();
+            _findController.EditSelection();
         }
 
         private void _tbReplaceEdit_Click (object sender, EventArgs e)
@@ -312,6 +314,7 @@ namespace NBTExplorer.Windows
         public DataNode RootNode { get; set; }
         public IEnumerator<DataNode> State { get; set; }
         public bool TerminateOnDiscover { get; set; }
+        public float ProgressRate { get; set; }
 
         public abstract void InvokeDiscoverCallback (DataNode node);
         public abstract void InvokeProgressCallback (DataNode node);
@@ -321,6 +324,7 @@ namespace NBTExplorer.Windows
         protected ContainerRuleSearchState ()
         {
             TerminateOnDiscover = true;
+            ProgressRate = .5f;
         }
 
         public bool TestNode (DataNode node)

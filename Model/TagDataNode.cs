@@ -194,6 +194,20 @@ namespace NBTExplorer.Model
             }
         }
 
+        public override string NodePathName
+        {
+            get
+            {
+                if (Parent is TagDataNode.Container) {
+                    TagDataNode.Container container = Parent as TagDataNode.Container;
+                    if (container.IsOrderedContainer)
+                        return container.OrderedTagContainer.GetTagIndex(Tag).ToString();
+                }
+
+                return base.NodePathName;
+            }
+        }
+
         protected string NodeDisplayPrefix
         {
             get
