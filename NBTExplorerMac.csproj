@@ -40,8 +40,13 @@
     <ConsolePause>False</ConsolePause>
     <EnableCodeSigning>False</EnableCodeSigning>
     <CreatePackage>False</CreatePackage>
-    <CodeSigningKey>Mac Developer</CodeSigningKey>
+    <CodeSigningKey>Developer ID Application: Justin Aquadro (Z8QFJNBZ68)</CodeSigningKey>
     <PackageSigningKey>3rd Party Mac Developer Installer</PackageSigningKey>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="codesign -f -s &quot;Developer ID Application: Justin Aquadro (Z8QFJNBZ68)&quot; --resource-rules ResourceRules.plist NBTExplorer.app" workingdir="${TargetDir}" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -81,6 +86,9 @@
     <None Include="Properties\Settings.settings" />
     <None Include="LICENSE.txt" />
     <None Include="Mac\Scratch.cs" />
+    <None Include="ResourceRules.plist">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Mono\MonoMac\v0.0\Mono.MonoMac.targets" />
