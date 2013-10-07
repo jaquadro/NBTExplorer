@@ -70,6 +70,7 @@
             this._buttonReplace = new System.Windows.Forms.Button();
             this._buttonReplaceAll = new System.Windows.Forms.Button();
             this._buttonCancel = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -537,11 +538,20 @@
             this._buttonCancel.UseVisualStyleBackColor = true;
             this._buttonCancel.Click += new System.EventHandler(this._buttonCancel_Click);
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(12, 420);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(358, 18);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Search Root: blahblahbnl/blf";
+            // 
             // FindReplace
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(463, 449);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this._buttonCancel);
             this.Controls.Add(this._buttonReplaceAll);
             this.Controls.Add(this._buttonReplace);
@@ -607,5 +617,6 @@
         private System.Windows.Forms.ToolStripButton _tbFindGroupOr;
         private System.Windows.Forms.ToolStripButton _tbFindEdit;
         private System.Windows.Forms.ToolStripButton _tbReplaceEdit;
+        private System.Windows.Forms.Label label1;
     }
 }

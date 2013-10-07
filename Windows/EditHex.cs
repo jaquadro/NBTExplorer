@@ -5,15 +5,277 @@ using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Drawing;
 
 namespace NBTExplorer.Windows
 {
     public partial class HexEditor : Form
     {
-        private int _bytesPerElem;
-        private byte[] _data;
-        private bool _modified;
-        DynamicByteProvider _byteProvider;
+        private abstract class EditView
+        {
+            protected EditView (StatusStrip statusBar, int bytesPerElem)
+            {
+                BytesPerElem = bytesPerElem;
+                StatusBar = statusBar;
+            }
+
+            public event EventHandler Modified;
+
+            public int BytesPerElem { get; set; }
+            public StatusStrip StatusBar { get; set; }
+
+            public abstract TabPage TabPage { get; }
+
+            public abstract void Initialize ();
+            public abstract void Activate ();
+            public abstract byte[] GetRawData ();
+            public abstract void SetRawData (byte[] data);
+
+            protected virtual void OnModified ()
+            {
+                var ev = Modified;
+                if (ev != null)
+                    ev(this, EventArgs.Empty);
+            }
+        }
+
+        private class TextView : EditView
+        {
+            private TabPage _tabPage;
+            private TextBox _textBox;
+
+            private ToolStripStatusLabel _elementLabel;
+            private ToolStripStatusLabel _spaceLabel;
+
+            private Dictionary<int, int> _elemIndex = new Dictionary<int, int>();
+
+            public TextView (StatusStrip statusBar, int bytesPerElem)
+                : base(statusBar, bytesPerElem)
+            { }
+
+            public override void Initialize ()
+            {
+                _textBox = new TextBox() {
+                    Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
+                    Font = new Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point, 0),
+                    Location = new Point(0, 0),
+                    Margin = new Padding(0),
+                    Multiline = true,
+                    ScrollBars = ScrollBars.Vertical,
+                    Size = new Size(500, 263),
+                    TabIndex = 0,
+                    MaxLength = 0,
+                };
+
+                _tabPage = new TabPage() {
+                    Location = new Point(4, 22),
+                    Padding = new Padding(3),
+                    Size = new Size(500, 263),
+                    TabIndex = 1,
+                    Text = "Text View",
+                    UseVisualStyleBackColor = true,
+                };
+
+                _tabPage.Controls.Add(_textBox);
+
+                _textBox.TextChanged += (s, e) => { OnModified(); RebuildElementIndex(); };
+                _textBox.PreviewKeyDown += (s, e) => { e.IsInputKey = true; };
+                _textBox.KeyUp += (s, e) => { UpdateElementLabel(); };
+                _textBox.MouseClick += (s, e) => { UpdateElementLabel(); };
+
+                InitializeStatusBar();
+            }
+
+            private void InitializeStatusBar ()
+            {
+                _elementLabel = new ToolStripStatusLabel() {
+                    Size = new Size(100, 17),
+                    Text = "Element 0",
+                    TextAlign = ContentAlignment.MiddleLeft,
+                };
+
+                _spaceLabel = new ToolStripStatusLabel() {
+                    Spring = true,
+                };
+            }
+
+            public override void Activate ()
+            {
+                StatusBar.Items.Clear();
+                StatusBar.Items.AddRange(new ToolStripItem[] {
+                    _elementLabel, _spaceLabel,
+                });
+            }
+
+            public override TabPage TabPage
+            {
+                get { return _tabPage; }
+            }
+
+            public override byte[] GetRawData ()
+            {
+                return HexEditor.TextToRaw(_textBox.Text, BytesPerElem);
+            }
+
+            public override void SetRawData (byte[] data)
+            {
+                _textBox.Text = HexEditor.RawToText(data, BytesPerElem);
+                RebuildElementIndex();
+            }
+
+            private void RebuildElementIndex ()
+            {
+                _elemIndex.Clear();
+
+                int element = 0;
+                String text = _textBox.Text;
+                bool lcw = true;
+
+                for (int i = 0; i < text.Length; i++) {
+                    bool w = IsWhiteSpace(text[i]);
+                    if (lcw && !w)
+                        _elemIndex[i] = element++;
+                    lcw = w;
+                }
+            }
+
+            private bool IsWhiteSpace (char c)
+            {
+                return c == ' ' || c == '\n' || c == '\r' || c == '\t';
+            }
+
+            private void UpdateElementLabel ()
+            {
+                int index = _textBox.SelectionStart;
+                int element = 0;
+
+                while (index >= 0 && !_elemIndex.TryGetValue(index, out element))
+                    index--;
+
+                _elementLabel.Text = "Element " + element;
+            }
+        }
+
+        private class HexView : EditView
+        {
+            private TabPage _tabPage;
+            private HexBox _hexBox;
+
+            private ToolStripStatusLabel _positionLabel;
+            private ToolStripStatusLabel _elementLabel;
+            private ToolStripStatusLabel _spaceLabel;
+            private ToolStripStatusLabel _insertLabel;
+
+            private DynamicByteProvider _byteProvider;
+
+            public HexView (StatusStrip statusBar, int bytesPerElem)
+                : base(statusBar, bytesPerElem)
+            { }
+
+            public override void Initialize ()
+            {
+                _byteProvider = new DynamicByteProvider(new byte[0]);
+                _byteProvider.Changed += (o, e) => { OnModified(); };
+
+                _hexBox = new HexBox() {
+                    Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
+                    Font = new Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point, 0),
+                    LineInfoForeColor = Color.Empty,
+                    LineInfoVisible = true,
+                    Location = new Point(0, 0),
+                    ShadowSelectionColor = Color.FromArgb(100, 60, 188, 255),
+                    Size = new Size(500, 263),
+                    TabIndex = 0,
+                    VScrollBarVisible = true,
+                    ByteProvider = _byteProvider,
+                };
+
+                _tabPage = new TabPage() {
+                    Location = new Point(4, 22),
+                    Padding = new Padding(3),
+                    Size = new Size(500, 263),
+                    TabIndex = 0,
+                    Text = "Hex View",
+                    UseVisualStyleBackColor = true,
+                };
+
+                _tabPage.Controls.Add(_hexBox);
+
+                _hexBox.HorizontalByteCountChanged += (s, e) => { UpdatePosition(); };
+                _hexBox.CurrentLineChanged += (s, e) => { UpdatePosition(); };
+                _hexBox.CurrentPositionInLineChanged += (s, e) => { UpdatePosition(); };
+
+                _hexBox.InsertActiveChanged += (s, e) => { _insertLabel.Text = (_hexBox.InsertActive) ? "Insert" : "Overwrite"; };
+
+                InitializeStatusBar();
+            }
+
+            private void InitializeStatusBar ()
+            {
+                _positionLabel = new ToolStripStatusLabel() {
+                    AutoSize = false,
+                    Size = new Size(100, 17),
+                    Text = "0000",
+                };
+
+                _elementLabel = new ToolStripStatusLabel() {
+                    Size = new Size(59, 17),
+                    Text = "Element 0",
+                    TextAlign = ContentAlignment.MiddleLeft,
+                };
+
+                _spaceLabel = new ToolStripStatusLabel() {
+                    Size = new Size(300, 17),
+                    Spring = true,
+                };
+
+                _insertLabel = new ToolStripStatusLabel() {
+                    Size = new Size(58, 17),
+                    Text = (_hexBox.InsertActive) ? "Insert" : "Overwrite",
+                };
+            }
+
+            public override void Activate ()
+            {
+                StatusBar.Items.Clear();
+                StatusBar.Items.AddRange(new ToolStripItem[] {
+                    _positionLabel, _elementLabel, _spaceLabel, _insertLabel,
+                });
+
+                UpdatePosition();
+            }
+
+            public override TabPage TabPage
+            {
+                get { return _tabPage; }
+            }
+
+            public override byte[] GetRawData ()
+            {
+                byte[] data = new byte[_byteProvider.Length];
+                for (int i = 0; i < data.Length; i++) {
+                    data[i] = _byteProvider.Bytes[i];
+                }
+
+                return data;
+            }
+
+            public override void SetRawData (byte[] data)
+            {
+                _byteProvider = new DynamicByteProvider(data);
+                _byteProvider.Changed += (o, e2) => { OnModified(); };
+
+                _hexBox.ByteProvider = _byteProvider;
+            }
+
+            private void UpdatePosition ()
+            {
+                long pos = (_hexBox.CurrentLine - 1) * _hexBox.HorizontalByteCount + _hexBox.CurrentPositionInLine - 1;
+
+                _positionLabel.Text = "0x" + pos.ToString("X4");
+                _elementLabel.Text = "Element " + pos / BytesPerElem;
+            }
+        }
 
         private class FixedByteProvider : DynamicByteProvider
         {
@@ -27,30 +289,60 @@ namespace NBTExplorer.Windows
             }
         }
 
+        private TabPage _previousPage;
+        private int _bytesPerElem;
+        private byte[] _data;
+        private bool _modified;
+
+        private Dictionary<TabPage, EditView> _views = new Dictionary<TabPage, EditView>();
+
         public HexEditor (string tagName, byte[] data, int bytesPerElem)
         {
             InitializeComponent();
 
+            EditView textView = new TextView(statusStrip1, bytesPerElem);
+            textView.Initialize();
+            textView.SetRawData(data);
+            textView.Modified += (s, e) => { _modified = true; };
+
+            _views.Add(textView.TabPage, textView);
+            viewTabs.TabPages.Add(textView.TabPage);
+
+            EditView hexView = null;
+
+            if (!IsMono()) {
+                hexView = new HexView(statusStrip1, bytesPerElem);
+                hexView.Initialize();
+                hexView.SetRawData(data);
+                hexView.Modified += (s, e) => { _modified = true; };
+
+                _views.Add(hexView.TabPage, hexView);
+                viewTabs.TabPages.Add(hexView.TabPage);
+            }
+
+            if (bytesPerElem > 1 || IsMono()) {
+                textView.Activate();
+                viewTabs.SelectedTab = textView.TabPage;
+            }
+            else {
+                hexView.Activate();
+                viewTabs.SelectedTab = hexView.TabPage;
+            }
+
+            viewTabs.Deselected += (o, e) => { _previousPage = e.TabPage; };
+            viewTabs.Selecting += HandleTabChanged;
+
             this.Text = "Editing: " + tagName;
 
             _bytesPerElem = bytesPerElem;
-            _curPositionLabel.Text = "0x0000";
-            _curElementLabel.Text = "Element 0";
 
             _data = new byte[data.Length];
             Array.Copy(data, _data, data.Length);
+        }
 
-            _byteProvider = new DynamicByteProvider(_data);
-            _byteProvider.Changed += (o, e) => { _modified = true; };
-
-            hexBox1.ByteProvider = _byteProvider;
-
-            hexBox1.HorizontalByteCountChanged += HexBox_HorizontalByteCountChanged;
-            hexBox1.CurrentLineChanged += HexBox_CurrentLineChanged;
-            hexBox1.CurrentPositionInLineChanged += HexBox_CurrentPositionInLineChanged;
-            hexBox1.InsertActiveChanged += HexBox_InsertActiveChanged;
-
-            hexBox1.ReadOnly = false;
+        private bool IsMono ()
+        {
+            return Type.GetType("Mono.Runtime") != null;
         }
 
         public byte[] Data
@@ -63,45 +355,27 @@ namespace NBTExplorer.Windows
             get { return _modified; }
         }
 
-        private void HexBox_HorizontalByteCountChanged (object sender, EventArgs e)
+        private void HandleTabChanged (object sender, TabControlCancelEventArgs e)
         {
-            UpdatePosition();
-        }
+            if (e.Action != TabControlAction.Selecting)
+                return;
 
-        private void HexBox_CurrentLineChanged (object sender, EventArgs e)
-        {
-            UpdatePosition();
-        }
+            if (e.TabPage == _previousPage)
+                return;
 
-        private void HexBox_CurrentPositionInLineChanged (object sender, EventArgs e)
-        {
-            UpdatePosition();
-        }
+            EditView oldView = _views[_previousPage];
+            EditView newView = _views[e.TabPage];
 
-        private void HexBox_InsertActiveChanged (object sender, EventArgs e)
-        {
-            if (hexBox1.InsertActive)
-                _insertStateLabel.Text = "Insert";
-            else
-                _insertStateLabel.Text = "Overwrite";
-        }
+            byte[] data = oldView.GetRawData();
+            newView.SetRawData(data);
 
-        private void UpdatePosition ()
-        {
-            long pos = (hexBox1.CurrentLine - 1) * hexBox1.HorizontalByteCount + hexBox1.CurrentPositionInLine - 1;
-
-            _curPositionLabel.Text = "0x" + pos.ToString("X4");
-            _curElementLabel.Text = "Element " + pos / _bytesPerElem;
+            newView.Activate();
         }
 
         private void Apply ()
         {
-            if (_data.Length != _byteProvider.Length)
-                _data = new byte[_byteProvider.Length];
-
-            for (int i = 0; i < _data.Length; i++) {
-                _data[i] = _byteProvider.Bytes[i];
-            }
+            EditView view = _views[viewTabs.SelectedTab];
+            _data = view.GetRawData();
 
             DialogResult = DialogResult.OK;
             Close();
@@ -109,29 +383,50 @@ namespace NBTExplorer.Windows
 
         private String RawToText (byte[] data)
         {
+            return RawToText(data, _bytesPerElem);
+        }
+
+        private static String RawToText (byte[] data, int bytesPerElem)
+        {
+            switch (bytesPerElem) {
+                case 1: return RawToText(data, bytesPerElem, 16);
+                case 2: return RawToText(data, bytesPerElem, 8);
+                case 4: return RawToText(data, bytesPerElem, 4);
+                case 8: return RawToText(data, bytesPerElem, 2);
+                default: return RawToText(data, bytesPerElem, 1);
+            }
+        }
+
+        private static String RawToText (byte[] data, int bytesPerElem, int elementsPerLine)
+        {
             StringBuilder builder = new StringBuilder();
 
-            for (int i = 0; i < data.Length; i += _bytesPerElem) {
-                if (data.Length - i < _bytesPerElem)
+            for (int i = 0; i < data.Length; i += bytesPerElem) {
+                if (data.Length - i < bytesPerElem)
                     break;
 
-                switch (_bytesPerElem) {
+                switch (bytesPerElem) {
                     case 1:
-                        builder.AppendLine(((sbyte)data[i]).ToString());
+                        builder.Append(((sbyte)data[i]).ToString());
                         break;
 
                     case 2:
-                        builder.AppendLine(BitConverter.ToInt16(data, i).ToString());
+                        builder.Append(BitConverter.ToInt16(data, i).ToString());
                         break;
 
                     case 4:
-                        builder.AppendLine(BitConverter.ToInt32(data, i).ToString());
+                        builder.Append(BitConverter.ToInt32(data, i).ToString());
                         break;
 
                     case 8:
-                        builder.AppendLine(BitConverter.ToInt64(data, i).ToString());
+                        builder.Append(BitConverter.ToInt64(data, i).ToString());
                         break;
                 }
+
+                if ((i / bytesPerElem) % elementsPerLine == elementsPerLine - 1)
+                    builder.AppendLine();
+                else
+                    builder.Append("  ");
             }
 
             return builder.ToString();
@@ -139,13 +434,18 @@ namespace NBTExplorer.Windows
 
         private byte[] TextToRaw (string text)
         {
+            return TextToRaw(text, _bytesPerElem);
+        }
+
+        private static byte[] TextToRaw (string text, int bytesPerElem)
+        {
             string[] items = text.Split(null as char[], StringSplitOptions.RemoveEmptyEntries);
-            byte[] data = new byte[_bytesPerElem * items.Length];
+            byte[] data = new byte[bytesPerElem * items.Length];
 
             for (int i = 0; i < items.Length; i++) {
-                int index = i * _bytesPerElem;
+                int index = i * bytesPerElem;
 
-                switch (_bytesPerElem) {
+                switch (bytesPerElem) {
                     case 1:
                         sbyte val1;
                         if (sbyte.TryParse(items[i], out val1))
@@ -188,10 +488,9 @@ namespace NBTExplorer.Windows
                     _data = new byte[fstr.Length];
                     fstr.Read(_data, 0, (int)fstr.Length);
 
-                    _byteProvider = new DynamicByteProvider(_data);
-                    _byteProvider.Changed += (o, e) => { _modified = true; };
+                    EditView view = _views[viewTabs.SelectedTab];
+                    view.SetRawData(_data);
 
-                    hexBox1.ByteProvider = _byteProvider;
                     _modified = true;
                 }
             }
@@ -210,10 +509,9 @@ namespace NBTExplorer.Windows
                     string text = System.Text.Encoding.UTF8.GetString(raw, 0, raw.Length);
                     _data = TextToRaw(text);
 
-                    _byteProvider = new DynamicByteProvider(_data);
-                    _byteProvider.Changed += (o, e) => { _modified = true; };
+                    EditView view = _views[viewTabs.SelectedTab];
+                    view.SetRawData(_data);
 
-                    hexBox1.ByteProvider = _byteProvider;
                     _modified = true;
                 }
             }
@@ -226,7 +524,9 @@ namespace NBTExplorer.Windows
         {
             try {
                 using (FileStream fstr = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None)) {
-                    byte[] data = _byteProvider.Bytes.ToArray();
+                    EditView view = _views[viewTabs.SelectedTab];
+                    byte[] data = view.GetRawData();
+
                     fstr.Write(data, 0, data.Length);
                 }
             }
@@ -239,7 +539,9 @@ namespace NBTExplorer.Windows
         {
             try {
                 using (FileStream fstr = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None)) {
-                    string text = RawToText(_byteProvider.Bytes.ToArray());
+                    EditView view = _views[viewTabs.SelectedTab];
+                    string text = RawToText(view.GetRawData());
+
                     byte[] data = System.Text.Encoding.UTF8.GetBytes(text);
                     fstr.Write(data, 0, data.Length);
                 }

@@ -16,7 +16,11 @@ namespace NBTExplorer.Model
 
         public override bool CanEditNode
         {
-            get { return !IsMono(); }
+#if WINDOWS
+            get { return true; }
+#else
+            get { return false; }
+#endif
         }
 
         public override bool EditNode ()
@@ -27,11 +31,6 @@ namespace NBTExplorer.Model
         public override string NodeDisplay
         {
             get { return NodeDisplayPrefix + Tag.Data.Length + " integers"; }
-        }
-
-        private bool IsMono ()
-        {
-            return Type.GetType("Mono.Runtime") != null;
         }
     }
 }
