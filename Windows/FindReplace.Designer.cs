@@ -70,6 +70,8 @@
             this._buttonReplace = new System.Windows.Forms.Button();
             this._buttonReplaceAll = new System.Windows.Forms.Button();
             this._buttonCancel = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this._explorerStrip = new System.Windows.Forms.ToolStrip();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -83,9 +85,9 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.panel1);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(12, 46);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(439, 180);
+            this.groupBox1.Size = new System.Drawing.Size(450, 146);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Find";
@@ -98,7 +100,7 @@
             this.panel1.Controls.Add(this.toolStrip1);
             this.panel1.Location = new System.Drawing.Point(6, 19);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(427, 155);
+            this.panel1.Size = new System.Drawing.Size(438, 155);
             this.panel1.TabIndex = 0;
             // 
             // treeView1
@@ -112,7 +114,7 @@
             this.treeView1.SelectedImageIndex = 0;
             this.treeView1.ShowPlusMinus = false;
             this.treeView1.ShowRootLines = false;
-            this.treeView1.Size = new System.Drawing.Size(427, 130);
+            this.treeView1.Size = new System.Drawing.Size(438, 130);
             this.treeView1.TabIndex = 1;
             // 
             // imageList1
@@ -160,7 +162,7 @@
             this._tbFindString});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(427, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(438, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -302,7 +304,7 @@
             this.groupBox2.Controls.Add(this.panel2);
             this.groupBox2.Location = new System.Drawing.Point(12, 198);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(439, 182);
+            this.groupBox2.Size = new System.Drawing.Size(450, 184);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Replace";
@@ -316,7 +318,7 @@
             this.panel2.Controls.Add(this.toolStrip2);
             this.panel2.Location = new System.Drawing.Point(6, 19);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(427, 157);
+            this.panel2.Size = new System.Drawing.Size(438, 159);
             this.panel2.TabIndex = 0;
             // 
             // treeView2
@@ -330,7 +332,7 @@
             this.treeView2.SelectedImageIndex = 0;
             this.treeView2.ShowPlusMinus = false;
             this.treeView2.ShowRootLines = false;
-            this.treeView2.Size = new System.Drawing.Size(427, 132);
+            this.treeView2.Size = new System.Drawing.Size(438, 134);
             this.treeView2.TabIndex = 1;
             // 
             // toolStrip2
@@ -353,7 +355,7 @@
             this._tbReplaceCompound});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(427, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(438, 25);
             this.toolStrip2.TabIndex = 0;
             this.toolStrip2.Text = "toolStrip2";
             // 
@@ -495,7 +497,7 @@
             // _buttonFind
             // 
             this._buttonFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this._buttonFind.Location = new System.Drawing.Point(295, 386);
+            this._buttonFind.Location = new System.Drawing.Point(306, 388);
             this._buttonFind.Name = "_buttonFind";
             this._buttonFind.Size = new System.Drawing.Size(75, 23);
             this._buttonFind.TabIndex = 2;
@@ -506,7 +508,7 @@
             // _buttonReplace
             // 
             this._buttonReplace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this._buttonReplace.Location = new System.Drawing.Point(376, 386);
+            this._buttonReplace.Location = new System.Drawing.Point(387, 388);
             this._buttonReplace.Name = "_buttonReplace";
             this._buttonReplace.Size = new System.Drawing.Size(75, 23);
             this._buttonReplace.TabIndex = 3;
@@ -518,7 +520,7 @@
             // 
             this._buttonReplaceAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this._buttonReplaceAll.Enabled = false;
-            this._buttonReplaceAll.Location = new System.Drawing.Point(376, 415);
+            this._buttonReplaceAll.Location = new System.Drawing.Point(387, 417);
             this._buttonReplaceAll.Name = "_buttonReplaceAll";
             this._buttonReplaceAll.Size = new System.Drawing.Size(75, 23);
             this._buttonReplaceAll.TabIndex = 4;
@@ -529,7 +531,7 @@
             // _buttonCancel
             // 
             this._buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this._buttonCancel.Location = new System.Drawing.Point(12, 386);
+            this._buttonCancel.Location = new System.Drawing.Point(12, 388);
             this._buttonCancel.Name = "_buttonCancel";
             this._buttonCancel.Size = new System.Drawing.Size(75, 23);
             this._buttonCancel.TabIndex = 5;
@@ -537,11 +539,29 @@
             this._buttonCancel.UseVisualStyleBackColor = true;
             this._buttonCancel.Click += new System.EventHandler(this._buttonCancel_Click);
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(12, 420);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(358, 18);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Search Root: blahblahbnl/blf";
+            // 
+            // _explorerStrip
+            // 
+            this._explorerStrip.Location = new System.Drawing.Point(0, 0);
+            this._explorerStrip.Name = "_explorerStrip";
+            this._explorerStrip.Size = new System.Drawing.Size(474, 25);
+            this._explorerStrip.TabIndex = 7;
+            this._explorerStrip.Text = "toolStrip3";
+            // 
             // FindReplace
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(463, 449);
+            this.ClientSize = new System.Drawing.Size(474, 451);
+            this.Controls.Add(this._explorerStrip);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this._buttonCancel);
             this.Controls.Add(this._buttonReplaceAll);
             this.Controls.Add(this._buttonReplace);
@@ -561,6 +581,7 @@
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -607,5 +628,7 @@
         private System.Windows.Forms.ToolStripButton _tbFindGroupOr;
         private System.Windows.Forms.ToolStripButton _tbFindEdit;
         private System.Windows.Forms.ToolStripButton _tbReplaceEdit;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolStrip _explorerStrip;
     }
 }

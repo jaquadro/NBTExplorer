@@ -95,6 +95,12 @@
     <Compile Include="Windows\CancelSearchForm.Designer.cs">
       <DependentUpon>CancelSearchForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Windows\ExplorerBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Windows\ExplorerBar.Designer.cs">
+      <DependentUpon>ExplorerBar.cs</DependentUpon>
+    </Compile>
     <Compile Include="Windows\FindReplace.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -226,8 +232,14 @@
     <Compile Include="Windows\Search\ValueRuleForm.Designer.cs">
       <DependentUpon>ValueRuleForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Windows\ToolStripExplorerButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <EmbeddedResource Include="Windows\CancelSearchForm.resx">
       <DependentUpon>CancelSearchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows\ExplorerBar.resx">
+      <DependentUpon>ExplorerBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\FindReplace.resx">
       <DependentUpon>FindReplace.cs</DependentUpon>

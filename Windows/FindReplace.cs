@@ -36,6 +36,8 @@ namespace NBTExplorer.Windows
 
             _replaceController = new NodeTreeController(treeView2);
             _replaceController.VirtualRootDisplay = "Replacement Tags";
+
+            _explorerStrip.Renderer = new ToolStripExplorerRenderer();
         }
 
         #region Find Toolbar Buttons
