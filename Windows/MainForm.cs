@@ -348,6 +348,8 @@ namespace NBTExplorer.Windows
             if (_searchForm.ShowDialog(this) == DialogResult.Cancel) {
                 worker.Cancel();
                 _searchState = null;
+
+                UpdateUI();
             }
 
             t.Join();
@@ -374,6 +376,9 @@ namespace NBTExplorer.Windows
                 _searchForm.DialogResult = DialogResult.OK;
                 _searchForm = null;
             }
+
+            _searchState = null;
+            UpdateUI();
 
             MessageBox.Show("End of results");
         }
