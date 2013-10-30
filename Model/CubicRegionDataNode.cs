@@ -41,6 +41,11 @@ namespace NBTExplorer.Model
             get { return !IsExpanded; }
         }
 
+        public override bool IsContainerType
+        {
+            get { return true; }
+        }
+
         public override string NodePathName
         {
             get { return Path.GetFileName(_path); }

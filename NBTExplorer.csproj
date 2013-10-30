@@ -81,6 +81,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ExplorerBarController.cs" />
     <Compile Include="Controllers\NodeTreeController.cs" />
     <Compile Include="FormRegistry.cs" />
     <Compile Include="Controllers\RuleTreeController.cs" />
@@ -94,12 +95,6 @@
     </Compile>
     <Compile Include="Windows\CancelSearchForm.Designer.cs">
       <DependentUpon>CancelSearchForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\ExplorerBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Windows\ExplorerBar.Designer.cs">
-      <DependentUpon>ExplorerBar.cs</DependentUpon>
     </Compile>
     <Compile Include="Windows\FindReplace.cs">
       <SubType>Form</SubType>
@@ -232,14 +227,9 @@
     <Compile Include="Windows\Search\ValueRuleForm.Designer.cs">
       <DependentUpon>ValueRuleForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Windows\ToolStripExplorerButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Windows\ToolStripExplorerRenderer.cs" />
     <EmbeddedResource Include="Windows\CancelSearchForm.resx">
       <DependentUpon>CancelSearchForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Windows\ExplorerBar.resx">
-      <DependentUpon>ExplorerBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\FindReplace.resx">
       <DependentUpon>FindReplace.cs</DependentUpon>
@@ -305,7 +295,6 @@
     <None Include="Resources\arrow-270.png" />
     <Content Include="Vendor\Be.Windows.Forms.HexBox\HexBox.bmp" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

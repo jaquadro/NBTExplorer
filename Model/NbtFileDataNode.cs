@@ -95,6 +95,11 @@ namespace NBTExplorer.Model
             get { return !IsExpanded; }
         }
 
+        public override bool IsContainerType
+        {
+            get { return true; }
+        }
+
         protected override void ExpandCore ()
         {
             if (_tree == null) {

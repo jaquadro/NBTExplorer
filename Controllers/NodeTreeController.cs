@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using System.Windows.Forms;
 using NBTExplorer.Model;
-using Substrate.Nbt;
-using NBTExplorer.Windows;
 using NBTExplorer.Vendor.MultiSelectTreeView;
-using System.IO;
+using NBTExplorer.Windows;
+using Substrate.Nbt;
 
 namespace NBTExplorer.Controllers
 {
@@ -52,6 +51,16 @@ namespace NBTExplorer.Controllers
         public TreeView Tree
         {
             get { return _nodeTree; }
+        }
+
+        public IconRegistry IconRegistry
+        {
+            get { return _iconRegistry; }
+        }
+
+        public ImageList IconList
+        {
+            get { return _multiTree.ImageList; }
         }
 
         public bool ShowVirtualRoot { get; set; }

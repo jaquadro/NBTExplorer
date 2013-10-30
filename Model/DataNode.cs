@@ -195,6 +195,11 @@ namespace NBTExplorer.Model
             get { return ""; }
         }
 
+        public virtual bool IsContainerType
+        {
+            get { return false; }
+        }
+
         public virtual bool HasUnexpandedChildren
         {
             get { return false; }

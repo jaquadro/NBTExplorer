@@ -22,6 +22,8 @@ namespace NBTExplorer.Windows
         private RuleTreeController _findController;
         private NodeTreeController _replaceController;
 
+        private ExplorerBarController _explorerManager;
+
         public FindReplace (MainForm main, NodeTreeController controller, DataNode searchRoot)
         {
             InitializeComponent();
@@ -38,6 +40,13 @@ namespace NBTExplorer.Windows
             _replaceController.VirtualRootDisplay = "Replacement Tags";
 
             _explorerStrip.Renderer = new ToolStripExplorerRenderer();
+            _explorerStrip.ImageList = _mainController.IconList;
+
+            _explorerManager = new ExplorerBarController(_explorerStrip, _mainController.IconRegistry, _mainController.IconList, searchRoot);
+            _explorerManager.SearchRootChanged += (s, e) => {
+                _mainSearchRoot = _explorerManager.SearchRoot;
+                Reset();
+            };
         }
 
         #region Find Toolbar Buttons
@@ -162,6 +171,12 @@ namespace NBTExplorer.Windows
         }
 
         #endregion
+
+        private void Reset ()
+        {
+            _searchForm = null;
+            _searchState = null;
+        }
 
         private CancelSearchForm _searchForm;
         private ContainerRuleSearchStateWin _searchState;

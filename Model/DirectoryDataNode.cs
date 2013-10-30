@@ -26,7 +26,9 @@ namespace NBTExplorer.Model
         {
             get
             {
-                string name = Path.GetDirectoryName(_path);
+                string path = (_path.EndsWith("/") || _path.EndsWith("\\")) ? _path : _path + '/';
+                
+                string name = Path.GetDirectoryName(path);
                 int sepIndex = Math.Max(name.LastIndexOf('/'), name.LastIndexOf('\\'));
 
                 return (sepIndex > 0) ? name.Substring(sepIndex + 1) : name;
@@ -41,6 +43,11 @@ namespace NBTExplorer.Model
         public override bool HasUnexpandedChildren
         {
             get { return !IsExpanded; }
+        }
+
+        public override bool IsContainerType
+        {
+            get { return true; }
         }
 
         protected override void ExpandCore ()

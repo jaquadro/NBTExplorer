@@ -66,6 +66,11 @@ namespace NBTExplorer.Model
                 get { return !IsExpanded && TagCount > 0; }
             }
 
+            public override bool IsContainerType
+            {
+                get { return true; }
+            }
+
             public override string NodeDisplay
             {
                 get { return NodeDisplayPrefix + TagCount + ((TagCount == 1) ? " entry" : " entries"); }

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using NBTExplorer.Windows;
+﻿using System.Windows.Forms;
 using NBTExplorer.Model.Search;
-using Substrate.Nbt;
+using NBTExplorer.Windows;
 using NBTExplorer.Windows.Search;
-using System.Drawing;
+using Substrate.Nbt;
 
 namespace NBTExplorer.Controllers
 {

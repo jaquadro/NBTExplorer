@@ -76,6 +76,11 @@ namespace NBTExplorer.Model
             }
         }
 
+        public override bool IsContainerType
+        {
+            get { return true; }
+        }
+
         public bool IsNamedContainer
         {
             get { return true; }
