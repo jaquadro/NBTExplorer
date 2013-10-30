@@ -11,6 +11,7 @@ namespace NBTExplorer
 
         IEnumerator<DataNode> State { get; set; }
         bool TerminateOnDiscover { get; set; }
+        bool IsTerminated { get; set; }
 
         float ProgressRate { get; set; }
 
@@ -30,6 +31,7 @@ namespace NBTExplorer
         public DataNode RootNode { get; set; }
         public IEnumerator<DataNode> State { get; set; }
         public bool TerminateOnDiscover { get; set; }
+        public bool IsTerminated { get; set; }
         public float ProgressRate { get; set; }
 
         public abstract void InvokeDiscoverCallback (DataNode node);
@@ -157,10 +159,25 @@ namespace NBTExplorer
                 }*/
             }
 
-            foreach (DataNode sub in node.Nodes) {
-                foreach (DataNode s in FindNode(sub))
-                    yield return s;
+            using (node.Nodes.Snapshot()) {
+                foreach (DataNode sub in node.Nodes) {
+                    foreach (DataNode s in FindNode(sub))
+                        yield return s;
+                }
             }
+
+            /*IList<DataNode> nodeList = node.Nodes;
+            for (int i = 0; i < nodeList.Count; i++) {
+                int changeset = node.Nodes.ChangeCount;
+                foreach (DataNode s in FindNode(nodeList[i])) {
+
+                }
+            }
+
+                foreach (DataNode sub in node.Nodes) {
+                    foreach (DataNode s in FindNode(sub))
+                        yield return s;
+                }*/
 
             if (searchExpanded) {
                 if (!node.IsModified) {
@@ -187,6 +204,7 @@ namespace NBTExplorer
 
         private void InvokeEndCallback ()
         {
+            _state.IsTerminated = true;
             _state.InvokeEndCallback(null);
         }
     }

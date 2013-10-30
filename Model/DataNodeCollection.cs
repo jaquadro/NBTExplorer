@@ -5,13 +5,24 @@ namespace NBTExplorer.Model
 {
     public class DataNodeCollection : IList<DataNode>
     {
-        private List<DataNode> _nodes;
+        private SnapshotList<DataNode> _nodes;
         private DataNode _parent;
+        private int _changeCount;
 
         internal DataNodeCollection (DataNode parent)
         {
             _parent = parent;
-            _nodes = new List<DataNode>();
+            _nodes = new SnapshotList<DataNode>();
+        }
+
+        public SnapshotState<DataNode> Snapshot ()
+        {
+            return _nodes.Snapshot();
+        }
+
+        public int ChangeCount
+        {
+            get { return _changeCount; }
         }
 
         public int IndexOf (DataNode item)
@@ -29,6 +40,7 @@ namespace NBTExplorer.Model
             item.Parent = _parent;
 
             _nodes.Insert(index, item);
+            _changeCount++;
         }
 
         public void RemoveAt (int index)
@@ -40,6 +52,7 @@ namespace NBTExplorer.Model
             node.Parent = null;
 
             _nodes.RemoveAt(index);
+            _changeCount++;
         }
 
         DataNode IList<DataNode>.this[int index]
@@ -57,6 +70,7 @@ namespace NBTExplorer.Model
                 _nodes[index].Parent = null;
                 _nodes[index] = value;
                 _nodes[index].Parent = _parent;
+                _changeCount++;
             }
         }
 
@@ -70,6 +84,7 @@ namespace NBTExplorer.Model
             item.Parent = _parent;
 
             _nodes.Add(item);
+            _changeCount++;
         }
 
         public void Clear ()
@@ -78,6 +93,7 @@ namespace NBTExplorer.Model
                 node.Parent = null;
 
             _nodes.Clear();
+            _changeCount++;
         }
 
         public bool Contains (DataNode item)
@@ -104,6 +120,8 @@ namespace NBTExplorer.Model
         {
             if (_nodes.Contains(item))
                 item.Parent = null;
+
+            _changeCount++;
 
             return _nodes.Remove(item);
         }

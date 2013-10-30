@@ -519,7 +519,6 @@
             // _buttonReplaceAll
             // 
             this._buttonReplaceAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this._buttonReplaceAll.Enabled = false;
             this._buttonReplaceAll.Location = new System.Drawing.Point(387, 417);
             this._buttonReplaceAll.Name = "_buttonReplaceAll";
             this._buttonReplaceAll.Size = new System.Drawing.Size(75, 23);

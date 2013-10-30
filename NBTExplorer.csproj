@@ -87,6 +87,7 @@
     <Compile Include="Controllers\RuleTreeController.cs" />
     <Compile Include="Model\Search\SearchRule.cs" />
     <Compile Include="NbtClipboardController.cs" />
+    <Compile Include="SnapshotList.cs" />
     <Compile Include="Vendor\MultiSelectTreeView\MultiSelectTreeview.cs">
       <SubType>Component</SubType>
     </Compile>
