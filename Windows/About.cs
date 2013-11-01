@@ -11,7 +11,7 @@ namespace NBTExplorer.Windows
 
         private void linkLabel1_LinkClicked (object sender, LinkLabelLinkClickedEventArgs e)
         {
-
+            System.Diagnostics.Process.Start("https://github.com/jaquadro/NBTExplorer");
         }
     }
 }

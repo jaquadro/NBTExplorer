@@ -33,10 +33,17 @@ namespace NBTExplorer.Windows
             _mainSearchRoot = searchRoot;
 
             _findController = new RuleTreeController(treeView1);
+            treeView1.NodeMouseDoubleClick += (s, e) => {
+                _findController.EditSelection();
+            };
 
             //_findController.VirtualRootDisplay = "Find Rules";
 
             _replaceController = new NodeTreeController(treeView2);
+            treeView2.NodeMouseDoubleClick += (s, e) => {
+                _replaceController.EditSelection();
+            };
+
             _replaceController.VirtualRootDisplay = "Replacement Tags";
 
             _explorerStrip.Renderer = new ToolStripExplorerRenderer();
@@ -228,8 +235,6 @@ namespace NBTExplorer.Windows
                 worker.Cancel();
                 _searchState = null;
             }
-
-            t.Join();
         }
 
         private void SearchNextNodeContinuous ()
@@ -248,8 +253,6 @@ namespace NBTExplorer.Windows
                 worker.Cancel();
                 _searchState = null;
             }
-
-            //t.Join();
         }
 
         private void RunContinuousReplace ()
@@ -260,8 +263,6 @@ namespace NBTExplorer.Windows
             Invoke((Action)(() => {
                 Reset();
             }));
-
-            //while (worker.Continue()) ;
         }
 
         private delegate void Action ();
@@ -328,8 +329,13 @@ namespace NBTExplorer.Windows
             List<TagDataNode> matches = new List<TagDataNode>();
             _findController.Root.Matches(node, matches);
 
+            List<string> replaceNames = new List<string>();
+            foreach (DataNode rnode in _replaceController.Root.Nodes)
+                replaceNames.Add(rnode.NodeName);
+
             foreach (var replNode in matches) {
-                replNode.DeleteNode();
+                if (_deleteTagsCheckbox.Checked || replaceNames.Contains(replNode.NodeName))
+                    replNode.DeleteNode();
             }
 
             foreach (TagDataNode tag in _replaceController.Root.Nodes) {

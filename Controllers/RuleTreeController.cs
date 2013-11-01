@@ -86,6 +86,11 @@ namespace NBTExplorer.Controllers
             get { return _nodeTree.SelectedNode; }
         }
 
+        private TreeNode SelectedOrRootNode
+        {
+            get { return _nodeTree.SelectedNode ?? (_nodeTree.Nodes.Count > 0 ? _nodeTree.Nodes[0] : null); }
+        }
+
         private TreeNode CreateIntegralNode<T, K> (string typeName)
             where K : TagNode
             where T : IntegralTagRule<K>, new()
@@ -346,7 +351,7 @@ namespace NBTExplorer.Controllers
 
         public void CreateWildcardNode ()
         {
-            CreateWildcardNode(SelectedNode);
+            CreateWildcardNode(SelectedOrRootNode);
         }
 
         public void CreateUnionNode (TreeNode node)
@@ -365,7 +370,7 @@ namespace NBTExplorer.Controllers
 
         public void CreateUnionNode ()
         {
-            CreateUnionNode(SelectedNode);
+            CreateUnionNode(SelectedOrRootNode);
         }
 
         public void CreateIntersectNode (TreeNode node)
@@ -384,15 +389,15 @@ namespace NBTExplorer.Controllers
 
         public void CreateIntersectNode ()
         {
-            CreateIntersectNode(SelectedNode);
+            CreateIntersectNode(SelectedOrRootNode);
         }
 
         public void CreateNode (TagType type)
         {
-            if (_nodeTree.SelectedNode == null)
+            if (SelectedOrRootNode == null)
                 return;
 
-            CreateNode(_nodeTree.SelectedNode, type);
+            CreateNode(SelectedOrRootNode, type);
         }
 
         private TreeNode CreateNode (SearchRule rule)

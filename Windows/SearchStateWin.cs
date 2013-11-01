@@ -23,25 +23,25 @@ namespace NBTExplorer.Windows
         public override void InvokeDiscoverCallback (DataNode node)
         {
             if (_sender != null && DiscoverCallback != null)
-                _sender.BeginInvoke(DiscoverCallback, new object[] { node });
+                _sender.Invoke(DiscoverCallback, new object[] { node });
         }
 
         public override void InvokeProgressCallback (DataNode node)
         {
             if (_sender != null && ProgressCallback != null)
-                _sender.BeginInvoke(ProgressCallback, new object[] { node });
+                _sender.Invoke(ProgressCallback, new object[] { node });
         }
 
         public override void InvokeCollapseCallback (DataNode node)
         {
             if (_sender != null && CollapseCallback != null)
-                _sender.BeginInvoke(CollapseCallback, new object[] { node });
+                _sender.Invoke(CollapseCallback, new object[] { node });
         }
 
         public override void InvokeEndCallback (DataNode node)
         {
             if (_sender != null && EndCallback != null)
-                _sender.BeginInvoke(EndCallback, new object[] { node });
+                _sender.Invoke(EndCallback, new object[] { node });
         }
     }
 }

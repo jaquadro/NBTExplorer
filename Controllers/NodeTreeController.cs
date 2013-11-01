@@ -183,10 +183,13 @@ namespace NBTExplorer.Controllers
 
         public void CreateNode (TagType type)
         {
-            if (_nodeTree.SelectedNode == null)
+            if (_nodeTree.Nodes == null || _nodeTree.Nodes.Count == 0)
                 return;
 
-            CreateNode(_nodeTree.SelectedNode, type);
+            if (_nodeTree.SelectedNode == null)
+                CreateNode(_nodeTree.Nodes[0], type);
+            else
+                CreateNode(_nodeTree.SelectedNode, type);
         }
 
         public void DeleteNode (TreeNode node)

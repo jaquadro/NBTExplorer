@@ -37,14 +37,16 @@
             // 
             this.linkLabel1.AutoSize = true;
             this.linkLabel1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(0, 0);
+            this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(165, 31);
             this.linkLabel1.Location = new System.Drawing.Point(96, 12);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(245, 120);
+            this.linkLabel1.Size = new System.Drawing.Size(256, 133);
             this.linkLabel1.TabIndex = 0;
-            this.linkLabel1.Text = "NBTExplorer\r\nCopyright ©2011-2012 Justin Aquadro\r\n\r\nNBTExplorer is based on NBTEd" +
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "NBTExplorer\r\nCopyright ©2011-2013 Justin Aquadro\r\n\r\nNBTExplorer is based on NBTEd" +
     "it by copyboy\r\nFugue icon set: p.yusukekamiyamane.com\r\n\r\nEmail: jaquadro@gmail.c" +
     "om\r\nNBTExplorer Github Project Page";
+            this.linkLabel1.UseCompatibleTextRendering = true;
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // pictureBox1
