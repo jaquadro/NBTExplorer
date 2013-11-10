@@ -586,6 +586,13 @@ namespace NBTExplorer.Controllers
             }
         }
 
+        public void ScrollNode (DataNode node)
+        {
+            TreeNode treeNode = FindFrontNode(node);
+            if (treeNode != null)
+                treeNode.EnsureVisible();
+        }
+
         public void RefreshRootNodes ()
         {
             if (ShowVirtualRoot) {

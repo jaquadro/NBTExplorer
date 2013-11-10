@@ -10,7 +10,7 @@ namespace NBTExplorer.Model
         private string _path;
         private RegionFile _region;
 
-        private static Regex _namePattern = new Regex(@"^r(\.-?\d+){2}\.(mcr|mca)$");
+        private static Regex _namePattern = new Regex(@"^r\.(-?\d+)\.(-?\d+)\.(mcr|mca)$");
 
         private RegionFileDataNode (string path)
         {
@@ -26,6 +26,20 @@ namespace NBTExplorer.Model
         {
             path = Path.GetFileName(path);
             return _namePattern.IsMatch(path);
+        }
+
+        public static bool RegionCoordinates (string path, out int rx, out int rz)
+        {
+            rx = 0;
+            rz = 0;
+
+            Match match = _namePattern.Match(path);
+            if (match.Success && match.Groups.Count > 3) {
+                rx = int.Parse(match.Groups[1].Value);
+                rz = int.Parse(match.Groups[2].Value);
+            }
+
+            return match.Success;
         }
 
         protected override NodeCapabilities Capabilities

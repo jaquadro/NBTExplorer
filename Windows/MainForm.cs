@@ -846,6 +846,20 @@ namespace NBTExplorer.Windows
             _controller.MoveSelectionDown();
         }
 
+        private void findBlockToolStripMenuItem_Click (object sender, EventArgs e)
+        {
+            FindBlock form = new FindBlock(_nodeTree.SelectedNode.Tag as DataNode);
+            if (form.ShowDialog() == DialogResult.OK) {
+                if (form.Result != null) {
+                    _controller.SelectNode(form.Result);
+                    _controller.ExpandSelectedNode();
+                    _controller.ScrollNode(form.Result);
+                }
+                else
+                    MessageBox.Show("Chunk not found.");
+            }
+        }
+
         #endregion
 
         #endregion

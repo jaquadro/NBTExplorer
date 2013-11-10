@@ -21,6 +21,16 @@ namespace NBTExplorer.Model
             _container = new CompoundTagContainer(new TagNodeCompound());
         }
 
+        public int X
+        {
+            get { return _x; }
+        }
+
+        public int Z
+        {
+            get { return _z; }
+        }
+
         protected override NodeCapabilities Capabilities
         {
             get
