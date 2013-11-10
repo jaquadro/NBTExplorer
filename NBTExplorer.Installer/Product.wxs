@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" 
+           Name="NBTExplorer" 
+           Language="1033" 
+           Version="2.6.0.0" 
+           Manufacturer="Justin Aquadro" 
+           UpgradeCode="0bfb1026-21f2-4552-ad71-ca90aae10a25">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes" />
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR"/>
+    <UI>
+      <UIRef Id="WixUI_InstallDir" />
+
+      <Publish Dialog="ExitDialog"
+               Control="Finish"
+               Event="DoAction"
+               Value="CA.LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+    </UI>
+
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+
+    <WixVariable Id="WixUIBannerBmp" Value="Bitmaps/Banner.png" />
+    <WixVariable Id="WixUIDialogBmp" Value="Bitmaps/Dialog.png" />
+
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch NBTExplorer" />
+    <Property Id="WixShellExecTarget" Value="[#NBTExplorer.exe]" />
+    <CustomAction Id="CA.LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+
+    
+
+    <Icon Id="I.MainIcon" SourceFile="Icon.ico" />
+    <Property Id="ARPPRODUCTICON" Value="I.MainIcon" />
+
+		<Feature Id="F.MainApplication" Title="NBTExplorer" Level="1">
+      <ComponentGroupRef Id="CG.StartMenu" />
+			<ComponentGroupRef Id="CG.ProductComponents" />
+		</Feature>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="D.StartFolder" Name="NBTExplorer" />
+      </Directory>
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLDIR" Name="NBTExplorer" />
+			</Directory>
+		</Directory>
+
+    <ComponentGroup Id="CG.StartMenu" Directory="D.StartFolder">
+      <Component Id="C.NBTEShortcut" Guid="*">
+        <Shortcut Id="S.NBTEShortcut"
+                  Name="NBTExplorer"
+                  Target="[INSTALLDIR]NBTExplorer.exe"
+                  WorkingDirectory="INSTALLDIR" />
+        <RemoveFolder Id="RF.StartFolder" On="uninstall" />
+        <RegistryValue Id="RV.NBTEShortcut" Root="HKCU" Key="Software\NBTExplorer" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+      <Component Id="C.Uninstall" Guid="*">
+        <Shortcut Id="S.Uninstall"
+                  Name="Uninstall NBTExplorer"
+                  Target="[SystemFolder]msiexec.exe"
+                  Arguments="/x [ProductCode]"
+                  Description="Uninstalls the NBTExplorer Application" />
+        <RemoveFolder Id="RF.Uninstall" On ="uninstall" />
+        <RegistryValue Id="RV.Uninstall" Root="HKCU" Key="Software\NBTExplorer" Name="uninstall" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <ComponentGroup Id="CG.ProductComponents" Directory="INSTALLDIR">
+      <Component Id="C.NBTExplorer.exe" Guid="*">
+        <File Source="../Staging/NBTExplorer.exe" KeyPath="yes" />
+      </Component>
+      <Component Id="C.NBTExplorer.exe.config" Guid="*">
+        <File Source="../Staging/NBTExplorer.exe.config" KeyPath="yes" />
+      </Component>
+      <Component Id="C.NBTExplorer.visualelementsmanifest.xml" Guid="*">
+        <File Source="../Staging/Windows/NBTExplorer.visualelementsmanifest.xml" KeyPath="yes" />
+      </Component>
+      <Component Id="C.Substrate.dll" Guid="*">
+        <File Source="../Staging/Substrate.dll" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+	</Fragment>
+</Wix>
