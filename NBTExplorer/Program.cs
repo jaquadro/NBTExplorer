@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using NBTExplorer.Windows;
 
@@ -12,6 +16,11 @@ namespace NBTExplorer
         [STAThread]
         static void Main ()
         {
+            Application.ThreadException += AppThreadFailureHandler;
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+
+            AppDomain.CurrentDomain.UnhandledException += AppDomainFailureHandler;
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
@@ -30,6 +39,59 @@ namespace NBTExplorer
 
             MessageBox.Show("Application failed during static initialization: " + original.Message);
             Application.Exit();
+        }
+
+        private static void AppThreadFailureHandler (object sender, ThreadExceptionEventArgs e)
+        {
+            ProcessException(e.Exception);
+        }
+
+        private static void AppDomainFailureHandler (object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e.ExceptionObject is Exception)
+                ProcessException(e.ExceptionObject as Exception);
+            else if (e.IsTerminating) {
+                MessageBox.Show("NBTExplorer encountered an unknown exception object: " + e.ExceptionObject.GetType().FullName,
+                    "NBTExplorer failed to run", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+            }
+        }
+
+        private static void ProcessException (Exception ex)
+        {
+            if (IsMissingSubstrate(ex)) {
+                MessageBox.Show("NBTExplorer could not find required assembly \"Substrate.dll\".\n\nIf you obtained NBTExplorer from a ZIP distribution, make sure you've extracted NBTExplorer and all of its supporting files into another directory before running it.", 
+                    "NBTExplorer failed to run", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+                return;
+            }
+
+            StringBuilder errorText = new StringBuilder();
+            errorText.AppendLine("NBTExplorer encountered the following exception while trying to run: " + ex.GetType().Name);
+            errorText.AppendLine("Message: " + ex.Message);
+
+            while (ex.InnerException != null) {
+                ex = ex.InnerException;
+                errorText.AppendLine();
+                errorText.AppendLine("Caused by Inner Exception: " + ex.GetType().Name);
+                errorText.AppendLine("Message: " + ex.Message);
+            }
+
+            MessageBox.Show(errorText.ToString(), "NBTExplorer failed to run", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Application.Exit();
+        }
+
+        private static bool IsMissingSubstrate (Exception ex)
+        {
+            if (ex is TypeInitializationException && ex.InnerException != null)
+                ex = ex.InnerException;
+            if (ex is FileNotFoundException) {
+                FileNotFoundException fileEx = ex as FileNotFoundException;
+                if (fileEx.FileName.Contains("Substrate"))
+                    return true;
+            }
+
+            return false;
         }
     }
 }
