@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
+using NBTExplorer.Common;
+//using System.Windows.Forms;
 using NBTExplorer.Model;
 using NBTExplorer.Vendor.MultiSelectTreeView;
 using NBTExplorer.Windows;
@@ -22,18 +23,19 @@ namespace NBTExplorer.Controllers
 
     public class NodeTreeController
     {
-        private TreeView _nodeTree;
-        private MultiSelectTreeView _multiTree;
+        //private TreeView _nodeTree;
+        //private MultiSelectTreeView _multiTree;
+
+        private TreeViewController _tree;
 
         private IconRegistry _iconRegistry;
 
         //private TagCompoundDataNode _rootData;
         private RootDataNode _rootData;
 
-        public NodeTreeController (TreeView nodeTree)
+        public NodeTreeController (TreeViewController nodeTree)
         {
-            _nodeTree = nodeTree;
-            _multiTree = nodeTree as MultiSelectTreeView;
+            _tree = nodeTree;
 
             InitializeIconRegistry();
             ShowVirtualRoot = true;
@@ -48,9 +50,9 @@ namespace NBTExplorer.Controllers
             get { return _rootData; }
         }
 
-        public TreeView Tree
+        public TreeViewController Tree
         {
-            get { return _nodeTree; }
+            get { return _tree; }
         }
 
         public IconRegistry IconRegistry
@@ -58,10 +60,10 @@ namespace NBTExplorer.Controllers
             get { return _iconRegistry; }
         }
 
-        public ImageList IconList
+        /*public ImageList IconList
         {
             get { return _multiTree.ImageList; }
-        }
+        }*/
 
         public bool ShowVirtualRoot { get; set; }
 
@@ -71,8 +73,8 @@ namespace NBTExplorer.Controllers
             set
             {
                 _rootData.SetDisplayName(value);
-                if (ShowVirtualRoot && _nodeTree.Nodes.Count > 0)
-                    UpdateNodeText(_nodeTree.Nodes[0]);
+                if (ShowVirtualRoot && _tree.Nodes.Count > 0)
+                    UpdateNodeText(_tree.Nodes[0]);
             }
         }
 
@@ -105,22 +107,16 @@ namespace NBTExplorer.Controllers
         }
 
 
-        private TreeNode SelectedNode
+        private TreeNodeController SelectedNode
         {
-            get
-            {
-                if (_multiTree != null)
-                    return _multiTree.SelectedNode;
-                else
-                    return _nodeTree.SelectedNode;
-            }
+            get { return _tree.SelectedNode; }
         }
 
         #region Load / Save
 
         public void Save ()
         {
-            foreach (TreeNode node in _nodeTree.Nodes) {
+            foreach (var node in _tree.Nodes) {
                 DataNode dataNode = node.Tag as DataNode;
                 if (dataNode != null)
                     dataNode.Save();
@@ -131,14 +127,14 @@ namespace NBTExplorer.Controllers
 
         public int OpenPaths (string[] paths)
         {
-            _nodeTree.Nodes.Clear();
+            _tree.Nodes.Clear();
 
             int failCount = 0;
 
             foreach (string path in paths) {
                 if (Directory.Exists(path)) {
                     DirectoryDataNode node = new DirectoryDataNode(path);
-                    _nodeTree.Nodes.Add(CreateUnexpandedNode(node));
+                    _tree.Nodes.Add(CreateUnexpandedNode(node));
                 }
                 else if (File.Exists(path)) {
                     DataNode node = null;
@@ -148,14 +144,14 @@ namespace NBTExplorer.Controllers
                     }
 
                     if (node != null)
-                        _nodeTree.Nodes.Add(CreateUnexpandedNode(node));
+                        _tree.Nodes.Add(CreateUnexpandedNode(node));
                     else
                         failCount++;
                 }
             }
 
-            if (_nodeTree.Nodes.Count > 0) {
-                _nodeTree.Nodes[0].Expand();
+            if (_tree.Nodes.Count > 0) {
+                _tree.Nodes[0].Expand();
             }
 
             OnSelectionInvalidated();
@@ -165,7 +161,7 @@ namespace NBTExplorer.Controllers
 
         #endregion
 
-        public void CreateNode (TreeNode node, TagType type)
+        public void CreateNode (TreeNodeController node, TagType type)
         {
             if (node == null || !(node.Tag is DataNode))
                 return;
@@ -183,16 +179,16 @@ namespace NBTExplorer.Controllers
 
         public void CreateNode (TagType type)
         {
-            if (SelectedNode == null || _nodeTree.Nodes.Count == 0)
+            if (SelectedNode == null || _tree.Nodes.Count == 0)
                 return;
 
             if (SelectedNode == null)
-                CreateNode(_nodeTree.Nodes[0], type);
+                CreateNode(_tree.Nodes[0], type);
             else
                 CreateNode(SelectedNode, type);
         }
 
-        public void DeleteNode (TreeNode node)
+        public void DeleteNode (TreeNodeController node)
         {
             if (node == null || !(node.Tag is DataNode))
                 return;
@@ -210,7 +206,7 @@ namespace NBTExplorer.Controllers
             }
         }
 
-        private bool DeleteNode (IList<TreeNode> nodes)
+        private bool DeleteNode (IList<TreeNodeController> nodes)
         {
             bool? elideChildren = null;
             if (!CanOperateOnNodesEx(nodes, Predicates.DeleteNodePred, out elideChildren))
@@ -220,7 +216,7 @@ namespace NBTExplorer.Controllers
                 nodes = ElideChildren(nodes);
 
             bool selectionModified = false;
-            foreach (TreeNode node in nodes) {
+            foreach (var node in nodes) {
                 DataNode dataNode = node.Tag as DataNode;
                 if (dataNode.DeleteNode()) {
                     UpdateNodeText(node.Parent);
@@ -237,24 +233,19 @@ namespace NBTExplorer.Controllers
             return true;
         }
 
-        private bool RemoveNodeFromSelection (TreeNode node)
+        private bool RemoveNodeFromSelection (TreeNodeController node)
         {
             bool selectionModified = false;
 
-            if (_multiTree != null) {
-                if (_multiTree.SelectedNodes.Contains(node)) {
-                    _multiTree.SelectedNodes.Remove(node);
-                    selectionModified = true;
-                }
-
-                if (_multiTree.SelectedNode == node) {
-                    _multiTree.SelectedNode = null;
+            if (_tree.SelectedNodes != null) {
+                if (_tree.SelectedNodes.Contains(node)) {
+                    _tree.SelectedNodes.Remove(node);
                     selectionModified = true;
                 }
             }
 
-            if (_nodeTree.SelectedNode == node) {
-                _nodeTree.SelectedNode = null;
+            if (_tree.SelectedNode == node) {
+                _tree.SelectedNode = null;
                 selectionModified = true;
             }
 
@@ -263,13 +254,13 @@ namespace NBTExplorer.Controllers
 
         public void DeleteSelection ()
         {
-            if (_multiTree != null)
-                DeleteNode(_multiTree.SelectedNodes);
+            if (_tree.SelectedNodes != null && _tree.SelectedNodes.Count > 0)
+                DeleteNode(_tree.SelectedNodes);
             else
                 DeleteNode(SelectedNode);
         }
 
-        public void EditNode (TreeNode node)
+        public void EditNode (TreeNodeController node)
         {
             if (node == null || !(node.Tag is DataNode))
                 return;
@@ -289,7 +280,7 @@ namespace NBTExplorer.Controllers
             EditNode(SelectedNode);
         }
 
-        private void RenameNode (TreeNode node)
+        private void RenameNode (TreeNodeController node)
         {
             if (node == null || !(node.Tag is DataNode))
                 return;
@@ -309,7 +300,7 @@ namespace NBTExplorer.Controllers
             RenameNode(SelectedNode);
         }
 
-        private void RefreshNode (TreeNode node)
+        private void RefreshNode (TreeNodeController node)
         {
             if (node == null || !(node.Tag is DataNode))
                 return;
@@ -333,7 +324,7 @@ namespace NBTExplorer.Controllers
             RefreshNode(SelectedNode);
         }
 
-        private void ExpandToEdge (TreeNode node)
+        private void ExpandToEdge (TreeNodeController node)
         {
             if (node == null || !(node.Tag is DataNode))
                 return;
@@ -343,12 +334,12 @@ namespace NBTExplorer.Controllers
                 if (!node.IsExpanded)
                     node.Expand();
 
-                foreach (TreeNode child in node.Nodes)
+                foreach (var child in node.Nodes)
                     ExpandToEdge(child);
             }
         }
 
-        private void CopyNode (TreeNode node)
+        private void CopyNode (TreeNodeController node)
         {
             if (node == null || !(node.Tag is DataNode))
                 return;
@@ -360,7 +351,7 @@ namespace NBTExplorer.Controllers
             dataNode.CopyNode();
         }
 
-        private void CutNode (TreeNode node)
+        private void CutNode (TreeNodeController node)
         {
             if (node == null || !(node.Tag is DataNode))
                 return;
@@ -378,7 +369,7 @@ namespace NBTExplorer.Controllers
             }
         }
 
-        private void PasteNode (TreeNode node)
+        private void PasteNode (TreeNodeController node)
         {
             if (node == null || !(node.Tag is DataNode))
                 return;
@@ -410,7 +401,7 @@ namespace NBTExplorer.Controllers
             PasteNode(SelectedNode);
         }
 
-        public void MoveNodeUp (TreeNode node)
+        public void MoveNodeUp (TreeNodeController node)
         {
             if (node == null)
                 return;
@@ -425,7 +416,7 @@ namespace NBTExplorer.Controllers
             }
         }
 
-        public void MoveNodeDown (TreeNode node)
+        public void MoveNodeDown (TreeNodeController node)
         {
             if (node == null)
                 return;
@@ -458,7 +449,7 @@ namespace NBTExplorer.Controllers
             }
         }*/
 
-        public void ExpandNode (TreeNode node)
+        public void ExpandNode (TreeNodeController node)
         {
             if (node == null || !(node.Tag is DataNode))
                 return;
@@ -485,7 +476,7 @@ namespace NBTExplorer.Controllers
                 SelectedNode.Expand();
         }
 
-        public void CollapseNode (TreeNode node)
+        public void CollapseNode (TreeNodeController node)
         {
             if (node == null || !(node.Tag is DataNode))
                 return;
@@ -495,11 +486,11 @@ namespace NBTExplorer.Controllers
                 return;
 
             backNode.Collapse();
-            node.Name = backNode.NodeDisplay;
+            node.Text = backNode.NodeDisplay;
 
             node.Nodes.Clear();
             if (backNode.HasUnexpandedChildren)
-                node.Nodes.Add(new TreeNode());
+                node.Nodes.Add();
         }
 
         public void CollapseSelectedNode ()
@@ -507,7 +498,7 @@ namespace NBTExplorer.Controllers
             CollapseNode(SelectedNode);
         }
 
-        private TreeNode GetRootFromDataNodePath (DataNode node, out Stack<DataNode> hierarchy)
+        private TreeNodeController GetRootFromDataNodePath (DataNode node, out Stack<DataNode> hierarchy)
         {
             hierarchy = new Stack<DataNode>();
             while (node != null) {
@@ -516,8 +507,8 @@ namespace NBTExplorer.Controllers
             }
 
             DataNode rootDataNode = hierarchy.Pop();
-            TreeNode frontNode = null;
-            foreach (TreeNode child in _nodeTree.Nodes) {
+            TreeNodeController frontNode = null;
+            foreach (var child in _tree.Nodes) {
                 if (child.Tag == rootDataNode)
                     frontNode = child;
             }
@@ -525,22 +516,22 @@ namespace NBTExplorer.Controllers
             return frontNode;
         }
 
-        private TreeNode FindFrontNode (DataNode node)
+        private TreeNodeController FindFrontNode (DataNode node)
         {
             Stack<DataNode> hierarchy;
-            TreeNode frontNode = GetRootFromDataNodePath(node, out hierarchy);
+            TreeNodeController frontNode = GetRootFromDataNodePath(node, out hierarchy);
 
             if (frontNode == null)
                 return null;
 
             while (hierarchy.Count > 0) {
                 if (!frontNode.IsExpanded) {
-                    frontNode.Nodes.Add(new TreeNode());
+                    frontNode.Nodes.Add();
                     frontNode.Expand();
                 }
 
                 DataNode childData = hierarchy.Pop();
-                foreach (TreeNode childFront in frontNode.Nodes) {
+                foreach (var childFront in frontNode.Nodes) {
                     if (childFront.Tag == childData) {
                         frontNode = childFront;
                         break;
@@ -554,7 +545,7 @@ namespace NBTExplorer.Controllers
         public void CollapseBelow (DataNode node)
         {
             Stack<DataNode> hierarchy;
-            TreeNode frontNode = GetRootFromDataNodePath(node, out hierarchy);
+            TreeNodeController frontNode = GetRootFromDataNodePath(node, out hierarchy);
 
             if (frontNode == null)
                 return;
@@ -564,7 +555,7 @@ namespace NBTExplorer.Controllers
                     return;
 
                 DataNode childData = hierarchy.Pop();
-                foreach (TreeNode childFront in frontNode.Nodes) {
+                foreach (var childFront in frontNode.Nodes) {
                     if (childFront.Tag == childData) {
                         frontNode = childFront;
                         break;
@@ -578,17 +569,12 @@ namespace NBTExplorer.Controllers
 
         public void SelectNode (DataNode node)
         {
-            if (_multiTree != null) {
-                _multiTree.SelectedNode = FindFrontNode(node);
-            }
-            else {
-                _nodeTree.SelectedNode = FindFrontNode(node);
-            }
+            _tree.SelectedNode = FindFrontNode(node);
         }
 
         public void ScrollNode (DataNode node)
         {
-            TreeNode treeNode = FindFrontNode(node);
+            TreeNodeController treeNode = FindFrontNode(node);
             if (treeNode != null)
                 treeNode.EnsureVisible();
         }
@@ -596,26 +582,26 @@ namespace NBTExplorer.Controllers
         public void RefreshRootNodes ()
         {
             if (ShowVirtualRoot) {
-                _nodeTree.Nodes.Clear();
-                _nodeTree.Nodes.Add(CreateUnexpandedNode(_rootData));
+                _tree.Nodes.Clear();
+                _tree.Nodes.Add(CreateUnexpandedNode(_rootData));
                 return;
             }
 
             if (_rootData.HasUnexpandedChildren)
                 _rootData.Expand();
 
-            Dictionary<DataNode, TreeNode> currentNodes = new Dictionary<DataNode, TreeNode>();
-            foreach (TreeNode child in _nodeTree.Nodes) {
+            Dictionary<DataNode, TreeNodeController> currentNodes = new Dictionary<DataNode, TreeNodeController>();
+            foreach (var child in _tree.Nodes) {
                 if (child.Tag is DataNode)
                     currentNodes.Add(child.Tag as DataNode, child);
             }
 
-            _nodeTree.Nodes.Clear();
+            _tree.Nodes.Clear();
             foreach (DataNode child in _rootData.Nodes) {
                 if (!currentNodes.ContainsKey(child))
-                    _nodeTree.Nodes.Add(CreateUnexpandedNode(child));
+                    _tree.Nodes.Add(CreateUnexpandedNode(child));
                 else
-                    _nodeTree.Nodes.Add(currentNodes[child]);
+                    _tree.Nodes.Add(currentNodes[child]);
             }
 
             //if (_nodeTree.Nodes.Count == 0 && _rootData.HasUnexpandedChildren) {
@@ -624,10 +610,10 @@ namespace NBTExplorer.Controllers
             //}
         }
 
-        public void RefreshChildNodes (TreeNode node, DataNode dataNode)
+        public void RefreshChildNodes (TreeNodeController node, DataNode dataNode)
         {
-            Dictionary<DataNode, TreeNode> currentNodes = new Dictionary<DataNode, TreeNode>();
-            foreach (TreeNode child in node.Nodes) {
+            Dictionary<DataNode, TreeNodeController> currentNodes = new Dictionary<DataNode, TreeNodeController>();
+            foreach (var child in node.Nodes) {
                 if (child.Tag is DataNode)
                     currentNodes.Add(child.Tag as DataNode, child);
             }
@@ -640,8 +626,8 @@ namespace NBTExplorer.Controllers
                     node.Nodes.Add(currentNodes[child]);
             }
 
-            foreach (TreeNode child in node.Nodes)
-                child.ContextMenuStrip = BuildNodeContextMenu(child, child.Tag as DataNode);
+            foreach (var child in node.Nodes)
+                child.ContextMenu = BuildNodeContextMenu(child, child.Tag as DataNode);
 
             if (node.Nodes.Count == 0 && dataNode.HasUnexpandedChildren) {
                 ExpandNode(node);
@@ -651,7 +637,7 @@ namespace NBTExplorer.Controllers
 
         public void RefreshTreeNode (DataNode dataNode)
         {
-            TreeNode node = FindFrontNode(dataNode);
+            TreeNodeController node = FindFrontNode(dataNode);
             RefreshChildNodes(node, dataNode);
         }
 
@@ -679,7 +665,7 @@ namespace NBTExplorer.Controllers
             _iconRegistry.Register(typeof(RootDataNode), 16);
         }
 
-        private void UpdateNodeText (TreeNode node)
+        private void UpdateNodeText (TreeNodeController node)
         {
             if (node == null || !(node.Tag is DataNode))
                 return;
@@ -690,7 +676,7 @@ namespace NBTExplorer.Controllers
 
         public bool CheckModifications ()
         {
-            foreach (TreeNode node in _nodeTree.Nodes) {
+            foreach (var node in _tree.Nodes) {
                 DataNode dataNode = node.Tag as DataNode;
                 if (dataNode != null && dataNode.IsModified)
                     return true;
@@ -699,21 +685,21 @@ namespace NBTExplorer.Controllers
             return false;
         }
 
-        private TreeNode CreateUnexpandedNode (DataNode node)
+        private TreeNodeController CreateUnexpandedNode (DataNode node)
         {
-            TreeNode frontNode = new TreeNode(node.NodeDisplay);
-            frontNode.ImageIndex = _iconRegistry.Lookup(node.GetType());
-            frontNode.SelectedImageIndex = frontNode.ImageIndex;
+            TreeNodeController frontNode = _tree.CreateDefaultNode();
+            frontNode.Text = node.NodeDisplay;
+            frontNode.Icon = _iconRegistry.Lookup(node.GetType());
+            frontNode.SelectedIcon = frontNode.Icon;
             frontNode.Tag = node;
-            //frontNode.ContextMenuStrip = BuildNodeContextMenu(node);
 
             if (node.HasUnexpandedChildren || node.Nodes.Count > 0)
-                frontNode.Nodes.Add(new TreeNode());
+                frontNode.Nodes.Add();
 
             return frontNode;
         }
 
-        public ContextMenuStrip BuildNodeContextMenu (TreeNode frontNode, DataNode node)
+        public ContextMenuStrip BuildNodeContextMenu (TreeNodeController frontNode, DataNode node)
         {
             if (node == null)
                 return null;
@@ -756,28 +742,28 @@ namespace NBTExplorer.Controllers
 
         private void _contextCollapse_Click (object sender, EventArgs e)
         {
-            if (_multiTree.SelectedNode != null)
-                _multiTree.SelectedNode.Collapse();
+            if (_tree.SelectedNode != null)
+                _tree.SelectedNode.Collapse();
         }
 
         private void _contextExpand_Click (object sender, EventArgs e)
         {
-            if (_multiTree.SelectedNode != null)
-                _multiTree.SelectedNode.Expand();
+            if (_tree.SelectedNode != null)
+                _tree.SelectedNode.Expand();
         }
 
         private void _contextExpandChildren_Click (object sender, EventArgs e)
         {
-            if (_multiTree.SelectedNode != null) {
-                foreach (TreeNode node in _multiTree.SelectedNode.Nodes)
+            if (_tree.SelectedNode != null) {
+                foreach (var node in _tree.SelectedNode.Nodes)
                     node.Expand();
             }
         }
 
         private void _contextExpandTree_Click (object sender, EventArgs e)
         {
-            if (_multiTree.SelectedNode != null) {
-                _multiTree.SelectedNode.ExpandAll();
+            if (_tree.SelectedNode != null) {
+                _tree.SelectedNode.ExpandAll();
             }
         }
 
@@ -936,24 +922,24 @@ namespace NBTExplorer.Controllers
 
         public bool CanOperateOnSelection (DataNodePredicate pred)
         {
-            if (_multiTree != null)
-                return CanOperateOnNodes(_multiTree.SelectedNodes, pred);
+            if (_tree.SelectedNodes != null)
+                return CanOperateOnNodes(_tree.SelectedNodes, pred);
             else
-                return CanOperateOnNodes(new List<TreeNode>() { _nodeTree.SelectedNode }, pred);
+                return CanOperateOnNodes(new List<TreeNodeController>() { _tree.SelectedNode }, pred);
         }
 
-        private bool CanOperateOnNodes (IList<TreeNode> nodes, DataNodePredicate pred)
+        private bool CanOperateOnNodes (IList<TreeNodeController> nodes, DataNodePredicate pred)
         {
             bool? elideChildren = null;
             return CanOperateOnNodesEx(nodes, pred, out elideChildren);
         }
 
-        private bool CanOperateOnNodesEx (IList<TreeNode> nodes, DataNodePredicate pred, out bool? elideChildren)
+        private bool CanOperateOnNodesEx (IList<TreeNodeController> nodes, DataNodePredicate pred, out bool? elideChildren)
         {
             GroupCapabilities caps = GroupCapabilities.All;
             elideChildren = null;
 
-            foreach (TreeNode node in nodes) {
+            foreach (var node in nodes) {
                 if (node == null || !(node.Tag is DataNode))
                     return false;
 
@@ -977,12 +963,12 @@ namespace NBTExplorer.Controllers
             return true;
         }
 
-        private IList<TreeNode> ElideChildren (IList<TreeNode> nodes)
+        private IList<TreeNodeController> ElideChildren (IList<TreeNodeController> nodes)
         {
-            List<TreeNode> filtered = new List<TreeNode>();
+            List<TreeNodeController> filtered = new List<TreeNodeController>();
 
-            foreach (TreeNode node in nodes) {
-                TreeNode parent = node.Parent;
+            foreach (TreeNodeController node in nodes) {
+                TreeNodeController parent = node.Parent;
                 bool foundParent = false;
 
                 while (parent != null) {
@@ -1000,10 +986,10 @@ namespace NBTExplorer.Controllers
             return filtered;
         }
 
-        private bool CommonContainer (IEnumerable<TreeNode> nodes)
+        private bool CommonContainer (IEnumerable<TreeNodeController> nodes)
         {
             object container = null;
-            foreach (TreeNode node in nodes) {
+            foreach (var node in nodes) {
                 DataNode dataNode = node.Tag as DataNode;
                 if (container == null)
                     container = dataNode.Parent;
@@ -1015,10 +1001,10 @@ namespace NBTExplorer.Controllers
             return true;
         }
 
-        private bool CommonType (IEnumerable<TreeNode> nodes)
+        private bool CommonType (IEnumerable<TreeNodeController> nodes)
         {
             Type datatype = null;
-            foreach (TreeNode node in nodes) {
+            foreach (var node in nodes) {
                 DataNode dataNode = node.Tag as DataNode;
                 if (datatype == null)
                     datatype = dataNode.GetType();
@@ -1030,7 +1016,7 @@ namespace NBTExplorer.Controllers
             return true;
         }
 
-        private bool SufficientCapabilities (IEnumerable<TreeNode> nodes, GroupCapabilities commonCaps)
+        private bool SufficientCapabilities (IEnumerable<TreeNodeController> nodes, GroupCapabilities commonCaps)
         {
             bool commonContainer = CommonContainer(nodes);
             bool commonType = CommonType(nodes);

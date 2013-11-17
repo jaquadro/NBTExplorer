@@ -96,8 +96,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\TreeViewController.cs" />
     <Compile Include="Controllers\ExplorerBarController.cs" />
-    <Compile Include="Controllers\NodeTreeController.cs" />
+    <None Include="Controllers\NodeTreeController.cs" />
     <Compile Include="FormRegistry.cs" />
     <Compile Include="Controllers\RuleTreeController.cs" />
     <Compile Include="Model\Search\SearchRule.cs" />
