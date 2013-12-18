@@ -101,6 +101,7 @@ namespace NBTExplorer.Windows
             _menuItemFind.Click += _menuItemFind_Click;
             _menuItemFindNext.Click += _menuItemFindNext_Click;
             _menuItemAbout.Click += _menuItemAbout_Click;
+            _menuItemOpenInExplorer.Click += _menuItemOpenInExplorer_Click;
 
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1) {
@@ -113,6 +114,18 @@ namespace NBTExplorer.Windows
             }
 
             UpdateOpenMenu();
+        }
+
+        void _menuItemOpenInExplorer_Click(object sender, EventArgs e)
+        {
+            if (_nodeTree.SelectedNode.Tag is DirectoryDataNode) {
+                DirectoryDataNode ddNode = _nodeTree.SelectedNode.Tag as DirectoryDataNode;
+                try {
+                    System.Diagnostics.Process.Start(ddNode.NodeDirPath);
+                } catch (Win32Exception ex) {
+                    MessageBox.Show(ex.Message, "Can't open directory", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         private void InitializeIconRegistry ()
@@ -162,13 +175,31 @@ namespace NBTExplorer.Windows
             if (!ConfirmAction("Open new folder anyway?"))
                 return;
 
-            using (FolderBrowserDialog ofd = new FolderBrowserDialog()) {
-                if (_openFolderPath != null)
-                    ofd.SelectedPath = _openFolderPath;
+            if ((ModifierKeys & Keys.Control) > 0 && (ModifierKeys & Keys.Shift) == 0) {
+                // If the user is holding Control, use a file open dialog and open whichever directory has the selected file.
+                // But not if the user is also holding Shift, as Ctrl+Shift+O is the keyboard shortcut for this menu item.
+                using (OpenFileDialog ofd = new OpenFileDialog()) {
+                    ofd.Title = "Select any file in the directory to open";
+                    ofd.Filter = "All files (*.*)|*.*";
 
-                if (ofd.ShowDialog() == DialogResult.OK) {
-                    _openFolderPath = ofd.SelectedPath;
-                    OpenPaths(new string[] { ofd.SelectedPath });
+                    if (_openFolderPath != null)
+                        ofd.InitialDirectory = _openFolderPath;
+
+                    if (ofd.ShowDialog() == DialogResult.OK) {
+                        _openFolderPath = Path.GetDirectoryName(ofd.FileName);
+                        OpenPaths(new string[] { _openFolderPath });
+                    }
+                }
+            } else {
+                // Otherwise, use the standard folder browser dialog.
+                using (FolderBrowserDialog ofd = new FolderBrowserDialog()) {
+                    if (_openFolderPath != null)
+                        ofd.SelectedPath = _openFolderPath;
+
+                    if (ofd.ShowDialog() == DialogResult.OK) {
+                        _openFolderPath = ofd.SelectedPath;
+                        OpenPaths(new string[] { ofd.SelectedPath });
+                    }
                 }
             }
 
@@ -462,6 +493,7 @@ namespace NBTExplorer.Windows
             _menuItemFindNext.Enabled = _searchState != null;
             _menuItemMoveUp.Enabled = node.CanMoveNodeUp;
             _menuItemMoveDown.Enabled = node.CanMoveNodeDown;
+            _menuItemOpenInExplorer.Enabled = node is DirectoryDataNode;
 
             UpdateUI(_nodeTree.SelectedNodes);
         }
@@ -749,7 +781,7 @@ namespace NBTExplorer.Windows
         {
             OpenFile();
         }
-
+        
         private void _menuItemOpenFolder_Click (object sender, EventArgs e)
         {
             OpenFolder();
