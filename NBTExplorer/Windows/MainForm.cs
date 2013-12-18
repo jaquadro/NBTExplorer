@@ -162,13 +162,30 @@ namespace NBTExplorer.Windows
             if (!ConfirmAction("Open new folder anyway?"))
                 return;
 
-            using (FolderBrowserDialog ofd = new FolderBrowserDialog()) {
-                if (_openFolderPath != null)
-                    ofd.SelectedPath = _openFolderPath;
+            if ((ModifierKeys & Keys.Control) == 0) {
+                // if the user isn't holding Control, use the standard folder browser dialog
+                using (FolderBrowserDialog ofd = new FolderBrowserDialog()) {
+                    if (_openFolderPath != null)
+                        ofd.SelectedPath = _openFolderPath;
 
-                if (ofd.ShowDialog() == DialogResult.OK) {
-                    _openFolderPath = ofd.SelectedPath;
-                    OpenPaths(new string[] { ofd.SelectedPath });
+                    if (ofd.ShowDialog() == DialogResult.OK) {
+                        _openFolderPath = ofd.SelectedPath;
+                        OpenPaths(new string[] { ofd.SelectedPath });
+                    }
+                }
+            } else {
+                // otherwise, use a file open dialog and open whichever directory has the selected file
+                using (OpenFileDialog ofd = new OpenFileDialog()) {
+                    ofd.Title = "Select any file in the directory to open";
+                    ofd.Filter = "All files (*.*)|*.*";
+
+                    if (_openFolderPath != null)
+                        ofd.InitialDirectory = _openFolderPath;
+
+                    if (ofd.ShowDialog() == DialogResult.OK) {
+                        _openFolderPath = Path.GetDirectoryName(ofd.FileName);
+                        OpenPaths(new string[] { _openFolderPath });
+                    }
                 }
             }
 
@@ -749,7 +766,7 @@ namespace NBTExplorer.Windows
         {
             OpenFile();
         }
-
+        
         private void _menuItemOpenFolder_Click (object sender, EventArgs e)
         {
             OpenFolder();
