@@ -162,19 +162,9 @@ namespace NBTExplorer.Windows
             if (!ConfirmAction("Open new folder anyway?"))
                 return;
 
-            if ((ModifierKeys & Keys.Control) == 0) {
-                // if the user isn't holding Control, use the standard folder browser dialog
-                using (FolderBrowserDialog ofd = new FolderBrowserDialog()) {
-                    if (_openFolderPath != null)
-                        ofd.SelectedPath = _openFolderPath;
-
-                    if (ofd.ShowDialog() == DialogResult.OK) {
-                        _openFolderPath = ofd.SelectedPath;
-                        OpenPaths(new string[] { ofd.SelectedPath });
-                    }
-                }
-            } else {
-                // otherwise, use a file open dialog and open whichever directory has the selected file
+            if ((ModifierKeys & Keys.Control) > 0 && (ModifierKeys & Keys.Shift) == 0) {
+                // If the user is holding Control, use a file open dialog and open whichever directory has the selected file.
+                // But not if the user is also holding Shift, as Ctrl+Shift+O is the keyboard shortcut for this menu item.
                 using (OpenFileDialog ofd = new OpenFileDialog()) {
                     ofd.Title = "Select any file in the directory to open";
                     ofd.Filter = "All files (*.*)|*.*";
@@ -185,6 +175,17 @@ namespace NBTExplorer.Windows
                     if (ofd.ShowDialog() == DialogResult.OK) {
                         _openFolderPath = Path.GetDirectoryName(ofd.FileName);
                         OpenPaths(new string[] { _openFolderPath });
+                    }
+                }
+            } else {
+                // Otherwise, use the standard folder browser dialog.
+                using (FolderBrowserDialog ofd = new FolderBrowserDialog()) {
+                    if (_openFolderPath != null)
+                        ofd.SelectedPath = _openFolderPath;
+
+                    if (ofd.ShowDialog() == DialogResult.OK) {
+                        _openFolderPath = ofd.SelectedPath;
+                        OpenPaths(new string[] { ofd.SelectedPath });
                     }
                 }
             }
