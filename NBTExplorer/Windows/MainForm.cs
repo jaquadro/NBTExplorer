@@ -101,6 +101,7 @@ namespace NBTExplorer.Windows
             _menuItemFind.Click += _menuItemFind_Click;
             _menuItemFindNext.Click += _menuItemFindNext_Click;
             _menuItemAbout.Click += _menuItemAbout_Click;
+            _menuItemOpenInExplorer.Click += _menuItemOpenInExplorer_Click;
 
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1) {
@@ -113,6 +114,18 @@ namespace NBTExplorer.Windows
             }
 
             UpdateOpenMenu();
+        }
+
+        void _menuItemOpenInExplorer_Click(object sender, EventArgs e)
+        {
+            if (_nodeTree.SelectedNode.Tag is DirectoryDataNode) {
+                DirectoryDataNode ddNode = _nodeTree.SelectedNode.Tag as DirectoryDataNode;
+                try {
+                    System.Diagnostics.Process.Start(ddNode.NodeDirPath);
+                } catch (Win32Exception ex) {
+                    MessageBox.Show(ex.Message, "Can't open directory", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         private void InitializeIconRegistry ()
@@ -480,6 +493,7 @@ namespace NBTExplorer.Windows
             _menuItemFindNext.Enabled = _searchState != null;
             _menuItemMoveUp.Enabled = node.CanMoveNodeUp;
             _menuItemMoveDown.Enabled = node.CanMoveNodeDown;
+            _menuItemOpenInExplorer.Enabled = node is DirectoryDataNode;
 
             UpdateUI(_nodeTree.SelectedNodes);
         }
