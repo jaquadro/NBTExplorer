@@ -121,7 +121,8 @@ namespace NBTExplorer.Windows
             if (_nodeTree.SelectedNode.Tag is DirectoryDataNode) {
                 DirectoryDataNode ddNode = _nodeTree.SelectedNode.Tag as DirectoryDataNode;
                 try {
-                    System.Diagnostics.Process.Start(ddNode.NodeDirPath);
+                    string path = (!Interop.IsWindows ? "file://" : "") + ddNode.NodeDirPath;
+                    System.Diagnostics.Process.Start(path);
                 } catch (Win32Exception ex) {
                     MessageBox.Show(ex.Message, "Can't open directory", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }

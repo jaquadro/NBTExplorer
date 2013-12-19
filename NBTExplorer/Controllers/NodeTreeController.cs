@@ -729,8 +729,8 @@ namespace NBTExplorer.Controllers
                     ToolStripMenuItem itemExpandTree = new ToolStripMenuItem("Expand &Tree", null, _contextExpandTree_Click);
 
                     menu.Items.AddRange(new ToolStripItem[] {
-                    itemCollapse, new ToolStripSeparator(), itemExpandChildren, itemExpandTree,
-                });
+                        itemCollapse, new ToolStripSeparator(), itemExpandChildren, itemExpandTree,
+                    });
                 }
                 else {
                     ToolStripMenuItem itemExpand = new ToolStripMenuItem("&Expand", null, _contextExpand_Click);
@@ -749,6 +749,14 @@ namespace NBTExplorer.Controllers
 
                 menu.Items.Add(itemUp);
                 menu.Items.Add(itemDn);
+            }
+
+            if (node is DirectoryDataNode) {
+                if (menu.Items.Count > 0)
+                    menu.Items.Add(new ToolStripSeparator());
+
+                ToolStripMenuItem itemOpenExplorer = new ToolStripMenuItem("Open in E&xplorer", null, _contextOpenInExplorer_Click);
+                menu.Items.Add(itemOpenExplorer);
             }
 
             return (menu.Items.Count > 0) ? menu : null;
@@ -789,6 +797,20 @@ namespace NBTExplorer.Controllers
         private void _contextMoveDown_Click (object sender, EventArgs e)
         {
             MoveSelectionDown();
+        }
+
+        private void _contextOpenInExplorer_Click (object sender, EventArgs e)
+        {
+            if (_multiTree.SelectedNode != null && _multiTree.SelectedNode.Tag is DirectoryDataNode) {
+                DirectoryDataNode ddNode = _multiTree.SelectedNode.Tag as DirectoryDataNode;
+                try {
+                    string path = (!Interop.IsWindows ? "file://" : "") + ddNode.NodeDirPath;
+                    System.Diagnostics.Process.Start(path);
+                }
+                catch (Exception ex) {
+                    MessageBox.Show(ex.Message, "Can't open directory", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         #region Capability Checking
