@@ -22,6 +22,11 @@ namespace NBTExplorer.Model
             }
         }
 
+        public string NodeDirPath
+        {
+            get { return _path; }
+        }
+
         public override string NodePathName
         {
             get
