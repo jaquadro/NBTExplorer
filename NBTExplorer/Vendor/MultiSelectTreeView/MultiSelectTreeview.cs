@@ -11,7 +11,6 @@ namespace NBTExplorer.Vendor.MultiSelectTreeView
 {
 	public class MultiSelectTreeView : TreeView
 	{
-
 		#region Selected Node(s) Properties
 
 		private List<TreeNode> m_SelectedNodes = null;		
@@ -57,13 +56,39 @@ namespace NBTExplorer.Vendor.MultiSelectTreeView
 
 		public MultiSelectTreeView()
 		{
+            DoubleBuffered = true;
+
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
 			m_SelectedNodes = new List<TreeNode>();
 			base.SelectedNode = null;
 		}
 
+        private void UpdateExtendedStyles ()
+        {
+            if (Interop.WinInteropAvailable) {
+                int style = 0;
+
+                if (DoubleBuffered)
+                    style |= NativeInterop.TVS_EX_DOUBLEBUFFER;
+
+                if (style != 0)
+                    Interop.SendMessage(Handle, NativeInterop.TVM_SETEXTENDEDSTYLE, (IntPtr)NativeInterop.TVS_EX_DOUBLEBUFFER, (IntPtr)style);
+            }
+        }
+
 		#region Overridden Events
+
+        protected override void OnHandleCreated (EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            
+            if (Interop.WinInteropAvailable) {
+                UpdateExtendedStyles();
+                if (!Interop.IsWinXP)
+                    Interop.SendMessage(Handle, NativeInterop.TVM_SETBKCOLOR, IntPtr.Zero, (IntPtr)ColorTranslator.ToWin32(BackColor));
+            }
+        }
 
 		protected override void OnGotFocus( EventArgs e )
 		{

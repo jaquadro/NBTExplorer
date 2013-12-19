@@ -12,6 +12,7 @@
     <AssemblyName>NBTExplorer</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -24,7 +25,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -100,6 +100,7 @@
     <Compile Include="Controllers\NodeTreeController.cs" />
     <Compile Include="FormRegistry.cs" />
     <Compile Include="Controllers\RuleTreeController.cs" />
+    <Compile Include="Interop.cs" />
     <Compile Include="Model\Search\SearchRule.cs" />
     <Compile Include="NbtClipboardController.cs" />
     <Compile Include="SnapshotList.cs" />
