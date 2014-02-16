@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NBTExplorer.Model</RootNamespace>
+    <AssemblyName>NBTModel</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Substrate">
+      <HintPath>..\References\Substrate.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CompoundTagContainer.cs" />
+    <Compile Include="CubicRegionDataNode.cs" />
+    <Compile Include="CubicRegionFile.cs" />
+    <Compile Include="DataNode.cs" />
+    <Compile Include="DataNodeCollection.cs" />
+    <Compile Include="DirectoryDataNode.cs" />
+    <Compile Include="FileTypeRegistry.cs" />
+    <Compile Include="Interop\FormRegistry.cs" />
+    <Compile Include="Interop\NbtClipboardController.cs" />
+    <Compile Include="Interop\NbtClipboardData.cs" />
+    <Compile Include="ListTagContainer.cs" />
+    <Compile Include="NbtFileDataNode.cs" />
+    <Compile Include="NodeCapabilities.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegionChunkDataNode.cs" />
+    <Compile Include="RegionFileDataNode.cs" />
+    <Compile Include="Search\SearchRule.cs" />
+    <Compile Include="TagByteArrayDataNode.cs" />
+    <Compile Include="TagByteDataNode.cs" />
+    <Compile Include="TagCompoundDataNode.cs" />
+    <Compile Include="TagContainerInterface.cs" />
+    <Compile Include="TagDataNode.cs" />
+    <Compile Include="TagDoubleDataNode.cs" />
+    <Compile Include="TagFloatDataNode.cs" />
+    <Compile Include="TagIntArrayDataNode.cs" />
+    <Compile Include="TagIntDataNode.cs" />
+    <Compile Include="TagKey.cs" />
+    <Compile Include="TagListDataNode.cs" />
+    <Compile Include="TagLongDataNode.cs" />
+    <Compile Include="TagShortDataNode.cs" />
+    <Compile Include="TagStringDataNode.cs" />
+    <Compile Include="Utility\SnapshotList.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

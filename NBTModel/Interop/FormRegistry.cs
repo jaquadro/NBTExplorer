@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Substrate.Nbt;
 
-namespace NBTExplorer
+namespace NBTModel.Interop
 {
     public static class FormRegistry
     {

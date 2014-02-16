@@ -1,45 +1,31 @@
 ﻿using System.IO;
 using System.Text.RegularExpressions;
-using Substrate.Core;
 using System.Collections.Generic;
+using NBTModel.Interop;
 
 namespace NBTExplorer.Model
 {
-    public class RegionFileDataNode : DataNode
+    public class CubicRegionDataNode : DataNode
     {
         private string _path;
-        private RegionFile _region;
+        private CubicRegionFile _region;
 
-        private static Regex _namePattern = new Regex(@"^r\.(-?\d+)\.(-?\d+)\.(mcr|mca)$");
+        private static Regex _namePattern = new Regex(@"^r2(\.-?\d+){3}\.(mcr|mca)$");
 
-        private RegionFileDataNode (string path)
+        private CubicRegionDataNode (string path)
         {
             _path = path;
         }
 
-        public static RegionFileDataNode TryCreateFrom (string path)
+        public static CubicRegionDataNode TryCreateFrom (string path)
         {
-            return new RegionFileDataNode(path);
+            return new CubicRegionDataNode(path);
         }
 
         public static bool SupportedNamePattern (string path)
         {
             path = Path.GetFileName(path);
             return _namePattern.IsMatch(path);
-        }
-
-        public static bool RegionCoordinates (string path, out int rx, out int rz)
-        {
-            rx = 0;
-            rz = 0;
-
-            Match match = _namePattern.Match(path);
-            if (match.Success && match.Groups.Count > 3) {
-                rx = int.Parse(match.Groups[1].Value);
-                rz = int.Parse(match.Groups[2].Value);
-            }
-
-            return match.Success;
         }
 
         protected override NodeCapabilities Capabilities
@@ -75,7 +61,7 @@ namespace NBTExplorer.Model
         {
             try {
                 if (_region == null)
-                    _region = new RegionFile(_path);
+                    _region = new CubicRegionFile(_path);
 
                 for (int x = 0; x < 32; x++) {
                     for (int z = 0; z < 32; z++) {
@@ -87,7 +73,7 @@ namespace NBTExplorer.Model
             }
             catch {
                 if (FormRegistry.MessageBox != null)
-                    FormRegistry.MessageBox("Not a valid region file.");
+                    FormRegistry.MessageBox("Not a valid cubic region file.");
             }
         }
 

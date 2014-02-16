@@ -13,6 +13,7 @@ using NBTExplorer.Controllers;
 namespace NBTExplorer.Windows
 {
     using Predicates = NodeTreeController.Predicates;
+    using NBTModel.Interop;
 
     public partial class MainForm : Form
     {

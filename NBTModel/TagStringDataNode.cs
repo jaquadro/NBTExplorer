@@ -8,6 +8,19 @@ namespace NBTExplorer.Model
             : base(tag)
         { }
 
+        protected new TagNodeString Tag
+        {
+            get { return base.Tag as TagNodeString; }
+        }
+
+        public override bool Parse (string value)
+        {
+            Tag.Data = value;
+            IsDataModified = true;
+
+            return true;
+        }
+
         public override bool EditNode ()
         {
             return EditStringValue(Tag);

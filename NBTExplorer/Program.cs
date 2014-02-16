@@ -14,7 +14,7 @@ namespace NBTExplorer
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main ()
+        static void Main (string[] args)
         {
             Application.ThreadException += AppThreadFailureHandler;
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);

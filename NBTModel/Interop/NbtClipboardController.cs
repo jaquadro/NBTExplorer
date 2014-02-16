@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NBTExplorer
+namespace NBTModel.Interop
 {
     public static class NbtClipboardController
     {

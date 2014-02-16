@@ -4,6 +4,7 @@ using Substrate.Core;
 using Substrate.Nbt;
 using System.Collections.Generic;
 using System;
+using NBTModel.Interop;
 
 namespace NBTExplorer.Model
 {

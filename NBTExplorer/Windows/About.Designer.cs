@@ -43,7 +43,7 @@
             this.linkLabel1.Size = new System.Drawing.Size(256, 133);
             this.linkLabel1.TabIndex = 0;
             this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "NBTExplorer\r\nCopyright ©2011-2013 Justin Aquadro\r\n\r\nNBTExplorer is based on NBTEd" +
+            this.linkLabel1.Text = "NBTExplorer\r\nCopyright ©2011-2014 Justin Aquadro\r\n\r\nNBTExplorer is based on NBTEd" +
     "it by copyboy\r\nFugue icon set: p.yusukekamiyamane.com\r\n\r\nEmail: jaquadro@gmail.c" +
     "om\r\nNBTExplorer Github Project Page";
             this.linkLabel1.UseCompatibleTextRendering = true;

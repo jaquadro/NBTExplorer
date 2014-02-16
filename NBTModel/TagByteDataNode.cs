@@ -13,6 +13,18 @@ namespace NBTExplorer.Model
             get { return base.Tag as TagNodeByte; }
         }
 
+        public override bool Parse (string value)
+        {
+            byte data;
+            if (!byte.TryParse(value, out data))
+                return false;
+
+            Tag.Data = data;
+            IsDataModified = true;
+
+            return true;
+        }
+
         public override bool EditNode ()
         {
             return EditScalarValue(Tag);

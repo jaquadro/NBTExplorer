@@ -3,7 +3,7 @@
 	<Product Id="*" 
            Name="NBTExplorer" 
            Language="1033" 
-           Version="2.6.1.0" 
+           Version="2.7.0.0" 
            Manufacturer="Justin Aquadro" 
            UpgradeCode="0bfb1026-21f2-4552-ad71-ca90aae10a25">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
@@ -80,6 +80,15 @@
       </Component>
       <Component Id="C.NBTExplorer.visualelementsmanifest.xml" Guid="*">
         <File Source="../Staging/Windows/NBTExplorer.visualelementsmanifest.xml" KeyPath="yes" />
+      </Component>
+      <Component Id="C.NBTUtil.exe" Guid="*">
+        <File Source="../Staging/NBTUtil.exe" KeyPath="yes" />
+      </Component>
+      <Component Id="C.NBTUtil.exe.config" Guid="*">
+        <File Source="../Staging/NBTUtil.exe.config" KeyPath="yes" />
+      </Component>
+      <Component Id="C.NBTModel.dll" Guid="*">
+        <File Source="../Staging/NBTModel.dll" KeyPath="yes" />
       </Component>
       <Component Id="C.Substrate.dll" Guid="*">
         <File Source="../Staging/Substrate.dll" KeyPath="yes" />

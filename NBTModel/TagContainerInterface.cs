@@ -36,5 +36,6 @@ namespace NBTExplorer.Model
     {
         int GetTagIndex (TagNode tag);
         bool InsertTag (TagNode tag, int index);
+        bool AppendTag (TagNode tag);
     }
 }

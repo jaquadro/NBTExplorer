@@ -1,4 +1,5 @@
 ﻿using System;
+using NBTModel.Interop;
 using Substrate.Nbt;
 
 namespace NBTExplorer.Model
@@ -10,10 +11,10 @@ namespace NBTExplorer.Model
         public TagListDataNode (TagNodeList tag)
             : base(tag)
         {
-            _container = new ListTagContainer(tag);
+            _container = new ListTagContainer(tag, res => IsDataModified = true);
         }
 
-        protected new TagNodeList Tag
+        public new TagNodeList Tag
         {
             get { return base.Tag as TagNodeList; }
             set { base.Tag = value; }
@@ -99,8 +100,22 @@ namespace NBTExplorer.Model
             return _container.DeleteTag(tag);
         }
 
-        private void AppendTag (TagNode tag)
+        public override void Clear ()
         {
+            if (TagCount == 0)
+                return;
+
+            Nodes.Clear();
+            Tag.Clear();
+
+            IsDataModified = true;
+        }
+
+        public bool AppendTag (TagNode tag)
+        {
+            if (tag == null || !CanCreateTag(tag.GetTagType()))
+                return false;
+
             _container.InsertTag(tag, _container.TagCount);
             IsDataModified = true;
 
@@ -109,6 +124,8 @@ namespace NBTExplorer.Model
                 if (node != null)
                     Nodes.Add(node);
             }
+
+            return true;
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 
-namespace NBTExplorer
+namespace NBTExplorer.Utility
 {
     public class SnapshotState<T> : IDisposable
     {

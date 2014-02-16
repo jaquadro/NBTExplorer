@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBTExplorerMac", "NBTExplor
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "NBTExplorer.Installer", "NBTExplorer.Installer\NBTExplorer.Installer.wixproj", "{A1566071-7CBB-4C54-AAE1-4B81B7715DB3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBTUtil", "NBTUtil\NBTUtil.csproj", "{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBTModel", "NBTModel\NBTModel.csproj", "{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		AppStore|Any CPU = AppStore|Any CPU
@@ -71,6 +75,36 @@ Global
 		{A1566071-7CBB-4C54-AAE1-4B81B7715DB3}.Release|Mixed Platforms.Build.0 = Release|x86
 		{A1566071-7CBB-4C54-AAE1-4B81B7715DB3}.Release|x86.ActiveCfg = Release|x86
 		{A1566071-7CBB-4C54-AAE1-4B81B7715DB3}.Release|x86.Build.0 = Release|x86
+		{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}.AppStore|Any CPU.Build.0 = Release|Any CPU
+		{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}.AppStore|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}.AppStore|Mixed Platforms.Build.0 = Release|Any CPU
+		{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}.AppStore|x86.ActiveCfg = Release|Any CPU
+		{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}.Release|x86.ActiveCfg = Release|Any CPU
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.AppStore|Any CPU.Build.0 = Release|Any CPU
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.AppStore|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.AppStore|Mixed Platforms.Build.0 = Release|Any CPU
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.AppStore|x86.ActiveCfg = Release|Any CPU
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

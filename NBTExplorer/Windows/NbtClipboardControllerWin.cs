@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using NBTModel.Interop;
 using Substrate.Nbt;
 
 namespace NBTExplorer.Windows

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NBTModel.Interop;
 using Substrate.Nbt;
 
 namespace NBTExplorer.Model
@@ -43,6 +44,9 @@ namespace NBTExplorer.Model
             {
                 return false;
             }
+
+            public virtual void Clear ()
+            { }
 
             #endregion
 
@@ -153,6 +157,11 @@ namespace NBTExplorer.Model
                 if (_tag.GetTagType() == value.GetTagType())
                     _tag = value;
             }
+        }
+
+        public virtual bool Parse (string value)
+        {
+            return false;
         }
 
         protected override NodeCapabilities Capabilities
