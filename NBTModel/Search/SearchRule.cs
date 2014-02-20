@@ -169,26 +169,30 @@ namespace NBTExplorer.Model.Search
         {
             TagDataNode childNode = GetChild(container, Name);
             T data = LookupTag<T>(container, Name);
+            if (data == null)
+                return false;
 
-            if (data != null) {
-                switch (Operator) {
-                    case NumericOperator.Equals:
-                        if (data.ToTagLong() != Value)
-                            return false;
-                        break;
-                    case NumericOperator.NotEquals:
-                        if (data.ToTagLong() == Value)
-                            return false;
-                        break;
-                    case NumericOperator.GreaterThan:
-                        if (data.ToTagLong() <= Value)
-                            return false;
-                        break;
-                    case NumericOperator.LessThan:
-                        if (data.ToTagLong() >= Value)
-                            return false;
-                        break;
-                }
+            switch (Operator) {
+                case NumericOperator.Equals:
+                    if (data.ToTagLong() != Value)
+                        return false;
+                    break;
+                case NumericOperator.NotEquals:
+                    if (data.ToTagLong() == Value)
+                        return false;
+                    break;
+                case NumericOperator.GreaterThan:
+                    if (data.ToTagLong() <= Value)
+                        return false;
+                    break;
+                case NumericOperator.LessThan:
+                    if (data.ToTagLong() >= Value)
+                        return false;
+                    break;
+                case NumericOperator.Any:
+                    break;
+                default:
+                    return false;
             }
 
             if (!matchedNodes.Contains(childNode))
@@ -226,26 +230,30 @@ namespace NBTExplorer.Model.Search
         {
             TagDataNode childNode = GetChild(container, Name);
             T data = LookupTag<T>(container, Name);
+            if (data == null)
+                return false;
 
-            if (data != null) {
-                switch (Operator) {
-                    case NumericOperator.Equals:
-                        if (data.ToTagDouble() != Value)
-                            return false;
-                        break;
-                    case NumericOperator.NotEquals:
-                        if (data.ToTagDouble() == Value)
-                            return false;
-                        break;
-                    case NumericOperator.GreaterThan:
-                        if (data.ToTagDouble() <= Value)
-                            return false;
-                        break;
-                    case NumericOperator.LessThan:
-                        if (data.ToTagDouble() >= Value)
-                            return false;
-                        break;
-                }
+            switch (Operator) {
+                case NumericOperator.Equals:
+                    if (data.ToTagDouble() != Value)
+                        return false;
+                    break;
+                case NumericOperator.NotEquals:
+                    if (data.ToTagDouble() == Value)
+                        return false;
+                    break;
+                case NumericOperator.GreaterThan:
+                    if (data.ToTagDouble() <= Value)
+                        return false;
+                    break;
+                case NumericOperator.LessThan:
+                    if (data.ToTagDouble() >= Value)
+                        return false;
+                    break;
+                case NumericOperator.Any:
+                    break;
+                default:
+                    return false;
             }
             
             if (!matchedNodes.Contains(childNode))
@@ -276,34 +284,38 @@ namespace NBTExplorer.Model.Search
         {
             TagDataNode childNode = GetChild(container, Name);
             TagNodeString data = LookupTag<TagNodeString>(container, Name);
+            if (data == null)
+                return false;
 
-            if (data != null) {
-                switch (Operator) {
-                    case StringOperator.Equals:
-                        if (data.ToTagString().Data != Value)
-                            return false;
-                        break;
-                    case StringOperator.NotEquals:
-                        if (data.ToTagString().Data == Value)
-                            return false;
-                        break;
-                    case StringOperator.Contains:
-                        if (!data.ToTagString().Data.Contains(Value))
-                            return false;
-                        break;
-                    case StringOperator.NotContains:
-                        if (data.ToTagString().Data.Contains(Value))
-                            return false;
-                        break;
-                    case StringOperator.StartsWith:
-                        if (!data.ToTagString().Data.StartsWith(Value))
-                            return false;
-                        break;
-                    case StringOperator.EndsWith:
-                        if (!data.ToTagString().Data.EndsWith(Value))
-                            return false;
-                        break;
-                }
+            switch (Operator) {
+                case StringOperator.Equals:
+                    if (data.ToTagString().Data != Value)
+                        return false;
+                    break;
+                case StringOperator.NotEquals:
+                    if (data.ToTagString().Data == Value)
+                        return false;
+                    break;
+                case StringOperator.Contains:
+                    if (!data.ToTagString().Data.Contains(Value))
+                        return false;
+                    break;
+                case StringOperator.NotContains:
+                    if (data.ToTagString().Data.Contains(Value))
+                        return false;
+                    break;
+                case StringOperator.StartsWith:
+                    if (!data.ToTagString().Data.StartsWith(Value))
+                        return false;
+                    break;
+                case StringOperator.EndsWith:
+                    if (!data.ToTagString().Data.EndsWith(Value))
+                        return false;
+                    break;
+                case StringOperator.Any:
+                    break;
+                default:
+                    return false;
             }
 
             if (!matchedNodes.Contains(childNode))
