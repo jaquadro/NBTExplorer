@@ -37,23 +37,30 @@ namespace NBTUtil
             if (!_commandTable.ContainsKey(_options.Command))
                 return PrintUsage("Error: No command specified");
 
-            NbtPath path = new NbtPath(_options.Path);
-            DataNode targetNode = path.Open();
-
-            if (targetNode == null)
-                return PrintError("Error: Invalid path");
-
             ConsoleOperation op = _commandTable[_options.Command];
             if (!op.OptionsValid(_options))
                 return PrintError("Error: Invalid options specified for the given command");
-            if (!op.CanProcess(targetNode))
-                return PrintError("Error: The given command can't be applied to the given tag");
-            if (!op.Process(targetNode, _options))
-                return PrintError("Error: Problem encountered applying the given command");
 
-            path.RootNode.Save();
+            int successCount = 0;
+            int failCount = 0;
 
-            Console.WriteLine("The operation completed successfully");
+            foreach (var targetNode in new NbtPathEnumerator(_options.Path)) {
+                if (!op.CanProcess(targetNode)) {
+                    Console.WriteLine(targetNode.NodePath + ": ERROR (invalid command)");
+                    failCount++;
+                }
+                if (!op.Process(targetNode, _options)) {
+                    Console.WriteLine(targetNode.NodePath + ": ERROR (apply)");
+                    failCount++;
+                }
+
+                targetNode.Root.Save();
+
+                Console.WriteLine(targetNode.NodePath + ": OK");
+                successCount++;
+            }
+
+            Console.WriteLine("Operation complete.  Nodes succeeded: {0}  Nodes failed: {1}", successCount, failCount);
 
             return true;
         }
@@ -117,65 +124,6 @@ namespace NBTUtil
             Console.WriteLine(error);
 
             return false;
-        }
-    }
-
-    class NbtPath
-    {
-        private class PathPart
-        {
-            public string Name;
-            public DataNode Node;
-        }
-
-        private List<PathPart> _pathParts = new List<PathPart>();
-
-        public NbtPath (string path)
-        {
-            Path = path;
-
-            string[] parts = path.Split('/', '\\');
-            foreach (var p in parts) {
-                _pathParts.Add(new PathPart() {
-                    Name = p,
-                });
-            }
-        }
-
-        public string Path { get; private set; }
-
-        public DataNode RootNode
-        {
-            get { return (_pathParts.Count == 0) ? null : _pathParts[0].Node; }
-        }
-
-        public DataNode TargetNode
-        {
-            get { return (_pathParts.Count == 0) ? null : _pathParts[_pathParts.Count - 1].Node; }
-        }
-
-        public DataNode Open ()
-        {
-            DataNode dataNode = new DirectoryDataNode(Directory.GetCurrentDirectory());
-            dataNode.Expand();
-
-            foreach (var part in _pathParts) {
-                DataNode match = null;
-                foreach (var child in dataNode.Nodes) {
-                    if (child.NodePathName == part.Name)
-                        match = child;
-                }
-
-                if (match == null)
-                    return null;
-
-                part.Node = match;
-
-                dataNode = match;
-                dataNode.Expand();
-            }
-
-            return dataNode;
         }
     }
 }

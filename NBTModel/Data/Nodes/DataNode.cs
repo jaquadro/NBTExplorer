@@ -65,6 +65,11 @@ namespace NBTExplorer.Model
             internal set { _parent = value; }
         }
 
+        public DataNode Root
+        {
+            get { return (_parent == null) ? this : _parent.Root; }
+        }
+
         public DataNodeCollection Nodes
         {
             get { return _children; }

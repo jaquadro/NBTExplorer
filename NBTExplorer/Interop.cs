@@ -56,9 +56,5 @@ namespace NBTExplorer
 
         [DllImport("user32.dll")]
         public static extern IntPtr SendMessage (IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-
-        
-
-        
     }
 }

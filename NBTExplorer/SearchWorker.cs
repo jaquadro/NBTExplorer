@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using NBTExplorer.Model;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
+using NBTExplorer.Model;
 
 namespace NBTExplorer
 {
