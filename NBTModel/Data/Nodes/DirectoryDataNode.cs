@@ -33,7 +33,7 @@ namespace NBTExplorer.Model
             {
                 string path = (_path.EndsWith("/") || _path.EndsWith("\\")) ? _path : _path + '/';
                 
-                string name = Path.GetDirectoryName(path);
+                string name = Path.GetDirectoryName(path) ?? path.Substring(0, path.Length - 1);
                 int sepIndex = Math.Max(name.LastIndexOf('/'), name.LastIndexOf('\\'));
 
                 return (sepIndex > 0) ? name.Substring(sepIndex + 1) : name;
