@@ -27,6 +27,7 @@
     <CreatePackage>False</CreatePackage>
     <CodeSigningKey>Mac Developer</CodeSigningKey>
     <PackageSigningKey>3rd Party Mac Developer Installer</PackageSigningKey>
+    <UseSGen>false</UseSGen>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -47,6 +48,7 @@
         <Command type="AfterBuild" command="codesign -f -s &quot;Developer ID Application: Justin Aquadro (Z8QFJNBZ68)&quot; --resource-rules ResourceRules.plist NBTExplorer.app" workingdir="${TargetDir}" />
       </CustomCommands>
     </CustomCommands>
+    <UseSGen>false</UseSGen>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -62,6 +64,7 @@
     <EnableCodeSigning>True</EnableCodeSigning>
     <CreatePackage>True</CreatePackage>
     <CodeSigningKey>3rd Party Mac Developer Application</CodeSigningKey>
+    <UseSGen>false</UseSGen>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

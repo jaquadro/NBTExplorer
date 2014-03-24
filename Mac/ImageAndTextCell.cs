@@ -309,7 +309,7 @@ namespace NBTExplorer.Mac
 
 				imageFrame.X += 3;
 				imageFrame.Size = _image.Size;
-				if (ofView.MouseinRect(point, imageFrame))
+				if (ofView.IsMouseInRect(point, imageFrame))
 					return NSCellHit.ContentArea;
 			}
 
