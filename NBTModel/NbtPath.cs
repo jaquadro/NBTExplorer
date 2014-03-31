@@ -51,7 +51,7 @@ namespace NBTExplorer.Model
 
             string part = nextLevels[0];
             List<string> remainingLevels = nextLevels.GetRange(1, nextLevels.Count - 1);
-
+            
             if (part == "*") {
                 foreach (DataNode childNode in containerNode.Nodes) {
                     foreach (DataNode grandChildNode in EnumerateNodes(childNode, remainingLevels))
