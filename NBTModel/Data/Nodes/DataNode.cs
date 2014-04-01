@@ -231,6 +231,9 @@ namespace NBTExplorer.Model
 
         protected void RestoreExpandSet (DataNode node, Dictionary<string, object> expandSet)
         {
+            if (expandSet == null)
+                return;
+
             node.Expand();
 
             foreach (DataNode child in node.Nodes) {

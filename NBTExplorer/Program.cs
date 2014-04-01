@@ -66,16 +66,47 @@ namespace NBTExplorer
                 return;
             }
 
+            if (IsMissingNBTModel(ex)) {
+                MessageBox.Show("NBTExplorer could not find required assembly \"NBTModel.dll\".\n\nIf you obtained NBTExplorer from a ZIP distribution, make sure you've extracted NBTExplorer and all of its supporting files into another directory before running it.",
+                    "NBTExplorer failed to run", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+                return;
+            }
+
             StringBuilder errorText = new StringBuilder();
             errorText.AppendLine("NBTExplorer encountered the following exception while trying to run: " + ex.GetType().Name);
             errorText.AppendLine("Message: " + ex.Message);
 
-            while (ex.InnerException != null) {
-                ex = ex.InnerException;
+            Exception ix = ex;
+            while (ix.InnerException != null) {
+                ix = ix.InnerException;
                 errorText.AppendLine();
                 errorText.AppendLine("Caused by Inner Exception: " + ex.GetType().Name);
                 errorText.AppendLine("Message: " + ex.Message);
             }
+
+            try {
+                using (var writer = new StreamWriter("NBTExplorer.error.log", true)) {
+                    writer.WriteLine("NBTExplorer Error Report");
+                    writer.WriteLine(DateTime.Now);
+                    writer.WriteLine("-------");
+                    writer.WriteLine(errorText);
+                    writer.WriteLine("-------");
+
+                    ix = ex;
+                    while (ix != null) {
+                        writer.WriteLine(ex.StackTrace);
+                        writer.WriteLine("-------");
+                        ix = ix.InnerException;
+                    }
+
+                    writer.WriteLine();
+                }
+
+                errorText.AppendLine();
+                errorText.AppendLine("Additional error detail has been written to NBTExplorer.error.log");
+            }
+            catch { }
 
             MessageBox.Show(errorText.ToString(), "NBTExplorer failed to run", MessageBoxButtons.OK, MessageBoxIcon.Error);
             Application.Exit();
@@ -88,6 +119,19 @@ namespace NBTExplorer
             if (ex is FileNotFoundException) {
                 FileNotFoundException fileEx = ex as FileNotFoundException;
                 if (fileEx.FileName.Contains("Substrate"))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsMissingNBTModel (Exception ex)
+        {
+            if (ex is TypeInitializationException && ex.InnerException != null)
+                ex = ex.InnerException;
+            if (ex is FileNotFoundException) {
+                FileNotFoundException fileEx = ex as FileNotFoundException;
+                if (fileEx.FileName.Contains("NBTModel"))
                     return true;
             }
 

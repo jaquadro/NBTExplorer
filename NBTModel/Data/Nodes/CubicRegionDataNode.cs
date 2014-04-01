@@ -91,7 +91,7 @@ namespace NBTExplorer.Model
             Release();
             RestoreExpandSet(this, expandSet);
 
-            return true;
+            return expandSet != null;
         }
     }
 }
