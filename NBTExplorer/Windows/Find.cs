@@ -41,5 +41,15 @@ namespace NBTExplorer.Windows
             DialogResult = DialogResult.Cancel;
             Close();
         }
+
+        private void _textName_TextChanged (object sender, EventArgs e)
+        {
+            _cbName.Checked = true;
+        }
+
+        private void _textValue_TextChanged (object sender, EventArgs e)
+        {
+            _cbValue.Checked = true;
+        }
     }
 }

@@ -38,8 +38,6 @@
             // _cbName
             // 
             this._cbName.AutoSize = true;
-            this._cbName.Checked = true;
-            this._cbName.CheckState = System.Windows.Forms.CheckState.Checked;
             this._cbName.Location = new System.Drawing.Point(13, 13);
             this._cbName.Name = "_cbName";
             this._cbName.Size = new System.Drawing.Size(57, 17);
@@ -65,6 +63,7 @@
             this._textName.Name = "_textName";
             this._textName.Size = new System.Drawing.Size(273, 20);
             this._textName.TabIndex = 2;
+            this._textName.TextChanged += new System.EventHandler(this._textName_TextChanged);
             // 
             // _textValue
             // 
@@ -74,6 +73,7 @@
             this._textValue.Name = "_textValue";
             this._textValue.Size = new System.Drawing.Size(273, 20);
             this._textValue.TabIndex = 3;
+            this._textValue.TextChanged += new System.EventHandler(this._textValue_TextChanged);
             // 
             // _buttonFind
             // 
