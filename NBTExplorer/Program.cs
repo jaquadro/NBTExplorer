@@ -86,7 +86,12 @@ namespace NBTExplorer
             }
 
             try {
-                using (var writer = new StreamWriter("NBTExplorer.error.log", true)) {
+                string logDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "NBTExplorer");
+                if (!Directory.Exists(logDir))
+                    Directory.CreateDirectory(logDir);
+
+                string logPath = Path.Combine(logDir, "error.log");
+                using (var writer = new StreamWriter(logPath, true)) {
                     writer.WriteLine("NBTExplorer Error Report");
                     writer.WriteLine(DateTime.Now);
                     writer.WriteLine("-------");
@@ -104,7 +109,7 @@ namespace NBTExplorer
                 }
 
                 errorText.AppendLine();
-                errorText.AppendLine("Additional error detail has been written to NBTExplorer.error.log");
+                errorText.AppendLine("Additional error detail has been written to:\n" + logPath);
             }
             catch { }
 
