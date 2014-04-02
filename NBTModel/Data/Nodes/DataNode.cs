@@ -219,10 +219,7 @@ namespace NBTExplorer.Model
             foreach (DataNode child in node.Nodes) {
                 Dictionary<string, object> childDict = BuildExpandSet(child);
                 if (childDict != null) {
-                    if (!String.IsNullOrEmpty(child.NodeName))
-                        dict[child.NodeName] = childDict;
-                    else
-                        dict[child.NodeDisplay] = childDict;
+                    dict[child.NodePathName] = childDict;
                 }
             }
 
@@ -237,13 +234,8 @@ namespace NBTExplorer.Model
             node.Expand();
 
             foreach (DataNode child in node.Nodes) {
-                if (expandSet.ContainsKey(child.NodeName)) {
-                    Dictionary<string, object> childDict = (Dictionary<string, object>)expandSet[child.NodeName];
-                    if (childDict != null)
-                        RestoreExpandSet(child, childDict);
-                }
-                else if (expandSet.ContainsKey(child.NodeDisplay)) {
-                    Dictionary<string, object> childDict = (Dictionary<string, object>)expandSet[child.NodeDisplay];
+                if (expandSet.ContainsKey(child.NodePathName)) {
+                    Dictionary<string, object> childDict = (Dictionary<string, object>)expandSet[child.NodePathName];
                     if (childDict != null)
                         RestoreExpandSet(child, childDict);
                 }
