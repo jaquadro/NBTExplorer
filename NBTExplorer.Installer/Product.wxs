@@ -3,7 +3,7 @@
 	<Product Id="*" 
            Name="NBTExplorer" 
            Language="1033" 
-           Version="2.7.3.0" 
+           Version="2.7.4.0" 
            Manufacturer="Justin Aquadro" 
            UpgradeCode="0bfb1026-21f2-4552-ad71-ca90aae10a25">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
