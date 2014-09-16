@@ -35,17 +35,14 @@
             // 
             // linkLabel1
             // 
-            this.linkLabel1.AutoSize = true;
             this.linkLabel1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(165, 31);
+            this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(171, 31);
             this.linkLabel1.Location = new System.Drawing.Point(96, 12);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(256, 133);
+            this.linkLabel1.Size = new System.Drawing.Size(272, 133);
             this.linkLabel1.TabIndex = 0;
             this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "NBTExplorer\r\nCopyright ©2011-2014 Justin Aquadro\r\n\r\nNBTExplorer is based on NBTEd" +
-    "it by copyboy\r\nFugue icon set: p.yusukekamiyamane.com\r\n\r\nEmail: jaquadro@gmail.c" +
-    "om\r\nNBTExplorer Github Project Page";
+            this.linkLabel1.Text = resources.GetString("linkLabel1.Text");
             this.linkLabel1.UseCompatibleTextRendering = true;
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
@@ -63,7 +60,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(350, 144);
+            this.ClientSize = new System.Drawing.Size(380, 144);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.linkLabel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -73,7 +70,6 @@
             this.Text = "About NBTExplorer";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 

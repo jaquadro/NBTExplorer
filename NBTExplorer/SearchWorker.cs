@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using NBTExplorer.Model;
 
 namespace NBTExplorer
@@ -52,12 +53,12 @@ namespace NBTExplorer
             if (SearchName != null) {
                 string tagName = node.NodeName;
                 if (tagName != null)
-                    mName = tagName.Contains(SearchName);
+                    mName = CultureInfo.InvariantCulture.CompareInfo.IndexOf(tagName, SearchName, CompareOptions.IgnoreCase) >= 0;
             }
             if (SearchValue != null) {
                 string tagValue = node.NodeDisplay;
                 if (tagValue != null)
-                    mValue = tagValue.Contains(SearchValue);
+                    mValue = CultureInfo.InvariantCulture.CompareInfo.IndexOf(tagValue, SearchValue, CompareOptions.IgnoreCase) >= 0;
             }
 
             if (mName && mValue) {

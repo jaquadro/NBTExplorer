@@ -22,7 +22,7 @@ namespace NBTExplorer.Model
             if (typeDiff != 0)
                 return typeDiff;
 
-            return String.Compare(x.Name, y.Name, true);
+            return String.Compare(x.Name, y.Name, false);
         }
 
         #endregion
