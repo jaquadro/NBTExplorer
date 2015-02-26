@@ -6,6 +6,7 @@ using NBTExplorer.Model;
 using NBTExplorer.Vendor.MultiSelectTreeView;
 using NBTExplorer.Windows;
 using Substrate.Nbt;
+using System.Collections;
 
 namespace NBTExplorer.Controllers
 {
@@ -17,6 +18,56 @@ namespace NBTExplorer.Controllers
         public MessageBoxEventArgs (string message)
         {
             Message = message;
+        }
+    }
+
+    public class NodeTreeComparer : IComparer
+    {
+        public int orderForTag(TagType tagID)
+        {
+            switch (tagID)
+            {
+                case TagType.TAG_COMPOUND:
+                    return 0;
+                case TagType.TAG_LIST:
+                    return 1;
+                case TagType.TAG_BYTE:
+                case TagType.TAG_SHORT:
+                case TagType.TAG_INT:
+                case TagType.TAG_LONG:
+                case TagType.TAG_FLOAT:
+                case TagType.TAG_DOUBLE:
+                case TagType.TAG_STRING:
+                    return 2;
+                default:
+                    return 3;
+            }
+        }
+
+        public int Compare(object x, object y)
+        {
+            TreeNode tx = x as TreeNode;
+            TreeNode ty = y as TreeNode;
+            TagDataNode dx = tx.Tag as TagDataNode;
+            TagDataNode dy = ty.Tag as TagDataNode;
+
+            if (dx == null || dy == null)
+            {
+                return tx.Text.CompareTo(ty.Text);
+            }
+
+            TagType idx = dx.Tag.GetTagType();
+            TagType idy = dy.Tag.GetTagType();
+            int tagOrder = this.orderForTag(idx).CompareTo(this.orderForTag(idy));
+            if (tagOrder != 0)
+            {
+                return tagOrder;
+            } 
+            else 
+            {
+                return dx.NodeDisplay.CompareTo(dy.NodeDisplay);
+            }
+            
         }
     }
 
@@ -33,6 +84,7 @@ namespace NBTExplorer.Controllers
         public NodeTreeController (TreeView nodeTree)
         {
             _nodeTree = nodeTree;
+            nodeTree.TreeViewNodeSorter = new NodeTreeComparer();
             _multiTree = nodeTree as MultiSelectTreeView;
 
             InitializeIconRegistry();
