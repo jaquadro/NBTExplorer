@@ -23,7 +23,7 @@ namespace NBTExplorer.Controllers
 
     public class NodeTreeComparer : IComparer
     {
-        public int orderForTag(TagType tagID)
+        public int OrderForTag(TagType tagID)
         {
             switch (tagID)
             {
@@ -44,6 +44,18 @@ namespace NBTExplorer.Controllers
             }
         }
 
+        public int OrderForNode(object node)
+        {
+            if (node is DirectoryDataNode)
+            {
+                return 0;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+
         public int Compare(object x, object y)
         {
             TreeNode tx = x as TreeNode;
@@ -53,12 +65,20 @@ namespace NBTExplorer.Controllers
 
             if (dx == null || dy == null)
             {
-                return tx.Text.CompareTo(ty.Text);
+                int nodeOrder = this.OrderForNode(tx.Tag).CompareTo(this.OrderForNode(ty.Tag));
+                if (nodeOrder != 0)
+                {
+                    return nodeOrder;
+                }
+                else
+                {
+                    return tx.Text.CompareTo(ty.Text);
+                }
             }
 
             TagType idx = dx.Tag.GetTagType();
             TagType idy = dy.Tag.GetTagType();
-            int tagOrder = this.orderForTag(idx).CompareTo(this.orderForTag(idy));
+            int tagOrder = this.OrderForTag(idx).CompareTo(this.OrderForTag(idy));
             if (tagOrder != 0)
             {
                 return tagOrder;
