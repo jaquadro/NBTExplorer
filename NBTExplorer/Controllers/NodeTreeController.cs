@@ -7,6 +7,7 @@ using NBTExplorer.Vendor.MultiSelectTreeView;
 using NBTExplorer.Windows;
 using Substrate.Nbt;
 using System.Collections;
+using NBTExplorer.Utility;
 
 namespace NBTExplorer.Controllers
 {
@@ -23,6 +24,8 @@ namespace NBTExplorer.Controllers
 
     public class NodeTreeComparer : IComparer
     {
+        private NaturalComparer _comparer = new NaturalComparer();
+
         public int OrderForTag(TagType tagID)
         {
             switch (tagID)
@@ -72,7 +75,7 @@ namespace NBTExplorer.Controllers
                 }
                 else
                 {
-                    return tx.Text.CompareTo(ty.Text);
+                    return _comparer.Compare(tx.Text, ty.Text);
                 }
             }
 
@@ -85,9 +88,8 @@ namespace NBTExplorer.Controllers
             } 
             else 
             {
-                return dx.NodeDisplay.CompareTo(dy.NodeDisplay);
+                return _comparer.Compare(dx.NodeDisplay, dy.NodeDisplay);
             }
-            
         }
     }
 

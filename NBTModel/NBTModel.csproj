@@ -72,6 +72,7 @@
     <Compile Include="Data\Nodes\TagLongDataNode.cs" />
     <Compile Include="Data\Nodes\TagShortDataNode.cs" />
     <Compile Include="Data\Nodes\TagStringDataNode.cs" />
+    <Compile Include="Utility\NaturalComparer.cs" />
     <Compile Include="Utility\SnapshotList.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
