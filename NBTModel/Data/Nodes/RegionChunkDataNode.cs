@@ -53,7 +53,15 @@ namespace NBTExplorer.Model
 
         public override string NodeDisplay
         {
-            get { return "Chunk [" + _x + ", " + _z + "]"; }
+            get 
+            {
+                RegionKey key = _regionFile.parseCoordinatesFromName();
+                string absChunk = "";
+                if (key != RegionKey.InvalidRegion)
+                    absChunk = "        in world at (" + (key.X * 32 + _x) + ", " + (key.Z * 32 + _z) + ")";
+
+                return "Chunk [" + _x + ", " + _z + "]" + absChunk; 
+            }
         }
 
         protected override void ExpandCore ()
