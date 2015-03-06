@@ -79,6 +79,16 @@ namespace NBTExplorer.Controllers
                 }
             }
 
+            TagDataNode px = dx.Parent as TagDataNode;
+            TagDataNode py = dy.Parent as TagDataNode;
+            if (px != null && py != null)
+            {
+                if (px.Tag.GetTagType() == TagType.TAG_LIST || py.Tag.GetTagType() == TagType.TAG_LIST)
+                {
+                    return 0;
+                }
+            }
+
             TagType idx = dx.Tag.GetTagType();
             TagType idy = dy.Tag.GetTagType();
             int tagOrder = this.OrderForTag(idx).CompareTo(this.OrderForTag(idy));
