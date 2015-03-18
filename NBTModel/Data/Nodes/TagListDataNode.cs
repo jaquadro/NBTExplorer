@@ -46,7 +46,7 @@ namespace NBTExplorer.Model
                     if (data == null)
                         return false;
 
-                    if (data.Node != null && data.Node.GetTagType() == Tag.ValueType)
+                    if (data.Node != null && (data.Node.GetTagType() == Tag.ValueType || Tag.Count == 0))
                         return true;
                 }
 
@@ -75,6 +75,10 @@ namespace NBTExplorer.Model
             NbtClipboardData clipboard = NbtClipboardController.CopyFromClipboard();
             if (clipboard == null || clipboard.Node == null)
                 return false;
+
+            if (Tag.Count == 0) {
+                Tag.ChangeValueType(clipboard.Node.GetTagType());
+            }
 
             AppendTag(clipboard.Node);
             return true;
