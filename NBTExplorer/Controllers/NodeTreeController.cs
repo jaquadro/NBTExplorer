@@ -231,6 +231,8 @@ namespace NBTExplorer.Controllers
                             node = item.Value.NodeCreate(path);
                     }
 
+                    if (node == null)
+                        node = NbtFileDataNode.TryCreateFrom(path);
                     if (node != null)
                         _nodeTree.Nodes.Add(CreateUnexpandedNode(node));
                     else
