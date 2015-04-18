@@ -39,6 +39,7 @@ namespace NBTExplorer.Windows
                 _tagIconIndex[TagType.TAG_LIST] = 8;
                 _tagIconIndex[TagType.TAG_COMPOUND] = 9;
                 _tagIconIndex[TagType.TAG_INT_ARRAY] = 14;
+                _tagIconIndex[TagType.TAG_SHORT_ARRAY] = 16;
             }
             catch (Exception e) {
                 Program.StaticInitFailure(e);
@@ -151,6 +152,7 @@ namespace NBTExplorer.Windows
             _iconRegistry.Register(typeof(CubicRegionDataNode), 11);
             _iconRegistry.Register(typeof(NbtFileDataNode), 12);
             _iconRegistry.Register(typeof(TagIntArrayDataNode), 14);
+            _iconRegistry.Register(typeof(TagShortArrayDataNode), 16);
         }
 
         private void OpenFile ()

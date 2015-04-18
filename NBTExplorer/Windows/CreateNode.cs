@@ -163,6 +163,7 @@ namespace NBTExplorer.Windows
                 switch (_type) {
                     case TagType.TAG_BYTE_ARRAY:
                     case TagType.TAG_INT_ARRAY:
+                    case TagType.TAG_SHORT_ARRAY:
                         return true;
                     default:
                         return false;

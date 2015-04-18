@@ -34,6 +34,8 @@
             this._menuItemOpen = new System.Windows.Forms.ToolStripMenuItem();
             this._menuItemOpenFolder = new System.Windows.Forms.ToolStripMenuItem();
             this._menuItemOpenMinecraftSaveFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
+            this._menuItemOpenInExplorer = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this._menuItemSave = new System.Windows.Forms.ToolStripMenuItem();
             this._menuItemRefresh = new System.Windows.Forms.ToolStripMenuItem();
@@ -97,8 +99,6 @@
             this.ContentPanel = new System.Windows.Forms.ToolStripContentPanel();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
-            this._menuItemOpenInExplorer = new System.Windows.Forms.ToolStripMenuItem();
             this._nodeTree = new NBTExplorer.Vendor.MultiSelectTreeView.MultiSelectTreeView();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -160,6 +160,20 @@
             this._menuItemOpenMinecraftSaveFolder.Name = "_menuItemOpenMinecraftSaveFolder";
             this._menuItemOpenMinecraftSaveFolder.Size = new System.Drawing.Size(233, 22);
             this._menuItemOpenMinecraftSaveFolder.Text = "Open &Minecraft Save Folder";
+            // 
+            // toolStripSeparator12
+            // 
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(230, 6);
+            // 
+            // _menuItemOpenInExplorer
+            // 
+            this._menuItemOpenInExplorer.Enabled = false;
+            this._menuItemOpenInExplorer.Name = "_menuItemOpenInExplorer";
+            this._menuItemOpenInExplorer.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.E)));
+            this._menuItemOpenInExplorer.Size = new System.Drawing.Size(233, 22);
+            this._menuItemOpenInExplorer.Text = "Open in &Explorer";
             // 
             // toolStripSeparator3
             // 
@@ -397,6 +411,7 @@
             this.imageList1.Images.SetKeyName(13, "map.png");
             this.imageList1.Images.SetKeyName(14, "edit-code-i.png");
             this.imageList1.Images.SetKeyName(15, "question-white.png");
+            this.imageList1.Images.SetKeyName(16, "edit-code-s.png");
             // 
             // toolStrip1
             // 
@@ -701,20 +716,6 @@
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
             this.testToolStripMenuItem.Size = new System.Drawing.Size(96, 22);
             this.testToolStripMenuItem.Text = "Test";
-            // 
-            // toolStripSeparator12
-            // 
-            this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(230, 6);
-            // 
-            // _menuItemOpenInExplorer
-            // 
-            this._menuItemOpenInExplorer.Enabled = false;
-            this._menuItemOpenInExplorer.Name = "_menuItemOpenInExplorer";
-            this._menuItemOpenInExplorer.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.E)));
-            this._menuItemOpenInExplorer.Size = new System.Drawing.Size(233, 22);
-            this._menuItemOpenInExplorer.Text = "Open in &Explorer";
             // 
             // _nodeTree
             // 

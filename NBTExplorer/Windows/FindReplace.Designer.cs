@@ -145,6 +145,7 @@
             this.imageList1.Images.SetKeyName(17, "asterisk-yellow.png");
             this.imageList1.Images.SetKeyName(18, "sql-join-inner.png");
             this.imageList1.Images.SetKeyName(19, "sql-join-outer.png");
+            this.imageList1.Images.SetKeyName(20, "edit-code-s.png");
             // 
             // toolStrip1
             // 

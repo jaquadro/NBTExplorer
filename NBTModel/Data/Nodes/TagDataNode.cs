@@ -96,6 +96,7 @@ namespace NBTExplorer.Model
             _tagRegistry[TagType.TAG_LIST] = typeof(TagListDataNode);
             _tagRegistry[TagType.TAG_LONG] = typeof(TagLongDataNode);
             _tagRegistry[TagType.TAG_SHORT] = typeof(TagShortDataNode);
+            _tagRegistry[TagType.TAG_SHORT_ARRAY] = typeof(TagShortArrayDataNode);
             _tagRegistry[TagType.TAG_STRING] = typeof(TagStringDataNode);
         }
 
@@ -130,6 +131,8 @@ namespace NBTExplorer.Model
                     return new TagNodeLong(0);
                 case TagType.TAG_SHORT:
                     return new TagNodeShort(0);
+                case TagType.TAG_SHORT_ARRAY:
+                    return new TagNodeShortArray(new short[0]);
                 case TagType.TAG_STRING:
                     return new TagNodeString("");
                 default:
@@ -349,6 +352,36 @@ namespace NBTExplorer.Model
                 if (FormRegistry.EditByteArray(data)) {
                     tag.ToTagByteArray().Data = data.Data;
                     //Array.Copy(data.Data, tag.ToTagByteArray().Data, tag.ToTagByteArray().Length);
+                    IsDataModified = true;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        protected bool EditShortHexValue (TagNode tag)
+        {
+            if (FormRegistry.EditByteArray != null) {
+                TagNodeShortArray iatag = tag.ToTagShortArray();
+                byte[] byteData = new byte[iatag.Length * 2];
+                for (int i = 0; i < iatag.Length; i++) {
+                    byte[] buf = BitConverter.GetBytes(iatag.Data[i]);
+                    Array.Copy(buf, 0, byteData, 2 * i, 2);
+                }
+
+                ByteArrayFormData data = new ByteArrayFormData() {
+                    NodeName = NodeName,
+                    BytesPerElement = 2,
+                    Data = byteData,
+                };
+
+                if (FormRegistry.EditByteArray(data)) {
+                    iatag.Data = new short[data.Data.Length / 2];
+                    for (int i = 0; i < iatag.Length; i++) {
+                        iatag.Data[i] = BitConverter.ToInt16(data.Data, i * 2);
+                    }
+
                     IsDataModified = true;
                     return true;
                 }

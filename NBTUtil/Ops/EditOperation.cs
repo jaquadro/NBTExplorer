@@ -18,7 +18,7 @@ namespace NBTUtil.Ops
         {
             if (!(dataNode is TagDataNode) || !dataNode.CanEditNode)
                 return false;
-            if (dataNode is TagByteArrayDataNode || dataNode is TagIntArrayDataNode)
+            if (dataNode is TagByteArrayDataNode || dataNode is TagIntArrayDataNode || dataNode is TagShortArrayDataNode)
                 return false;
 
             return true;

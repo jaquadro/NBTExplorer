@@ -46,6 +46,7 @@
     <Compile Include="Data\DataNodeCollection.cs" />
     <Compile Include="Data\Nodes\DirectoryDataNode.cs" />
     <Compile Include="Data\FileTypeRegistry.cs" />
+    <Compile Include="Data\Nodes\TagShortArrayDataNode.cs" />
     <Compile Include="FilterExpressionParser.cs" />
     <Compile Include="Interop\FormRegistry.cs" />
     <Compile Include="Interop\NbtClipboardController.cs" />
