@@ -10,6 +10,7 @@ namespace NBTExplorer.Model
     {
         private string _path;
         private RegionFile _region;
+        private List<RegionKey> _deleteQueue = new List<RegionKey>();
 
         private static Regex _namePattern = new Regex(@"^r\.(-?\d+)\.(-?\d+)\.(mcr|mca)$");
 
@@ -100,6 +101,16 @@ namespace NBTExplorer.Model
             Nodes.Clear();
         }
 
+        protected override void SaveCore ()
+        {
+            foreach (RegionKey key in _deleteQueue) {
+                if (_region.HasChunk(key.X, key.Z))
+                    _region.DeleteChunk(key.X, key.Z);
+            }
+
+            _deleteQueue.Clear();
+        }
+
         public override bool RefreshNode ()
         {
             Dictionary<string, object> expandSet = BuildExpandSet(this);
@@ -107,6 +118,13 @@ namespace NBTExplorer.Model
             RestoreExpandSet(this, expandSet);
 
             return expandSet != null;
+        }
+
+        public void QueueDeleteChunk (int rx, int rz)
+        {
+            RegionKey key = new RegionKey(rx, rz);
+            if (!_deleteQueue.Contains(key))
+                _deleteQueue.Add(key);
         }
     }
 }

@@ -31,13 +31,19 @@ namespace NBTExplorer.Model
             get { return _z; }
         }
 
+        protected RegionFileDataNode RegionParent
+        {
+            get { return Parent as RegionFileDataNode; }
+        }
+
         protected override NodeCapabilities Capabilities
         {
             get
             {
                 return NodeCapabilities.CreateTag
                     | NodeCapabilities.PasteInto
-                    | NodeCapabilities.Search;
+                    | NodeCapabilities.Search
+                    | NodeCapabilities.Delete;
             }
         }
 
@@ -97,6 +103,17 @@ namespace NBTExplorer.Model
         public override bool IsContainerType
         {
             get { return true; }
+        }
+
+        public override bool DeleteNode ()
+        {
+            if (CanDeleteNode && _regionFile.HasChunk(_x, _z)) {
+                RegionParent.QueueDeleteChunk(_x, _z);
+                IsParentModified = true;
+                return Parent.Nodes.Remove(this);
+            }
+
+            return false;
         }
 
         public bool IsNamedContainer
