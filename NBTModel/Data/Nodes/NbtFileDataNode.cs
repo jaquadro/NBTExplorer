@@ -16,7 +16,7 @@ namespace NBTExplorer.Model
 
         private CompoundTagContainer _container;
 
-        private static Regex _namePattern = new Regex(@"\.(dat|nbt|schematic)$");
+        private static Regex _namePattern = new Regex(@"\.(dat|nbt|schematic|dat_mcr|dat_old|bpt|rc)$");
 
         private NbtFileDataNode (string path, CompressionType compressionType)
         {
