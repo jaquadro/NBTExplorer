@@ -12,6 +12,7 @@ namespace NBTUtil
         PrintTree,
         SetValue,
         SetList,
+        Json,
         Help,
     }
 
@@ -38,6 +39,10 @@ namespace NBTUtil
                 { "print", "Print the value(s) of a tag", v => Command = ConsoleCommand.Print },
                 { "printtree", "Print the NBT tree rooted at a tag", v => Command = ConsoleCommand.PrintTree },
                 { "types", "Show data types when printing tags", v => ShowTypes = true },
+                { "json=", "Export the NBT tree rooted at a tag as JSON", v => {
+                    Command = ConsoleCommand.Json;
+                    Values.Add(v);
+                }},
                 { "setvalue=", "Set a single tag value", v => { 
                     Command = ConsoleCommand.SetValue;
                     _currentKey = "setvalue";

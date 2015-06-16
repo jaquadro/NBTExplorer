@@ -46,6 +46,7 @@
     <Compile Include="NDesk\Options.cs" />
     <Compile Include="Ops\ConsoleOperation.cs" />
     <Compile Include="Ops\EditOperation.cs" />
+    <Compile Include="Ops\JsonOperation.cs" />
     <Compile Include="Ops\PrintOperation.cs" />
     <Compile Include="Ops\PrintTreeOperation.cs" />
     <Compile Include="Ops\SetListOperation.cs" />

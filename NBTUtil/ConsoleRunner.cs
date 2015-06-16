@@ -16,6 +16,7 @@ namespace NBTUtil
             { ConsoleCommand.SetList, new SetListOperation() },
             { ConsoleCommand.Print, new PrintOperation() },
             { ConsoleCommand.PrintTree, new PrintTreeOperation() },
+            { ConsoleCommand.Json, new JsonOperation() },
         };
 
         private ConsoleOptions _options;
