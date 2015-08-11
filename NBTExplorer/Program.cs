@@ -81,8 +81,8 @@ namespace NBTExplorer
             while (ix.InnerException != null) {
                 ix = ix.InnerException;
                 errorText.AppendLine();
-                errorText.AppendLine("Caused by Inner Exception: " + ex.GetType().Name);
-                errorText.AppendLine("Message: " + ex.Message);
+                errorText.AppendLine("Caused by Inner Exception: " + ix.GetType().Name);
+                errorText.AppendLine("Message: " + ix.Message);
             }
 
             try {
