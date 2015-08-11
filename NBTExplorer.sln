@@ -1,13 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBTExplorer", "NBTExplorer\NBTExplorer.csproj", "{8A458245-8176-4599-95CD-3CA39F2435CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBTExplorerMac", "NBTExplorer\NBTExplorerMac.csproj", "{01F9A296-C477-4CBF-A0D0-41E697048257}"
-EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "NBTExplorer.Installer", "NBTExplorer.Installer\NBTExplorer.Installer.wixproj", "{A1566071-7CBB-4C54-AAE1-4B81B7715DB3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8A458245-8176-4599-95CD-3CA39F2435CE} = {8A458245-8176-4599-95CD-3CA39F2435CE}
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC} = {20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}
+		{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF} = {BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBTUtil", "NBTUtil\NBTUtil.csproj", "{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}"
 EndProject
@@ -44,22 +47,6 @@ Global
 		{8A458245-8176-4599-95CD-3CA39F2435CE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{8A458245-8176-4599-95CD-3CA39F2435CE}.Release|x86.ActiveCfg = Release|x86
 		{8A458245-8176-4599-95CD-3CA39F2435CE}.Release|x86.Build.0 = Release|x86
-		{01F9A296-C477-4CBF-A0D0-41E697048257}.AppStore|Any CPU.ActiveCfg = AppStore|Any CPU
-		{01F9A296-C477-4CBF-A0D0-41E697048257}.AppStore|Any CPU.Build.0 = AppStore|Any CPU
-		{01F9A296-C477-4CBF-A0D0-41E697048257}.AppStore|Mixed Platforms.ActiveCfg = AppStore|Any CPU
-		{01F9A296-C477-4CBF-A0D0-41E697048257}.AppStore|x86.ActiveCfg = AppStore|Any CPU
-		{01F9A296-C477-4CBF-A0D0-41E697048257}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{01F9A296-C477-4CBF-A0D0-41E697048257}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{01F9A296-C477-4CBF-A0D0-41E697048257}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{01F9A296-C477-4CBF-A0D0-41E697048257}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{01F9A296-C477-4CBF-A0D0-41E697048257}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{01F9A296-C477-4CBF-A0D0-41E697048257}.Debug|x86.Build.0 = Debug|Any CPU
-		{01F9A296-C477-4CBF-A0D0-41E697048257}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{01F9A296-C477-4CBF-A0D0-41E697048257}.Release|Any CPU.Build.0 = Release|Any CPU
-		{01F9A296-C477-4CBF-A0D0-41E697048257}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{01F9A296-C477-4CBF-A0D0-41E697048257}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{01F9A296-C477-4CBF-A0D0-41E697048257}.Release|x86.ActiveCfg = Release|Any CPU
-		{01F9A296-C477-4CBF-A0D0-41E697048257}.Release|x86.Build.0 = Release|Any CPU
 		{A1566071-7CBB-4C54-AAE1-4B81B7715DB3}.AppStore|Any CPU.ActiveCfg = Release|x86
 		{A1566071-7CBB-4C54-AAE1-4B81B7715DB3}.AppStore|Mixed Platforms.ActiveCfg = Release|x86
 		{A1566071-7CBB-4C54-AAE1-4B81B7715DB3}.AppStore|Mixed Platforms.Build.0 = Release|x86
@@ -105,6 +92,7 @@ Global
 		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Release|x86.ActiveCfg = Release|Any CPU
+		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
