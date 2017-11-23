@@ -957,6 +957,12 @@ namespace NBTExplorer.Controllers
                 return (dataNode != null) && dataNode.CanCreateTag(TagType.TAG_INT_ARRAY);
             }
 
+            public static bool CreateLongArrayNodePred(DataNode dataNode, out GroupCapabilities caps)
+            {
+                caps = GroupCapabilities.Single;
+                return (dataNode != null) && dataNode.CanCreateTag(TagType.TAG_LONG_ARRAY);
+            }
+
             public static bool CreateStringNodePred (DataNode dataNode, out GroupCapabilities caps)
             {
                 caps = GroupCapabilities.Single;

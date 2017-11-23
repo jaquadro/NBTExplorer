@@ -632,7 +632,8 @@
             // _buttonAddTagLongArray
             // 
             this._buttonAddTagLongArray.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._buttonAddTagLongArray.Image = global::NBTExplorer.Properties.Resources.edit_code_l;
+            this._buttonAddTagLongArray.Image = ((System.Drawing.Image)(resources.GetObject("_buttonAddTagLongArray.Image")));
+            this._buttonAddTagIntArray.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this._buttonAddTagLongArray.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._buttonAddTagLongArray.Name = "_buttonAddTagLongArray";
             this._buttonAddTagLongArray.Size = new System.Drawing.Size(23, 22);
@@ -720,12 +721,12 @@
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.testToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(97, 26);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(96, 26);
             // 
             // testToolStripMenuItem
             // 
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(96, 22);
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(95, 22);
             this.testToolStripMenuItem.Text = "Test";
             // 
             // _nodeTree
