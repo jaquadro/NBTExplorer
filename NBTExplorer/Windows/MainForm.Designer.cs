@@ -87,6 +87,7 @@
             this._buttonAddTagDouble = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagByteArray = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagIntArray = new System.Windows.Forms.ToolStripButton();
+            this._buttonAddTagLongArray = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagString = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagList = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagCompound = new System.Windows.Forms.ToolStripButton();
@@ -437,6 +438,7 @@
             this._buttonAddTagDouble,
             this._buttonAddTagByteArray,
             this._buttonAddTagIntArray,
+            this._buttonAddTagLongArray,
             this._buttonAddTagString,
             this._buttonAddTagList,
             this._buttonAddTagCompound,
@@ -627,6 +629,16 @@
             this._buttonAddTagIntArray.Size = new System.Drawing.Size(23, 22);
             this._buttonAddTagIntArray.Text = "Add Int Array Tag";
             // 
+            // _buttonAddTagLongArray
+            // 
+            this._buttonAddTagLongArray.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._buttonAddTagLongArray.Image = ((System.Drawing.Image)(resources.GetObject("_buttonAddTagLongArray.Image")));
+            this._buttonAddTagIntArray.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this._buttonAddTagLongArray.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._buttonAddTagLongArray.Name = "_buttonAddTagLongArray";
+            this._buttonAddTagLongArray.Size = new System.Drawing.Size(23, 22);
+            this._buttonAddTagLongArray.Text = "Add Long Array Tag";
+            // 
             // _buttonAddTagString
             // 
             this._buttonAddTagString.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -709,12 +721,12 @@
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.testToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(97, 26);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(96, 26);
             // 
             // testToolStripMenuItem
             // 
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(96, 22);
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(95, 22);
             this.testToolStripMenuItem.Text = "Test";
             // 
             // _nodeTree
@@ -830,6 +842,7 @@
         private System.Windows.Forms.ToolStripMenuItem findBlockToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
         private System.Windows.Forms.ToolStripMenuItem _menuItemOpenInExplorer;
+        private System.Windows.Forms.ToolStripButton _buttonAddTagLongArray;
     }
 }
 

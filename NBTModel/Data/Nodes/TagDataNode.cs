@@ -95,6 +95,7 @@ namespace NBTExplorer.Model
             _tagRegistry[TagType.TAG_INT_ARRAY] = typeof(TagIntArrayDataNode);
             _tagRegistry[TagType.TAG_LIST] = typeof(TagListDataNode);
             _tagRegistry[TagType.TAG_LONG] = typeof(TagLongDataNode);
+            _tagRegistry[TagType.TAG_LONG_ARRAY] = typeof(TagLongArrayDataNode);
             _tagRegistry[TagType.TAG_SHORT] = typeof(TagShortDataNode);
             _tagRegistry[TagType.TAG_SHORT_ARRAY] = typeof(TagShortArrayDataNode);
             _tagRegistry[TagType.TAG_STRING] = typeof(TagStringDataNode);
@@ -129,6 +130,8 @@ namespace NBTExplorer.Model
                     return new TagNodeList(TagType.TAG_BYTE);
                 case TagType.TAG_LONG:
                     return new TagNodeLong(0);
+                case TagType.TAG_LONG_ARRAY:
+                    return new TagNodeLongArray(new long[0]);
                 case TagType.TAG_SHORT:
                     return new TagNodeShort(0);
                 case TagType.TAG_SHORT_ARRAY:
@@ -352,6 +355,41 @@ namespace NBTExplorer.Model
                 if (FormRegistry.EditByteArray(data)) {
                     tag.ToTagByteArray().Data = data.Data;
                     //Array.Copy(data.Data, tag.ToTagByteArray().Data, tag.ToTagByteArray().Length);
+                    IsDataModified = true;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        protected bool EditLongHexValue(TagNode tag)
+        {
+            if (FormRegistry.EditByteArray != null)
+            {
+                TagNodeLongArray iatag = tag.ToTagLongArray();
+                byte[] byteData = new byte[iatag.Length * 8];
+                for (int i = 0; i < iatag.Length; i++)
+                {
+                    byte[] buf = BitConverter.GetBytes(iatag.Data[i]);
+                    Array.Copy(buf, 0, byteData, 8 * i, 8);
+                }
+
+                ByteArrayFormData data = new ByteArrayFormData()
+                {
+                    NodeName = NodeName,
+                    BytesPerElement = 8,
+                    Data = byteData,
+                };
+
+                if (FormRegistry.EditByteArray(data))
+                {
+                    iatag.Data = new long[data.Data.Length / 8];
+                    for (int i = 0; i < iatag.Length; i++)
+                    {
+                        iatag.Data[i] = BitConverter.ToInt64(data.Data, i * 8);
+                    }
+
                     IsDataModified = true;
                     return true;
                 }
