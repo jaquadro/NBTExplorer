@@ -87,6 +87,7 @@
             this._buttonAddTagDouble = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagByteArray = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagIntArray = new System.Windows.Forms.ToolStripButton();
+            this._buttonAddTagLongArray = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagString = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagList = new System.Windows.Forms.ToolStripButton();
             this._buttonAddTagCompound = new System.Windows.Forms.ToolStripButton();
@@ -437,6 +438,7 @@
             this._buttonAddTagDouble,
             this._buttonAddTagByteArray,
             this._buttonAddTagIntArray,
+            this._buttonAddTagLongArray,
             this._buttonAddTagString,
             this._buttonAddTagList,
             this._buttonAddTagCompound,
@@ -626,6 +628,15 @@
             this._buttonAddTagIntArray.Name = "_buttonAddTagIntArray";
             this._buttonAddTagIntArray.Size = new System.Drawing.Size(23, 22);
             this._buttonAddTagIntArray.Text = "Add Int Array Tag";
+            // 
+            // _buttonAddTagLongArray
+            // 
+            this._buttonAddTagLongArray.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._buttonAddTagLongArray.Image = global::NBTExplorer.Properties.Resources.edit_code_l;
+            this._buttonAddTagLongArray.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._buttonAddTagLongArray.Name = "_buttonAddTagLongArray";
+            this._buttonAddTagLongArray.Size = new System.Drawing.Size(23, 22);
+            this._buttonAddTagLongArray.Text = "Add Long Array Tag";
             // 
             // _buttonAddTagString
             // 
@@ -830,6 +841,7 @@
         private System.Windows.Forms.ToolStripMenuItem findBlockToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
         private System.Windows.Forms.ToolStripMenuItem _menuItemOpenInExplorer;
+        private System.Windows.Forms.ToolStripButton _buttonAddTagLongArray;
     }
 }
 

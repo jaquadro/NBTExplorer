@@ -762,8 +762,9 @@ namespace NBTExplorer.Controllers
             _iconRegistry.Register(typeof(CubicRegionDataNode), 11);
             _iconRegistry.Register(typeof(NbtFileDataNode), 12);
             _iconRegistry.Register(typeof(TagIntArrayDataNode), 14);
-            _iconRegistry.Register(typeof(TagShortArrayDataNode), 16);
-            _iconRegistry.Register(typeof(RootDataNode), 17);
+            _iconRegistry.Register(typeof(TagLongArrayDataNode), 16);
+            _iconRegistry.Register(typeof(TagShortArrayDataNode), 17);
+            _iconRegistry.Register(typeof(RootDataNode), 18);
         }
 
         private void UpdateNodeText (TreeNode node)

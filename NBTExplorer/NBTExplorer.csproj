@@ -293,6 +293,8 @@
     </None>
     <None Include="Resources\arrow-090.png" />
     <None Include="Resources\arrow-270.png" />
+    <None Include="Resources\_tbReplaceLongArray.Image.bmp" />
+    <None Include="Resources\edit-code-l.png" />
     <Content Include="Windows\NBTExplorer.visualelementsmanifest.xml" />
     <Content Include="Vendor\Be.Windows.Forms.HexBox\HexBox.bmp" />
   </ItemGroup>
