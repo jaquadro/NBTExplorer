@@ -100,6 +100,7 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this._nodeTree = new NBTExplorer.Vendor.MultiSelectTreeView.MultiSelectTreeView();
+            this._buttonAddTagLongArray = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -412,6 +413,7 @@
             this.imageList1.Images.SetKeyName(14, "edit-code-i.png");
             this.imageList1.Images.SetKeyName(15, "question-white.png");
             this.imageList1.Images.SetKeyName(16, "edit-code-s.png");
+            this.imageList1.Images.SetKeyName(17, "edit-code-l.png");
             // 
             // toolStrip1
             // 
@@ -437,6 +439,7 @@
             this._buttonAddTagDouble,
             this._buttonAddTagByteArray,
             this._buttonAddTagIntArray,
+            this._buttonAddTagLongArray,
             this._buttonAddTagString,
             this._buttonAddTagList,
             this._buttonAddTagCompound,
@@ -709,12 +712,12 @@
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.testToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(97, 26);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(96, 26);
             // 
             // testToolStripMenuItem
             // 
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(96, 22);
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(95, 22);
             this.testToolStripMenuItem.Text = "Test";
             // 
             // _nodeTree
@@ -733,6 +736,16 @@
             this._nodeTree.SelectedNodes = ((System.Collections.Generic.List<System.Windows.Forms.TreeNode>)(resources.GetObject("_nodeTree.SelectedNodes")));
             this._nodeTree.Size = new System.Drawing.Size(619, 374);
             this._nodeTree.TabIndex = 0;
+            // 
+            // _buttonAddTagLongArray
+            // 
+            this._buttonAddTagLongArray.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._buttonAddTagLongArray.Image = ((System.Drawing.Image)(resources.GetObject("_buttonAddTagLongArray.Image")));
+            this._buttonAddTagLongArray.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this._buttonAddTagLongArray.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._buttonAddTagLongArray.Name = "_buttonAddTagLongArray";
+            this._buttonAddTagLongArray.Size = new System.Drawing.Size(23, 22);
+            this._buttonAddTagLongArray.Text = "Add Long Array Tag";
             // 
             // MainForm
             // 
@@ -830,6 +843,7 @@
         private System.Windows.Forms.ToolStripMenuItem findBlockToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
         private System.Windows.Forms.ToolStripMenuItem _menuItemOpenInExplorer;
+        private System.Windows.Forms.ToolStripButton _buttonAddTagLongArray;
     }
 }
 

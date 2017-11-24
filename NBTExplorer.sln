@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBTExplorer", "NBTExplorer\NBTExplorer.csproj", "{8A458245-8176-4599-95CD-3CA39F2435CE}"
 EndProject
@@ -15,6 +15,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBTUtil", "NBTUtil\NBTUtil.csproj", "{BD90EED5-97B9-47D5-AFEA-C2C0D0E59FCF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBTModel", "NBTModel\NBTModel.csproj", "{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Substrate (NET2)", "..\Substrate\SubstrateCS\Substrate (NET2).csproj", "{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +95,24 @@ Global
 		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Release|x86.ActiveCfg = Release|Any CPU
 		{20D7CBA3-5B6D-40B0-8D28-4C9A58E4FFBC}.Release|x86.Build.0 = Release|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.AppStore|Any CPU.Build.0 = Release|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.AppStore|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.AppStore|Mixed Platforms.Build.0 = Release|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.AppStore|x86.ActiveCfg = Release|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.AppStore|x86.Build.0 = Release|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Debug|x86.Build.0 = Debug|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Release|x86.ActiveCfg = Release|Any CPU
+		{AFE30E14-3F2F-4461-9F7D-147AB4DCA4C3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

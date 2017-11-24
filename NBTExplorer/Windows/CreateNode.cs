@@ -107,6 +107,8 @@ namespace NBTExplorer.Windows
                     return new TagNodeList(TagType.TAG_BYTE);
                 case TagType.TAG_LONG:
                     return new TagNodeLong();
+                case TagType.TAG_LONG_ARRAY:
+                    return new TagNodeLongArray(new long[_size]);
                 case TagType.TAG_SHORT:
                     return new TagNodeShort();
                 case TagType.TAG_STRING:
@@ -164,6 +166,7 @@ namespace NBTExplorer.Windows
                     case TagType.TAG_BYTE_ARRAY:
                     case TagType.TAG_INT_ARRAY:
                     case TagType.TAG_SHORT_ARRAY:
+                    case TagType.TAG_LONG_ARRAY:
                         return true;
                     default:
                         return false;

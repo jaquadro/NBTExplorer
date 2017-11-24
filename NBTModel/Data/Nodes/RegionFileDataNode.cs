@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Substrate.Core;
 using System.Collections.Generic;
 using NBTModel.Interop;
+using System;
 
 namespace NBTExplorer.Model
 {
@@ -87,7 +88,7 @@ namespace NBTExplorer.Model
                     }
                 }
             }
-            catch {
+            catch (Exception e) {
                 if (FormRegistry.MessageBox != null)
                     FormRegistry.MessageBox("Not a valid region file.");
             }

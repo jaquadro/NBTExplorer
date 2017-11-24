@@ -36,7 +36,7 @@
             // linkLabel1
             // 
             this.linkLabel1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(171, 31);
+            this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(171, 32);
             this.linkLabel1.Location = new System.Drawing.Point(96, 12);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(272, 133);

@@ -30,10 +30,10 @@ namespace NBTExplorer.Controllers
             _iconRegistry = new IconRegistry();
             _iconRegistry.DefaultIcon = 15;
 
-            _iconRegistry.Register(typeof(RootRule), 16);
-            _iconRegistry.Register(typeof(UnionRule), 19);
-            _iconRegistry.Register(typeof(IntersectRule), 18);
-            _iconRegistry.Register(typeof(WildcardRule), 17);
+            _iconRegistry.Register(typeof(RootRule), 18);
+            _iconRegistry.Register(typeof(UnionRule), 21);
+            _iconRegistry.Register(typeof(IntersectRule), 20);
+            _iconRegistry.Register(typeof(WildcardRule), 19);
             _iconRegistry.Register(typeof(ByteTagRule), 0);
             _iconRegistry.Register(typeof(ShortTagRule), 1);
             _iconRegistry.Register(typeof(IntTagRule), 2);
