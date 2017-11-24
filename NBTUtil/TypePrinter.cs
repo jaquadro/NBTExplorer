@@ -18,6 +18,7 @@ namespace NBTUtil
             { typeof(TagByteArrayDataNode), "B" },
             { typeof(TagIntArrayDataNode), "I" },
             { typeof(TagShortArrayDataNode), "S" },
+            { typeof(TagLongArrayDataNode), "L" },
             { typeof(TagListDataNode), "L" },
             { typeof(TagCompoundDataNode), "C" },
             { typeof(NbtFileDataNode), "N" },
