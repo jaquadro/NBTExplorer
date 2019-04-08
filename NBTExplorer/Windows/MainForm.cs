@@ -165,7 +165,7 @@ namespace NBTExplorer.Windows
             using (OpenFileDialog ofd = new OpenFileDialog() {
                 RestoreDirectory = true,
                 Multiselect = true,
-                Filter = "All Files|*|NBT Files (*.dat, *.schematic)|*.dat;*.nbt;*.schematic|Region Files (*.mca, *.mcr)|*.mca;*.mcr",
+                Filter = "All Files|*|NBT Files (*.dat, *.schematic)|*.dat;*.nbt;*.schematic;*.schem|Region Files (*.mca, *.mcr)|*.mca;*.mcr",
                 FilterIndex = 0,
             }) {
                 if (ofd.ShowDialog() == DialogResult.OK) {
