@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using NBTModel.Interop;
 using Substrate.Core;
 using Substrate.Nbt;
 
@@ -145,5 +148,88 @@ namespace NBTExplorer.Model
         {
             return _container.DeleteTag(tag);
         }
+
+        public override bool CanCreateTag(TagType type)
+        {
+            return Enum.IsDefined(typeof(TagType), type) && type != TagType.TAG_END;
+        }
+
+        public override bool CreateNode(TagType type)
+        {
+            if (!CanCreateTag(type))
+                return false;
+
+            if (FormRegistry.CreateNode != null)
+            {
+                CreateTagFormData data = new CreateTagFormData()
+                {
+                    TagType = type,
+                    HasName = true,
+                };
+                data.RestrictedNames.AddRange(_container.TagNamesInUse);
+
+                if (FormRegistry.CreateNode(data))
+                {
+                    AddTag(data.TagNode, data.TagName);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool AddTag(TagNode tag, string name)
+        {
+            if (tag == null)
+                return false;
+
+            _container.AddTag(tag, name);
+            IsDataModified = true;
+
+            if (IsExpanded)
+            {
+                TagDataNode node = TagDataNode.CreateFromTag(tag);
+                if (node != null)
+                    Nodes.Add(node);
+            }
+
+            return true;
+        }
+
+        public override bool PasteNode()
+        {
+            if (!CanPasteIntoNode)
+                return false;
+
+            NbtClipboardData clipboard = NbtClipboardController.CopyFromClipboard();
+            if (clipboard == null || clipboard.Node == null)
+                return false;
+
+            string name = clipboard.Name;
+            if (String.IsNullOrEmpty(name))
+                name = "UNNAMED";
+
+            AddTag(clipboard.Node, MakeUniqueName(name));
+            return true;
+        }
+
+        private string MakeCandidateName(string name, int index)
+        {
+            return name + " (Copy " + index + ")";
+        }
+
+        private string MakeUniqueName(string name)
+        {
+            List<string> names = new List<string>(_container.TagNamesInUse);
+            if (!names.Contains(name))
+                return name;
+
+            int index = 1;
+            while (names.Contains(MakeCandidateName(name, index)))
+                index++;
+
+            return MakeCandidateName(name, index);
+        }
+
     }
 }
