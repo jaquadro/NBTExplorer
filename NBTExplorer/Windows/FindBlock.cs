@@ -38,6 +38,10 @@ namespace NBTExplorer.Windows
         {
             InitializeComponent();
 
+            inputDistance = groupBox1.Width - _regionXTextBox.Width;
+
+            FormResize();
+
             _searchRoot = searchRoot;
 
             _groupX = new CoordinateGroup() {
@@ -58,7 +62,6 @@ namespace NBTExplorer.Windows
 
             ApplyRegion(_groupX, "0", true);
             ApplyRegion(_groupZ, "0", true);
-
             Validate();
         }
 
@@ -525,6 +528,21 @@ namespace NBTExplorer.Windows
         {
             DialogResult = DialogResult.Cancel;
             Close();
+        }
+
+        private int inputDistance;
+
+        private void FormResize(object sender = null, EventArgs e = null) {
+            _regionXTextBox.Width = groupBox1.Width - inputDistance;
+            _regionZTextBox.Width = groupBox1.Width - inputDistance;
+            _chunkXTextBox.Width = groupBox1.Width - inputDistance;
+            _chunkZTextBox.Width = groupBox1.Width - inputDistance;
+            _blockXTextBox.Width = groupBox1.Width - inputDistance;
+            _blockZTextBox.Width = groupBox1.Width - inputDistance;
+            _localChunkXTextBox.Width = groupBox1.Width - inputDistance;
+            _localChunkZTextBox.Width = groupBox1.Width - inputDistance;
+            _localBlockXTextBox.Width = groupBox1.Width - inputDistance;
+            _localBlockZTextBox.Width = groupBox1.Width - inputDistance;
         }
     }
 }

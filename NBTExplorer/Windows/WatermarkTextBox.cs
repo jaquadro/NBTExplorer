@@ -17,7 +17,7 @@ namespace NBTExplorer.Windows
             this.ForeColor = Color.Gray;
 
             GotFocus += (source, e) => {
-                RemoveWatermak();
+                RemoveWatermark();
             };
 
             LostFocus += (source, e) => {
@@ -29,7 +29,7 @@ namespace NBTExplorer.Windows
 
         public bool WatermarkActive { get; set; }
 
-        public void RemoveWatermak ()
+        public void RemoveWatermark ()
         {
             if (this.WatermarkActive) {
                 this.WatermarkActive = false;
@@ -56,7 +56,7 @@ namespace NBTExplorer.Windows
 
         public void ApplyText (string text)
         {
-            RemoveWatermak();
+            RemoveWatermark();
             Text = text;
         }
     }
