@@ -45,17 +45,30 @@ namespace NBTUtil
             int successCount = 0;
             int failCount = 0;
 
-            foreach (var targetNode in new NbtPathEnumerator(_options.Path)) {
-                if (!op.CanProcess(targetNode)) {
-                    Console.WriteLine(targetNode.NodePath + ": ERROR (invalid command)");
+            var nodesToProcess = new List<DataNode>();
+
+            foreach (var node in new NbtPathEnumerator(_options.Path))
+            {
+                if (op.CanProcess(node))
+                {
+                    nodesToProcess.Add(node);
+                }
+                else
+                {
+                    Console.WriteLine(node.NodePath + ": ERROR (invalid command)");
                     failCount++;
                 }
+            }
+
+            foreach (var targetNode in nodesToProcess) {
+                var root = targetNode.Root;
+
                 if (!op.Process(targetNode, _options)) {
                     Console.WriteLine(targetNode.NodePath + ": ERROR (apply)");
                     failCount++;
                 }
 
-                targetNode.Root.Save();
+                root.Save();
 
                 Console.WriteLine(targetNode.NodePath + ": OK");
                 successCount++;
