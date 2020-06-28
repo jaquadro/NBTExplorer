@@ -56,6 +56,7 @@ namespace NBTUtil
                     if (!string.IsNullOrEmpty(v))
                         Values.Add(v);
                 }},
+                { "delete", "Delete the NBT tag if found", v => Command = ConsoleCommand.DeleteValue },
                 { "help", "Print this help message", v => Command = ConsoleCommand.Help },
                 { "<>", v => {
                     switch (_currentKey) {
@@ -65,7 +66,6 @@ namespace NBTUtil
                             break;
                     }
                 }},
-                { "delete", "Delete the NBT tag if found", v => Command = ConsoleCommand.DeleteValue },
             };
         }
 
