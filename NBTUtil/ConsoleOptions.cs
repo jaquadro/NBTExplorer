@@ -11,6 +11,7 @@ namespace NBTUtil
         Print,
         PrintTree,
         SetValue,
+        DeleteValue,
         SetList,
         Json,
         Help,
@@ -64,6 +65,7 @@ namespace NBTUtil
                             break;
                     }
                 }},
+                { "delete", "Delete the NBT tag if found", v => Command = ConsoleCommand.DeleteValue },
             };
         }
 

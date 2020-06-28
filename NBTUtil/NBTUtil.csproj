@@ -45,6 +45,7 @@
     <Compile Include="ConsoleRunner.cs" />
     <Compile Include="NDesk\Options.cs" />
     <Compile Include="Ops\ConsoleOperation.cs" />
+    <Compile Include="Ops\DeleteOperation.cs" />
     <Compile Include="Ops\EditOperation.cs" />
     <Compile Include="Ops\JsonOperation.cs" />
     <Compile Include="Ops\PrintOperation.cs" />
