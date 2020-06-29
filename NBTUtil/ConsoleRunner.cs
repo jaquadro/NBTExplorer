@@ -13,6 +13,7 @@ namespace NBTUtil
     {
         private static readonly Dictionary<ConsoleCommand, ConsoleOperation> _commandTable = new Dictionary<ConsoleCommand, ConsoleOperation>() {
             { ConsoleCommand.SetValue, new EditOperation() },
+            { ConsoleCommand.DeleteValue, new DeleteOperation() },
             { ConsoleCommand.SetList, new SetListOperation() },
             { ConsoleCommand.Print, new PrintOperation() },
             { ConsoleCommand.PrintTree, new PrintTreeOperation() },
@@ -28,6 +29,8 @@ namespace NBTUtil
 
         public bool Run (string[] args)
         {
+            // Parse and validate command line arguments.
+
             _options.Parse(args);
 
             if (_options.Command == ConsoleCommand.Help)
@@ -45,20 +48,47 @@ namespace NBTUtil
             int successCount = 0;
             int failCount = 0;
 
-            foreach (var targetNode in new NbtPathEnumerator(_options.Path)) {
-                if (!op.CanProcess(targetNode)) {
-                    Console.WriteLine(targetNode.NodePath + ": ERROR (invalid command)");
+            var nodesToProcess = new List<DataNode>();
+
+            // Iterate over all nodes matching the provided Path and create a list of the ones that can be processed
+            // using the provided ConsoleCommand.
+
+            foreach (var node in new NbtPathEnumerator(_options.Path))
+            {
+                if (op.CanProcess(node))
+                {
+                    nodesToProcess.Add(node);
+                }
+                else
+                {
+                    Console.WriteLine(node.NodePath + ": ERROR (invalid command)");
                     failCount++;
                 }
-                if (!op.Process(targetNode, _options)) {
+            }
+
+            // Iterate over all the processable nodes and process them.
+            // Doing this separately from the CanProcess loop allows Process to make significant changes to the NBT
+            // tree like node deletion.
+
+            foreach (var targetNode in nodesToProcess) {
+                // Since Process may render targetNode inoperable, save targetNode.Root beforehand.
+                var root = targetNode.Root;
+
+                if (op.Process(targetNode, _options))
+                {
+                    // Now that processing has succeeded, save the changes.
+                    root.Save();
+                    Console.WriteLine(targetNode.NodePath + ": OK");
+                    successCount++;
+                }
+                else
+                {
+                    // Since processing failed, discard any changes that may have been made. This prevents other
+                    // iterations of this loop from saving them.
+                    targetNode.RefreshNode();
                     Console.WriteLine(targetNode.NodePath + ": ERROR (apply)");
                     failCount++;
                 }
-
-                targetNode.Root.Save();
-
-                Console.WriteLine(targetNode.NodePath + ": OK");
-                successCount++;
             }
 
             Console.WriteLine("Operation complete.  Nodes succeeded: {0}  Nodes failed: {1}", successCount, failCount);
