@@ -4,42 +4,27 @@ namespace Be.Windows.Forms
 {
     internal sealed class FileDataBlock : DataBlock
     {
-        long _length;
-        long _fileOffset;
+        private long _length;
 
         public FileDataBlock(long fileOffset, long length)
         {
-            _fileOffset = fileOffset;
+            FileOffset = fileOffset;
             _length = length;
         }
 
-        public long FileOffset
-        {
-            get
-            {
-                return _fileOffset;
-            }
-        }
+        public long FileOffset { get; private set; }
 
-        public override long Length
-        {
-            get
-            {
-                return _length;
-            }
-        }
+        public override long Length => _length;
 
         public void SetFileOffset(long value)
         {
-            _fileOffset = value;
+            FileOffset = value;
         }
 
         public void RemoveBytesFromEnd(long count)
         {
             if (count > _length)
-            {
                 throw new ArgumentOutOfRangeException("count");
-            }
 
             _length -= count;
         }
@@ -47,35 +32,29 @@ namespace Be.Windows.Forms
         public void RemoveBytesFromStart(long count)
         {
             if (count > _length)
-            {
                 throw new ArgumentOutOfRangeException("count");
-            }
 
-            _fileOffset += count;
+            FileOffset += count;
             _length -= count;
         }
 
         public override void RemoveBytes(long position, long count)
         {
             if (position > _length)
-            {
                 throw new ArgumentOutOfRangeException("position");
-            }
 
             if (position + count > _length)
-            {
                 throw new ArgumentOutOfRangeException("count");
-            }
 
-            long prefixLength = position;
-            long prefixFileOffset = _fileOffset;
+            var prefixLength = position;
+            var prefixFileOffset = FileOffset;
 
-            long suffixLength = _length - count - prefixLength;
-            long suffixFileOffset = _fileOffset + position + count;
+            var suffixLength = _length - count - prefixLength;
+            var suffixFileOffset = FileOffset + position + count;
 
             if (prefixLength > 0 && suffixLength > 0)
             {
-                _fileOffset = prefixFileOffset;
+                FileOffset = prefixFileOffset;
                 _length = prefixLength;
                 _map.AddAfter(this, new FileDataBlock(suffixFileOffset, suffixLength));
                 return;
@@ -83,12 +62,12 @@ namespace Be.Windows.Forms
 
             if (prefixLength > 0)
             {
-                _fileOffset = prefixFileOffset;
+                FileOffset = prefixFileOffset;
                 _length = prefixLength;
             }
             else
             {
-                _fileOffset = suffixFileOffset;
+                FileOffset = suffixFileOffset;
                 _length = suffixLength;
             }
         }

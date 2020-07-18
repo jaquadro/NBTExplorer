@@ -1,12 +1,12 @@
-﻿using System;
+﻿using NBTModel.Interop;
+using System;
 using System.Windows.Forms;
-using NBTModel.Interop;
 
 namespace NBTExplorer.Windows
 {
     public static class FormHandlers
     {
-        public static void Register ()
+        public static void Register()
         {
             FormRegistry.EditByteArray = EditByteArrayHandler;
             FormRegistry.EditString = EditStringHandler;
@@ -17,70 +17,70 @@ namespace NBTExplorer.Windows
             FormRegistry.MessageBox = MessageBoxHandler;
         }
 
-        public static void MessageBoxHandler (string message)
+        public static void MessageBoxHandler(string message)
         {
             MessageBox.Show(message);
         }
 
-        public static bool EditStringHandler (StringFormData data)
+        public static bool EditStringHandler(StringFormData data)
         {
-            EditString form = new EditString(data.Value);
-            if (form.ShowDialog() == DialogResult.OK) {
+            var form = new EditString(data.Value);
+            if (form.ShowDialog() == DialogResult.OK)
+            {
                 data.Value = form.StringValue;
                 return true;
             }
-            else
-                return false;
+            return false;
         }
 
-        public static bool RenameTagHandler (RestrictedStringFormData data)
+        public static bool RenameTagHandler(RestrictedStringFormData data)
         {
-            EditName form = new EditName(data.Value) {
-                AllowEmpty = data.AllowEmpty,
+            var form = new EditName(data.Value)
+            {
+                AllowEmpty = data.AllowEmpty
             };
             form.InvalidNames.AddRange(data.RestrictedValues);
 
-            if (form.ShowDialog() == DialogResult.OK && form.IsModified) {
+            if (form.ShowDialog() == DialogResult.OK && form.IsModified)
+            {
                 data.Value = form.TagName;
                 return true;
             }
-            else
-                return false;
+            return false;
         }
 
-        public static bool EditTagScalarValueHandler (TagScalarFormData data)
+        public static bool EditTagScalarValueHandler(TagScalarFormData data)
         {
-            EditValue form = new EditValue(data.Tag);
+            var form = new EditValue(data.Tag);
             if (form.ShowDialog() == DialogResult.OK)
                 return true;
-            else
-                return false;
+            return false;
         }
 
-        public static bool EditByteArrayHandler (ByteArrayFormData data)
+        public static bool EditByteArrayHandler(ByteArrayFormData data)
         {
-            HexEditor form = new HexEditor(data.NodeName, data.Data, data.BytesPerElement);
-            if (form.ShowDialog() == DialogResult.OK && form.Modified) {
+            var form = new HexEditor(data.NodeName, data.Data, data.BytesPerElement);
+            if (form.ShowDialog() == DialogResult.OK && form.Modified)
+            {
                 data.Data = new byte[form.Data.Length];
                 Array.Copy(form.Data, data.Data, data.Data.Length);
                 return true;
             }
-            else
-                return false;
+            return false;
         }
 
-        public static bool CreateNodeHandler (CreateTagFormData data)
+        public static bool CreateNodeHandler(CreateTagFormData data)
         {
-            CreateNodeForm form = new CreateNodeForm(data.TagType, data.HasName);
+            var form = new CreateNodeForm(data.TagType, data.HasName);
             form.InvalidNames.AddRange(data.RestrictedNames);
 
-            if (form.ShowDialog() == DialogResult.OK) {
+            if (form.ShowDialog() == DialogResult.OK)
+            {
                 data.TagNode = form.TagNode;
                 data.TagName = form.TagName;
                 return true;
             }
-            else
-                return false;
+            return false;
         }
     }
 }

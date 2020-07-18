@@ -1,20 +1,20 @@
-﻿using System;
+﻿using NBTExplorer.Model;
+using NBTExplorer.Windows;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using NBTExplorer.Model;
-using NBTExplorer.Windows;
 
 namespace NBTExplorer.Controllers
 {
-    class ExplorerBarController
+    internal class ExplorerBarController
     {
-        private ToolStrip _explorerStrip;
+        private readonly ToolStrip _explorerStrip;
+        private readonly ImageList _iconList;
+        private readonly IconRegistry _registry;
         private DataNode _rootNode;
-        private IconRegistry _registry;
-        private ImageList _iconList;
 
-        public ExplorerBarController (ToolStrip toolStrip, IconRegistry registry, ImageList iconList, DataNode rootNode)
+        public ExplorerBarController(ToolStrip toolStrip, IconRegistry registry, ImageList iconList, DataNode rootNode)
         {
             _explorerStrip = toolStrip;
             _registry = registry;
@@ -24,26 +24,45 @@ namespace NBTExplorer.Controllers
             Initialize();
         }
 
-        private void Initialize ()
+        public DataNode SearchRoot
+        {
+            get => _rootNode;
+            set
+            {
+                if (_rootNode == value)
+                    return;
+
+                _rootNode = value;
+                Initialize();
+
+                OnSearchRootChanged();
+            }
+        }
+
+        private void Initialize()
         {
             _explorerStrip.Items.Clear();
 
-            List<DataNode> ancestry = new List<DataNode>();
-            DataNode node = _rootNode;
+            var ancestry = new List<DataNode>();
+            var node = _rootNode;
 
-            while (node != null) {
+            while (node != null)
+            {
                 ancestry.Add(node);
                 node = node.Parent;
             }
 
             ancestry.Reverse();
 
-            foreach (DataNode item in ancestry) {
-                ToolStripSplitButton itemButton = new ToolStripSplitButton(item.NodePathName) {
-                    Tag = item,
+            foreach (var item in ancestry)
+            {
+                var itemButton = new ToolStripSplitButton(item.NodePathName)
+                {
+                    Tag = item
                 };
-                itemButton.ButtonClick += (s, e) => {
-                    ToolStripSplitButton button = s as ToolStripSplitButton;
+                itemButton.ButtonClick += (s, e) =>
+                {
+                    var button = s as ToolStripSplitButton;
                     if (button != null)
                         SearchRoot = button.Tag as DataNode;
                 };
@@ -55,16 +74,19 @@ namespace NBTExplorer.Controllers
                 if (!item.IsExpanded)
                     item.Expand();
 
-                foreach (DataNode subItem in item.Nodes) {
+                foreach (var subItem in item.Nodes)
+                {
                     if (!subItem.IsContainerType)
                         continue;
 
-                    ToolStripMenuItem menuItem = new ToolStripMenuItem(subItem.NodePathName) {
+                    var menuItem = new ToolStripMenuItem(subItem.NodePathName)
+                    {
                         ImageIndex = _registry.Lookup(subItem.GetType()),
-                        Tag = subItem,
+                        Tag = subItem
                     };
-                    menuItem.Click += (s, e) => {
-                        ToolStripMenuItem mItem = s as ToolStripMenuItem;
+                    menuItem.Click += (s, e) =>
+                    {
+                        var mItem = s as ToolStripMenuItem;
                         if (mItem != null)
                             SearchRoot = mItem.Tag as DataNode;
                     };
@@ -79,24 +101,9 @@ namespace NBTExplorer.Controllers
             }
         }
 
-        public DataNode SearchRoot
-        {
-            get { return _rootNode; }
-            set
-            {
-                if (_rootNode == value)
-                    return;
-
-                _rootNode = value;
-                Initialize();
-
-                OnSearchRootChanged();
-            }
-        }
-
         public event EventHandler SearchRootChanged;
 
-        protected virtual void OnSearchRootChanged ()
+        protected virtual void OnSearchRootChanged()
         {
             var ev = SearchRootChanged;
             if (ev != null)

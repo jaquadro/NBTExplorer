@@ -15,7 +15,7 @@ namespace NBTExplorer.Model
         CreateTag = 0x40,
         Search = 0x80,
         Reorder = 0x100,
-        Refresh = 0x200,
+        Refresh = 0x200
     }
 
     [Flags]
@@ -27,6 +27,6 @@ namespace NBTExplorer.Model
         MultiSameType = 0x4 | SiblingSameType,
         MultiMixedType = 0x8 | MultiSameType | SiblingMixedType,
         ElideChildren = 0x10,
-        All = MultiMixedType | ElideChildren,
+        All = MultiMixedType | ElideChildren
     }
 }

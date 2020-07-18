@@ -6,16 +6,11 @@ namespace NBTExplorer.Model
 {
     public class NbtPathEnumerator : IEnumerable<DataNode>
     {
-        private class PathPartDesc
-        {
-            public string Name;
-            public DataNode Node;
-        }
+        private readonly List<string> _pathParts = new List<string>();
 
-        private string _pathRoot;
-        private List<string> _pathParts = new List<string>();
+        private readonly string _pathRoot;
 
-        public NbtPathEnumerator (string path)
+        public NbtPathEnumerator(string path)
         {
             _pathRoot = Path.GetPathRoot(path);
             _pathParts = new List<string>(path.Substring(_pathRoot.Length).Split('/', '\\'));
@@ -24,24 +19,25 @@ namespace NBTExplorer.Model
                 _pathRoot = Directory.GetCurrentDirectory();
         }
 
-        public IEnumerator<DataNode> GetEnumerator ()
+        public IEnumerator<DataNode> GetEnumerator()
         {
             DataNode dataNode = new DirectoryDataNode(_pathRoot);
             dataNode.Expand();
 
-            foreach (DataNode childNode in EnumerateNodes(dataNode, _pathParts))
+            foreach (var childNode in EnumerateNodes(dataNode, _pathParts))
                 yield return childNode;
         }
 
-        IEnumerator IEnumerable.GetEnumerator ()
+        IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
 
-        private IEnumerable<DataNode> EnumerateNodes (DataNode containerNode, List<string> nextLevels)
+        private IEnumerable<DataNode> EnumerateNodes(DataNode containerNode, List<string> nextLevels)
         {
             containerNode.Expand();
-            if (nextLevels.Count == 0) {
+            if (nextLevels.Count == 0)
+            {
                 yield return containerNode;
                 yield break;
             }
@@ -49,57 +45,57 @@ namespace NBTExplorer.Model
             if (containerNode.Nodes.Count == 0)
                 yield break;
 
-            string part = nextLevels[0];
-            List<string> remainingLevels = nextLevels.GetRange(1, nextLevels.Count - 1);
-            
-            if (part == "*") {
-                foreach (DataNode childNode in containerNode.Nodes) {
-                    foreach (DataNode grandChildNode in EnumerateNodes(childNode, remainingLevels))
+            var part = nextLevels[0];
+            var remainingLevels = nextLevels.GetRange(1, nextLevels.Count - 1);
+
+            if (part == "*")
+                foreach (var childNode in containerNode.Nodes)
+                    foreach (var grandChildNode in EnumerateNodes(childNode, remainingLevels))
                         yield return grandChildNode;
-                }
-            }
-            else if (part == "**") {
-                foreach (DataNode childNode in containerNode.Nodes) {
-                    foreach (DataNode grandChildNode in EnumerateNodes(childNode, remainingLevels))
+            else if (part == "**")
+                foreach (var childNode in containerNode.Nodes)
+                {
+                    foreach (var grandChildNode in EnumerateNodes(childNode, remainingLevels))
                         yield return grandChildNode;
 
-                    foreach (DataNode grandChildNode in EnumerateNodes(childNode, nextLevels))
+                    foreach (var grandChildNode in EnumerateNodes(childNode, nextLevels))
                         yield return grandChildNode;
                 }
-            }
-            else {
-                foreach (var childNode in containerNode.Nodes) {
-                    if (childNode.NodePathName == part) {
-                        foreach (DataNode grandChildNode in EnumerateNodes(childNode, remainingLevels))
+            else
+                foreach (var childNode in containerNode.Nodes)
+                    if (childNode.NodePathName == part)
+                        foreach (var grandChildNode in EnumerateNodes(childNode, remainingLevels))
                             yield return grandChildNode;
-                    }
-                }
-            }
+        }
+
+        private class PathPartDesc
+        {
+            public string Name;
+            public DataNode Node;
         }
     }
 
     public class NbtPath
     {
+        //private List<PathPart> _pathParts = new List<PathPart>();
+
+        private List<DataNode> _nodes;
+
+        internal NbtPath(List<DataNode> nodes)
+        {
+            _nodes = nodes;
+        }
+
         private class PathPart
         {
             public string Name;
             public DataNode Node;
         }
 
-        
-        //private List<PathPart> _pathParts = new List<PathPart>();
-
-        private List<DataNode> _nodes;
-
-        internal NbtPath (List<DataNode> nodes)
-        {
-            _nodes = nodes;
-        }
-
         /*public NbtPath (string path)
         {
             Path = path;
-            
+
             string[] parts = path.Split('/', '\\');
             foreach (var p in parts) {
                 _pathParts.Add(new PathPart() {

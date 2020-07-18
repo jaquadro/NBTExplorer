@@ -1,16 +1,20 @@
-﻿using System;
+﻿using Substrate.Nbt;
+using System;
 using System.Collections.Generic;
-using Substrate.Nbt;
 
 namespace NBTModel.Interop
 {
     public static class FormRegistry
     {
-        public delegate bool EditStringAction (StringFormData data);
-        public delegate bool EditRestrictedStringAction (RestrictedStringFormData data);
-        public delegate bool EditTagScalarAction (TagScalarFormData data);
-        public delegate bool EditByteArrayAction (ByteArrayFormData data);
-        public delegate bool CreateNodeAction (CreateTagFormData data);
+        public delegate bool CreateNodeAction(CreateTagFormData data);
+
+        public delegate bool EditByteArrayAction(ByteArrayFormData data);
+
+        public delegate bool EditRestrictedStringAction(RestrictedStringFormData data);
+
+        public delegate bool EditStringAction(StringFormData data);
+
+        public delegate bool EditTagScalarAction(TagScalarFormData data);
 
         public static EditStringAction EditString { get; set; }
         public static EditRestrictedStringAction RenameTag { get; set; }
@@ -23,50 +27,45 @@ namespace NBTModel.Interop
 
     public class TagScalarFormData
     {
-        public TagScalarFormData (TagNode tag)
+        public TagScalarFormData(TagNode tag)
         {
             Tag = tag;
         }
-        
-        public TagNode Tag { get; private set; }
+
+        public TagNode Tag { get; }
     }
 
     public class StringFormData
     {
-        public StringFormData (String value)
+        public StringFormData(string value)
         {
             Value = value;
         }
 
-        public String Value { get; set; }
+        public string Value { get; set; }
         public bool AllowEmpty { get; set; }
     }
 
     public class RestrictedStringFormData : StringFormData
     {
-        private List<String> _restricted = new List<string>();
-
-        public RestrictedStringFormData (String value)
+        public RestrictedStringFormData(string value)
             : base(value)
         {
         }
 
-        public List<String> RestrictedValues
-        {
-            get { return _restricted; }
-        }
+        public List<string> RestrictedValues { get; } = new List<string>();
     }
 
     public class CreateTagFormData
     {
-        public CreateTagFormData ()
+        public CreateTagFormData()
         {
             RestrictedNames = new List<string>();
         }
 
         public TagType TagType { get; set; }
         public bool HasName { get; set; }
-        public List<String> RestrictedNames { get; private set; }
+        public List<string> RestrictedNames { get; }
 
         public TagNode TagNode { get; set; }
         public string TagName { get; set; }

@@ -6,69 +6,60 @@ namespace NBTExplorer.Windows
 {
     public partial class EditName : Form
     {
-        private string _originalName;
-        private string _name;
+        private readonly string _originalName;
 
-        private List<string> _invalidNames = new List<string>();
-
-        public EditName (String name)
+        public EditName(string name)
         {
             InitializeComponent();
 
             _originalName = name;
-            _name = name;
+            TagName = name;
 
-            _nameField.Text = _name;
+            _nameField.Text = TagName;
         }
 
-        public String TagName
-        {
-            get { return _name; }
-        }
+        public string TagName { get; private set; }
 
-        public List<string> InvalidNames
-        {
-            get { return _invalidNames; }
-        }
+        public List<string> InvalidNames { get; } = new List<string>();
 
         public bool AllowEmpty { get; set; }
 
-        public bool IsModified
-        {
-            get { return _name != _originalName; }
-        }
+        public bool IsModified => TagName != _originalName;
 
-        private void Apply ()
+        private void Apply()
         {
-            if (ValidateInput()) {
+            if (ValidateInput())
+            {
                 DialogResult = DialogResult.OK;
                 Close();
             }
         }
 
-        private bool ValidateInput ()
+        private bool ValidateInput()
         {
             return ValidateNameInput();
         }
 
-        private bool ValidateNameInput ()
+        private bool ValidateNameInput()
         {
-            string text = _nameField.Text.Trim();
-            if (String.IsNullOrEmpty(text) && !AllowEmpty) {
+            var text = _nameField.Text.Trim();
+            if (string.IsNullOrEmpty(text) && !AllowEmpty)
+            {
                 MessageBox.Show("You must provide a nonempty name.");
                 return false;
             }
 
-            if (text != _originalName && _invalidNames.Contains(text)) {
+            if (text != _originalName && InvalidNames.Contains(text))
+            {
                 MessageBox.Show("Duplicate name provided.");
                 return false;
             }
 
-            _name = _nameField.Text.Trim();
+            TagName = _nameField.Text.Trim();
             return true;
         }
 
-        private void _buttonOK_Click (object sender, EventArgs e)
+        private void _buttonOK_Click(object sender, EventArgs e)
         {
             Apply();
         }

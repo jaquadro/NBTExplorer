@@ -5,23 +5,17 @@ namespace NBTExplorer
 {
     internal static class Interop
     {
-        public static bool WinInteropAvailable
-        {
-            get { return IsWindows && Type.GetType("Mono.Runtime") == null; }
-        }
+        public static bool WinInteropAvailable => IsWindows && Type.GetType("Mono.Runtime") == null;
 
-        public static bool IsWindows
-        {
-            get { return Environment.OSVersion.Platform == PlatformID.Win32NT; }
-        }
+        public static bool IsWindows => Environment.OSVersion.Platform == PlatformID.Win32NT;
 
         public static bool IsWinXP
         {
             get
             {
-                OperatingSystem OS = Environment.OSVersion;
-                return (OS.Platform == PlatformID.Win32NT) &&
-                    ((OS.Version.Major > 5) || ((OS.Version.Major == 5) && (OS.Version.Minor == 1)));
+                var OS = Environment.OSVersion;
+                return OS.Platform == PlatformID.Win32NT &&
+                       (OS.Version.Major > 5 || OS.Version.Major == 5 && OS.Version.Minor == 1);
             }
         }
 
@@ -29,17 +23,16 @@ namespace NBTExplorer
         {
             get
             {
-                OperatingSystem OS = Environment.OSVersion;
-                return (OS.Platform == PlatformID.Win32NT) && (OS.Version.Major >= 6);
+                var OS = Environment.OSVersion;
+                return OS.Platform == PlatformID.Win32NT && OS.Version.Major >= 6;
             }
         }
 
-        public static IntPtr SendMessage (IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
+        public static IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
         {
             if (WinInteropAvailable)
                 return NativeInterop.SendMessage(hWnd, msg, wParam, lParam);
-            else
-                return IntPtr.Zero;
+            return IntPtr.Zero;
         }
     }
 
@@ -55,6 +48,6 @@ namespace NBTExplorer
         public const int TVS_EX_DOUBLEBUFFER = 0x0004;
 
         [DllImport("user32.dll")]
-        public static extern IntPtr SendMessage (IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+        public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
     }
 }

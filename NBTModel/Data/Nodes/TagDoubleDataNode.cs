@@ -4,16 +4,14 @@ namespace NBTExplorer.Model
 {
     public class TagDoubleDataNode : TagDataNode
     {
-        public TagDoubleDataNode (TagNodeDouble tag)
+        public TagDoubleDataNode(TagNodeDouble tag)
             : base(tag)
-        { }
-
-        protected new TagNodeDouble Tag
         {
-            get { return base.Tag as TagNodeDouble; }
         }
 
-        public override bool Parse (string value)
+        protected new TagNodeDouble Tag => base.Tag as TagNodeDouble;
+
+        public override bool Parse(string value)
         {
             double data;
             if (!double.TryParse(value, out data))
@@ -25,7 +23,7 @@ namespace NBTExplorer.Model
             return true;
         }
 
-        public override bool EditNode ()
+        public override bool EditNode()
         {
             return EditScalarValue(Tag);
         }

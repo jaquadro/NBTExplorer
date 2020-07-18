@@ -5,43 +5,38 @@ namespace NBTExplorer.Windows
 {
     public partial class EditString : Form
     {
-        private string _string;
-
-        public EditString (string stringVal)
+        public EditString(string stringVal)
         {
             InitializeComponent();
 
-            _string = stringVal;
+            StringValue = stringVal;
 
-            _stringField.Text = _string;
+            _stringField.Text = StringValue;
         }
 
-        public string StringValue
-        {
-            get { return _string; }
-        }
+        public string StringValue { get; private set; }
 
-        private void Apply ()
+        private void Apply()
         {
-            if (ValidateInput()) {
+            if (ValidateInput())
+            {
                 DialogResult = DialogResult.OK;
                 Close();
-                return;
             }
         }
 
-        private bool ValidateInput ()
+        private bool ValidateInput()
         {
             return ValidateStringInput();
         }
 
-        private bool ValidateStringInput ()
+        private bool ValidateStringInput()
         {
-            _string = _stringField.Text.Trim();
+            StringValue = _stringField.Text.Trim();
             return true;
         }
 
-        private void _buttonOK_Click (object sender, EventArgs e)
+        private void _buttonOK_Click(object sender, EventArgs e)
         {
             Apply();
         }

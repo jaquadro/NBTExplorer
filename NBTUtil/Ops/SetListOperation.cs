@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NBTExplorer.Model;
-using Substrate.Nbt;
+﻿using NBTExplorer.Model;
 
 namespace NBTUtil.Ops
 {
-    class SetListOperation : ConsoleOperation
+    internal class SetListOperation : ConsoleOperation
     {
-        public override bool CanProcess (DataNode dataNode)
+        public override bool CanProcess(DataNode dataNode)
         {
             if (!(dataNode is TagListDataNode))
                 return false;
@@ -16,14 +12,15 @@ namespace NBTUtil.Ops
             return true;
         }
 
-        public override bool Process (DataNode dataNode, ConsoleOptions options)
+        public override bool Process(DataNode dataNode, ConsoleOptions options)
         {
-            TagListDataNode listNode = dataNode as TagListDataNode;
+            var listNode = dataNode as TagListDataNode;
 
             listNode.Clear();
-            foreach (string value in options.Values) {
-                TagNode tag = TagDataNode.DefaultTag(listNode.Tag.ValueType);
-                TagDataNode tagData = TagDataNode.CreateFromTag(tag);
+            foreach (var value in options.Values)
+            {
+                var tag = TagDataNode.DefaultTag(listNode.Tag.ValueType);
+                var tagData = TagDataNode.CreateFromTag(tag);
                 if (!tagData.Parse(value))
                     return false;
 

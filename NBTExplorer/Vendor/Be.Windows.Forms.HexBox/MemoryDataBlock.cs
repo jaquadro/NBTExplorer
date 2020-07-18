@@ -4,84 +4,60 @@ namespace Be.Windows.Forms
 {
     internal sealed class MemoryDataBlock : DataBlock
     {
-        byte[] _data;
-
         public MemoryDataBlock(byte data)
         {
-            _data = new byte[] { data };
+            Data = new[] { data };
         }
 
         public MemoryDataBlock(byte[] data)
         {
             if (data == null)
-            {
                 throw new ArgumentNullException("data");
-            }
 
-            _data = (byte[])data.Clone();
+            Data = (byte[])data.Clone();
         }
 
-        public override long Length
-        {
-            get
-            {
-                return _data.LongLength;
-            }
-        }
+        public override long Length => Data.LongLength;
 
-        public byte[] Data
-        {
-            get
-            {
-                return _data;
-            }
-        }
+        public byte[] Data { get; private set; }
 
         public void AddByteToEnd(byte value)
         {
-            byte[] newData = new byte[_data.LongLength + 1];
-            _data.CopyTo(newData, 0);
+            var newData = new byte[Data.LongLength + 1];
+            Data.CopyTo(newData, 0);
             newData[newData.LongLength - 1] = value;
-            _data = newData;
+            Data = newData;
         }
 
         public void AddByteToStart(byte value)
         {
-            byte[] newData = new byte[_data.LongLength + 1];
+            var newData = new byte[Data.LongLength + 1];
             newData[0] = value;
-            _data.CopyTo(newData, 1);
-            _data = newData;
+            Data.CopyTo(newData, 1);
+            Data = newData;
         }
 
         public void InsertBytes(long position, byte[] data)
         {
-            byte[] newData = new byte[_data.LongLength + data.LongLength];
+            var newData = new byte[Data.LongLength + data.LongLength];
             if (position > 0)
-            {
-                Array.Copy(_data, 0, newData, 0, position);
-            }
+                Array.Copy(Data, 0, newData, 0, position);
             Array.Copy(data, 0, newData, position, data.LongLength);
-            if (position < _data.LongLength)
-            {
-                Array.Copy(_data, position, newData, position + data.LongLength, _data.LongLength - position);
-            }
-            _data = newData;
+            if (position < Data.LongLength)
+                Array.Copy(Data, position, newData, position + data.LongLength, Data.LongLength - position);
+            Data = newData;
         }
 
         public override void RemoveBytes(long position, long count)
         {
-            byte[] newData = new byte[_data.LongLength - count];
+            var newData = new byte[Data.LongLength - count];
 
             if (position > 0)
-            {
-                Array.Copy(_data, 0, newData, 0, position);
-            }
-            if (position + count < _data.LongLength)
-            {
-                Array.Copy(_data, position + count, newData, position, newData.LongLength - position);
-            }
+                Array.Copy(Data, 0, newData, 0, position);
+            if (position + count < Data.LongLength)
+                Array.Copy(Data, position + count, newData, position, newData.LongLength - position);
 
-            _data = newData;
+            Data = newData;
         }
     }
 }

@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace NBTUtil
+﻿namespace NBTUtil
 {
-    class Program
+    internal class Program
     {
-        static void Main (string[] args)
+        private static void Main(string[] args)
         {
-            ConsoleRunner runner = new ConsoleRunner();
+            var runner = new ConsoleRunner();
             runner.Run(args);
         }
     }

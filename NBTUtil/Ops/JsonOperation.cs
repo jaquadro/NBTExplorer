@@ -1,37 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using NBTExplorer.Model;
+﻿using NBTExplorer.Model;
 using Substrate.Nbt;
+using System.IO;
 
 namespace NBTUtil.Ops
 {
-    class JsonOperation : ConsoleOperation
+    internal class JsonOperation : ConsoleOperation
     {
-        public override bool CanProcess (DataNode dataNode)
+        public override bool CanProcess(DataNode dataNode)
         {
             return dataNode is NbtFileDataNode || dataNode is TagDataNode;
         }
 
-        public override bool Process (DataNode dataNode, ConsoleOptions options)
+        public override bool Process(DataNode dataNode, ConsoleOptions options)
         {
             if (options.Values.Count == 0)
                 return false;
 
-            string jsonPath = options.Values[0];
-            using (FileStream stream = File.OpenWrite(jsonPath)) {
-                using (StreamWriter writer = new StreamWriter(stream)) {
-                    if (dataNode is TagDataNode) {
-                        TagDataNode tagNode = dataNode as TagDataNode;
+            var jsonPath = options.Values[0];
+            using (var stream = File.OpenWrite(jsonPath))
+            {
+                using (var writer = new StreamWriter(stream))
+                {
+                    if (dataNode is TagDataNode)
+                    {
+                        var tagNode = dataNode as TagDataNode;
                         WriteNbtTag(writer, tagNode.Tag);
                     }
-                    else if (dataNode is NbtFileDataNode) {
+                    else if (dataNode is NbtFileDataNode)
+                    {
                         dataNode.Expand();
-                        TagNodeCompound root = new TagNodeCompound();
+                        var root = new TagNodeCompound();
 
-                        foreach (DataNode child in dataNode.Nodes) {
-                            TagDataNode childTagNode = child as TagDataNode;
+                        foreach (var child in dataNode.Nodes)
+                        {
+                            var childTagNode = child as TagDataNode;
                             if (childTagNode == null)
                                 continue;
 
@@ -47,7 +49,7 @@ namespace NBTUtil.Ops
             return true;
         }
 
-        private void WriteNbtTag (StreamWriter writer, TagNode tag)
+        private void WriteNbtTag(StreamWriter writer, TagNode tag)
         {
             if (tag == null)
                 return;

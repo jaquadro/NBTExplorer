@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Substrate.Nbt;
+﻿using Substrate.Nbt;
+using System.Collections.Generic;
 
 namespace NBTExplorer.Model
 {
@@ -7,7 +7,7 @@ namespace NBTExplorer.Model
     {
         int TagCount { get; }
 
-        bool DeleteTag (TagNode tag);
+        bool DeleteTag(TagNode tag);
     }
 
     public interface IMetaTagContainer : ITagContainer
@@ -23,19 +23,25 @@ namespace NBTExplorer.Model
     {
         IEnumerable<string> TagNamesInUse { get; }
 
-        string GetTagName (TagNode tag);
-        TagNode GetTagNode (string name);
+        string GetTagName(TagNode tag);
 
-        bool AddTag (TagNode tag, string name);
-        bool RenameTag (TagNode tag, string name);
-        bool ContainsTag (string name);
-        bool DeleteTag (string name);
+        TagNode GetTagNode(string name);
+
+        bool AddTag(TagNode tag, string name);
+
+        bool RenameTag(TagNode tag, string name);
+
+        bool ContainsTag(string name);
+
+        bool DeleteTag(string name);
     }
 
     public interface IOrderedTagContainer : ITagContainer
     {
-        int GetTagIndex (TagNode tag);
-        bool InsertTag (TagNode tag, int index);
-        bool AppendTag (TagNode tag);
+        int GetTagIndex(TagNode tag);
+
+        bool InsertTag(TagNode tag, int index);
+
+        bool AppendTag(TagNode tag);
     }
 }

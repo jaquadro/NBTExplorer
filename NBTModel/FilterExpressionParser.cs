@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace NBTExplorer.Model
 {
-    class FilterExpressionParser
+    internal class FilterExpressionParser
     {
         private Stack<string> argStack = new Stack<string>();
 
@@ -17,52 +16,57 @@ namespace NBTExplorer.Model
 
                 switch (token) {
                     case "equal":
-
                 }
             }
         }*/
     }
 
-    static class FilterExpressionConverter
+    internal static class FilterExpressionConverter
     {
-        private static List<List<string>> OperatorGroups = new List<List<string>> {
-            new List<string> { "equal", "greater", "less", "contains", "begins", "ends" },
-            new List<string> { "not" },
-            new List<string> { "and", "or" },
+        private static readonly List<List<string>> OperatorGroups = new List<List<string>>
+        {
+            new List<string> {"equal", "greater", "less", "contains", "begins", "ends"},
+            new List<string> {"not"},
+            new List<string> {"and", "or"}
         };
 
-        public static List<string> Convert (List<string> tokens)
+        public static List<string> Convert(List<string> tokens)
         {
-            Queue<string> tokenQueue = new Queue<string>(tokens);
-            List<string> output = new List<string>();
-            Stack<string> opStack = new Stack<string>();
+            var tokenQueue = new Queue<string>(tokens);
+            var output = new List<string>();
+            var opStack = new Stack<string>();
 
-            while (tokenQueue.Count > 0) {
-                string token = tokenQueue.Dequeue();
+            while (tokenQueue.Count > 0)
+            {
+                var token = tokenQueue.Dequeue();
 
-                if (IsGroupStart(token)) {
+                if (IsGroupStart(token))
+                {
                     opStack.Push(token);
                 }
-                else if (IsGroupEnd(token)) {
+                else if (IsGroupEnd(token))
+                {
                     while (opStack.Count > 0 && !IsGroupStart(opStack.Peek()))
                         output.Add(opStack.Pop());
                     if (opStack.Count == 0)
                         throw new Exception("Mismatched grouping");
                     opStack.Pop();
                 }
-                else if (IsOperator(token)) {
-                    while (opStack.Count > 0 && IsOperator(opStack.Peek())) {
+                else if (IsOperator(token))
+                {
+                    while (opStack.Count > 0 && IsOperator(opStack.Peek()))
                         if (Precedence(token) > Precedence(opStack.Peek()))
                             output.Add(opStack.Pop());
-                    }
                     opStack.Push(token);
                 }
-                else {
+                else
+                {
                     output.Add(token);
                 }
             }
 
-            while (opStack.Count > 0) {
+            while (opStack.Count > 0)
+            {
                 if (IsGroupStart(opStack.Peek()))
                     throw new Exception("Mismatched grouping");
                 output.Add(opStack.Pop());
@@ -71,30 +75,29 @@ namespace NBTExplorer.Model
             return output;
         }
 
-        private static bool IsGroupStart (string token)
+        private static bool IsGroupStart(string token)
         {
             return token == "(";
         }
 
-        private static bool IsGroupEnd (string token)
+        private static bool IsGroupEnd(string token)
         {
             return token == ")";
         }
 
-        private static bool IsOperator (string token)
+        private static bool IsOperator(string token)
         {
-            foreach (var group in OperatorGroups) {
+            foreach (var group in OperatorGroups)
                 if (group.Contains(token))
                     return true;
-            }
             return false;
         }
 
-        private static int Precedence (string op) {
-            for (int i = 0; i < OperatorGroups.Count; i++) {
+        private static int Precedence(string op)
+        {
+            for (var i = 0; i < OperatorGroups.Count; i++)
                 if (OperatorGroups[i].Contains(op))
                     return i;
-            }
             return int.MaxValue;
         }
     }

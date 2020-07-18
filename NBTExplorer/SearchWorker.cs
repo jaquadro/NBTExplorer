@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using NBTExplorer.Model;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using NBTExplorer.Model;
 
 namespace NBTExplorer
 {
@@ -15,16 +15,25 @@ namespace NBTExplorer
 
         float ProgressRate { get; set; }
 
-        void InvokeDiscoverCallback (DataNode node);
-        void InvokeProgressCallback (DataNode node);
-        void InvokeCollapseCallback (DataNode node);
-        void InvokeEndCallback (DataNode node);
+        void InvokeDiscoverCallback(DataNode node);
 
-        bool TestNode (DataNode node);
+        void InvokeProgressCallback(DataNode node);
+
+        void InvokeCollapseCallback(DataNode node);
+
+        void InvokeEndCallback(DataNode node);
+
+        bool TestNode(DataNode node);
     }
 
     internal abstract class NameValueSearchState : ISearchState
     {
+        protected NameValueSearchState()
+        {
+            TerminateOnDiscover = true;
+            ProgressRate = .5f;
+        }
+
         public virtual string SearchName { get; set; }
         public virtual string SearchValue { get; set; }
 
@@ -34,36 +43,35 @@ namespace NBTExplorer
         public bool IsTerminated { get; set; }
         public float ProgressRate { get; set; }
 
-        public abstract void InvokeDiscoverCallback (DataNode node);
-        public abstract void InvokeProgressCallback (DataNode node);
-        public abstract void InvokeCollapseCallback (DataNode node);
-        public abstract void InvokeEndCallback (DataNode node);
+        public abstract void InvokeDiscoverCallback(DataNode node);
 
-        protected NameValueSearchState ()
+        public abstract void InvokeProgressCallback(DataNode node);
+
+        public abstract void InvokeCollapseCallback(DataNode node);
+
+        public abstract void InvokeEndCallback(DataNode node);
+
+        public bool TestNode(DataNode node)
         {
-            TerminateOnDiscover = true;
-            ProgressRate = .5f;
-        }
+            var mName = SearchName == null;
+            var mValue = SearchValue == null;
 
-        public bool TestNode (DataNode node)
-        {
-            bool mName = SearchName == null;
-            bool mValue = SearchValue == null;
-
-            if (SearchName != null) {
-                string tagName = node.NodeName;
+            if (SearchName != null)
+            {
+                var tagName = node.NodeName;
                 if (tagName != null)
-                    mName = CultureInfo.InvariantCulture.CompareInfo.IndexOf(tagName, SearchName, CompareOptions.IgnoreCase) >= 0;
+                    mName = CultureInfo.InvariantCulture.CompareInfo.IndexOf(tagName, SearchName,
+                                CompareOptions.IgnoreCase) >= 0;
             }
-            if (SearchValue != null) {
-                string tagValue = node.NodeDisplay;
+            if (SearchValue != null)
+            {
+                var tagValue = node.NodeDisplay;
                 if (tagValue != null)
-                    mValue = CultureInfo.InvariantCulture.CompareInfo.IndexOf(tagValue, SearchValue, CompareOptions.IgnoreCase) >= 0;
+                    mValue = CultureInfo.InvariantCulture.CompareInfo.IndexOf(tagValue, SearchValue,
+                                 CompareOptions.IgnoreCase) >= 0;
             }
 
-            if (mName && mValue) {
-                return true;
-            }
+            if (mName && mValue) return true;
 
             return false;
         }
@@ -71,28 +79,29 @@ namespace NBTExplorer
 
     internal class SearchWorker
     {
-        private ISearchState _state;
+        private readonly object _lock;
+        private readonly ISearchState _state;
         private bool _cancel;
-        private object _lock;
+        private float _lastSampleTime;
+        private float _progressTime;
 
         private Stopwatch _progressWatch;
-        private float _progressTime;
-        private float _lastSampleTime;
 
-        public SearchWorker (ISearchState state)
+        public SearchWorker(ISearchState state)
         {
             _state = state;
             _lock = new object();
         }
 
-        public void Cancel ()
+        public void Cancel()
         {
-            lock (_lock) {
+            lock (_lock)
+            {
                 _cancel = true;
             }
         }
 
-        public void Run ()
+        public void Run()
         {
             _progressWatch = new Stopwatch();
             _progressWatch.Start();
@@ -106,9 +115,10 @@ namespace NBTExplorer
             _progressWatch.Stop();
         }
 
-        private IEnumerable<DataNode> FindNode (DataNode node)
+        private IEnumerable<DataNode> FindNode(DataNode node)
         {
-            lock (_lock) {
+            lock (_lock)
+            {
                 if (_cancel)
                     yield break;
             }
@@ -116,24 +126,28 @@ namespace NBTExplorer
             if (node == null)
                 yield break;
 
-            bool searchExpanded = false;
-            if (!node.IsExpanded) {
+            var searchExpanded = false;
+            if (!node.IsExpanded)
+            {
                 node.Expand();
                 searchExpanded = true;
             }
 
-            TagDataNode tagNode = node as TagDataNode;
-            if (tagNode != null) {
-                float currentSampleTime = (float)_progressWatch.Elapsed.TotalSeconds;
-                _progressTime += (currentSampleTime - _lastSampleTime);
+            var tagNode = node as TagDataNode;
+            if (tagNode != null)
+            {
+                var currentSampleTime = (float)_progressWatch.Elapsed.TotalSeconds;
+                _progressTime += currentSampleTime - _lastSampleTime;
                 _lastSampleTime = currentSampleTime;
 
-                if (_progressTime > _state.ProgressRate) {
+                if (_progressTime > _state.ProgressRate)
+                {
                     InvokeProgressCallback(node);
                     _progressTime -= _state.ProgressRate;
                 }
 
-                if (_state.TestNode(tagNode)) {
+                if (_state.TestNode(tagNode))
+                {
                     InvokeDiscoverCallback(node);
                     if (_state.TerminateOnDiscover)
                         yield return node;
@@ -159,18 +173,17 @@ namespace NBTExplorer
                 }*/
             }
 
-            using (node.Nodes.Snapshot()) {
-                foreach (DataNode sub in node.Nodes) {
-                    foreach (DataNode s in FindNode(sub))
+            using (node.Nodes.Snapshot())
+            {
+                foreach (var sub in node.Nodes)
+                    foreach (var s in FindNode(sub))
                         yield return s;
-                }
             }
 
             /*IList<DataNode> nodeList = node.Nodes;
             for (int i = 0; i < nodeList.Count; i++) {
                 int changeset = node.Nodes.ChangeCount;
                 foreach (DataNode s in FindNode(nodeList[i])) {
-
                 }
             }
 
@@ -179,30 +192,30 @@ namespace NBTExplorer
                         yield return s;
                 }*/
 
-            if (searchExpanded) {
-                if (!node.IsModified) {
+            if (searchExpanded)
+                if (!node.IsModified)
+                {
                     node.Collapse();
                     InvokeCollapseCallback(node);
                 }
-            }
         }
 
-        private void InvokeProgressCallback (DataNode node)
+        private void InvokeProgressCallback(DataNode node)
         {
             _state.InvokeProgressCallback(node);
         }
 
-        private void InvokeDiscoverCallback (DataNode node)
+        private void InvokeDiscoverCallback(DataNode node)
         {
             _state.InvokeDiscoverCallback(node);
         }
 
-        private void InvokeCollapseCallback (DataNode node)
+        private void InvokeCollapseCallback(DataNode node)
         {
             _state.InvokeCollapseCallback(node);
         }
 
-        private void InvokeEndCallback ()
+        private void InvokeEndCallback()
         {
             _state.IsTerminated = true;
             _state.InvokeEndCallback(null);

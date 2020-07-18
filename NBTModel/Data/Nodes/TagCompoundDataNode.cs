@@ -1,61 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using NBTModel.Interop;
+﻿using NBTModel.Interop;
 using Substrate.Nbt;
+using System;
+using System.Collections.Generic;
 
 namespace NBTExplorer.Model
 {
     public class TagCompoundDataNode : TagDataNode.Container
     {
-        private CompoundTagContainer _container;
+        private readonly CompoundTagContainer _container;
 
-        public TagCompoundDataNode (TagNodeCompound tag)
+        public TagCompoundDataNode(TagNodeCompound tag)
             : base(tag)
         {
             _container = new CompoundTagContainer(tag);
         }
 
-        protected new TagNodeCompound Tag
-        {
-            get { return base.Tag as TagNodeCompound; }
-        }
+        protected new TagNodeCompound Tag => base.Tag as TagNodeCompound;
 
-        protected override void ExpandCore ()
+        public override bool CanPasteIntoNode => NbtClipboardController.ContainsData;
+
+        public override bool IsNamedContainer => true;
+
+        public override INamedTagContainer NamedTagContainer => _container;
+
+        public override int TagCount => _container.TagCount;
+
+        protected override void ExpandCore()
         {
             var list = new SortedList<TagKey, TagNode>();
-            foreach (var item in Tag) {
-                list.Add(new TagKey(item.Key, item.Value.GetTagType()), item.Value);
-            }
+            foreach (var item in Tag) list.Add(new TagKey(item.Key, item.Value.GetTagType()), item.Value);
 
-            foreach (var item in list) {
-                TagDataNode node = TagDataNode.CreateFromTag(item.Value);
+            foreach (var item in list)
+            {
+                var node = CreateFromTag(item.Value);
                 if (node != null)
                     Nodes.Add(node);
             }
         }
 
-        public override bool CanCreateTag (TagType type)
+        public override bool CanCreateTag(TagType type)
         {
             return Enum.IsDefined(typeof(TagType), type) && type != TagType.TAG_END;
         }
 
-        public override bool CanPasteIntoNode
-        {
-            get { return NbtClipboardController.ContainsData; }
-        }
-
-        public override bool CreateNode (TagType type)
+        public override bool CreateNode(TagType type)
         {
             if (!CanCreateTag(type))
                 return false;
 
-            if (FormRegistry.CreateNode != null) {
-                CreateTagFormData data = new CreateTagFormData() {
-                    TagType = type, HasName = true,
+            if (FormRegistry.CreateNode != null)
+            {
+                var data = new CreateTagFormData
+                {
+                    TagType = type,
+                    HasName = true
                 };
                 data.RestrictedNames.AddRange(_container.TagNamesInUse);
 
-                if (FormRegistry.CreateNode(data)) {
+                if (FormRegistry.CreateNode(data))
+                {
                     AddTag(data.TagNode, data.TagName);
                     return true;
                 }
@@ -64,99 +67,85 @@ namespace NBTExplorer.Model
             return false;
         }
 
-        public override bool PasteNode ()
+        public override bool PasteNode()
         {
             if (!CanPasteIntoNode)
                 return false;
 
-            NbtClipboardData clipboard = NbtClipboardController.CopyFromClipboard();
+            var clipboard = NbtClipboardController.CopyFromClipboard();
             if (clipboard == null || clipboard.Node == null)
                 return false;
 
-            string name = clipboard.Name;
-            if (String.IsNullOrEmpty(name))
+            var name = clipboard.Name;
+            if (string.IsNullOrEmpty(name))
                 name = "UNNAMED";
 
             AddTag(clipboard.Node, MakeUniqueName(name));
             return true;
         }
 
-        public override bool IsNamedContainer
-        {
-            get { return true; }
-        }
-
-        public override INamedTagContainer NamedTagContainer
-        {
-            get { return _container; }
-        }
-
-        public override int TagCount
-        {
-            get { return _container.TagCount; }
-        }
-
-        public override bool DeleteTag (TagNode tag)
+        public override bool DeleteTag(TagNode tag)
         {
             return _container.DeleteTag(tag);
         }
 
-        public bool ContainsTag (string name)
+        public bool ContainsTag(string name)
         {
             return _container.ContainsTag(name);
         }
 
-        public override void SyncTag ()
+        public override void SyncTag()
         {
-            Dictionary<TagNode, TagDataNode> lookup = new Dictionary<TagNode, TagDataNode>();
+            var lookup = new Dictionary<TagNode, TagDataNode>();
             foreach (TagDataNode node in Nodes)
                 lookup[node.Tag] = node;
 
-            foreach (var kvp in lookup) {
+            foreach (var kvp in lookup)
                 if (!Tag.Values.Contains(kvp.Key))
                     Nodes.Remove(kvp.Value);
-            }
 
-            foreach (TagNode tag in Tag.Values) {
-                if (!lookup.ContainsKey(tag)) {
-                    TagDataNode newnode = TagDataNode.CreateFromTag(tag);
-                    if (newnode != null) {
+            foreach (var tag in Tag.Values)
+                if (!lookup.ContainsKey(tag))
+                {
+                    var newnode = CreateFromTag(tag);
+                    if (newnode != null)
+                    {
                         Nodes.Add(newnode);
                         newnode.Expand();
                     }
                 }
-            }
 
             foreach (TagDataNode node in Nodes)
                 node.SyncTag();
         }
 
-        private void AddTag (TagNode tag, string name)
+        private void AddTag(TagNode tag, string name)
         {
             _container.AddTag(tag, name);
             IsDataModified = true;
 
-            if (IsExpanded) {
-                TagDataNode node = TagDataNode.CreateFromTag(tag);
+            if (IsExpanded)
+            {
+                var node = CreateFromTag(tag);
                 if (node != null)
                     Nodes.Add(node);
             }
         }
 
-        private string MakeUniqueName (string name)
+        private string MakeUniqueName(string name)
         {
-            List<string> names = new List<string>(_container.TagNamesInUse);
+            var names = new List<string>(_container.TagNamesInUse);
             if (!names.Contains(name))
                 return name;
 
-            int index = 1;
+            var index = 1;
             while (names.Contains(MakeCandidateName(name, index)))
                 index++;
 
             return MakeCandidateName(name, index);
         }
 
-        private string MakeCandidateName (string name, int index)
+        private string MakeCandidateName(string name, int index)
         {
             return name + " (Copy " + index + ")";
         }

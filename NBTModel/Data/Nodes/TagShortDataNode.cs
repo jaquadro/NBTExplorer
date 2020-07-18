@@ -4,16 +4,14 @@ namespace NBTExplorer.Model
 {
     public class TagShortDataNode : TagDataNode
     {
-        public TagShortDataNode (TagNodeShort tag)
+        public TagShortDataNode(TagNodeShort tag)
             : base(tag)
-        { }
-
-        protected new TagNodeShort Tag
         {
-            get { return base.Tag as TagNodeShort; }
         }
 
-        public override bool Parse (string value)
+        protected new TagNodeShort Tag => base.Tag as TagNodeShort;
+
+        public override bool Parse(string value)
         {
             short data;
             if (!short.TryParse(value, out data))
@@ -25,7 +23,7 @@ namespace NBTExplorer.Model
             return true;
         }
 
-        public override bool EditNode ()
+        public override bool EditNode()
         {
             return EditScalarValue(Tag);
         }

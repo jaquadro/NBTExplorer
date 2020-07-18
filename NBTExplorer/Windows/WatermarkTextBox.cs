@@ -1,60 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace NBTExplorer.Windows
 {
-    class WatermarkTextBox : TextBox
+    internal class WatermarkTextBox : TextBox
     {
-        public WatermarkTextBox ()
+        public WatermarkTextBox()
         {
             WatermarkText = "Type here";
             WatermarkActive = true;
 
-            this.Text = WatermarkText;
-            this.ForeColor = Color.Gray;
+            Text = WatermarkText;
+            ForeColor = Color.Gray;
 
-            GotFocus += (source, e) => {
-                RemoveWatermak();
-            };
+            GotFocus += (source, e) => { RemoveWatermak(); };
 
-            LostFocus += (source, e) => {
-                ApplyWatermark();
-            };
+            LostFocus += (source, e) => { ApplyWatermark(); };
         }
 
         public string WatermarkText { get; set; }
 
         public bool WatermarkActive { get; set; }
 
-        public void RemoveWatermak ()
+        public void RemoveWatermak()
         {
-            if (this.WatermarkActive) {
-                this.WatermarkActive = false;
-                this.Text = "";
-                this.ForeColor = Color.Black;
+            if (WatermarkActive)
+            {
+                WatermarkActive = false;
+                Text = "";
+                ForeColor = Color.Black;
             }
         }
 
-        public void ApplyWatermark ()
+        public void ApplyWatermark()
         {
-            if (!this.WatermarkActive && string.IsNullOrEmpty(this.Text) || ForeColor == Color.Gray) {
-                this.WatermarkActive = true;
-                this.Text = WatermarkText;
-                this.ForeColor = Color.Gray;
+            if (!WatermarkActive && string.IsNullOrEmpty(Text) || ForeColor == Color.Gray)
+            {
+                WatermarkActive = true;
+                Text = WatermarkText;
+                ForeColor = Color.Gray;
             }
         }
 
-        public void ApplyWatermark (string newText)
+        public void ApplyWatermark(string newText)
         {
             Text = "";
             WatermarkText = newText;
             ApplyWatermark();
         }
 
-        public void ApplyText (string text)
+        public void ApplyText(string text)
         {
             RemoveWatermak();
             Text = text;

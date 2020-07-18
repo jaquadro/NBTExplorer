@@ -1,30 +1,27 @@
-﻿using System;
-using System.Windows.Forms;
-using NBTModel.Interop;
+﻿using NBTModel.Interop;
 using Substrate.Nbt;
+using System;
+using System.Windows.Forms;
 
 namespace NBTExplorer.Windows
 {
     public class NbtClipboardControllerWin : INbtClipboardController
     {
-        public bool ContainsData
-        {
-            get { return Clipboard.ContainsData(typeof(NbtClipboardDataWin).FullName); }
-        }
+        public bool ContainsData => Clipboard.ContainsData(typeof(NbtClipboardDataWin).FullName);
 
-        public void CopyToClipboard (NbtClipboardData data)
+        public void CopyToClipboard(NbtClipboardData data)
         {
-            NbtClipboardDataWin dataWin = new NbtClipboardDataWin(data);
+            var dataWin = new NbtClipboardDataWin(data);
             Clipboard.SetData(typeof(NbtClipboardDataWin).FullName, dataWin);
         }
 
-        public NbtClipboardData CopyFromClipboard ()
+        public NbtClipboardData CopyFromClipboard()
         {
-            NbtClipboardDataWin clip = Clipboard.GetData(typeof(NbtClipboardDataWin).FullName) as NbtClipboardDataWin;
+            var clip = Clipboard.GetData(typeof(NbtClipboardDataWin).FullName) as NbtClipboardDataWin;
             if (clip == null)
                 return null;
 
-            TagNode node = clip.Node;
+            var node = clip.Node;
             if (node == null)
                 return null;
 
@@ -35,10 +32,10 @@ namespace NBTExplorer.Windows
     [Serializable]
     public class NbtClipboardDataWin
     {
-        private string _name;
         private byte[] _data;
+        private string _name;
 
-        public NbtClipboardDataWin (NbtClipboardData data)
+        public NbtClipboardDataWin(NbtClipboardData data)
         {
             Name = data.Name;
             Node = data.Node;
@@ -46,14 +43,14 @@ namespace NBTExplorer.Windows
 
         public string Name
         {
-            get { return _name; }
-            set { _name = value; }
+            get => _name;
+            set => _name = value;
         }
 
         public TagNode Node
         {
-            get { return NbtClipboardData.DeserializeNode(_data); }
-            set { _data = NbtClipboardData.SerializeNode(value); }
+            get => NbtClipboardData.DeserializeNode(_data);
+            set => _data = NbtClipboardData.SerializeNode(value);
         }
     }
 }

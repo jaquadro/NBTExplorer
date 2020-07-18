@@ -4,16 +4,16 @@ namespace NBTExplorer.Model
 {
     public class TagByteDataNode : TagDataNode
     {
-        public TagByteDataNode (TagNodeByte tag)
+        public TagByteDataNode(TagNodeByte tag)
             : base(tag)
-        { }
-
-        protected new TagNodeByte Tag
         {
-            get { return base.Tag as TagNodeByte; }
         }
 
-        public override bool Parse (string value)
+        protected new TagNodeByte Tag => base.Tag as TagNodeByte;
+
+        public override string NodeDisplay => NodeDisplayPrefix + unchecked((sbyte)Tag.Data);
+
+        public override bool Parse(string value)
         {
             byte data;
             if (!byte.TryParse(value, out data))
@@ -25,14 +25,9 @@ namespace NBTExplorer.Model
             return true;
         }
 
-        public override bool EditNode ()
+        public override bool EditNode()
         {
             return EditScalarValue(Tag);
-        }
-
-        public override string NodeDisplay
-        {
-            get { return NodeDisplayPrefix + unchecked((sbyte)Tag.Data).ToString(); }
         }
     }
 }

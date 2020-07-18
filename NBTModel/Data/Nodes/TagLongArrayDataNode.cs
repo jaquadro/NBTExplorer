@@ -1,5 +1,4 @@
-﻿using System;
-using Substrate.Nbt;
+﻿using Substrate.Nbt;
 
 namespace NBTExplorer.Model
 {
@@ -7,12 +6,10 @@ namespace NBTExplorer.Model
     {
         public TagLongArrayDataNode(TagNodeLongArray tag)
             : base(tag)
-        { }
-
-        protected new TagNodeLongArray Tag
         {
-            get { return base.Tag as TagNodeLongArray; }
         }
+
+        protected new TagNodeLongArray Tag => base.Tag as TagNodeLongArray;
 
         public override bool CanEditNode
         {
@@ -23,14 +20,11 @@ namespace NBTExplorer.Model
 #endif
         }
 
+        public override string NodeDisplay => NodeDisplayPrefix + Tag.Data.Length + " long integers";
+
         public override bool EditNode()
         {
             return EditLongHexValue(Tag);
-        }
-
-        public override string NodeDisplay
-        {
-            get { return NodeDisplayPrefix + Tag.Data.Length + " long integers"; }
         }
     }
 }

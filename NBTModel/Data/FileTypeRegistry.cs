@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace NBTExplorer.Model
 {
-    public delegate bool NamePatternTestFunc (string path);
-    public delegate DataNode NodeCreateFunc (string path);
+    public delegate bool NamePatternTestFunc(string path);
+
+    public delegate DataNode NodeCreateFunc(string path);
 
     public class FileTypeRecord
     {
@@ -14,56 +15,60 @@ namespace NBTExplorer.Model
 
     public class FileTypeRegistry
     {
-        private static Dictionary<Type, FileTypeRecord> _registry = new Dictionary<Type, FileTypeRecord>();
+        private static readonly Dictionary<Type, FileTypeRecord> _registry = new Dictionary<Type, FileTypeRecord>();
 
-        public static FileTypeRecord Lookup (Type type)
+        static FileTypeRegistry()
         {
-            if (_registry.ContainsKey(type))
-                return _registry[type];
-            else
-                return null;
-        }
+            try
+            {
+                Register<NbtFileDataNode>(new FileTypeRecord
+                {
+                    NamePatternTest = NbtFileDataNode.SupportedNamePattern,
+                    NodeCreate = NbtFileDataNode.TryCreateFrom
+                });
 
-        public static void Register (Type type, FileTypeRecord record)
-        {
-            _registry[type] = record;
-        }
+                Register<RegionFileDataNode>(new FileTypeRecord
+                {
+                    NamePatternTest = RegionFileDataNode.SupportedNamePattern,
+                    NodeCreate = RegionFileDataNode.TryCreateFrom
+                });
 
-        public static void Register<T> (FileTypeRecord record)
-        {
-            Register(typeof(T), record);
+                Register<CubicRegionDataNode>(new FileTypeRecord
+                {
+                    NamePatternTest = CubicRegionDataNode.SupportedNamePattern,
+                    NodeCreate = CubicRegionDataNode.TryCreateFrom
+                });
+            }
+            catch (Exception)
+            {
+                //Program.StaticInitFailure(e);
+            }
         }
 
         public static IEnumerable<KeyValuePair<Type, FileTypeRecord>> RegisteredTypes
         {
-            get 
+            get
             {
                 foreach (var item in _registry)
                     yield return item;
             }
         }
 
-        static FileTypeRegistry ()
+        public static FileTypeRecord Lookup(Type type)
         {
-            try {
-                Register<NbtFileDataNode>(new FileTypeRecord() {
-                    NamePatternTest = NbtFileDataNode.SupportedNamePattern,
-                    NodeCreate = NbtFileDataNode.TryCreateFrom,
-                });
+            if (_registry.ContainsKey(type))
+                return _registry[type];
+            return null;
+        }
 
-                Register<RegionFileDataNode>(new FileTypeRecord() {
-                    NamePatternTest = RegionFileDataNode.SupportedNamePattern,
-                    NodeCreate = RegionFileDataNode.TryCreateFrom,
-                });
+        public static void Register(Type type, FileTypeRecord record)
+        {
+            _registry[type] = record;
+        }
 
-                Register<CubicRegionDataNode>(new FileTypeRecord() {
-                    NamePatternTest = CubicRegionDataNode.SupportedNamePattern,
-                    NodeCreate = CubicRegionDataNode.TryCreateFrom,
-                });
-            }
-            catch (Exception) {
-                //Program.StaticInitFailure(e);
-            }
+        public static void Register<T>(FileTypeRecord record)
+        {
+            Register(typeof(T), record);
         }
     }
 }
