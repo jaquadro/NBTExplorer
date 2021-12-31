@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 namespace NBTExplorer.Model
 {
@@ -8,8 +9,8 @@ namespace NBTExplorer.Model
     {
         private class PathPartDesc
         {
-            public string Name;
-            public DataNode Node;
+            //public string Name;
+            //public DataNode Node;
         }
 
         private string _pathRoot;
@@ -22,6 +23,8 @@ namespace NBTExplorer.Model
 
             if (string.IsNullOrEmpty(_pathRoot))
                 _pathRoot = Directory.GetCurrentDirectory();
+            Console.WriteLine("Root: '{0}': ", _pathRoot);
+            Console.WriteLine("Paths: [{0}]", string.Join(",", _pathParts.ToArray()));
         }
 
         public IEnumerator<DataNode> GetEnumerator ()
@@ -29,8 +32,9 @@ namespace NBTExplorer.Model
             DataNode dataNode = new DirectoryDataNode(_pathRoot);
             dataNode.Expand();
 
-            foreach (DataNode childNode in EnumerateNodes(dataNode, _pathParts))
+            foreach (DataNode childNode in EnumerateNodes(dataNode, _pathParts)) {
                 yield return childNode;
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator ()
@@ -41,11 +45,13 @@ namespace NBTExplorer.Model
         private IEnumerable<DataNode> EnumerateNodes (DataNode containerNode, List<string> nextLevels)
         {
             containerNode.Expand();
+            Console.WriteLine("Enumerating {0}", string.Join(",", nextLevels.ToArray()) );
             if (nextLevels.Count == 0) {
                 yield return containerNode;
                 yield break;
             }
 
+            Console.WriteLine("Count: {0}", containerNode.Nodes.Count);
             if (containerNode.Nodes.Count == 0)
                 yield break;
 
@@ -82,8 +88,8 @@ namespace NBTExplorer.Model
     {
         private class PathPart
         {
-            public string Name;
-            public DataNode Node;
+            //public string Name;
+            //public DataNode Node;
         }
 
         
