@@ -89,8 +89,11 @@ namespace NBTExplorer.Model
                 }
             }
             catch (Exception e) {
-                if (FormRegistry.MessageBox != null)
+                if (FormRegistry.MessageBox != null) {
                     FormRegistry.MessageBox("Not a valid region file.");
+		} else {
+                    Console.WriteLine(e.ToString());
+                }
             }
         }
 

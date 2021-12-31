@@ -51,7 +51,12 @@ namespace NBTExplorer.Model
         public static bool SupportedNamePattern (string path)
         {
             path = Path.GetFileName(path);
-            return _namePattern.IsMatch(path);
+            if (_namePattern.IsMatch(path)) {
+                return true;
+            } else {
+                Console.WriteLine("File doesn't have the appropriate extension: '{0}'", path);
+                return false;
+            }
         }
 
         protected override NodeCapabilities Capabilities
