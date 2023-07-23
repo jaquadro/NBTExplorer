@@ -7,18 +7,15 @@ using System;
 
 namespace NBTExplorer.Model
 {
-    public class RegionFileDataNode : DataNode
+    public class RegionFileDataNode : AbstractFileDataNode
     {
-        private string _path;
         private RegionFile _region;
         private List<RegionKey> _deleteQueue = new List<RegionKey>();
 
         private static Regex _namePattern = new Regex(@"^r\.(-?\d+)\.(-?\d+)\.(mcr|mca)$");
 
-        private RegionFileDataNode (string path)
-        {
-            _path = path;
-        }
+        private RegionFileDataNode (string path) : base(path)
+        {}
 
         public static RegionFileDataNode TryCreateFrom (string path)
         {
@@ -62,16 +59,6 @@ namespace NBTExplorer.Model
         public override bool IsContainerType
         {
             get { return true; }
-        }
-
-        public override string NodePathName
-        {
-            get { return Path.GetFileName(_path); }
-        }
-
-        public override string NodeDisplay
-        {
-            get { return Path.GetFileName(_path); }
         }
 
         protected override void ExpandCore ()
