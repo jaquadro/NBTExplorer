@@ -8,19 +8,17 @@ using NBTModel.Interop;
 
 namespace NBTExplorer.Model
 {
-    public class NbtFileDataNode : DataNode, IMetaTagContainer
+    public class NbtFileDataNode : AbstractFileDataNode, IMetaTagContainer
     {
         private NbtTree _tree;
-        private string _path;
         private CompressionType _compressionType;
 
         private CompoundTagContainer _container;
 
         private static Regex _namePattern = new Regex(@"\.(dat|nbt|schematic|dat_mcr|dat_old|bpt|rc)$");
 
-        private NbtFileDataNode (string path, CompressionType compressionType)
+        private NbtFileDataNode (string path, CompressionType compressionType) : base(path)
         {
-            _path = path;
             _compressionType = compressionType;
             _container = new CompoundTagContainer(new TagNodeCompound());
         }
@@ -64,16 +62,6 @@ namespace NBTExplorer.Model
                     | NodeCapabilities.Refresh
                     | NodeCapabilities.Rename;
             }
-        }
-
-        public override string NodeName
-        {
-            get { return Path.GetFileName(_path); }
-        }
-
-        public override string NodePathName
-        {
-            get { return Path.GetFileName(_path); }
         }
 
         public override string NodeDisplay

@@ -5,17 +5,14 @@ using NBTModel.Interop;
 
 namespace NBTExplorer.Model
 {
-    public class CubicRegionDataNode : DataNode
-    {
-        private string _path;
+    public class CubicRegionDataNode : AbstractFileDataNode
+  {
         private CubicRegionFile _region;
 
         private static Regex _namePattern = new Regex(@"^r2(\.-?\d+){3}\.(mcr|mca)$");
 
-        private CubicRegionDataNode (string path)
-        {
-            _path = path;
-        }
+        private CubicRegionDataNode (string path) : base(path)
+        {}
 
         public static CubicRegionDataNode TryCreateFrom (string path)
         {
@@ -45,16 +42,6 @@ namespace NBTExplorer.Model
         public override bool IsContainerType
         {
             get { return true; }
-        }
-
-        public override string NodePathName
-        {
-            get { return Path.GetFileName(_path); }
-        }
-
-        public override string NodeDisplay
-        {
-            get { return Path.GetFileName(_path); }
         }
 
         protected override void ExpandCore ()

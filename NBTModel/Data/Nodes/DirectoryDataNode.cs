@@ -4,14 +4,10 @@ using System;
 
 namespace NBTExplorer.Model
 {
-    public class DirectoryDataNode : DataNode
+    public class DirectoryDataNode : AbstractFileDataNode
     {
-        private string _path;
-
-        public DirectoryDataNode (string path)
-        {
-            _path = path;
-        }
+        public DirectoryDataNode (string path) : base(path)
+        {}
 
         protected override NodeCapabilities Capabilities
         {
@@ -38,11 +34,6 @@ namespace NBTExplorer.Model
 
                 return (sepIndex > 0) ? name.Substring(sepIndex + 1) : name;
             }
-        }
-
-        public override string NodeDisplay
-        {
-            get { return Path.GetFileName(_path); }
         }
 
         public override bool HasUnexpandedChildren
