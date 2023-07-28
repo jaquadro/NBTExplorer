@@ -59,6 +59,7 @@ namespace NBTExplorer.Model
             get
             {
                 return NodeCapabilities.CreateTag
+                    | NodeCapabilities.Copy
                     | NodeCapabilities.PasteInto
                     | NodeCapabilities.Search
                     | NodeCapabilities.Refresh
@@ -71,9 +72,15 @@ namespace NBTExplorer.Model
             get { return Path.GetFileName(_path); }
         }
 
+
         public override string NodePathName
         {
             get { return Path.GetFileName(_path); }
+        }
+
+        private string NodeNameWithoutExtension
+        {
+            get { return Path.GetFileNameWithoutExtension(_path); }
         }
 
         public override string NodeDisplay
@@ -99,6 +106,27 @@ namespace NBTExplorer.Model
         public override bool IsContainerType
         {
             get { return true; }
+        }
+
+        private TagNodeCompound GetTagNode ()
+        {
+            TagNode tag;
+
+            if (_tree == null) {
+                try {
+                    Expand();
+                    tag = _tree.Root.Copy();
+                    Release();
+                }
+                catch {
+                    Release();
+                    return null;
+                }
+            }
+            else {
+                tag = _tree.Root.Copy();
+            }
+            return (TagNodeCompound) tag;
         }
 
         protected override void ExpandCore ()
@@ -198,6 +226,20 @@ namespace NBTExplorer.Model
                     AddTag(data.TagNode, data.TagName);
                     return true;
                 }
+            }
+
+            return false;
+        }
+
+        public override bool CopyNode()
+        {
+            if (CanCopyNode)
+            {
+                // Need to create new compound tag, add all children of the nbt node into it,
+                // copy it and delete it.
+                
+                NbtClipboardController.CopyToClipboard(new NbtClipboardData(this.NodeNameWithoutExtension, this.GetTagNode()));
+                return true;
             }
 
             return false;
