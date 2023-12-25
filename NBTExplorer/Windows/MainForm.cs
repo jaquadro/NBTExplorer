@@ -257,16 +257,17 @@ namespace NBTExplorer.Windows
                 return;
 
             try {
-                foreach (string path in new[] { 
+                foreach (string basepath in new[] { 
                   Environment.ExpandEnvironmentVariables("%APPDATA%"), 
                   Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                  Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) } // Tries Linux Minecraft location
+                  System.Environment.GetEnvironmentVariable("HOME") } // Tries Linux Minecraft location
                   ) {
-                    if (!Directory.Exists(path)) {
+                    if (!Directory.Exists(basepath)) {
                         continue;
                     }
     
-                    path = Path.Combine(path, ".minecraft", "saves");
+                    string path = Path.Combine(basepath, ".minecraft");
+                    path = Path.Combine(path, "saves");
     
                     if (!Directory.Exists(path)) {
                         continue;
