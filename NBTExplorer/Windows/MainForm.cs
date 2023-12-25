@@ -257,19 +257,23 @@ namespace NBTExplorer.Windows
                 return;
 
             try {
-                string path = Environment.ExpandEnvironmentVariables("%APPDATA%");
-                if (!Directory.Exists(path)) {
-                    path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                foreach (string path in new[] { 
+                  Environment.ExpandEnvironmentVariables("%APPDATA%"), 
+                  Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                  Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) } // Tries Linux Minecraft location
+                  ) {
+                    if (!Directory.Exists(path)) {
+                        continue;
+                    }
+    
+                    path = Path.Combine(path, ".minecraft", "saves");
+    
+                    if (!Directory.Exists(path)) {
+                        continue;
+                    }
+    
+                    OpenPaths(new string[] { path });
                 }
-
-                path = Path.Combine(path, ".minecraft");
-                path = Path.Combine(path, "saves");
-
-                if (!Directory.Exists(path)) {
-                    path = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
-                }
-
-                OpenPaths(new string[] { path });
             }
             catch (Exception e) {
                 MessageBox.Show("Could not open default Minecraft save directory");
